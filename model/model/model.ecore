@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="model" nsURI="http://www.example.org/model" nsPrefix="model">
+  <eClassifiers xsi:type="ecore:EEnum" name="Status">
+    <eLiterals name="ACTIVE" value="1"/>
+    <eLiterals name="INACTIVE" value="2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Root">
+    <eOperations name="createNetwork" eType="#//Network">
+      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="status" eType="#//Status"/>
+      <eParameters name="isVirtual" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="networks" upperBound="-1"
+        eType="#//Network" containment="true" eOpposite="#//Network/root"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Element" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="status" lowerBound="1"
+        eType="#//Status"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Node" abstract="true" eSuperTypes="#//Element">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="depth" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="0"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="network" lowerBound="1"
+        eType="#//Network" eOpposite="#//Network/nodes"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outgoingLinks" upperBound="-1"
+        eType="#//Link" eOpposite="#//Link/source"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="incomingLinks" upperBound="-1"
+        eType="#//Link" eOpposite="#//Link/target"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="paths" upperBound="-1"
+        eType="#//Path" eOpposite="#//Path/nodes"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outgoingPaths" upperBound="-1"
+        eType="#//Path" eOpposite="#//Path/source"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="incomingPaths" upperBound="-1"
+        eType="#//Path" eOpposite="#//Path/target"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Server" abstract="true" eSuperTypes="#//Node">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cpu" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="memory" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="storage" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Switch" abstract="true" eSuperTypes="#//Node"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Link" abstract="true" eSuperTypes="#//Element">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bandwidth" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="0"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="network" lowerBound="1"
+        eType="#//Network" eOpposite="#//Network/links"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="paths" eType="#//Path"
+        eOpposite="#//Path/links"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="source" lowerBound="1"
+        eType="#//Node" eOpposite="#//Node/outgoingLinks"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" lowerBound="1"
+        eType="#//Node" eOpposite="#//Node/incomingLinks"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Path" abstract="true" eSuperTypes="#//Element">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="network" lowerBound="1"
+        eType="#//Network" eOpposite="#//Network/paths"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="links" upperBound="-1"
+        eType="#//Link" eOpposite="#//Link/paths"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" upperBound="-1"
+        eType="#//Node" eOpposite="#//Node/paths"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="source" lowerBound="1"
+        eType="#//Node" eOpposite="#//Node/outgoingPaths"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" lowerBound="1"
+        eType="#//Node" eOpposite="#//Node/incomingPaths"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Network" abstract="true" eSuperTypes="#//Element">
+    <eOperations name="createServer" eType="#//Server">
+      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="cpu" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eParameters name="memory" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eParameters name="storage" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eParameters name="depth" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eParameters name="status" eType="#//Status"/>
+    </eOperations>
+    <eOperations name="createSwitch" eType="#//Switch">
+      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="depth" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eParameters name="status" eType="#//Status"/>
+    </eOperations>
+    <eOperations name="createLink" eType="#//Link">
+      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="source" eType="#//Node"/>
+      <eParameters name="target" eType="#//Node"/>
+      <eParameters name="bandwidth" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eParameters name="status" eType="#//Status"/>
+    </eOperations>
+    <eOperations name="createPath" eType="#//Path">
+      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="source" eType="#//Node"/>
+      <eParameters name="target" eType="#//Node"/>
+      <eParameters name="status" eType="#//Status"/>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="root" lowerBound="1" eType="#//Root"
+        eOpposite="#//Root/networks"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" upperBound="-1"
+        eType="#//Node" containment="true" eOpposite="#//Node/network"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="links" upperBound="-1"
+        eType="#//Link" containment="true" eOpposite="#//Link/network"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="paths" upperBound="-1"
+        eType="#//Path" containment="true" eOpposite="#//Path/network"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SubstrateElement" abstract="true" eSuperTypes="#//Element"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SubstrateNode" abstract="true" eSuperTypes="#//Node #//SubstrateElement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SubstrateServer" eSuperTypes="#//Server #//SubstrateNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SubstrateSwitch" eSuperTypes="#//Switch #//SubstrateNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SubstrateLink" eSuperTypes="#//Link #//SubstrateElement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SubstratePath" eSuperTypes="#//Path #//SubstrateElement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SubstrateNetwork" eSuperTypes="#//SubstrateElement #//Network">
+    <eOperations name="createSubstrateNetwork">
+      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="status" eType="#//Status"/>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="VirtualElement" abstract="true" eSuperTypes="#//Element"/>
+  <eClassifiers xsi:type="ecore:EClass" name="VirtualNode" abstract="true" eSuperTypes="#//Node #//VirtualElement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="VirtualServer" eSuperTypes="#//Server #//VirtualNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="VirtualSwitch" eSuperTypes="#//Switch #//VirtualNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="VirtualLink" eSuperTypes="#//VirtualElement #//Link"/>
+  <eClassifiers xsi:type="ecore:EClass" name="VirtualNetwork" eSuperTypes="#//VirtualElement #//Network">
+    <eOperations name="createVirtualNetwork" eType="#//VirtualNetwork">
+      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="status" eType="#//Status"/>
+    </eOperations>
+  </eClassifiers>
+</ecore:EPackage>
