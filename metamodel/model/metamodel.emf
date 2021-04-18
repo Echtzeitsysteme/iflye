@@ -1,0 +1,203 @@
+@GenModel(documentation="Meta-model for networks")
+@namespace(uri="platform:/resource/metamodel/model/metamodel.ecore", prefix="metamodel")
+package model;
+
+@GenModel(documentation="An enum to store status information.")
+enum Status {
+	@GenModel(documentation="Status is active.")
+	ACTIVE = 1;
+	
+	@GenModel(documentation="Status is inactive.")
+	INACTIVE = 2;
+}
+
+@GenModel(documentation="A root node as entry point.")
+class Root {
+	@GenModel(documentation="Set of networks within this root node.")
+	ref Network [*]#root networks;
+	
+	@GenModel(documentation="Creates a new network under this root node.")
+	op Network createNetwork(EString name, Status status, EBoolean isVirtual);
+}
+
+@GenModel(documentation="Abstract class for all elements.")
+abstract class Element {
+	@GenModel(documentation="Name.")
+	attr EString [1] name;
+	
+	@GenModel(documentation="Status.")
+	attr Status [1] status;
+}
+
+@GenModel(documentation="Abstract class for all nodes.")
+abstract class Node extends Element {
+	@GenModel(documentation="Depth inside tree-based networks.")
+	attr EInt [1] depth;
+	
+	@GenModel(documentation="Network this node belongs to.")
+	ref Network [1]#nodes network;
+	
+	@GenModel(documentation="Set of outgoing links (links that start at this node).")
+	ref Link [*]#source outgoingLinks;
+	
+	@GenModel(documentation="Set of incoming links (links that end at this node).")
+	ref Link [*]#target incomingLinks;
+	
+	@GenModel(documentation="Paths that use this node.")
+	ref Path [*]#nodes paths;
+	
+	@GenModel(documentation="Set of outgoing paths (paths that start at this node).")
+	ref Path [*]#source outgoingPaths;
+	
+	@GenModel(documentation="Set of incoming paths (paths that end at this node).")
+	ref Path [*]#target incomingPaths;
+}
+
+@GenModel(documentation="Abstract class for all servers.")
+abstract class Server extends Node {
+	@GenModel(documentation="CPU amount of this server.")
+	attr EInt [1] cpu;
+	
+	@GenModel(documentation="Memory (RAM) amout of this server.")
+	attr EInt [1] memory;
+	
+	@GenModel(documentation="Storage (HDD/SSD) amout of this server.")
+	attr EInt [1] storage;
+}
+
+@GenModel(documentation="Abstract class for all switches.")
+abstract class Switch extends Node {
+	
+}
+
+@GenModel(documentation="Abstract class for all links.")
+abstract class Link extends Element {
+	@GenModel(documentation="Bandwidth amount of this link.")
+	attr EInt [1] bandwidth;
+	
+	@GenModel(documentation="Network this link belongs to.")
+	ref Network [1]#links network;
+	
+	@GenModel(documentation="Paths that use this link.")
+	ref Path [*]#links paths;
+	
+	@GenModel(documentation="Source node at which this link starts.")
+	ref Node [1]#outgoingLinks source;
+	
+	@GenModel(documentation="Target node at which this link ends.")
+	ref Node [1]#incomingLinks target;
+}
+
+@GenModel(documentation="Abstract class for all paths.")
+abstract class Path extends Element {
+	@GenModel(documentation="Network this path belongs to.")
+	ref Network [1]#paths network;
+	
+	@GenModel(documentation="Source node at which this path starts.")
+	ref Node [1]#outgoingPaths source;
+	
+	@GenModel(documentation="Target node at which this path ends.")
+	ref Node [1]#incomingPaths target;
+	
+	@GenModel(documentation="All nodes that are part of this path.")
+	ref Node [*]#paths nodes;
+	
+	@GenModel(documentation="All links that are part of this path.")
+	ref Link [*]#paths links;
+}
+
+@GenModel(documentation="Abstract class for all networks.")
+abstract class Network extends Element {
+	@GenModel(documentation="Root node this network belongs to.")
+	ref Root [1]#networks root;
+	
+	@GenModel(documentation="Set of nodes that are part of this network.")
+	ref Node [*]#network nodes;
+	
+	@GenModel(documentation="Set of links that are part of this network.")
+	ref Link [*]#network links;
+	
+	@GenModel(documentation="Set of paths that are part of this network.")
+	ref Path [*]#network paths;
+	
+	@GenModel(documentation="Creates a new server within this network.")
+	op Server createServer(EString name, EInt depth, EInt cpu, EInt memory, EInt storage, Status status);
+	
+	@GenModel(documentation="Creates a new switch within this network.")
+	op Switch createSwitch(EString name, EInt depth, Status status);
+	
+	@GenModel(documentation="Creates a new link within this network.")
+	op Link createLink(EString name, Node source, Node target, EInt bandwidth, Status status);
+	
+	@GenModel(documentation="Creates a new path within this network.")
+	op Path createPath(EString name, Node source, Node target, Status status);
+}
+
+@GenModel(documentation="Abstract class that represents a substrate element.")
+abstract class SubstrateElement extends Element {
+	
+}
+
+@GenModel(documentation="Abstract class that represents a substrate node.")
+abstract class SubstrateNode extends Node, SubstrateElement {
+	
+}
+
+@GenModel(documentation="Class that represents a substrate server.")
+class SubstrateServer extends Server, SubstrateNode {
+	
+}
+
+@GenModel(documentation="Class that represents a substrate switch.")
+class SubstrateSwitch extends Switch, SubstrateNode {
+	
+}
+
+@GenModel(documentation="Class that represents a substrate link.")
+class SubstrateLink extends Link, SubstrateElement {
+	
+}
+
+@GenModel(documentation="Class that represents a substrate path.")
+class SubstratePath extends Path, SubstrateElement {
+	
+}
+
+@GenModel(documentation="Class that represents a substrate network")
+class SubstrateNetwork extends Network, SubstrateElement {
+	@GenModel(documentation="Creates a new substrate network.")
+	op SubstrateNetwork createSubstrateNetwork(EString name, Status status);
+	// TODO: Integrate create-methods for server, switch, link, path
+}
+
+@GenModel(documentation="Abstract class that represents a virtual element.")
+abstract class VirtualElement extends Element {
+	
+}
+
+@GenModel(documentation="Abstract class that represents a virtual node.")
+abstract class VirtualNode extends Node, VirtualElement {
+	
+}
+
+@GenModel(documentation="Class that represents a virtual server.")
+class VirtualServer extends Server, VirtualNode {
+	
+}
+
+@GenModel(documentation="Class that represents a virtual switch.")
+class VirtualSwitch extends Switch, VirtualNode {
+	
+}
+
+@GenModel(documentation="Class that represents a virtual link.")
+class VirtualLink extends Link, VirtualElement {
+	
+}
+
+@GenModel(documentation="Represents a virtual network.")
+class VirtualNetwork extends Network, VirtualElement {
+	@GenModel(documentation="Creates a new virtual network.")
+	op VirtualNetwork createVirtualNetwork(EString name, Status status);
+	// TODO: Integrate create-methods for server, switch, link, path
+}

@@ -1,5 +1,5 @@
 import "http://www.eclipse.org/emf/2002/Ecore"
-import "platform:/resource/model/model/model.ecore"
+import "platform:/resource/metamodel/model/metamodel.ecore"
 
 // Single root node
 pattern oneRoot {
