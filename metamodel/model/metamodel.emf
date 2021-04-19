@@ -167,7 +167,18 @@ class SubstratePath extends Path, SubstrateElement {
 class SubstrateNetwork extends Network, SubstrateElement {
 	@GenModel(documentation="Creates a new substrate network.")
 	op SubstrateNetwork createSubstrateNetwork(EString name, Status status);
-	// TODO: Integrate create-methods for server, switch, link, path
+	
+	@GenModel(documentation="Creates a new substrate server.")
+	op SubstrateServer createServer(EString name, EInt cpu, EInt memory, EInt storage, EInt depth, Status status);
+	
+	@GenModel(documentation="Creates a new substrate switch.")
+	op SubstrateSwitch createSwitch(EString name, EInt depth, Status status);
+	
+	@GenModel(documentation="Creates a new substrate link.")
+	op SubstrateLink createLink (EString name, EString sourceName, EString targetName, EInt bandwidth, Status status);
+	
+	@GenModel(documentation="Creates a new substrate path.")
+	op SubstratePath createPath(EString name, EString sourceName, EString targetName, Status status);
 }
 
 @GenModel(documentation="Abstract class that represents a virtual element.")
@@ -199,5 +210,13 @@ class VirtualLink extends Link, VirtualElement {
 class VirtualNetwork extends Network, VirtualElement {
 	@GenModel(documentation="Creates a new virtual network.")
 	op VirtualNetwork createVirtualNetwork(EString name, Status status);
-	// TODO: Integrate create-methods for server, switch, link, path
+	
+	@GenModel(documentation="Creates a new virtual server.")
+	op VirtualServer createServer(EString name, EInt cpu, EInt memory, EInt storage, EInt depth, Status status);
+	
+	@GenModel(documentation="Creates a new virtual switch.")
+	op VirtualSwitch createSwitch(EString name, EInt depth, Status status);
+	
+	@GenModel(documentation="Creates a new virtual link.")
+	op VirtualLink createLink (EString name, EString sourceName, EString targetName, EInt bandwidth, Status status);
 }

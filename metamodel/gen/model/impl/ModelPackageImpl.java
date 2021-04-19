@@ -747,6 +747,46 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * @generated
 	 */
 	@Override
+	public EOperation getSubstrateNetwork__CreateServer__String_int_int_int_int_Status() {
+		return substrateNetworkEClass.getEOperations().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getSubstrateNetwork__CreateSwitch__String_int_Status() {
+		return substrateNetworkEClass.getEOperations().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getSubstrateNetwork__CreateLink__String_String_String_int_Status() {
+		return substrateNetworkEClass.getEOperations().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getSubstrateNetwork__CreatePath__String_String_String_Status() {
+		return substrateNetworkEClass.getEOperations().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getVirtualElement() {
 		return virtualElementEClass;
 	}
@@ -809,6 +849,36 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	@Override
 	public EOperation getVirtualNetwork__CreateVirtualNetwork__String_Status() {
 		return virtualNetworkEClass.getEOperations().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getVirtualNetwork__CreateServer__String_int_int_int_int_Status() {
+		return virtualNetworkEClass.getEOperations().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getVirtualNetwork__CreateSwitch__String_int_Status() {
+		return virtualNetworkEClass.getEOperations().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getVirtualNetwork__CreateLink__String_String_String_int_Status() {
+		return virtualNetworkEClass.getEOperations().get(3);
 	}
 
 	/**
@@ -913,6 +983,10 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 
 		substrateNetworkEClass = createEClass(SUBSTRATE_NETWORK);
 		createEOperation(substrateNetworkEClass, SUBSTRATE_NETWORK___CREATE_SUBSTRATE_NETWORK__STRING_STATUS);
+		createEOperation(substrateNetworkEClass, SUBSTRATE_NETWORK___CREATE_SERVER__STRING_INT_INT_INT_INT_STATUS);
+		createEOperation(substrateNetworkEClass, SUBSTRATE_NETWORK___CREATE_SWITCH__STRING_INT_STATUS);
+		createEOperation(substrateNetworkEClass, SUBSTRATE_NETWORK___CREATE_LINK__STRING_STRING_STRING_INT_STATUS);
+		createEOperation(substrateNetworkEClass, SUBSTRATE_NETWORK___CREATE_PATH__STRING_STRING_STRING_STATUS);
 
 		virtualElementEClass = createEClass(VIRTUAL_ELEMENT);
 
@@ -926,6 +1000,9 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 
 		virtualNetworkEClass = createEClass(VIRTUAL_NETWORK);
 		createEOperation(virtualNetworkEClass, VIRTUAL_NETWORK___CREATE_VIRTUAL_NETWORK__STRING_STATUS);
+		createEOperation(virtualNetworkEClass, VIRTUAL_NETWORK___CREATE_SERVER__STRING_INT_INT_INT_INT_STATUS);
+		createEOperation(virtualNetworkEClass, VIRTUAL_NETWORK___CREATE_SWITCH__STRING_INT_STATUS);
+		createEOperation(virtualNetworkEClass, VIRTUAL_NETWORK___CREATE_LINK__STRING_STRING_STRING_INT_STATUS);
 
 		// Create enums
 		statusEEnum = createEEnum(STATUS);
@@ -1144,6 +1221,36 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		addEParameter(op, ecorePackage.getEString(), "name", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getStatus(), "status", 0, 1, IS_UNIQUE, IS_ORDERED);
 
+		op = initEOperation(getSubstrateNetwork__CreateServer__String_int_int_int_int_Status(),
+				this.getSubstrateServer(), "createServer", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "name", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEInt(), "cpu", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEInt(), "memory", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEInt(), "storage", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEInt(), "depth", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getStatus(), "status", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getSubstrateNetwork__CreateSwitch__String_int_Status(), this.getSubstrateSwitch(),
+				"createSwitch", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "name", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEInt(), "depth", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getStatus(), "status", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getSubstrateNetwork__CreateLink__String_String_String_int_Status(), this.getSubstrateLink(),
+				"createLink", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "name", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "sourceName", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "targetName", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEInt(), "bandwidth", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getStatus(), "status", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getSubstrateNetwork__CreatePath__String_String_String_Status(), this.getSubstratePath(),
+				"createPath", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "name", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "sourceName", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "targetName", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getStatus(), "status", 0, 1, IS_UNIQUE, IS_ORDERED);
+
 		initEClass(virtualElementEClass, VirtualElement.class, "VirtualElement", IS_ABSTRACT, !IS_INTERFACE,
 				IS_GENERATED_INSTANCE_CLASS);
 
@@ -1165,6 +1272,29 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		op = initEOperation(getVirtualNetwork__CreateVirtualNetwork__String_Status(), this.getVirtualNetwork(),
 				"createVirtualNetwork", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEString(), "name", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getStatus(), "status", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getVirtualNetwork__CreateServer__String_int_int_int_int_Status(), this.getVirtualServer(),
+				"createServer", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "name", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEInt(), "cpu", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEInt(), "memory", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEInt(), "storage", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEInt(), "depth", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getStatus(), "status", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getVirtualNetwork__CreateSwitch__String_int_Status(), this.getVirtualSwitch(),
+				"createSwitch", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "name", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEInt(), "depth", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getStatus(), "status", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getVirtualNetwork__CreateLink__String_String_String_int_Status(), this.getVirtualLink(),
+				"createLink", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "name", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "sourceName", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "targetName", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEInt(), "bandwidth", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getStatus(), "status", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		// Initialize enums and add enum literals
