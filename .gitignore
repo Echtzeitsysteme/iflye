@@ -108,5 +108,3 @@ hs_err_pid*
 .nfs*
 
 # End of https://www.toptal.com/developers/gitignore/api/java,linux,eclipse
-
-model/src-gen/

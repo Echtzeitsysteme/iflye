@@ -1,3 +1,11 @@
 /bin
-/gen
 /model/*.genmodel
+
+# Ignore all generated code except for *Impl.java files
+!/gen/
+/gen/*
+!/gen/model/
+/gen/model/*
+!/gen/model/impl/
+/gen/model/impl/*
+!/gen/model/impl/*Impl.java
