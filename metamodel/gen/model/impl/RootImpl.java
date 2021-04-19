@@ -83,18 +83,13 @@ public class RootImpl extends EObjectImpl implements Root {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated NOT
+	 * @generated
 	 */
 	@Override
 	public Network createNetwork(String name, Status status, boolean isVirtual) {
-		Network net;
-		if (isVirtual) {
-			net = new VirtualNetworkImpl().createVirtualNetwork(name, status);
-		} else {
-			net = new SubstrateNetworkImpl().createSubstrateNetwork(name, status);
-		}
-		this.getNetworks().add(net);
-		return net;
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
 	}
 
 	/**

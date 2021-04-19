@@ -4,7 +4,6 @@ package model.impl;
 
 import java.lang.reflect.InvocationTargetException;
 
-import model.ModelFactory;
 import model.ModelPackage;
 import model.Status;
 import model.SubstrateLink;
@@ -47,14 +46,13 @@ public class SubstrateNetworkImpl extends NetworkImpl implements SubstrateNetwor
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated NOT
+	 * @generated
 	 */
 	@Override
 	public SubstrateNetwork createSubstrateNetwork(String name, Status status) {
-		final SubstrateNetwork net = ModelFactory.eINSTANCE.createSubstrateNetwork();
-		net.setName(name);
-		net.setStatus(status);
-		return net;
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
 	}
 
 	/**
