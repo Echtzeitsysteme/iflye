@@ -1,10 +1,18 @@
 import "http://www.eclipse.org/emf/2002/Ecore"
 import "platform:/resource/metamodel/model/metamodel.ecore"
 
+//
+// Root
+//
+
 // Single root node only
 pattern oneRoot {
 	root: Root
 }
+
+//
+// Networks
+//
 
 // Abstract rule to create a generic network
 abstract rule createNetwork(name: EString, status: Status) {
@@ -12,7 +20,7 @@ abstract rule createNetwork(name: EString, status: Status) {
 		++ -networks->network
 	}
 	
-	++ network : Network{
+	++ network : Network {
 		.name := param::name
 		.status := param::status
 	}
