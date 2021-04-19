@@ -4,6 +4,7 @@ package model.impl;
 
 import java.lang.reflect.InvocationTargetException;
 
+import model.ModelFactory;
 import model.ModelPackage;
 import model.Status;
 import model.VirtualNetwork;
@@ -42,13 +43,14 @@ public class VirtualNetworkImpl extends NetworkImpl implements VirtualNetwork {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public VirtualNetwork createVirtualNetwork(String name, Status status) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+		final VirtualNetwork net = ModelFactory.eINSTANCE.createVirtualNetwork();
+		net.setName(name);
+		net.setStatus(status);
+		return net;
 	}
 
 	/**

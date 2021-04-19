@@ -87,11 +87,14 @@ public class RootImpl extends EObjectImpl implements Root {
 	 */
 	@Override
 	public Network createNetwork(String name, Status status, boolean isVirtual) {
+		Network net;
 		if (isVirtual) {
-			return new VirtualNetworkImpl().createVirtualNetwork(name, status);
+			net = new VirtualNetworkImpl().createVirtualNetwork(name, status);
 		} else {
-			return new SubstrateNetworkImpl().createSubstrateNetwork(name, status);
+			net = new SubstrateNetworkImpl().createSubstrateNetwork(name, status);
 		}
+		this.getNetworks().add(net);
+		return net;
 	}
 
 	/**
