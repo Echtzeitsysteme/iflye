@@ -10,7 +10,8 @@ Automatic-Module-Name: model2
 Require-Bundle: org.eclipse.emf.ecore,
  org.eclipse.emf.ecore.xmi,
  org.junit,
- org.junit.jupiter.api
+ org.junit.jupiter.api,
+ org.moflon.core.utilities
 Export-Package: model,
  model.util,
  model.impl,

@@ -3,7 +3,10 @@ package facade;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import org.moflon.core.utilities.eMoflonEMFUtil;
 
 import model.Link;
 import model.ModelFactory;
@@ -18,6 +21,7 @@ import model.VirtualNetwork;
 public class ModelFacade {
 	
 	private static ModelFacade instance;
+	private static AtomicInteger counter = new AtomicInteger();
 	
 	private ModelFacade() {}
 	
@@ -96,8 +100,15 @@ public class ModelFacade {
 			throw new IllegalArgumentException("A network with id " + id + " already exists!");
 		}
 		
-		final Network net = ModelFactory.eINSTANCE.createSubstrateNetwork();
+		Network net;
+		if (isVirtual) {
+			net = ModelFactory.eINSTANCE.createVirtualNetwork();
+		} else {
+			net = ModelFactory.eINSTANCE.createSubstrateNetwork();
+		}
+		
 		net.setName(id);
+		net.setRoot(root);
 		return root.getNetworks().add(net);
 	}
 	
@@ -161,7 +172,7 @@ public class ModelFacade {
 			throw new IllegalArgumentException("A link with id " + id + " already exists!");
 		}
 		
-		if (!(doesNodeIdExist(sourceId, networkId) || doesNodeIdExist(targetId, networkId) )) {
+		if (!doesNodeIdExist(sourceId, networkId) || !doesNodeIdExist(targetId, networkId)) {
 			throw new IllegalArgumentException("A node with given id does not exist!");
 		}
 		
@@ -185,7 +196,7 @@ public class ModelFacade {
 		checkStringValid(new String[] {id, networkId});
 		
 		return !getNetworkById(networkId).getNodes().stream()
-				.filter(n -> n.getName().equals(networkId))
+				.filter(n -> n.getName().equals(id))
 				.collect(Collectors.toList()).isEmpty();
 	}
 	
@@ -228,6 +239,14 @@ public class ModelFacade {
 				throw new IllegalArgumentException("Provided int was smaller than zero!");
 			}
 		}
+	}
+	
+	public int getNextId() {
+		return counter.getAndIncrement();
+	}
+	
+	public void persistModel() {
+		eMoflonEMFUtil.saveModel(root, "./export.xmi");
 	}
 	
 }
