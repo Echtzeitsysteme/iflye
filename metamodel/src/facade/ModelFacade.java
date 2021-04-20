@@ -39,6 +39,8 @@ public class ModelFacade {
 	}
 	
 	public Collection<Node> getAllServersOfNetwork(final String networkId) {
+		checkStringValid(networkId);
+		
 		for (Network actNet : getAllNetworks()) {
 			if (actNet.getName().equals(networkId)) {
 				return actNet.getNodes().stream()
@@ -51,32 +53,29 @@ public class ModelFacade {
 	}
 	
 	public Network getNetworkById(final String id) {
+		checkStringValid(id);
+		
 		return (Network) root.getNetworks().stream()
 				.filter(n -> n.getName() == id)
 				.collect(Collectors.toList()).get(0);
 	}
 	
 	public boolean networkExists(final String id) {
+		checkStringValid(id);
+		
 		return getAllNetworks().stream()
 		.filter(n -> n.getName().equals(id))
 		.collect(Collectors.toList()).size() != 0;
 	}
 	
 	public Server getServerById(final String id) {
-		List<Network> nets = root.getNetworks();
-		List<Server> servers = new ArrayList<Server>();
-		nets.stream()
-		.forEach(net -> {
-			net.getNodes().stream()
-			.filter(s -> s instanceof Server)
-			.forEach(s -> servers.add((Server) s));
-		});
-		return servers.stream()
-				.filter(s -> s.getName().equals(id))
-				.collect(Collectors.toList()).get(0);
+		checkStringValid(id);
+		return (Server) getNodeById(id);
 	}
 	
 	public Node getNodeById(final String id) {
+		checkStringValid(id);
+		
 		List<Network> nets = root.getNetworks();
 		List<Node> nodes = new ArrayList<Node>();
 		nets.stream()
@@ -91,6 +90,8 @@ public class ModelFacade {
 	}
 	
 	public boolean addNetworkToRoot(final String id, final boolean isVirtual) {
+		checkStringValid(id);
+		
 		if (networkExists(id)) {
 			throw new IllegalArgumentException("A network with id " + id + " already exists!");
 		}
@@ -102,6 +103,13 @@ public class ModelFacade {
 	
 	public boolean addServerToNetwork(final String id, final String networkId, final int cpu, 
 			final int memory, final int storage, final int depth) {
+		checkStringValid(new String[] {id, networkId});
+		checkIntValid(new int[] {cpu, memory, storage, depth});
+		
+		if (doesNodeIdExist(id, networkId)) {
+			throw new IllegalArgumentException("A node with id " + id + " already exists!");
+		}
+		
 		final Network net = getNetworkById(networkId);
 		Server server;
 		
@@ -121,6 +129,13 @@ public class ModelFacade {
 	}
 	
 	public boolean addSwitchToNetwork(final String id, final String networkId, final int depth) {
+		checkStringValid(new String[] {id, networkId});
+		checkIntValid(depth);
+		
+		if (doesNodeIdExist(id, networkId)) {
+			throw new IllegalArgumentException("A node with id " + id + " already exists!");
+		}
+		
 		final Network net = getNetworkById(networkId);
 		Switch sw;
 		
@@ -139,6 +154,17 @@ public class ModelFacade {
 	
 	public boolean addLinkToNetwork(final String id, final String networkId, final int bandwidth,
 			final String sourceId, final String targetId) {
+		checkStringValid(new String[] {id, networkId, sourceId, targetId});
+		checkIntValid(bandwidth);
+		
+		if (doesLinkIdExist(id, networkId)) {
+			throw new IllegalArgumentException("A link with id " + id + " already exists!");
+		}
+		
+		if (!(doesNodeIdExist(sourceId, networkId) || doesNodeIdExist(targetId, networkId) )) {
+			throw new IllegalArgumentException("A node with given id does not exist!");
+		}
+		
 		final Network net = getNetworkById(networkId);
 		Link link;
 		if (net instanceof VirtualNetwork) {
@@ -154,4 +180,54 @@ public class ModelFacade {
 		
 		return net.getLinks().add(link);
 	}
+	
+	public boolean doesNodeIdExist(final String id, final String networkId) {
+		checkStringValid(new String[] {id, networkId});
+		
+		return !getNetworkById(networkId).getNodes().stream()
+				.filter(n -> n.getName().equals(networkId))
+				.collect(Collectors.toList()).isEmpty();
+	}
+	
+	public boolean doesLinkIdExist(final String id, final String networkId) {
+		checkStringValid(id);
+		checkStringValid(networkId);
+		
+		return !getNetworkById(networkId).getLinks().stream()
+				.filter(l -> l.getName().equals(id))
+				.collect(Collectors.toList()).isEmpty();
+	}
+	
+	public void resetAll() {
+		root.getNetworks().clear();
+	}
+	
+	public void checkStringValid(final String... strings) {
+		if (strings == null) {
+			throw new IllegalArgumentException("Provided String(-array) was null!");
+		}
+		
+		for (String string : strings) {
+			if (string == null) {
+				throw new IllegalArgumentException("Provided String was null!");
+			}
+			
+			if (string.isBlank()) {
+				throw new IllegalArgumentException("Provided String was blank!");
+			}
+		}
+	}
+	
+	public void checkIntValid(final int... vals) {
+		if (vals == null) {
+			throw new IllegalArgumentException("Provided int(-array) was null!");
+		}
+		
+		for (int val : vals) {
+			if (val < 0) {
+				throw new IllegalArgumentException("Provided int was smaller than zero!");
+			}
+		}
+	}
+	
 }
