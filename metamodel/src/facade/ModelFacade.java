@@ -42,25 +42,19 @@ public class ModelFacade {
 		return root.getNetworks();
 	}
 	
-	public Collection<Node> getAllServersOfNetwork(final String networkId) {
+	public List<Node> getAllServersOfNetwork(final String networkId) {
 		checkStringValid(networkId);
 		
-		for (Network actNet : getAllNetworks()) {
-			if (actNet.getName().equals(networkId)) {
-				return actNet.getNodes().stream()
-						.filter(n -> n instanceof Server)
-						.collect(Collectors.toList());
-			}
-		}
-		
-		return null;
+		return getNetworkById(networkId).getNodes().stream()
+			.filter(n -> n instanceof Server)
+			.collect(Collectors.toList());
 	}
 	
 	public Network getNetworkById(final String id) {
 		checkStringValid(id);
 		
 		return (Network) root.getNetworks().stream()
-				.filter(n -> n.getName() == id)
+				.filter(n -> n.getName().equals(id))
 				.collect(Collectors.toList()).get(0);
 	}
 	
@@ -77,6 +71,11 @@ public class ModelFacade {
 		return (Server) getNodeById(id);
 	}
 	
+	public Switch getSwitchById(final String id) {
+		checkStringValid(id);
+		return (Switch) getNodeById(id);
+	}
+	
 	public Node getNodeById(final String id) {
 		checkStringValid(id);
 		
@@ -86,11 +85,24 @@ public class ModelFacade {
 		.forEach(net -> {
 			net.getNodes().stream()
 			.filter(n -> n instanceof Node)
+			.filter(n -> n.getName().equals(id))
 			.forEach(n -> nodes.add(n));
 		});
-		return nodes.stream()
-				.filter(n -> n.getName().equals(id))
-				.collect(Collectors.toList()).get(0);
+		return nodes.get(0);
+	}
+	
+	public Link getLinkById(final String id) {
+		checkStringValid(id);
+		
+		List<Network> nets = root.getNetworks();
+		List<Link> links = new ArrayList<Link>();
+		nets.stream()
+		.forEach(net -> {
+			net.getLinks().stream()
+			.filter(l -> l.getName().equals(id))
+			.forEach(l -> links.add(l));
+		});
+		return links.get(0);
 	}
 	
 	public boolean addNetworkToRoot(final String id, final boolean isVirtual) {
