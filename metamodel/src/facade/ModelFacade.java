@@ -22,6 +22,7 @@ public class ModelFacade {
 	
 	private static ModelFacade instance;
 	private static AtomicInteger counter = new AtomicInteger();
+	private static final String PERSISTANT_MODEL_PATH = "./model.xmi";
 	
 	private ModelFacade() {}
 	
@@ -32,7 +33,7 @@ public class ModelFacade {
 		return ModelFacade.instance;
 	}
 
-	private final Root root = ModelFactory.eINSTANCE.createRoot();
+	private Root root = ModelFactory.eINSTANCE.createRoot();
 	
 	public void dummy() {
 		System.out.println("=> Dummy method called.");
@@ -258,7 +259,12 @@ public class ModelFacade {
 	}
 	
 	public void persistModel() {
-		eMoflonEMFUtil.saveModel(root, "./export.xmi");
+		eMoflonEMFUtil.saveModel(root, PERSISTANT_MODEL_PATH);
+	}
+	
+	public void loadModel() {
+//		eMoflonEMFUtil.saveModel(root, "/dev/null");
+		root = (Root) eMoflonEMFUtil.loadModel(PERSISTANT_MODEL_PATH);
 	}
 	
 }
