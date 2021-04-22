@@ -10,7 +10,7 @@
       <details key="documentation" value="A root node as entry point."/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="networks" upperBound="-1"
-        eType="#//Network" eOpposite="#//Network/root">
+        eType="#//Network" containment="true" eOpposite="#//Network/root">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Set of networks within this root node."/>
       </eAnnotations>
@@ -180,19 +180,19 @@
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" upperBound="-1"
-        eType="#//Node" eOpposite="#//Node/network">
+        eType="#//Node" containment="true" eOpposite="#//Node/network">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Set of nodes that are part of this network."/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="links" upperBound="-1"
-        eType="#//Link" eOpposite="#//Link/network">
+        eType="#//Link" containment="true" eOpposite="#//Link/network">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Set of links that are part of this network."/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="paths" upperBound="-1"
-        eType="#//Path" eOpposite="#//Path/network">
+        eType="#//Path" containment="true" eOpposite="#//Path/network">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Set of paths that are part of this network."/>
       </eAnnotations>

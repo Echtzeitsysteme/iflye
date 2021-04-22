@@ -5,7 +5,7 @@ package model;
 @GenModel(documentation="A root node as entry point.")
 class Root {
 	@GenModel(documentation="Set of networks within this root node.")
-	ref Network [*]#root networks;
+	val Network [*]#root networks;
 }
 
 @GenModel(documentation="Abstract class for all elements.")
@@ -97,13 +97,13 @@ abstract class Network extends Element {
 	ref Root [1]#networks root;
 	
 	@GenModel(documentation="Set of nodes that are part of this network.")
-	ref Node [*]#network nodes;
+	val Node [*]#network nodes;
 	
 	@GenModel(documentation="Set of links that are part of this network.")
-	ref Link [*]#network links;
+	val Link [*]#network links;
 	
 	@GenModel(documentation="Set of paths that are part of this network.")
-	ref Path [*]#network paths;
+	val Path [*]#network paths;
 }
 
 @GenModel(documentation="Abstract class that represents a substrate element.")
