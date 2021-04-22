@@ -23,6 +23,11 @@ import model.VirtualNetwork;
 import model.VirtualServer;
 import model.VirtualSwitch;
 
+/**
+ * Test class for the ModelFacade.
+ * 
+ * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ */
 public class ModelFacadeTest {
 
 	@BeforeEach
@@ -109,7 +114,7 @@ public class ModelFacadeTest {
 		ModelFacade.getInstance().addNetworkToRoot("net", false);
 		ModelFacade.getInstance().addServerToNetwork(id, "net", 0, 0, 0, 0);
 		assertEquals(1, ModelFacade.getInstance().getNetworkById("net").getNodes().size());
-		assertTrue(ModelFacade.getInstance().getSwitchById(id) instanceof SubstrateServer);
+		assertTrue(ModelFacade.getInstance().getServerById(id) instanceof SubstrateServer);
 	}
 	
 	@Test
@@ -118,7 +123,7 @@ public class ModelFacadeTest {
 		ModelFacade.getInstance().addNetworkToRoot("net", true);
 		ModelFacade.getInstance().addServerToNetwork(id, "net", 0, 0, 0, 0);
 		assertEquals(1, ModelFacade.getInstance().getNetworkById("net").getNodes().size());
-		assertTrue(ModelFacade.getInstance().getSwitchById(id) instanceof VirtualServer);
+		assertTrue(ModelFacade.getInstance().getServerById(id) instanceof VirtualServer);
 	}
 	
 	@Test

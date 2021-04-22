@@ -2,31 +2,16 @@
 @namespace(uri="platform:/resource/metamodel/model/metamodel.ecore", prefix="metamodel")
 package model;
 
-@GenModel(documentation="An enum to store status information.")
-enum Status {
-	@GenModel(documentation="Status is active.")
-	ACTIVE = 1;
-	
-	@GenModel(documentation="Status is inactive.")
-	INACTIVE = 2;
-}
-
 @GenModel(documentation="A root node as entry point.")
 class Root {
 	@GenModel(documentation="Set of networks within this root node.")
 	ref Network [*]#root networks;
-	
-	@GenModel(documentation="Creates a new network under this root node.")
-	op Network createNetwork(EString name, Status status, EBoolean isVirtual);
 }
 
 @GenModel(documentation="Abstract class for all elements.")
 abstract class Element {
 	@GenModel(documentation="Name.")
 	attr EString [1] name;
-	
-	@GenModel(documentation="Status.")
-	attr Status [1] status;
 }
 
 @GenModel(documentation="Abstract class for all nodes.")
@@ -119,18 +104,6 @@ abstract class Network extends Element {
 	
 	@GenModel(documentation="Set of paths that are part of this network.")
 	ref Path [*]#network paths;
-	
-	@GenModel(documentation="Creates a new server within this network.")
-	op Server createServer(EString name, EInt depth, EInt cpu, EInt memory, EInt storage, Status status);
-	
-	@GenModel(documentation="Creates a new switch within this network.")
-	op Switch createSwitch(EString name, EInt depth, Status status);
-	
-	@GenModel(documentation="Creates a new link within this network.")
-	op Link createLink(EString name, Node source, Node target, EInt bandwidth, Status status);
-	
-	@GenModel(documentation="Creates a new path within this network.")
-	op Path createPath(EString name, Node source, Node target, Status status);
 }
 
 @GenModel(documentation="Abstract class that represents a substrate element.")
@@ -165,20 +138,7 @@ class SubstratePath extends Path, SubstrateElement {
 
 @GenModel(documentation="Class that represents a substrate network")
 class SubstrateNetwork extends Network, SubstrateElement {
-	@GenModel(documentation="Creates a new substrate network.")
-	op SubstrateNetwork createSubstrateNetwork(EString name, Status status);
-	
-	@GenModel(documentation="Creates a new substrate server.")
-	op SubstrateServer createServer(EString name, EInt cpu, EInt memory, EInt storage, EInt depth, Status status);
-	
-	@GenModel(documentation="Creates a new substrate switch.")
-	op SubstrateSwitch createSwitch(EString name, EInt depth, Status status);
-	
-	@GenModel(documentation="Creates a new substrate link.")
-	op SubstrateLink createLink (EString name, EString sourceName, EString targetName, EInt bandwidth, Status status);
-	
-	@GenModel(documentation="Creates a new substrate path.")
-	op SubstratePath createPath(EString name, EString sourceName, EString targetName, Status status);
+
 }
 
 @GenModel(documentation="Abstract class that represents a virtual element.")
@@ -208,15 +168,5 @@ class VirtualLink extends Link, VirtualElement {
 
 @GenModel(documentation="Represents a virtual network.")
 class VirtualNetwork extends Network, VirtualElement {
-	@GenModel(documentation="Creates a new virtual network.")
-	op VirtualNetwork createVirtualNetwork(EString name, Status status);
-	
-	@GenModel(documentation="Creates a new virtual server.")
-	op VirtualServer createServer(EString name, EInt cpu, EInt memory, EInt storage, EInt depth, Status status);
-	
-	@GenModel(documentation="Creates a new virtual switch.")
-	op VirtualSwitch createSwitch(EString name, EInt depth, Status status);
-	
-	@GenModel(documentation="Creates a new virtual link.")
-	op VirtualLink createLink (EString name, EString sourceName, EString targetName, EInt bandwidth, Status status);
+
 }

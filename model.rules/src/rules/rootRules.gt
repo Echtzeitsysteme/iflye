@@ -9,29 +9,3 @@ import "platform:/resource/metamodel/model/metamodel.ecore"
 pattern oneRoot {
 	root: Root
 }
-
-//
-// Networks
-//
-
-// Abstract rule to create a generic network
-abstract rule createNetwork(name: EString, status: Status) {
-	root : Root {
-		++ -networks->network
-	}
-	
-	++ network : Network {
-		.name := param::name
-		.status := param::status
-	}
-}
-
-// Rule to create a virtual network
-rule createVirtualNetwork(name: EString, status: Status) refines createNetwork {
-	++ network : VirtualNetwork
-}
-
-// Rule to create a substrate network
-rule createSubstrateNetwork(name: EString, status: Status) refines createNetwork {
-	++ network : SubstrateNetwork
-}

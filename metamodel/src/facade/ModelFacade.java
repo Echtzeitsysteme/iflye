@@ -14,7 +14,6 @@ import model.Network;
 import model.Node;
 import model.Root;
 import model.Server;
-import model.Status;
 import model.Switch;
 import model.VirtualNetwork;
 
@@ -242,7 +241,6 @@ public class ModelFacade {
 		server.setMemory(memory);
 		server.setStorage(storage);
 		server.setDepth(depth);
-		server.setStatus(Status.ACTIVE);
 		return net.getNodes().add(server);
 	}
 	
@@ -273,7 +271,6 @@ public class ModelFacade {
 		sw.setName(id);
 		sw.setNetwork(net);
 		sw.setDepth(depth);
-		sw.setStatus(Status.ACTIVE);
 		
 		return net.getNodes().add(sw);
 	}

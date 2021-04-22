@@ -5,35 +5,12 @@
   <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
     <details key="documentation" value="Meta-model for networks"/>
   </eAnnotations>
-  <eClassifiers xsi:type="ecore:EEnum" name="Status">
-    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="An enum to store status information."/>
-    </eAnnotations>
-    <eLiterals name="ACTIVE" value="1">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Status is active."/>
-      </eAnnotations>
-    </eLiterals>
-    <eLiterals name="INACTIVE" value="2">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Status is inactive."/>
-      </eAnnotations>
-    </eLiterals>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Root">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="A root node as entry point."/>
     </eAnnotations>
-    <eOperations name="createNetwork" eType="#//Network">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Creates a new network under this root node."/>
-      </eAnnotations>
-      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="status" eType="#//Status"/>
-      <eParameters name="isVirtual" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-    </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="networks" upperBound="-1"
-        eType="#//Network" containment="true" eOpposite="#//Network/root">
+        eType="#//Network" eOpposite="#//Network/root">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Set of networks within this root node."/>
       </eAnnotations>
@@ -46,12 +23,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Name."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="status" lowerBound="1"
-        eType="#//Status">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Status."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -202,44 +173,6 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Abstract class for all networks."/>
     </eAnnotations>
-    <eOperations name="createServer" eType="#//Server">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Creates a new server within this network."/>
-      </eAnnotations>
-      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="depth" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-      <eParameters name="cpu" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-      <eParameters name="memory" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-      <eParameters name="storage" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-      <eParameters name="status" eType="#//Status"/>
-    </eOperations>
-    <eOperations name="createSwitch" eType="#//Switch">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Creates a new switch within this network."/>
-      </eAnnotations>
-      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="depth" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-      <eParameters name="status" eType="#//Status"/>
-    </eOperations>
-    <eOperations name="createLink" eType="#//Link">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Creates a new link within this network."/>
-      </eAnnotations>
-      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="source" eType="#//Node"/>
-      <eParameters name="target" eType="#//Node"/>
-      <eParameters name="bandwidth" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-      <eParameters name="status" eType="#//Status"/>
-    </eOperations>
-    <eOperations name="createPath" eType="#//Path">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Creates a new path within this network."/>
-      </eAnnotations>
-      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="source" eType="#//Node"/>
-      <eParameters name="target" eType="#//Node"/>
-      <eParameters name="status" eType="#//Status"/>
-    </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="root" lowerBound="1" eType="#//Root"
         eOpposite="#//Root/networks">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -247,13 +180,13 @@
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" upperBound="-1"
-        eType="#//Node" containment="true" eOpposite="#//Node/network">
+        eType="#//Node" eOpposite="#//Node/network">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Set of nodes that are part of this network."/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="links" upperBound="-1"
-        eType="#//Link" containment="true" eOpposite="#//Link/network">
+        eType="#//Link" eOpposite="#//Link/network">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Set of links that are part of this network."/>
       </eAnnotations>
@@ -299,51 +232,6 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Class that represents a substrate network"/>
     </eAnnotations>
-    <eOperations name="createSubstrateNetwork" eType="#//SubstrateNetwork">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Creates a new substrate network."/>
-      </eAnnotations>
-      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="status" eType="#//Status"/>
-    </eOperations>
-    <eOperations name="createServer" eType="#//SubstrateServer">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Creates a new substrate server."/>
-      </eAnnotations>
-      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="cpu" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-      <eParameters name="memory" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-      <eParameters name="storage" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-      <eParameters name="depth" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-      <eParameters name="status" eType="#//Status"/>
-    </eOperations>
-    <eOperations name="createSwitch" eType="#//SubstrateSwitch">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Creates a new substrate switch."/>
-      </eAnnotations>
-      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="depth" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-      <eParameters name="status" eType="#//Status"/>
-    </eOperations>
-    <eOperations name="createLink" eType="#//SubstrateLink">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Creates a new substrate link."/>
-      </eAnnotations>
-      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="sourceName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="targetName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="bandwidth" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-      <eParameters name="status" eType="#//Status"/>
-    </eOperations>
-    <eOperations name="createPath" eType="#//SubstratePath">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Creates a new substrate path."/>
-      </eAnnotations>
-      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="sourceName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="targetName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="status" eType="#//Status"/>
-    </eOperations>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="VirtualElement" abstract="true" eSuperTypes="#//Element">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -374,41 +262,5 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Represents a virtual network."/>
     </eAnnotations>
-    <eOperations name="createVirtualNetwork" eType="#//VirtualNetwork">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Creates a new virtual network."/>
-      </eAnnotations>
-      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="status" eType="#//Status"/>
-    </eOperations>
-    <eOperations name="createServer" eType="#//VirtualServer">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Creates a new virtual server."/>
-      </eAnnotations>
-      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="cpu" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-      <eParameters name="memory" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-      <eParameters name="storage" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-      <eParameters name="depth" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-      <eParameters name="status" eType="#//Status"/>
-    </eOperations>
-    <eOperations name="createSwitch" eType="#//VirtualSwitch">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Creates a new virtual switch."/>
-      </eAnnotations>
-      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="depth" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-      <eParameters name="status" eType="#//Status"/>
-    </eOperations>
-    <eOperations name="createLink" eType="#//VirtualLink">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Creates a new virtual link."/>
-      </eAnnotations>
-      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="sourceName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="targetName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="bandwidth" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-      <eParameters name="status" eType="#//Status"/>
-    </eOperations>
   </eClassifiers>
 </ecore:EPackage>

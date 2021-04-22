@@ -1,5 +1,10 @@
 package config;
 
+/**
+ * Configuration (container-)class for the one tier network generator.
+ * 
+ * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ */
 public class OneTierConfig {
 
 	private int numberOfServers;
