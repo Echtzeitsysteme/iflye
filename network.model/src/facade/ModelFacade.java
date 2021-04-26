@@ -531,7 +531,8 @@ public class ModelFacade {
 			subServ.setResidualMemory(oldResMem - virtServ.getMemory());
 			subServ.setResidualStorage(oldResStor - virtServ.getStorage());
 		} else {
-			success = false;
+			throw new UnsupportedOperationException("Embedding of server not possible due resource "
+					+ "constraint violation.");
 		}
 		
 		return success;
@@ -589,7 +590,8 @@ public class ModelFacade {
 			final int oldResBw = subLink.getResidualBandwidth();
 			subLink.setResidualBandwidth(oldResBw - virtLink.getBandwidth());
 		} else {
-			success = false;
+			throw new UnsupportedOperationException("Embeding of link not possible due resource "
+					+ "constraint violation.");
 		}
 		
 		return success;
@@ -615,7 +617,8 @@ public class ModelFacade {
 			final int oldResBw = subPath.getResidualBandwidth();
 			subPath.setResidualBandwidth(oldResBw - virtLink.getBandwidth());
 		} else {
-			success = false;
+			throw new UnsupportedOperationException("Embeding of link not possible due resource "
+					+ "constraint violation.");
 		}
 		
 		return success;
