@@ -48,15 +48,6 @@ abstract class Server extends Node {
 	
 	@GenModel(documentation="Storage (HDD/SSD) amout of this server.")
 	attr EInt [1] storage;
-	
-	@GenModel(documentation="Residual CPU amount of this server.")
-	attr EInt [1] residualCpu;
-	
-	@GenModel(documentation="Residual memory amount of this server.")
-	attr EInt [1] residualMemory;
-	
-	@GenModel(documentation="Residual storage amount of this server.")
-	attr EInt [1] residualStorage;
 }
 
 @GenModel(documentation="Abstract class for all switches.")
@@ -68,9 +59,6 @@ abstract class Switch extends Node {
 abstract class Link extends Element {
 	@GenModel(documentation="Bandwidth amount of this link.")
 	attr EInt [1] bandwidth;
-	
-	@GenModel(documentation="Residual bandwidth amount of this link.")
-	attr EInt [1] residualBandwidth;
 	
 	@GenModel(documentation="Network this link belongs to.")
 	ref Network [1]#links network;
@@ -141,6 +129,15 @@ abstract class SubstrateNode extends Node, SubstrateElement {
 class SubstrateServer extends Server, SubstrateNode {
 	@GenModel(documentation="Virtual guest servers.")
 	ref VirtualServer [*]#host guestServers;
+	
+	@GenModel(documentation="Residual CPU amount of this server.")
+	attr EInt [1] residualCpu;
+	
+	@GenModel(documentation="Residual memory amount of this server.")
+	attr EInt [1] residualMemory;
+	
+	@GenModel(documentation="Residual storage amount of this server.")
+	attr EInt [1] residualStorage;
 }
 
 @GenModel(documentation="Class that represents a substrate switch.")
@@ -150,12 +147,14 @@ class SubstrateSwitch extends Switch, SubstrateNode {
 
 @GenModel(documentation="Class that represents a substrate link.")
 class SubstrateLink extends Link, SubstrateElement {
-	
+	@GenModel(documentation="Residual bandwidth amount of this link.")
+	attr EInt [1] residualBandwidth;
 }
 
 @GenModel(documentation="Class that represents a substrate path.")
 class SubstratePath extends Path, SubstrateElement {
-	
+	@GenModel(documentation="Residual bandwidth amount of this path.")
+	attr EInt [1] residualBandwidth;
 }
 
 @GenModel(documentation="Class that represents a substrate network")

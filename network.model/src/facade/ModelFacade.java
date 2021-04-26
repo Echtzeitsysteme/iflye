@@ -12,10 +12,19 @@ import model.Link;
 import model.ModelFactory;
 import model.Network;
 import model.Node;
+import model.Path;
 import model.Root;
 import model.Server;
+import model.SubstrateLink;
+import model.SubstrateNetwork;
+import model.SubstrateNode;
+import model.SubstratePath;
+import model.SubstrateServer;
 import model.Switch;
+import model.VirtualLink;
 import model.VirtualNetwork;
+import model.VirtualServer;
+import model.VirtualSwitch;
 
 /**
  * Facade to access and manipulate the underlying model.
@@ -178,6 +187,26 @@ public class ModelFacade {
 			.forEach(l -> links.add(l));
 		});
 		return links.get(0);
+	}
+	
+	/**
+	 * Returns a path object for a given ID.
+	 * 
+	 * @param id ID to return path object for.
+	 * @return Path object for given ID.
+	 */
+	public Path getPathById(final String id) {
+		checkStringValid(id);
+		
+		List<Network> nets = root.getNetworks();
+		List<Path> paths = new ArrayList<Path>();
+		nets.stream()
+		.forEach(net -> {
+			net.getPaths().stream()
+			.filter(p -> p.getName().equals(id))
+			.forEach(p -> paths.add(p));
+		});
+		return paths.get(0);
 	}
 	
 	/**
@@ -419,28 +448,134 @@ public class ModelFacade {
 	 * Embedding related methods.
 	 */
 	
-	public void embedNetworkToNetwork() {
-		//TODO
+	/**
+	 * Adds an embedding of one virtual network to one substrate network.
+	 * 
+	 * @param substrateId Substrate network id.
+	 * @param virtualId Virtual network id.
+	 * @return True if embedding was successful.
+	 */
+	public boolean embedNetworkToNetwork(final String substrateId, final String virtualId) {
+		final SubstrateNetwork subNet = (SubstrateNetwork) getNetworkById(substrateId);
+		final VirtualNetwork virtNet = (VirtualNetwork) getNetworkById(virtualId);
+		virtNet.setHost(subNet);
+		return subNet.getGuests().add(virtNet);
 	}
 	
-	public void embedServerToServer() {
-		//TODO
+	/**
+	 * Adds an embedding of one virtual server to one substrate server.
+	 * 
+	 * @param substrateId Substrate server id.
+	 * @param virtualId Virtual server id.
+	 * @return True if embedding was successful.
+	 */
+	public boolean embedServerToServer(final String substrateId, final String virtualId) {
+		final SubstrateServer subServ = (SubstrateServer) getServerById(substrateId);
+		final VirtualServer virtServ = (VirtualServer) getServerById(virtualId);
+		boolean success = true;
+		
+		if (subServ.getResidualCpu() >= virtServ.getCpu() &&
+				subServ.getResidualMemory() >= virtServ.getMemory() &&
+				subServ.getResidualStorage() >= virtServ.getStorage()) {
+			success &= subServ.getGuestServers().add(virtServ);
+			virtServ.setHost(subServ);
+			
+			// Update residual values of the host
+			final int oldResCpu = subServ.getResidualCpu();
+			final int oldResMem = subServ.getResidualMemory();
+			final int oldResStor = subServ.getResidualStorage();
+			subServ.setResidualCpu(oldResCpu - virtServ.getCpu());
+			subServ.setResidualMemory(oldResMem - virtServ.getMemory());
+			subServ.setResidualStorage(oldResStor - virtServ.getStorage());
+		} else {
+			success = false;
+		}
+		
+		return success;
 	}
 	
-	public void embedSwitchToNode() {
-		//TODO
+	/**
+	 * Adds an embedding of one virtual switch to one substrate node. The substrate node
+	 * may either be a substrate switch or a substrate server.
+	 * 
+	 * @param substrateId Substrate Id.
+	 * @param virtualId Virtual Id.
+	 * @return True if embedding was successful.
+	 */
+	public boolean embedSwitchToNode(final String substrateId, final String virtualId) {
+		final SubstrateNode subNode = (SubstrateNode) getNodeById(substrateId);
+		final VirtualSwitch virtSwitch = (VirtualSwitch) getSwitchById(virtualId);
+		virtSwitch.setHost(subNode);
+		return subNode.getGuestSwitches().add(virtSwitch);
 	}
 	
-	public void embedLinkToServer() {
-		//TODO
+	/**
+	 * Adds an embedding of one virtual link to one substrate server. There are no
+	 * constraints to check in this particular case.
+	 * 
+	 * @param substrateId Substrate Id.
+	 * @param virtualId Virtual Id.
+	 * @return True if embedding was successful.
+	 */
+	public boolean embedLinkToServer(final String substrateId, final String virtualId) {
+		final SubstrateServer subServ = (SubstrateServer) getServerById(substrateId);
+		final VirtualLink virtLink = (VirtualLink) getLinkById(virtualId);
+		
+		// No constraints to check!
+		virtLink.setHost(subServ);
+		return subServ.getGuestLinks().add(virtLink);
 	}
 	
-	public void embedLinkToLink() {
-		//TODO
+	/**
+	 * Adds an embedding of one virtual link to one substrate link.
+	 * 
+	 * @param substrateId Substrate Id.
+	 * @param virtualId Virtual Id.
+	 * @return True if embedding was successful.
+	 */
+	public boolean embedLinkToLink(final String substrateId, final String virtualId) {
+		final SubstrateLink subLink = (SubstrateLink) getLinkById(substrateId);
+		final VirtualLink virtLink = (VirtualLink) getLinkById(virtualId);
+		boolean success = true;
+		
+		if (subLink.getResidualBandwidth() >= virtLink.getBandwidth()) {
+			success &= subLink.getGuestLinks().add(virtLink);
+			virtLink.setHost(subLink);
+			
+			// Update residual values of the host
+			final int oldResBw = subLink.getResidualBandwidth();
+			subLink.setResidualBandwidth(oldResBw - virtLink.getBandwidth());
+		} else {
+			success = false;
+		}
+		
+		return success;
 	}
 	
-	public void embedLinkToPath() {
-		//TODO
+	/**
+	 * Adds an embedding of one virtual link to one substrate path.
+	 * 
+	 * @param substrateId Substrate Id.
+	 * @param virtualId Virtual Id.
+	 * @return True if embedding was successful.
+	 */
+	public boolean embedLinkToPath(final String substrateId, final String virtualId) {
+		final SubstratePath subPath = (SubstratePath) getPathById(substrateId);
+		final VirtualLink virtLink = (VirtualLink) getLinkById(virtualId);
+		boolean success = true;
+		
+		if (subPath.getResidualBandwidth() >= virtLink.getBandwidth()) {
+			success &= subPath.getGuestLinks().add(virtLink);
+			virtLink.setHost(subPath);
+			
+			// Update residual values of the host
+			final int oldResBw = subPath.getResidualBandwidth();
+			subPath.setResidualBandwidth(oldResBw - virtLink.getBandwidth());
+		} else {
+			success = false;
+		}
+		
+		return success;
 	}
 	
 }
