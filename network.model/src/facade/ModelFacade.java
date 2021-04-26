@@ -94,8 +94,34 @@ public class ModelFacade {
 		checkStringValid(networkId);
 		
 		return getNetworkById(networkId).getNodes().stream()
-			.filter(n -> n instanceof Server)
-			.collect(Collectors.toList());
+				.filter(n -> n instanceof Server)
+				.collect(Collectors.toList());
+	}
+	
+	/**
+	 * Returns a list of nodes with all switches of a given network ID.
+	 * 
+	 * @param networkId Network ID.
+	 * @return List of nodes with all switches of the given network ID.
+	 */
+	public List<Node> getAllSwitchesOfNetwork(final String networkId) {
+		checkStringValid(networkId);
+		
+		return getNetworkById(networkId).getNodes().stream()
+				.filter(n -> n instanceof Switch)
+				.collect(Collectors.toList());
+	}
+	
+	/**
+	 * Returns a list of all links of a given network ID.
+	 * 
+	 * @param networkId Network ID.
+	 * @return List of all links of the given networkd ID.
+	 */
+	public List<Link> getAllLinksOfNetwork(final String networkId) {
+		checkStringValid(networkId);
+		
+		return getNetworkById(networkId).getLinks();
 	}
 	
 	/**
@@ -270,6 +296,15 @@ public class ModelFacade {
 		server.setMemory(memory);
 		server.setStorage(storage);
 		server.setDepth(depth);
+		
+		// Add residual values to server if it is a substrate server
+		if (server instanceof SubstrateServer) {
+			SubstrateServer subServer = (SubstrateServer) server;
+			subServer.setResidualCpu(cpu);
+			subServer.setResidualMemory(memory);
+			subServer.setResidualStorage(storage);
+		}
+		
 		return net.getNodes().add(server);
 	}
 	
@@ -340,8 +375,16 @@ public class ModelFacade {
 		link.setSource(getNodeById(sourceId));
 		link.setTarget(getNodeById(targetId));
 		
+		// Add residual values to link if it is a substrate link
+		if (link instanceof SubstrateLink) {
+			SubstrateLink subLink = (SubstrateLink) link;
+			subLink.setResidualBandwidth(bandwidth);
+		}
+		
 		return net.getLinks().add(link);
 	}
+	
+	// TODO: Implement method 'addPathToNetwork'
 	
 	/**
 	 * Returns true, if a given node ID exists in a given network model.
