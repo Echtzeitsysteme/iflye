@@ -237,6 +237,12 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Abstract class that represents a substrate element."/>
     </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="guestLinks" upperBound="-1"
+        eType="#//VirtualLink" eOpposite="#//VirtualLink/host">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Virtual guest links."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SubstrateNode" abstract="true" eSuperTypes="#//Node #//SubstrateElement">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -257,12 +263,6 @@
         eType="#//VirtualServer" eOpposite="#//VirtualServer/host">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Virtual guest servers."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="guestLinks" upperBound="-1"
-        eType="#//VirtualLink" eOpposite="#//VirtualLink/host">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Virtual guest links."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -328,10 +328,10 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Class that represents a virtual link."/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="host" lowerBound="1" eType="#//SubstrateServer"
-        eOpposite="#//SubstrateServer/guestLinks">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="host" lowerBound="1" eType="#//SubstrateElement"
+        eOpposite="#//SubstrateElement/guestLinks">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Substrate host server."/>
+        <details key="documentation" value="Substrate host element."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
