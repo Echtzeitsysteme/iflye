@@ -415,4 +415,32 @@ public class ModelFacade {
 		root = (Root) eMoflonEMFUtil.loadModel(PERSISTANT_MODEL_PATH);
 	}
 	
+	/*
+	 * Embedding related methods.
+	 */
+	
+	public void embedNetworkToNetwork() {
+		//TODO
+	}
+	
+	public void embedServerToServer() {
+		//TODO
+	}
+	
+	public void embedSwitchToNode() {
+		//TODO
+	}
+	
+	public void embedLinkToServer() {
+		//TODO
+	}
+	
+	public void embedLinkToLink() {
+		//TODO
+	}
+	
+	public void embedLinkToPath() {
+		//TODO
+	}
+	
 }

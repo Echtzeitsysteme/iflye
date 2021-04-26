@@ -1,5 +1,5 @@
 @GenModel(documentation="Meta-model for networks")
-@namespace(uri="platform:/resource/metamodel/model/metamodel.ecore", prefix="metamodel")
+@namespace(uri="platform:/resource/network.model/model/metamodel.ecore", prefix="netowrk.model")
 package model;
 
 @GenModel(documentation="A root node as entry point.")
@@ -131,12 +131,17 @@ abstract class SubstrateElement extends Element {
 
 @GenModel(documentation="Abstract class that represents a substrate node.")
 abstract class SubstrateNode extends Node, SubstrateElement {
-	
+	@GenModel(documentation="Virtual guest switches.")
+	ref VirtualSwitch [*]#host guestSwitches;
 }
 
 @GenModel(documentation="Class that represents a substrate server.")
 class SubstrateServer extends Server, SubstrateNode {
+	@GenModel(documentation="Virtual guest servers.")
+	ref VirtualServer [*]#host guestServers;
 	
+	@GenModel(documentation="Virtual guest links.")
+	ref VirtualLink [*]#host guestLinks;
 }
 
 @GenModel(documentation="Class that represents a substrate switch.")
@@ -156,7 +161,8 @@ class SubstratePath extends Path, SubstrateElement {
 
 @GenModel(documentation="Class that represents a substrate network")
 class SubstrateNetwork extends Network, SubstrateElement {
-
+	@GenModel(documentation="Virtual guest networks that are running on this host network.")
+	ref VirtualNetwork [*]#host guests;
 }
 
 @GenModel(documentation="Abstract class that represents a virtual element.")
@@ -171,20 +177,24 @@ abstract class VirtualNode extends Node, VirtualElement {
 
 @GenModel(documentation="Class that represents a virtual server.")
 class VirtualServer extends Server, VirtualNode {
-	
+	@GenModel(documentation="Host server that runs this virtual server.")
+	ref SubstrateServer [1]#guestServers host;
 }
 
 @GenModel(documentation="Class that represents a virtual switch.")
 class VirtualSwitch extends Switch, VirtualNode {
-	
+	@GenModel(documentation="Host node that runs this virtual switch.")
+	ref SubstrateNode [1]#guestSwitches host;
 }
 
 @GenModel(documentation="Class that represents a virtual link.")
 class VirtualLink extends Link, VirtualElement {
-	
+	@GenModel(documentation="Substrate host server.")
+	ref SubstrateServer [1]#guestLinks host;
 }
 
 @GenModel(documentation="Represents a virtual network.")
 class VirtualNetwork extends Network, VirtualElement {
-
+	@GenModel(documentation="Host network that runs this virtual network.")
+	ref SubstrateNetwork [1]#guests host;
 }

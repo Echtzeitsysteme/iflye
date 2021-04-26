@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="model" nsURI="platform:/resource/metamodel/model/metamodel.ecore"
-    nsPrefix="metamodel">
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="model" nsURI="platform:/resource/network.model/model/metamodel.ecore"
+    nsPrefix="netowrk.model">
   <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
     <details key="documentation" value="Meta-model for networks"/>
   </eAnnotations>
@@ -242,11 +242,29 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Abstract class that represents a substrate node."/>
     </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="guestSwitches" upperBound="-1"
+        eType="#//VirtualSwitch" eOpposite="#//VirtualSwitch/host">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Virtual guest switches."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SubstrateServer" eSuperTypes="#//Server #//SubstrateNode">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Class that represents a substrate server."/>
     </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="guestServers" upperBound="-1"
+        eType="#//VirtualServer" eOpposite="#//VirtualServer/host">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Virtual guest servers."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="guestLinks" upperBound="-1"
+        eType="#//VirtualLink" eOpposite="#//VirtualLink/host">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Virtual guest links."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SubstrateSwitch" eSuperTypes="#//Switch #//SubstrateNode">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -267,6 +285,12 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Class that represents a substrate network"/>
     </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="guests" upperBound="-1"
+        eType="#//VirtualNetwork" eOpposite="#//VirtualNetwork/host">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Virtual guest networks that are running on this host network."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="VirtualElement" abstract="true" eSuperTypes="#//Element">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -282,20 +306,44 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Class that represents a virtual server."/>
     </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="host" lowerBound="1" eType="#//SubstrateServer"
+        eOpposite="#//SubstrateServer/guestServers">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Host server that runs this virtual server."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="VirtualSwitch" eSuperTypes="#//Switch #//VirtualNode">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Class that represents a virtual switch."/>
     </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="host" lowerBound="1" eType="#//SubstrateNode"
+        eOpposite="#//SubstrateNode/guestSwitches">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Host node that runs this virtual switch."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="VirtualLink" eSuperTypes="#//Link #//VirtualElement">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Class that represents a virtual link."/>
     </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="host" lowerBound="1" eType="#//SubstrateServer"
+        eOpposite="#//SubstrateServer/guestLinks">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Substrate host server."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="VirtualNetwork" eSuperTypes="#//Network #//VirtualElement">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Represents a virtual network."/>
     </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="host" lowerBound="1" eType="#//SubstrateNetwork"
+        eOpposite="#//SubstrateNetwork/guests">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Host network that runs this virtual network."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
 </ecore:EPackage>
