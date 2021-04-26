@@ -385,6 +385,22 @@ public class ModelFacade {
 	}
 	
 	// TODO: Implement method 'addPathToNetwork'
+	private boolean addPathToNetwork(final String id, final String networkId, final int bandwidth) {
+		// TODO: Add checks.
+//		
+//		final Network net = getNetworkById(networkId);
+//		Path path;
+//		if (net instanceof SubstrateNetwork) {
+//			path = ModelFactory.eINSTANCE.createSubstratePath();
+//		} else {
+//			throw new UnsupportedOperationException("Path creation on virtual networks "
+//					+ "is not possible.");
+//		}
+//		path.setName(id);
+//		path.setNetwork(net);
+//		path.setBandwidth(bandwidth);
+		return false;
+	}
 	
 	/**
 	 * Returns true, if a given node ID exists in a given network model.

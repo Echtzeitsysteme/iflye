@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import facade.ModelFacade;
+import model.Link;
 import model.Node;
 import model.Server;
 import model.SubstrateLink;
@@ -24,11 +25,11 @@ import model.VirtualServer;
 import model.VirtualSwitch;
 
 /**
- * Test class for the ModelFacade.
+ * Test class for the ModelFacade that tests some creation tasks.
  * 
  * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
  */
-public class ModelFacadeTest {
+public class ModelFacadeCreationTest {
 
 	@BeforeEach
 	public void resetModel() {
@@ -165,6 +166,30 @@ public class ModelFacadeTest {
 	}
 	
 	@Test
+	public void testGetAllSwitches() {
+		ModelFacade.getInstance().addNetworkToRoot("net", false);
+		ModelFacade.getInstance().addSwitchToNetwork("1", "net", 0);
+		ModelFacade.getInstance().addSwitchToNetwork("2", "net", 0);
+		final List<Node> allSwitches = ModelFacade.getInstance().getAllSwitchesOfNetwork("net");
+		assertEquals(2, allSwitches.size());
+		assertEquals("1", allSwitches.get(0).getName());
+		assertEquals("2", allSwitches.get(1).getName());
+	}
+	
+	@Test
+	public void testGetAllLinks() {
+		ModelFacade.getInstance().addNetworkToRoot("net", false);
+		ModelFacade.getInstance().addSwitchToNetwork("1", "net", 0);
+		ModelFacade.getInstance().addSwitchToNetwork("2", "net", 0);
+		ModelFacade.getInstance().addLinkToNetwork("3", "net", 0, "1", "2");
+		ModelFacade.getInstance().addLinkToNetwork("4", "net", 0, "2", "1");
+		final List<Link> allLinks = ModelFacade.getInstance().getAllLinksOfNetwork("net");
+		assertEquals(2, allLinks.size());
+		assertEquals("3", allLinks.get(0).getName());
+		assertEquals("4", allLinks.get(1).getName());
+	}
+	
+	@Test
 	public void testGetServerById() {
 		ModelFacade.getInstance().addNetworkToRoot("net", false);
 		ModelFacade.getInstance().addServerToNetwork("1", "net", 1, 2, 3, 4);
@@ -183,6 +208,22 @@ public class ModelFacadeTest {
 		Switch ret = ModelFacade.getInstance().getSwitchById("sw");
 		assertEquals("sw", ret.getName());
 		assertEquals(5, ret.getDepth());
+	}
+	
+	@Test
+	public void testGetLinkById() {
+		ModelFacade.getInstance().addNetworkToRoot("net", false);
+		ModelFacade.getInstance().addSwitchToNetwork("1", "net", 0);
+		ModelFacade.getInstance().addSwitchToNetwork("2", "net", 0);
+		ModelFacade.getInstance().addLinkToNetwork("3", "net", 42, "1", "2");
+		ModelFacade.getInstance().addLinkToNetwork("4", "net", 73, "2", "1");
+		assertEquals(42, ModelFacade.getInstance().getLinkById("3").getBandwidth());
+		assertEquals(73, ModelFacade.getInstance().getLinkById("4").getBandwidth());
+	}
+	
+	@Test
+	public void testGetPathById() {
+		// TODO
 	}
 	
 	@Test
