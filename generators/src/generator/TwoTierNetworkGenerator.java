@@ -3,8 +3,10 @@ package generator;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import config.GlobalGeneratorConfig;
 import config.TwoTierConfig;
 import facade.ModelFacade;
+import utils.GenUtils;
 
 /**
  * Basic implementation of a two tier network topology generator.
@@ -43,7 +45,7 @@ public class TwoTierNetworkGenerator {
 		
 		// Core switches
 		for (int i = 0; i < config.getNumberOfCoreSwitches(); i++) {
-			final String currentId = facade.getNextId();
+			final String currentId = GenUtils.getSwitchId();
 			coreSwitchIds.add(currentId);
 			facade.addSwitchToNetwork(currentId, networkId, 0);
 		}
@@ -56,7 +58,7 @@ public class TwoTierNetworkGenerator {
 		}
 		
 		for (int i = 0; i < config.getNumberOfRacks(); i++) {
-			final String currentId = facade.getNextId();
+			final String currentId = GenUtils.getSwitchId();
 			rackSwitchIds.add(currentId);
 			facade.addSwitchToNetwork(currentId, networkId, 1);
 		}
@@ -64,7 +66,7 @@ public class TwoTierNetworkGenerator {
 		// Servers
 		final int totalNumberOfServers = config.getNumberOfRacks() * config.getRack().getNumberOfServers();
 		for (int i = 0; i < totalNumberOfServers; i++) {
-			final String currentId = facade.getNextId();
+			final String currentId = GenUtils.getServerId();
 			serverIds.add(currentId);
 			facade.addServerToNetwork(currentId, networkId, 
 					config.getRack().getCpuPerServer(),
@@ -78,10 +80,10 @@ public class TwoTierNetworkGenerator {
 		for (String actCoreSwitch : coreSwitchIds) {
 			for (String actRackSwitch : rackSwitchIds) {
 				// Direction 1
-				facade.addLinkToNetwork(facade.getNextId(), networkId,
+				facade.addLinkToNetwork(GenUtils.getLinkdId(), networkId,
 						config.getCoreBandwidth(), actCoreSwitch, actRackSwitch);
 				// Direction 2
-				facade.addLinkToNetwork(facade.getNextId(), networkId,
+				facade.addLinkToNetwork(GenUtils.getLinkdId(), networkId,
 						config.getCoreBandwidth(), actRackSwitch, actCoreSwitch);
 			}
 		}
@@ -94,10 +96,10 @@ public class TwoTierNetworkGenerator {
 			for (int i = 0; i < config.getRack().getNumberOfServers(); i++) {
 				final String actLinkId = it.next();
 				// Direction 1
-				facade.addLinkToNetwork(facade.getNextId(), networkId,
+				facade.addLinkToNetwork(GenUtils.getLinkdId(), networkId,
 						config.getRack().getBandwidthPerLink(), actRackSwitch, actLinkId);
 				// Direction 2
-				facade.addLinkToNetwork(facade.getNextId(), networkId,
+				facade.addLinkToNetwork(GenUtils.getLinkdId(), networkId,
 						config.getRack().getBandwidthPerLink(), actLinkId, actRackSwitch);
 			}
 		}

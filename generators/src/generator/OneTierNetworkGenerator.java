@@ -2,8 +2,10 @@ package generator;
 
 import java.util.HashSet;
 
+import config.GlobalGeneratorConfig;
 import config.OneTierConfig;
 import facade.ModelFacade;
+import utils.GenUtils;
 
 /**
  * Basic implementation of a one tier network topology generator.
@@ -41,7 +43,7 @@ public class OneTierNetworkGenerator {
 		
 		// Servers
 		for (int i = 0; i < config.getNumberOfServers(); i++) {
-			final String currentId = facade.getNextId();
+			final String currentId = GenUtils.getServerId();
 			serverIds.add(currentId);
 			facade.addServerToNetwork(String.valueOf(currentId), networkId, config.getCpuPerServer(), 
 					config.getMemoryPerServer(), config.getStoragePerServer(), 1);
@@ -49,7 +51,7 @@ public class OneTierNetworkGenerator {
 		
 		// Switches
 		for (int i = 0; i < config.getNumberOfSwitches(); i++) {
-			final String currentId = facade.getNextId();
+			final String currentId = GenUtils.getServerId();
 			switchIds.add(currentId);
 			facade.addSwitchToNetwork(String.valueOf(currentId), networkId, 0);
 		}
@@ -58,10 +60,10 @@ public class OneTierNetworkGenerator {
 		for (String actServerId : serverIds) {
 			for (String actSwitchId : switchIds) {
 				// Direction 1
-				facade.addLinkToNetwork(facade.getNextId(), networkId, 
+				facade.addLinkToNetwork(GenUtils.getLinkdId(), networkId, 
 						config.getBandwidthPerLink(), actServerId, actSwitchId);
 				// Direction 2
-				facade.addLinkToNetwork(facade.getNextId(), networkId, 
+				facade.addLinkToNetwork(GenUtils.getLinkdId(), networkId, 
 						config.getBandwidthPerLink(), actSwitchId, actServerId);
 			}
 		}
