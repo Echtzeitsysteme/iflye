@@ -35,7 +35,9 @@ public class OneTierNetworkGenerator {
 		final HashSet<String> switchIds = new HashSet<String>();
 		
 		// Network
-		facade.addNetworkToRoot(networkId, isVirtual);
+		if (!facade.networkExists(networkId)) {
+			facade.addNetworkToRoot(networkId, isVirtual);
+		}
 		
 		// Servers
 		for (int i = 0; i < config.getNumberOfServers(); i++) {
