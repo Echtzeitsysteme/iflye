@@ -116,7 +116,7 @@ abstract class Network extends Element {
 abstract class SubstrateElement extends Element {
 	// Keep in mind: The host element must not be a switch!
 	@GenModel(documentation="Virtual guest links.")
-	ref VirtualLink [*]#host guestLinks;
+	ref VirtualLink [*]#hosts guestLinks;
 }
 
 @GenModel(documentation="Abstract class that represents a substrate node.")
@@ -189,7 +189,7 @@ class VirtualSwitch extends Switch, VirtualNode {
 class VirtualLink extends Link, VirtualElement {
 	// Keep in mind: The host element must not be a switch!
 	@GenModel(documentation="Substrate host element.")
-	ref SubstrateElement [1]#guestLinks host;
+	ref SubstrateElement [*]#guestLinks hosts;
 }
 
 @GenModel(documentation="Represents a virtual network.")

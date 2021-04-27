@@ -604,7 +604,7 @@ public class ModelFacade {
 		final VirtualLink virtLink = (VirtualLink) getLinkById(virtualId);
 		
 		// No constraints to check!
-		virtLink.setHost(subServ);
+		virtLink.getHosts().add(subServ);
 		return subServ.getGuestLinks().add(virtLink);
 	}
 	
@@ -622,7 +622,7 @@ public class ModelFacade {
 		
 		if (subLink.getResidualBandwidth() >= virtLink.getBandwidth()) {
 			success &= subLink.getGuestLinks().add(virtLink);
-			virtLink.setHost(subLink);
+			virtLink.getHosts().add(subLink);
 			
 			// Update residual values of the host
 			final int oldResBw = subLink.getResidualBandwidth();
@@ -649,7 +649,7 @@ public class ModelFacade {
 		
 		if (subPath.getResidualBandwidth() >= virtLink.getBandwidth()) {
 			success &= subPath.getGuestLinks().add(virtLink);
-			virtLink.setHost(subPath);
+			virtLink.getHosts().add(subPath);
 			
 			// Update residual values of the host
 			final int oldResBw = subPath.getResidualBandwidth();
