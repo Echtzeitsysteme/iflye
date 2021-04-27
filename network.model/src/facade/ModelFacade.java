@@ -2,7 +2,10 @@ package facade;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -47,6 +50,12 @@ public class ModelFacade {
 	 * Path to import and export models.
 	 */
 	private static final String PERSISTANT_MODEL_PATH = "./model.xmi";
+	
+	/*
+	 * Collections for the path creation methods.
+	 */
+	final Set<Node> visitedNodes = new HashSet<Node>();
+	final List<SubstratePath> generatedMetaPaths = new LinkedList<SubstratePath>();
 	
 	/**
 	 * Private constructor to disable direct object instantiation.
@@ -116,12 +125,24 @@ public class ModelFacade {
 	 * Returns a list of all links of a given network ID.
 	 * 
 	 * @param networkId Network ID.
-	 * @return List of all links of the given networkd ID.
+	 * @return List of all links of the given network ID.
 	 */
 	public List<Link> getAllLinksOfNetwork(final String networkId) {
 		checkStringValid(networkId);
 		
 		return getNetworkById(networkId).getLinks();
+	}
+	
+	/**
+	 * Returns a list of all paths of a given network ID.
+	 * 
+	 * @param networkId Network ID.
+	 * @return List of all paths of the given network ID.
+	 */
+	public List<Path> getAllPathsOfNetwork(final String networkId) {
+		checkStringValid(networkId);
+		
+		return getNetworkById(networkId).getPaths();
 	}
 	
 	/**
@@ -381,48 +402,243 @@ public class ModelFacade {
 			subLink.setResidualBandwidth(bandwidth);
 		}
 		
-		// Add paths that are related to this link
-		createPathsFromLink();
-		
 		return net.getLinks().add(link);
 	}
 	
-	private boolean createPathsFromLink() {
-		// TODO
-		return false;
+	/**
+	 * This method creates all necessary paths *after* all other components are added to the
+	 * network. Please notice: Currently, the method is only suited for tree-based networks that
+	 * do not have any cycles.
+	 * 
+	 * Assumptions: Every server of the given network is only connected to one switch.
+	 * 
+	 * @param networkdId Network ID to add paths to.
+	 */
+	public void createAllPathsForNetwork(final String networkdId) {
+		checkStringValid(networkdId);
+		
+		if (getNetworkById(networkdId) instanceof VirtualNetwork) {
+			throw new UnsupportedOperationException("Given network ID is virtual,"
+					+ " which is not supported!");
+		}
+		
+		// Iterate over all servers
+		for (Node s : getAllServersOfNetwork(networkdId)) {
+			final SubstrateServer srv = (SubstrateServer) s;
+			recursivePathGen(srv, srv);
+			
+			// Reset visited nodes -> This collection has to be empty for every new server
+			// we start the recursion with.
+			visitedNodes.clear();
+		}
+		
+		// Add attributes to meta paths and add them to model after all.
+		// The attributes are: (1) bandwidth, (2) hops, (3) network.
+		for (Path m : generatedMetaPaths) {
+			// (1) bandwidth
+			int minFoundBw = Integer.MAX_VALUE;
+			for (Link l : m.getLinks()) {
+				if (l.getBandwidth() < minFoundBw) {
+					minFoundBw = l.getBandwidth();
+				}
+			}
+			m.setBandwidth(minFoundBw);
+			
+			// (2) hops
+			m.setHops(m.getLinks().size());
+			
+			// (3) Network, this also adds the paths to the network model
+			m.setNetwork(getNetworkById(networkdId));
+		}
+		
+		System.out.println("=> Dummy.");
 	}
 	
-	/**
-	 * Creates and adds a (one) new path to a network. The network has to be a substrate network.
-	 * 
-	 * @param id ID of the new path to create.
-	 * @param networkId Network ID to add path to.
-	 * @param bandwidth Bandwidth amount.
-	 * @param sourceId ID of the source node.
-	 * @param targetId ID of the target node.
-	 */
-	private void addPathToNetwork(final String id, final String networkId, final int bandwidth,
-			final String sourceId, final String targetId) {
-		checkStringValid(new String[] {id, networkId, sourceId, targetId});
-		checkIntValid(bandwidth);
+	private void recursivePathGen(final Node source, final Node node) {
 		
-		final Network net = getNetworkById(networkId);
-		Path path;
-		if (net instanceof SubstrateNetwork) {
-			path = ModelFactory.eINSTANCE.createSubstratePath();
-		} else {
-			throw new UnsupportedOperationException("Path creation on virtual networks "
-					+ "is not possible.");
+		// End of recursion: The given node was already visited before.
+		if (visitedNodes.contains(node)) {
+			return;
 		}
-		path.setName(id);
-		path.setNetwork(net);
-		path.setBandwidth(bandwidth);
-		path.setSource(getNodeById(sourceId));
-		path.setTarget(getNodeById(targetId));
 		
-		// As all paths are substrate paths, we have to set the residual bandwidth value.
-		((SubstratePath) path).setResidualBandwidth(bandwidth);
+//		// Duplicate and extend every path known before that ends at the current node
+//		Set<SubstratePath> toAdd = new HashSet<SubstratePath>();
+//		for (SubstratePath prev : generatedMetaPaths) {
+//			if (prev.getTarget().equals(node)) {
+//				SubstratePath newPath = genMetaPath(prev.getSource(), node);
+//				newPath.getLinks().addAll(prev.getLinks());
+//				newPath.getLinks().add();
+//				toAdd.add(newPath);
+//			}
+//		}
+//		generatedMetaPaths.addAll(toAdd);
+		
+		// Add current node to set of visited nodes
+		visitedNodes.add(node);
+		
+		// Iterate over all outgoing links
+		for(Link l : node.getOutgoingLinks()) {
+//			generatedMetaPaths.add(genMetaPath(node, l.getTarget()));
+			
+			// Extend all paths that end on current node
+//			Set<SubstratePath> toAdd = new HashSet<SubstratePath>();
+//			for (SubstratePath prev : generatedMetaPaths) {
+//				if (prev.getTarget().equals(node)) {
+//					SubstratePath newPath = genMetaPath(prev.getSource(), l.getTarget());
+//					newPath.getLinks().add(l);
+//					newPath.getNodes().add(l.getTarget());
+//					toAdd.add(newPath);
+//				}
+//			}
+//			generatedMetaPaths.addAll(toAdd);
+			
+			// Create path from current node to target of current link
+			if (!visitedNodes.contains(l.getTarget())) {
+				SubstratePath current = genMetaPath(source, l.getTarget());
+				current.getLinks().add(l);
+				current.getNodes().add(source);
+				current.getNodes().add(l.getTarget());
+				generatedMetaPaths.add(current);
+			}
+
+			
+			// Call method for target of current link
+			recursivePathGen(source, l.getTarget());
+		}
 	}
+	
+	private SubstratePath genMetaPath(final Node source, final Node target) {
+		SubstratePath path = ModelFactory.eINSTANCE.createSubstratePath();
+		path.setSource(source);
+		path.setTarget(target);
+		return path;
+	}
+	
+//	private void addPathToNetwork(final Path path) {
+//		// TODO: Null check
+//		
+//		final Network network = path.getNetwork();
+//		final int bandwidth = path.getBandwidth();
+//		final Node source = path.getSource();
+//		final Node target = path.getTarget();
+//		final List<Link> links = path.getLinks();
+//		
+//		addPathToNetwork(getNextId(), network, bandwidth, source, target, links);
+//	}
+	
+//	private void addPathToNetwork(final String id, final Network network, final int bandwidth,
+//			final Node source, final Node target, final List<Link> links) {
+//		// TODO: Fix and extend null checks
+////		checkStringValid(new String[] {id, networkId, sourceId, targetId});
+////		checkStringValid(linkIds);
+//		checkIntValid(bandwidth);
+//		
+//		SubstratePath path;
+//		if (network instanceof SubstrateNetwork) {
+//			path = ModelFactory.eINSTANCE.createSubstratePath();
+//		} else {
+//			throw new UnsupportedOperationException("Path creation on virtual networks "
+//					+ "is not possible.");
+//		}
+//		path.setName(id);
+//		path.setNetwork(network);
+//		path.setBandwidth(bandwidth);
+//		path.setSource(source);
+//		path.setTarget(target);
+//		
+//		// Get all nodes from links
+//		final Set<Node> allNodes = new HashSet<Node>();
+//		for (Link l : links) {
+//			allNodes.add(l.getSource());
+//			allNodes.add(l.getTarget());
+//		}
+//		
+//		if (!allNodes.contains(source)) {
+//			allNodes.add(source);
+//		}
+//		
+//		if (!allNodes.contains(target)) {
+//			allNodes.add(target);
+//		}
+//		
+//		// Add all links and all nodes to path
+//		path.getNodes().addAll(allNodes);
+//		path.getLinks().addAll(links);
+//		
+//		// As all paths are substrate paths, we have to set the residual bandwidth value.
+//		path.setResidualBandwidth(bandwidth);
+//		
+//		// Set number of hops equals to number of links
+//		path.setHops(links.size());
+//		
+//		// Add path to the network
+//		network.getPaths().add(path);
+//	}
+	
+//	/**
+//	 * Creates and adds a (one) new path to a network. The network has to be a substrate network.
+//	 * 
+//	 * @param id ID of the new path to create.
+//	 * @param networkId Network ID to add path to.
+//	 * @param bandwidth Bandwidth amount.
+//	 * @param sourceId ID of the source node.
+//	 * @param targetId ID of the target node.
+//	 * @param linkIds Array of link IDs that are part of the new path.
+//	 */
+//	private void addPathToNetwork(final String id, final String networkId, final int bandwidth,
+//			final String sourceId, final String targetId, final String... linkIds) {
+//		checkStringValid(new String[] {id, networkId, sourceId, targetId});
+//		checkStringValid(linkIds);
+//		checkIntValid(bandwidth);
+//		
+//		final Network net = getNetworkById(networkId);
+//		SubstratePath path;
+//		if (net instanceof SubstrateNetwork) {
+//			path = ModelFactory.eINSTANCE.createSubstratePath();
+//		} else {
+//			throw new UnsupportedOperationException("Path creation on virtual networks "
+//					+ "is not possible.");
+//		}
+//		path.setName(id);
+//		path.setNetwork(net);
+//		path.setBandwidth(bandwidth);
+//		path.setSource(getNodeById(sourceId));
+//		path.setTarget(getNodeById(targetId));
+//		
+//		// Get all links
+//		final List<Link> allLinks = new LinkedList<Link>();
+//		for (String l : linkIds) {
+//			allLinks.add(getLinkById(l));
+//		}
+//		
+//		// Get all nodes from links
+//		final Set<Node> allNodes = new HashSet<Node>();
+//		for (Link l : allLinks) {
+//			allNodes.add(l.getSource());
+//			allNodes.add(l.getTarget());
+//		}
+//		
+//		if (!allNodes.contains(getNodeById(sourceId))) {
+//			allNodes.add(getNodeById(sourceId));
+//		}
+//		
+//		if (!allNodes.contains(getNodeById(targetId))) {
+//			allNodes.add(getNodeById(targetId));
+//		}
+//		
+//		// Add all links and all nodes to path
+//		path.getNodes().addAll(allNodes);
+//		path.getLinks().addAll(allLinks);
+//		
+//		// As all paths are substrate paths, we have to set the residual bandwidth value.
+//		path.setResidualBandwidth(bandwidth);
+//		
+//		// Set number of hops equals to number of links
+//		path.setHops(allLinks.size());
+//		
+//		// Add path to the network
+//		ModelFacade.getInstance().getNetworkById(networkId).getPaths().add(path);
+//	}
 	
 	/**
 	 * Returns true, if a given node ID exists in a given network model.
