@@ -707,6 +707,8 @@ public class ModelFacade {
 	 */
 	public void resetAll() {
 		root.getNetworks().clear();
+		generatedMetaPaths.clear();
+		visitedNodes.clear();
 	}
 	
 	/**
