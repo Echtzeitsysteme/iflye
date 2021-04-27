@@ -381,25 +381,47 @@ public class ModelFacade {
 			subLink.setResidualBandwidth(bandwidth);
 		}
 		
+		// Add paths that are related to this link
+		createPathsFromLink();
+		
 		return net.getLinks().add(link);
 	}
 	
-	// TODO: Implement method 'addPathToNetwork'
-	private boolean addPathToNetwork(final String id, final String networkId, final int bandwidth) {
-		// TODO: Add checks.
-//		
-//		final Network net = getNetworkById(networkId);
-//		Path path;
-//		if (net instanceof SubstrateNetwork) {
-//			path = ModelFactory.eINSTANCE.createSubstratePath();
-//		} else {
-//			throw new UnsupportedOperationException("Path creation on virtual networks "
-//					+ "is not possible.");
-//		}
-//		path.setName(id);
-//		path.setNetwork(net);
-//		path.setBandwidth(bandwidth);
+	private boolean createPathsFromLink() {
+		// TODO
 		return false;
+	}
+	
+	/**
+	 * Creates and adds a (one) new path to a network. The network has to be a substrate network.
+	 * 
+	 * @param id ID of the new path to create.
+	 * @param networkId Network ID to add path to.
+	 * @param bandwidth Bandwidth amount.
+	 * @param sourceId ID of the source node.
+	 * @param targetId ID of the target node.
+	 */
+	private void addPathToNetwork(final String id, final String networkId, final int bandwidth,
+			final String sourceId, final String targetId) {
+		checkStringValid(new String[] {id, networkId, sourceId, targetId});
+		checkIntValid(bandwidth);
+		
+		final Network net = getNetworkById(networkId);
+		Path path;
+		if (net instanceof SubstrateNetwork) {
+			path = ModelFactory.eINSTANCE.createSubstratePath();
+		} else {
+			throw new UnsupportedOperationException("Path creation on virtual networks "
+					+ "is not possible.");
+		}
+		path.setName(id);
+		path.setNetwork(net);
+		path.setBandwidth(bandwidth);
+		path.setSource(getNodeById(sourceId));
+		path.setTarget(getNodeById(targetId));
+		
+		// As all paths are substrate paths, we have to set the residual bandwidth value.
+		((SubstratePath) path).setResidualBandwidth(bandwidth);
 	}
 	
 	/**

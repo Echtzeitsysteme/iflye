@@ -3,7 +3,6 @@ package generator;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import config.GlobalGeneratorConfig;
 import config.TwoTierConfig;
 import facade.ModelFacade;
 import utils.GenUtils;
