@@ -651,12 +651,19 @@ public class ModelFacade {
 			success &= subPath.getGuestLinks().add(virtLink);
 			virtLink.getHosts().add(subPath);
 			
-			// Update residual values of the host
+			// Update residual values of the host path
 			final int oldResBw = subPath.getResidualBandwidth();
 			subPath.setResidualBandwidth(oldResBw - virtLink.getBandwidth());
 		} else {
 			throw new UnsupportedOperationException("Embeding of link not possible due resource "
 					+ "constraint violation.");
+		}
+		
+		// Update all residual bandwidths of all links of the path
+		for (Link actLink : subPath.getLinks()) {
+			SubstrateLink actSubLink = (SubstrateLink) actLink;
+			final int resBw = actSubLink.getResidualBandwidth();
+			actSubLink.setResidualBandwidth(resBw - virtLink.getBandwidth());
 		}
 		
 		return success;
