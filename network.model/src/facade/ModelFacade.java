@@ -56,6 +56,7 @@ public class ModelFacade {
 	 */
 	final Set<Node> visitedNodes = new HashSet<Node>();
 	final List<SubstratePath> generatedMetaPaths = new LinkedList<SubstratePath>();
+	final Set<Link> linksUntilNode = new HashSet<Link>();
 	
 	/**
 	 * Private constructor to disable direct object instantiation.
@@ -430,10 +431,11 @@ public class ModelFacade {
 			// Reset visited nodes -> This collection has to be empty for every new server
 			// we start the recursion with.
 			visitedNodes.clear();
+			linksUntilNode.clear();
 		}
 		
 		// Add attributes to meta paths and add them to model after all.
-		// The attributes are: (1) bandwidth, (2) hops, (3) network.
+		// The attributes are: (1) bandwidth, (2) hops, (3) name/ID,(4) network.
 		for (Path m : generatedMetaPaths) {
 			// Check if path with specific source and target already exist.
 			// TODO: This is quite a workaround and should be replaced in the future.
@@ -454,7 +456,10 @@ public class ModelFacade {
 			// (2) hops
 			m.setHops(m.getLinks().size());
 			
-			// (3) Network, this also adds the paths to the network model
+			// (3) name
+			m.setName(getNextId());
+			
+			// (4) Network, this also adds the paths to the network model
 			m.setNetwork(getNetworkById(networkdId));
 		}
 		
@@ -499,11 +504,18 @@ public class ModelFacade {
 //			}
 //			generatedMetaPaths.addAll(toAdd);
 			
+			// TODO: This is also quite a dirty workaround
+			if (!linksUntilNode.contains(l) && !visitedNodes.contains(l.getTarget())) {
+				linksUntilNode.add(l);
+			}
+			
 			// Create path from current node to target of current link
 			if (!visitedNodes.contains(l.getTarget())) {
 				SubstratePath current = genMetaPath(source, l.getTarget());
-				current.getLinks().add(l);
+//				current.getLinks().add(l);
+				current.getLinks().addAll(linksUntilNode);
 				current.getNodes().add(source);
+				current.getNodes().add(node);
 				current.getNodes().add(l.getTarget());
 				generatedMetaPaths.add(current);
 				
@@ -511,7 +523,8 @@ public class ModelFacade {
 				// (It will not be created automatically!)
 				if (l.getTarget() instanceof Switch) {
 					SubstratePath opposite = genMetaPath(l.getTarget(), source);
-					opposite.getLinks().add(l);
+//					opposite.getLinks().add(l);
+					opposite.getLinks().addAll(linksUntilNode);
 					opposite.getNodes().add(source);
 					opposite.getNodes().add(l.getTarget());
 					generatedMetaPaths.add(opposite);
@@ -709,6 +722,7 @@ public class ModelFacade {
 		root.getNetworks().clear();
 		generatedMetaPaths.clear();
 		visitedNodes.clear();
+		linksUntilNode.clear();
 	}
 	
 	/**
