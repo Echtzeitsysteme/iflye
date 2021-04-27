@@ -27,7 +27,7 @@ public class ModelFacadePathTest {
 		ModelFacade.getInstance().resetAll();
 	}
 	
-	private static void oneTierSetup() {
+	private static void oneTierSetupTwoServers() {
 		ModelFacade.getInstance().addNetworkToRoot("net", false);
 		ModelFacade.getInstance().addSwitchToNetwork("sw", "net", 0);
 		ModelFacade.getInstance().addServerToNetwork("srv1", "net", 0, 0, 0, 1);
@@ -38,30 +38,86 @@ public class ModelFacadePathTest {
 		ModelFacade.getInstance().addLinkToNetwork("ln4", "net", 0, "sw", "srv2");
 	}
 	
+	private static void oneTierSetupFourServers() {
+		ModelFacade.getInstance().addNetworkToRoot("net", false);
+		ModelFacade.getInstance().addSwitchToNetwork("sw", "net", 0);
+		ModelFacade.getInstance().addServerToNetwork("srv1", "net", 0, 0, 0, 1);
+		ModelFacade.getInstance().addServerToNetwork("srv2", "net", 0, 0, 0, 1);
+		ModelFacade.getInstance().addServerToNetwork("srv3", "net", 0, 0, 0, 1);
+		ModelFacade.getInstance().addServerToNetwork("srv4", "net", 0, 0, 0, 1);
+		ModelFacade.getInstance().addLinkToNetwork("ln1", "net", 0, "srv1", "sw");
+		ModelFacade.getInstance().addLinkToNetwork("ln2", "net", 0, "srv2", "sw");
+		ModelFacade.getInstance().addLinkToNetwork("ln3", "net", 0, "srv3", "sw");
+		ModelFacade.getInstance().addLinkToNetwork("ln4", "net", 0, "srv4", "sw");
+		ModelFacade.getInstance().addLinkToNetwork("ln5", "net", 0, "sw", "srv1");
+		ModelFacade.getInstance().addLinkToNetwork("ln6", "net", 0, "sw", "srv2");
+		ModelFacade.getInstance().addLinkToNetwork("ln7", "net", 0, "sw", "srv3");
+		ModelFacade.getInstance().addLinkToNetwork("ln8", "net", 0, "sw", "srv4");
+	}
+	
 	@Test
 	public void testNoPathsAfterNetworkCreation() {
-		oneTierSetup();
+		oneTierSetupTwoServers();
 		assertTrue(ModelFacade.getInstance().getAllPathsOfNetwork("net").isEmpty());
 	}
 	
 	@Test
-	public void testOneTierPathCreation() {
-		oneTierSetup();
+	public void testOneTierPathCreationTwoServers() {
+		oneTierSetupTwoServers();
 		
 		ModelFacade.getInstance().createAllPathsForNetwork("net");
 		final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
-		assertFalse(ModelFacade.getInstance().getAllPathsOfNetwork("net").isEmpty());
+		assertFalse(allPaths.isEmpty());
 		
 		// Check total number of paths
-		assertEquals(4, allPaths.size());
+		assertEquals(6, allPaths.size());
 		
 		// Check individual source and targets
 		final Map<String, String> mapping = new HashMap<String, String>();
 		mapping.put("srv1", "sw");
-		mapping.put("srv1", "srv2");
+		mapping.put("sw", "srv1");
 		mapping.put("srv2", "sw");
+		mapping.put("sw", "srv2");
+		mapping.put("srv1", "srv2");
 		mapping.put("srv2", "srv1");
 		
+		checkPathSourcesAndTargets(mapping, allPaths);
+	}
+	
+	@Test
+	public void testOneTierPathCreationFourServers() {
+		oneTierSetupFourServers();
+		
+		ModelFacade.getInstance().createAllPathsForNetwork("net");
+		final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+		assertFalse(allPaths.isEmpty());
+		
+		// Check total number of paths
+		assertEquals(20, allPaths.size());
+		
+		// Check individual source and targets
+		final Map<String, String> mapping = new HashMap<String, String>();
+		mapping.put("srv1", "sw");
+		mapping.put("sw", "srv1");
+		mapping.put("srv2", "sw");
+		mapping.put("sw", "srv2");
+		mapping.put("srv3", "sw");
+		mapping.put("sw", "srv3");
+		mapping.put("srv4", "sw");
+		mapping.put("sw", "srv4");
+		mapping.put("srv1", "srv2");
+		mapping.put("srv2", "srv1");
+		mapping.put("srv1", "srv3");
+		mapping.put("srv3", "srv1");
+		mapping.put("srv1", "srv4");
+		mapping.put("srv4", "srv1");
+		mapping.put("srv2", "srv3");
+		mapping.put("srv3", "srv2");
+		mapping.put("srv2", "srv4");
+		mapping.put("srv4", "srv2");
+		mapping.put("srv3", "srv4");
+		mapping.put("srv4", "srv3");
+
 		checkPathSourcesAndTargets(mapping, allPaths);
 	}
 	
@@ -82,7 +138,8 @@ public class ModelFacadePathTest {
 			}
 		}
 		
-		Assertions.fail("No matching path was found!");
+		Assertions.fail("No matching path was found for tuple: " + sourceId + " - " 
+				+ targetId);
 	}
 	
 }

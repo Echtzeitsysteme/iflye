@@ -435,6 +435,13 @@ public class ModelFacade {
 		// Add attributes to meta paths and add them to model after all.
 		// The attributes are: (1) bandwidth, (2) hops, (3) network.
 		for (Path m : generatedMetaPaths) {
+			// Check if path with specific source and target already exist.
+			// TODO: This is quite a workaround and should be replaced in the future.
+			if (doesPathWithSourceAndTargetExist(networkdId, m.getSource().getName(), 
+					m.getTarget().getName())) {
+				continue;
+			}
+			
 			// (1) bandwidth
 			int minFoundBw = Integer.MAX_VALUE;
 			for (Link l : m.getLinks()) {
@@ -499,6 +506,16 @@ public class ModelFacade {
 				current.getNodes().add(source);
 				current.getNodes().add(l.getTarget());
 				generatedMetaPaths.add(current);
+				
+				// If target node is a link, also create the opposite path
+				// (It will not be created automatically!)
+				if (l.getTarget() instanceof Switch) {
+					SubstratePath opposite = genMetaPath(l.getTarget(), source);
+					opposite.getLinks().add(l);
+					opposite.getNodes().add(source);
+					opposite.getNodes().add(l.getTarget());
+					generatedMetaPaths.add(opposite);
+				}
 			}
 
 			
@@ -639,6 +656,19 @@ public class ModelFacade {
 //		// Add path to the network
 //		ModelFacade.getInstance().getNetworkById(networkId).getPaths().add(path);
 //	}
+	
+	public boolean doesPathWithSourceAndTargetExist(final String networkdId, 
+			final String sourceId, final String targetId) {
+		SubstrateNetwork net = (SubstrateNetwork) getNetworkById(networkdId);
+		for (Path p : net.getPaths()) {
+			if (p.getSource().getName().equals(sourceId)
+					&& p.getTarget().getName().equals(targetId)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	
 	/**
 	 * Returns true, if a given node ID exists in a given network model.
