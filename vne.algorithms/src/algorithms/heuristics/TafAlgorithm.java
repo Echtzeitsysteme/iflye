@@ -5,9 +5,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -59,9 +61,12 @@ public class TafAlgorithm {
 	final List<VirtualLink> virtualLinks = new LinkedList<VirtualLink>();
 	final List<VirtualServer> virtualServers = new LinkedList<VirtualServer>();
 	final List<SubstrateServer> substrateServers = new LinkedList<SubstrateServer>();
+	final VirtualNetwork vNet;
+	final SubstrateNetwork sNet;
 	
 	// Map of virtual -> substrate server
-	final Map<VirtualServer, SubstrateServer> placedVms = new HashMap<VirtualServer, SubstrateServer>();
+	final Map<VirtualServer, SubstrateServer> placedVms = 
+			new HashMap<VirtualServer, SubstrateServer>();
 
 	/**
 	 * Model of the TAF communication cost. This is only a data type without logic.
@@ -181,6 +186,10 @@ public class TafAlgorithm {
 			substrateServers.add((SubstrateServer) n);
 		}
 		
+		// Save network objects
+		this.vNet = vNet;
+		this.sNet = sNet;
+		
 		// Check pre-conditions
 		checkPreConditions();
 	}
@@ -202,6 +211,53 @@ public class TafAlgorithm {
 		if (virtualServers.size() <= 1) {
 			throw new UnsupportedOperationException(
 					"There are not enough virtual servers available.");
+		}
+	}
+	
+	/**
+	 * Starts the algorithm and embeds the generated mapping in the model.
+	 * 
+	 * @return True if execution was successful and a valid embedding was found.
+	 */
+	public boolean execute() {
+		final boolean success = algorithm1();
+		if (success) {
+			embed();
+		}
+		
+		return success;
+	}
+	
+	/**
+	 * Embeds the calculated mappings in the model.
+	 */
+	private void embed() {
+		// Network
+		ModelFacade.getInstance().embedNetworkToNetwork(sNet.getName(), vNet.getName());
+		
+		// Embed all servers
+		for (final Entry<VirtualServer, SubstrateServer> m : placedVms.entrySet()) {
+			ModelFacade.getInstance().embedServerToServer(
+					m.getValue().getName(), m.getKey().getName());
+		}
+		
+		// Embed all links and the switch
+		if (allVirtualServersToOneSubstrateServer()) {
+			// If the virtual network can be placed onto one substrate server
+			// Switch
+			Iterator<SubstrateServer> sServerIt = placedVms.values().iterator();
+			final String sServerId = sServerIt.next().getName();
+			final String vSwitchId = ModelFacade.getInstance()
+					.getAllSwitchesOfNetwork(vNet.getName()).get(0).getName();
+			ModelFacade.getInstance().embedSwitchToNode(sServerId, vSwitchId);
+			
+			// Links
+			for (VirtualLink l : virtualLinks) {
+				ModelFacade.getInstance().embedLinkToServer(sServerId, l.getName());
+			}
+		} else {
+			// If the virtual network can *not* be placed onto one substrate server
+			throw new UnsupportedOperationException("Not implemented, yet!");
 		}
 	}
 	
@@ -231,14 +287,16 @@ public class TafAlgorithm {
 				if (serverSd == null) {
 					
 					// 7: Place Vi to Sd found by algorithm 2(Vi)
-					final SubstrateServer substrateServerForVi = algorithm2(Arrays.asList(serverVi));
+					final SubstrateServer substrateServerForVi = algorithm2(
+							Arrays.asList(serverVi));
 					if (substrateServerForVi == null) {
 						return false;
 					}
 					placedVms.put(serverVi, substrateServerForVi);
 					
 					// 8: Place Vj to Sd found by algorithm 2(Vj)
-					final SubstrateServer substrateServerForVj = algorithm2(Arrays.asList(serverVj));
+					final SubstrateServer substrateServerForVj = algorithm2(
+							Arrays.asList(serverVj));
 					if (substrateServerForVj == null) {
 						return false;
 					}
