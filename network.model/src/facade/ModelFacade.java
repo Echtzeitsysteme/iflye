@@ -466,44 +466,26 @@ public class ModelFacade {
 		System.out.println("=> Dummy.");
 	}
 	
+	/**
+	 * Recursive path generator method that takes a given source node and a current node and
+	 * calls itself recursively until all nodes are visited.
+	 * Please notice: The source node is always the same node as this the node on which the method
+	 * was first called.
+	 * 
+	 * @param source Source node of the recursive function call.
+	 * @param node Current node to generate paths to.
+	 */
 	private void recursivePathGen(final Node source, final Node node) {
-		
 		// End of recursion: The given node was already visited before.
 		if (visitedNodes.contains(node)) {
 			return;
 		}
 		
-//		// Duplicate and extend every path known before that ends at the current node
-//		Set<SubstratePath> toAdd = new HashSet<SubstratePath>();
-//		for (SubstratePath prev : generatedMetaPaths) {
-//			if (prev.getTarget().equals(node)) {
-//				SubstratePath newPath = genMetaPath(prev.getSource(), node);
-//				newPath.getLinks().addAll(prev.getLinks());
-//				newPath.getLinks().add();
-//				toAdd.add(newPath);
-//			}
-//		}
-//		generatedMetaPaths.addAll(toAdd);
-		
 		// Add current node to set of visited nodes
 		visitedNodes.add(node);
 		
 		// Iterate over all outgoing links
-		for(Link l : node.getOutgoingLinks()) {
-//			generatedMetaPaths.add(genMetaPath(node, l.getTarget()));
-			
-			// Extend all paths that end on current node
-//			Set<SubstratePath> toAdd = new HashSet<SubstratePath>();
-//			for (SubstratePath prev : generatedMetaPaths) {
-//				if (prev.getTarget().equals(node)) {
-//					SubstratePath newPath = genMetaPath(prev.getSource(), l.getTarget());
-//					newPath.getLinks().add(l);
-//					newPath.getNodes().add(l.getTarget());
-//					toAdd.add(newPath);
-//				}
-//			}
-//			generatedMetaPaths.addAll(toAdd);
-			
+		for(Link l : node.getOutgoingLinks()) {			
 			// TODO: This is also quite a dirty workaround
 			if (!linksUntilNode.contains(l) && !visitedNodes.contains(l.getTarget())) {
 				linksUntilNode.add(l);
@@ -512,7 +494,6 @@ public class ModelFacade {
 			// Create path from current node to target of current link
 			if (!visitedNodes.contains(l.getTarget())) {
 				SubstratePath current = genMetaPath(source, l.getTarget());
-//				current.getLinks().add(l);
 				current.getLinks().addAll(linksUntilNode);
 				current.getNodes().add(source);
 				current.getNodes().add(node);
@@ -523,8 +504,11 @@ public class ModelFacade {
 				// (It will not be created automatically!)
 				if (l.getTarget() instanceof Switch) {
 					SubstratePath opposite = genMetaPath(l.getTarget(), source);
-//					opposite.getLinks().add(l);
-					opposite.getLinks().addAll(linksUntilNode);
+					
+					// This link collection has to be "inverted" -> We need the opposite
+					// links instead of the forward ones!
+					opposite.getLinks().addAll(getOppositeLinks(linksUntilNode));
+					
 					opposite.getNodes().add(source);
 					opposite.getNodes().add(l.getTarget());
 					generatedMetaPaths.add(opposite);
@@ -537,6 +521,54 @@ public class ModelFacade {
 		}
 	}
 	
+	/**
+	 * Takes a given link and searches for the opposite one. The opposite link has the original
+	 * target as source and vice versa.
+	 * 
+	 * @param link Link to search opposite link for.
+	 * @return Opposite link for given link.
+	 */
+	private Link getOppositeLink(final Link link) {
+		final Node source = link.getSource();
+		final Node target = link.getTarget();
+		
+		final Network net = link.getNetwork();
+		final List<Link> allLinks = net.getLinks();
+		
+		for (Link l : allLinks) {
+			if (l.getSource().equals(target) && l.getTarget().equals(source)) {
+				return l;
+			}
+		}
+		
+		throw new UnsupportedOperationException("Opposite link could not be found!");
+	}
+	
+	/**
+	 * Returns a set of all opposite links for a given set of links. Basically, it calls the method
+	 * {@link #getOppositeLink(Link)} for every link in the incoming set.
+	 * 
+	 * @param links Set of links to get opposites for.
+	 * @return Set of opposite links.
+	 */
+	private Set<Link> getOppositeLinks(Set<Link> links) {
+		final Set<Link> opposites = new HashSet<Link>();
+		
+		for(Link l: links) {
+			opposites.add(getOppositeLink(l));
+		}
+		
+		return opposites;
+	}
+	
+	/**
+	 * Generates a meta path that has only the source and the target node set up. This is a
+	 * utility method for the path creation.
+	 * 
+	 * @param source Source node for the path.
+	 * @param target Target node for the path.
+	 * @return Generated substrate (meta-)path.
+	 */
 	private SubstratePath genMetaPath(final Node source, final Node target) {
 		SubstratePath path = ModelFactory.eINSTANCE.createSubstratePath();
 		path.setSource(source);
@@ -544,132 +576,15 @@ public class ModelFacade {
 		return path;
 	}
 	
-//	private void addPathToNetwork(final Path path) {
-//		// TODO: Null check
-//		
-//		final Network network = path.getNetwork();
-//		final int bandwidth = path.getBandwidth();
-//		final Node source = path.getSource();
-//		final Node target = path.getTarget();
-//		final List<Link> links = path.getLinks();
-//		
-//		addPathToNetwork(getNextId(), network, bandwidth, source, target, links);
-//	}
-	
-//	private void addPathToNetwork(final String id, final Network network, final int bandwidth,
-//			final Node source, final Node target, final List<Link> links) {
-//		// TODO: Fix and extend null checks
-////		checkStringValid(new String[] {id, networkId, sourceId, targetId});
-////		checkStringValid(linkIds);
-//		checkIntValid(bandwidth);
-//		
-//		SubstratePath path;
-//		if (network instanceof SubstrateNetwork) {
-//			path = ModelFactory.eINSTANCE.createSubstratePath();
-//		} else {
-//			throw new UnsupportedOperationException("Path creation on virtual networks "
-//					+ "is not possible.");
-//		}
-//		path.setName(id);
-//		path.setNetwork(network);
-//		path.setBandwidth(bandwidth);
-//		path.setSource(source);
-//		path.setTarget(target);
-//		
-//		// Get all nodes from links
-//		final Set<Node> allNodes = new HashSet<Node>();
-//		for (Link l : links) {
-//			allNodes.add(l.getSource());
-//			allNodes.add(l.getTarget());
-//		}
-//		
-//		if (!allNodes.contains(source)) {
-//			allNodes.add(source);
-//		}
-//		
-//		if (!allNodes.contains(target)) {
-//			allNodes.add(target);
-//		}
-//		
-//		// Add all links and all nodes to path
-//		path.getNodes().addAll(allNodes);
-//		path.getLinks().addAll(links);
-//		
-//		// As all paths are substrate paths, we have to set the residual bandwidth value.
-//		path.setResidualBandwidth(bandwidth);
-//		
-//		// Set number of hops equals to number of links
-//		path.setHops(links.size());
-//		
-//		// Add path to the network
-//		network.getPaths().add(path);
-//	}
-	
-//	/**
-//	 * Creates and adds a (one) new path to a network. The network has to be a substrate network.
-//	 * 
-//	 * @param id ID of the new path to create.
-//	 * @param networkId Network ID to add path to.
-//	 * @param bandwidth Bandwidth amount.
-//	 * @param sourceId ID of the source node.
-//	 * @param targetId ID of the target node.
-//	 * @param linkIds Array of link IDs that are part of the new path.
-//	 */
-//	private void addPathToNetwork(final String id, final String networkId, final int bandwidth,
-//			final String sourceId, final String targetId, final String... linkIds) {
-//		checkStringValid(new String[] {id, networkId, sourceId, targetId});
-//		checkStringValid(linkIds);
-//		checkIntValid(bandwidth);
-//		
-//		final Network net = getNetworkById(networkId);
-//		SubstratePath path;
-//		if (net instanceof SubstrateNetwork) {
-//			path = ModelFactory.eINSTANCE.createSubstratePath();
-//		} else {
-//			throw new UnsupportedOperationException("Path creation on virtual networks "
-//					+ "is not possible.");
-//		}
-//		path.setName(id);
-//		path.setNetwork(net);
-//		path.setBandwidth(bandwidth);
-//		path.setSource(getNodeById(sourceId));
-//		path.setTarget(getNodeById(targetId));
-//		
-//		// Get all links
-//		final List<Link> allLinks = new LinkedList<Link>();
-//		for (String l : linkIds) {
-//			allLinks.add(getLinkById(l));
-//		}
-//		
-//		// Get all nodes from links
-//		final Set<Node> allNodes = new HashSet<Node>();
-//		for (Link l : allLinks) {
-//			allNodes.add(l.getSource());
-//			allNodes.add(l.getTarget());
-//		}
-//		
-//		if (!allNodes.contains(getNodeById(sourceId))) {
-//			allNodes.add(getNodeById(sourceId));
-//		}
-//		
-//		if (!allNodes.contains(getNodeById(targetId))) {
-//			allNodes.add(getNodeById(targetId));
-//		}
-//		
-//		// Add all links and all nodes to path
-//		path.getNodes().addAll(allNodes);
-//		path.getLinks().addAll(allLinks);
-//		
-//		// As all paths are substrate paths, we have to set the residual bandwidth value.
-//		path.setResidualBandwidth(bandwidth);
-//		
-//		// Set number of hops equals to number of links
-//		path.setHops(allLinks.size());
-//		
-//		// Add path to the network
-//		ModelFacade.getInstance().getNetworkById(networkId).getPaths().add(path);
-//	}
-	
+	/**
+	 * This method checks the availability of a path with given source and target node ID and the
+	 * given network ID.
+	 * 
+	 * @param networkdId Network ID to search path for.
+	 * @param sourceId Source ID to search path for.
+	 * @param targetId Target ID to search path for.
+	 * @return True if a path with given IDs already exists.
+	 */
 	public boolean doesPathWithSourceAndTargetExist(final String networkdId, 
 			final String sourceId, final String targetId) {
 		SubstrateNetwork net = (SubstrateNetwork) getNetworkById(networkdId);

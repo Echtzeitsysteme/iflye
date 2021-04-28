@@ -6,14 +6,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import facade.ModelFacade;
+import model.Link;
+import model.Node;
 import model.Path;
 import model.Switch;
 
@@ -207,7 +211,20 @@ public class ModelFacadePathTest {
 	// TODO
 	@Test
 	public void testContainedLinksNames() {
+		oneTierSetupTwoServers();
 		
+		ModelFacade.getInstance().createAllPathsForNetwork("net");
+		final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+		
+		List<Set<String>> linkNames = new LinkedList<Set<String>>();
+		linkNames.add(Set.of("ln1"));
+		linkNames.add(Set.of("ln2"));
+		linkNames.add(Set.of("ln3"));
+		linkNames.add(Set.of("ln4"));
+		linkNames.add(Set.of("ln1", "ln4"));
+		linkNames.add(Set.of("ln2", "ln3"));
+
+		checkPathLinkNames(linkNames, allPaths);
 	}
 	
 	@Test
@@ -226,10 +243,23 @@ public class ModelFacadePathTest {
 		}
 	}
 	
-	// TODO:
 	@Test
 	public void testContainedNodesNames() {
+		oneTierSetupTwoServers();
 		
+		ModelFacade.getInstance().createAllPathsForNetwork("net");
+		final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+		
+		// The reference nodes only have to be added one time
+		List<Set<String>> nodeNames = new LinkedList<Set<String>>();
+		
+		for(int i = 0; i <= 1; i++) {
+			nodeNames.add(Set.of("srv1", "sw"));
+			nodeNames.add(Set.of("srv2", "sw"));
+			nodeNames.add(Set.of("srv1", "srv2", "sw"));
+		}
+		
+		checkPathNodeNames(nodeNames, allPaths);
 	}
 	
 	@Test
@@ -247,6 +277,51 @@ public class ModelFacadePathTest {
 	/*
 	 * Utility methods.
 	 */
+	
+	/**
+	 * Tests a list of a sets of strings against a list of paths. The check ensures, that all name
+	 * sets are contained within the list of paths (with links).
+	 * 
+	 * @param linkNames List of sets of strings with link names for each path.
+	 * @param pathsToCheck List of paths to check.
+	 */
+	private void checkPathLinkNames(final List<Set<String>> linkNames, 
+			final List<Path> pathsToCheck) {
+		List<Set<String>> pathLinks = new LinkedList<Set<String>>();
+		for (Path p : pathsToCheck) {
+			final Set<String> fromPath = new HashSet<String>();
+			for (Link l : p.getLinks()) {
+				fromPath.add(l.getName());
+			}
+			pathLinks.add(fromPath);
+		}
+		
+		assertTrue(linkNames.containsAll(pathLinks));
+		assertTrue(pathLinks.containsAll(linkNames));
+	}
+	
+	/**
+	 * Tests a list of sets of strings against a list of paths. The check ensures, that all name
+	 * sets are contained within the list of paths (with nodes).
+	 * 
+	 * @param nodeNames List of sets of strings with node names for each path.
+	 * @param pathsToCheck List of paths to check.
+	 */
+	private void checkPathNodeNames(final List<Set<String>> nodeNames, 
+			final List<Path> pathsToCheck) {
+		List<Set<String>> pathNodes = new LinkedList<Set<String>>();
+		for (Path p : pathsToCheck) {
+			final Set<String> fromPath = new HashSet<String>();
+			for (Node n : p.getNodes()) {
+				fromPath.add(n.getName());
+			}
+			pathNodes.add(fromPath);
+		}
+		
+		// Ignore order
+		assertTrue(nodeNames.containsAll(pathNodes));
+		assertTrue(pathNodes.containsAll(nodeNames));
+	}
 	
 	/**
 	 * Checks a given list of paths against a given map of strings to strings.
