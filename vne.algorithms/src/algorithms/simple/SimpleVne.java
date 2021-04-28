@@ -53,9 +53,9 @@ public class SimpleVne {
 		
 		final SubstrateServer largestSubServer = (SubstrateServer) facade.getServerById(largestServerId);
 		
-		if (!(summedCpu <= largestSubServer.getCpu()
-				&& summedMem <= largestSubServer.getMemory()
-				&& summedStor <= largestSubServer.getStorage())) {
+		if (!(summedCpu <= largestSubServer.getResidualCpu()
+				&& summedMem <= largestSubServer.getResidualMemory()
+				&& summedStor <= largestSubServer.getResidualStorage())) {
 			System.out.println("=> SimpleVne: Embedding not possible due to resource constraints.");
 			return false;
 		}

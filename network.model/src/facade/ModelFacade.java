@@ -641,6 +641,19 @@ public class ModelFacade {
 	}
 	
 	/**
+	 * Returns all outgoing links from provided server.
+	 * This method is necessary to convert from EList to List.
+	 * 
+	 * @param s Server to return all outgoing links from.
+	 * @return List of outgoing links from server s.
+	 */
+	public List<Link> getOutgoingLinksFromServer(final Server s) {
+		List<Link> outgoingLinks = new LinkedList<Link>();
+		outgoingLinks.addAll(s.getOutgoingLinks());
+		return outgoingLinks;
+	}
+	
+	/**
 	 * Checks string validity (null and blank).
 	 * 
 	 * @param strings Possible array of strings to check.
