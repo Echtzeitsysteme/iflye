@@ -448,7 +448,7 @@ public class TafAlgorithm {
 		
 		// Do while there are virtual links left
 		while(!processVirtualLinks.isEmpty()) {
-			final VirtualLink sourceLink = processVirtualLinks.get(0);
+			final VirtualLink sourceLink = processVirtualLinks.remove(0);
 			if (sourceLink.getSource() instanceof Server) {
 				for (final VirtualLink targetLink : virtualLinks) {
 					if (targetLink.getTarget() instanceof Server &&
@@ -457,8 +457,8 @@ public class TafAlgorithm {
 								// TODO: May this better be residual bandwidth?
 								sourceLink.getBandwidth(), targetLink.getBandwidth());
 						tVector.add(new TafTVectorData(
-								(SubstrateServer) sourceLink.getSource(),
-								(SubstrateServer) targetLink.getTarget(),
+								(VirtualServer) sourceLink.getSource(),
+								(VirtualServer) targetLink.getTarget(),
 								interVmTraffic));
 					}
 				}
