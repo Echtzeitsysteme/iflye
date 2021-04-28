@@ -16,10 +16,12 @@ import model.Link;
 import model.Node;
 import model.Server;
 import model.SubstrateLink;
+import model.SubstrateNetwork;
 import model.SubstrateNode;
 import model.SubstrateServer;
 import model.Switch;
 import model.VirtualLink;
+import model.VirtualNetwork;
 import model.VirtualServer;
 
 /**
@@ -39,6 +41,11 @@ import model.VirtualServer;
  */
 public class TafAlgorithm {
 	
+	/**
+	 * The instance of the TAF algorithm. Ensures Singleton pattern use only.
+	 */
+	private static TafAlgorithm instance;
+	
 	/*
 	 * Algorithm specific constants.
 	 */
@@ -47,12 +54,12 @@ public class TafAlgorithm {
 	public static final int C_GAMMA = 5;
 	
 	/*
-	 * Data from model.
+	 * Data from model (will be imported in initialization method).
 	 */
-	// TODO: Import and/or solve task in another way.
-	final LinkedList<VirtualLink> virtualLinks = new LinkedList<VirtualLink>();
-	final LinkedList<VirtualServer> virtualServers = new LinkedList<VirtualServer>();
-	final LinkedList<SubstrateServer> substrateServers = new LinkedList<SubstrateServer>();
+	final List<VirtualLink> virtualLinks = new LinkedList<VirtualLink>();
+	final List<VirtualServer> virtualServers = new LinkedList<VirtualServer>();
+	final List<SubstrateServer> substrateServers = new LinkedList<SubstrateServer>();
+	
 	// Map of virtual -> substrate server
 	final Map<VirtualServer, SubstrateServer> placedVms = new HashMap<VirtualServer, SubstrateServer>();
 
@@ -133,6 +140,71 @@ public class TafAlgorithm {
 
 	}
 
+
+	/**
+	 * Initializes a instance of this algorithm if there was none before.
+	 * 
+	 * @param vNet Virtual network to generate embedding for.
+	 * @param sNet Substrate network to embed virtual network in.
+	 * @return Instance of the TAF algorithm.
+	 */
+	public static TafAlgorithm init(final VirtualNetwork vNet, final SubstrateNetwork sNet) {
+		if (instance == null) {
+			instance = new TafAlgorithm(vNet, sNet);
+		}
+		return instance;
+	}
+	
+	/**
+	 * Private constructor that initializes the instance of this algorithm. Only gets called by the
+	 * public initialization method {@link #init(VirtualNetwork, SubstrateNetwork)}.
+	 * 
+	 * @param vNet Virtual network to generate embedding for.
+	 * @param sNet Substrate network to embed virtual network in.
+	 */
+	private TafAlgorithm(final VirtualNetwork vNet, final SubstrateNetwork sNet) {
+		// Add virtual links from model
+		List<Link> vLinks = ModelFacade.getInstance().getAllLinksOfNetwork(vNet.getName());
+		for (final Link l : vLinks) {
+			virtualLinks.add((VirtualLink) l);
+		}
+		
+		// Add virtual servers from model
+		List<Node> vServers = ModelFacade.getInstance().getAllServersOfNetwork(vNet.getName());
+		for (final Node n : vServers) {
+			virtualServers.add((VirtualServer) n);
+		}
+		
+		// Add substrate servers from model
+		List<Node> sServers = ModelFacade.getInstance().getAllServersOfNetwork(sNet.getName());
+		for (final Node n : sServers) {
+			substrateServers.add((SubstrateServer) n);
+		}
+		
+		// Check pre-conditions
+		checkPreConditions();
+	}
+	
+	/**
+	 * Checks every condition necessary to run this algorithm.
+	 * If a condition is not met, it throws an UnsupportedOperationException.
+	 */
+	private void checkPreConditions() {
+		// Every substrate server must be connected to exactly one switch
+		for (final SubstrateServer s : substrateServers) {
+			if (ModelFacade.getInstance().getOutgoingLinksFromServer(s).size() != 1) {
+				throw new UnsupportedOperationException(
+						"Substrate server connected to more than one other node.");
+			}
+		}
+		
+		// There has to be more than one virtual server
+		if (virtualServers.size() <= 1) {
+			throw new UnsupportedOperationException(
+					"There are not enough virtual servers available.");
+		}
+	}
+	
 	/**
 	 * Algorithm 1 of paper [1]. The TAF Algorithm.
 	 */
