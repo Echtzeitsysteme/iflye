@@ -9,24 +9,46 @@ import org.graphstream.ui.view.Viewer;
 
 import facade.ModelFacade;
 
+/**
+ * Visualization UI based on GraphStream, that can show network topologies based
+ * on models read from XMI files.
+ * 
+ * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ */
 public class Ui {
 	
-	final Set<Node> nodes = new HashSet<Node>();
-	final Set<Edge> edges = new HashSet<Edge>();
-	
+	/**
+	 * Servers (nodes) loaded from model.
+	 */
 	final static Set<model.Node> servers = new HashSet<model.Node>();
+	
+	/**
+	 * Switches (nodes) loaded from model.
+	 */
 	final static Set<model.Node> switches = new HashSet<model.Node>();
+	
+	/**
+	 * Links (edges) loaded from model.
+	 */
 	final static Set<model.Link> links = new HashSet<model.Link>();
 
+	/**
+	 * Main method that starts the visualization process.
+	 * 
+	 * @param args First string is the path of the model to load and second string is the name/ID
+	 * of the network to visualize.
+	 */
 	public static void main(final String[] args) {
 		System.setProperty("org.graphstream.ui", "swing");
-//		readModel(args[0], args[1]);
-		readModel("../examples/model.xmi", "sub");
+		readModel(args[0], args[1]);
+		//readModel("../examples/model.xmi", "sub");
 		
-		final Graph graph = new SingleGraph("network.model visualizer");
+		// Create the graph
+		final Graph graph = new SingleGraph("network model visualizer");
 		graph.setAttribute("ui.quality");
 		graph.setAttribute("ui.antialias");
 		
+		// Add all server nodes
 		for (final model.Node srv : servers) {
 			final Node srvNode = graph.addNode(srv.getName());
 			srvNode.setAttribute("ui.label", srv.getName());
@@ -39,6 +61,7 @@ public class Ui {
 					+ "text-style: bold;");
 		}
 		
+		// Add all switch nodes
 		for (final model.Node sw : switches) {
 			final Node swNode = graph.addNode(sw.getName());
 			swNode.setAttribute("ui.label", sw.getName());
@@ -52,10 +75,11 @@ public class Ui {
 					+ "text-style: bold;");
 		}
 		
+		// Add all link edges
 		for (final model.Link l : links) {
 			final Edge lnEdge = graph.addEdge(l.getName(), l.getSource().getName(),
 					l.getTarget().getName(), true);
-//			lnEdge.setAttribute("ui.label", l.getName());
+			//lnEdge.setAttribute("ui.label", l.getName());
 		}
 		
 		final Viewer viewer = graph.display();
@@ -63,10 +87,10 @@ public class Ui {
 	}
 	
 	/**
-	 * TODO
+	 * Reads a model with given network ID from given file path.
 	 * 
-	 * @param path
-	 * @param networkId
+	 * @param path Path to read file from.
+	 * @param networkId Network ID of the network to visualize.
 	 */
 	private static void readModel(final String path, final String networkId) {
 		ModelFacade.getInstance().loadModel(path);
