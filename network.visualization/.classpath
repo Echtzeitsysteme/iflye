@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-13">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libs/gs/gs-core-2.0.jar" sourcepath="libs/gs/gs-core-2.0-sources.jar"/>
+	<classpathentry kind="lib" path="libs/gs/gs-core-2.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="libs/gs/gs-core-2.0-sources.jar"/>
+	<classpathentry kind="lib" path="libs/gs/gs-ui-swing-2.0.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/network.model"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

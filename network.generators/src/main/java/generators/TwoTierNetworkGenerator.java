@@ -2,6 +2,8 @@ package generators;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import facade.ModelFacade;
 import generators.config.TwoTierConfig;
@@ -33,9 +35,9 @@ public class TwoTierNetworkGenerator {
 	 */
 	public static void createTwoTierNetwork (final String networkId, final TwoTierConfig config,
 			boolean isVirtual) {
-		final HashSet<String> serverIds = new HashSet<String>();
+		final List<String> serverIds = new LinkedList<String>();
 		final HashSet<String> coreSwitchIds = new HashSet<String>();
-		final HashSet<String> rackSwitchIds = new HashSet<String>();
+		final List<String> rackSwitchIds = new LinkedList<String>();
 		
 		// Network
 		if (!facade.networkExists(networkId)) {
