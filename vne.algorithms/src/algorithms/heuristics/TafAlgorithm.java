@@ -51,29 +51,69 @@ public class TafAlgorithm {
 	/*
 	 * Algorithm specific constants.
 	 */
+	/**
+	 * Cost for a VNE inside one substrate server.
+	 */
 	public static final int C_ALPHA = 1;
+	
+	/**
+	 * Cost for a VNE inside one substrate rack.
+	 */
 	public static final int C_BETA = 3;
+	
+	/**
+	 * Cost for a VNE on multiple substrate racks.
+	 */
 	public static final int C_GAMMA = 5;
 	
 	/*
 	 * Data from model (will be imported in initialization method).
 	 */
+	/**
+	 * All virtual links of the virtual network.
+	 */
 	final List<VirtualLink> virtualLinks = new LinkedList<VirtualLink>();
+	
+	/**
+	 * All virtual servers of the virtual network.
+	 */
 	final List<VirtualServer> virtualServers = new LinkedList<VirtualServer>();
+	
+	/**
+	 * All substrate servers of the substrate network.
+	 */
 	final List<SubstrateServer> substrateServers = new LinkedList<SubstrateServer>();
+	
+	/**
+	 * The virtual network (model).
+	 */
 	final VirtualNetwork vNet;
+	
+	/**
+	 * The substrate network (model).
+	 */
 	final SubstrateNetwork sNet;
 	
-	// Map of virtual -> substrate server
+	/**
+	 * Map of virtual -> substrate server.
+	 */
 	final Map<VirtualServer, SubstrateServer> placedVms = 
 			new HashMap<VirtualServer, SubstrateServer>();
 
 	/**
 	 * Model of the TAF communication cost. This is only a data type without logic.
+	 * It is needed for the ordering of substrate servers depending on their communication cost.
 	 */
 	private class TafCommunicationCost implements Comparable<TafCommunicationCost> {
 
+		/**
+		 * Communication cost.
+		 */
 		private final double communicationCost;
+		
+		/**
+		 * Substrate server.
+		 */
 		private final SubstrateServer substrateServer;
 
 		/**
@@ -107,8 +147,19 @@ public class TafAlgorithm {
 	 * Model of the TAF T vector. This is only a data type without logic.
 	 */
 	private class TafTVectorData implements Comparable<TafTVectorData> {
+		/**
+		 * Source server of the data set.
+		 */
 		private final Server sourceServer;
+		
+		/**
+		 * Target server of the data set.
+		 */
 		private final Server targetServer;
+		
+		/**
+		 * Bandwidth between the two servers.
+		 */
 		private final int bandwidth;
 
 		/**
@@ -169,19 +220,19 @@ public class TafAlgorithm {
 	 */
 	private TafAlgorithm(final VirtualNetwork vNet, final SubstrateNetwork sNet) {
 		// Add virtual links from model
-		List<Link> vLinks = ModelFacade.getInstance().getAllLinksOfNetwork(vNet.getName());
+		final List<Link> vLinks = ModelFacade.getInstance().getAllLinksOfNetwork(vNet.getName());
 		for (final Link l : vLinks) {
 			virtualLinks.add((VirtualLink) l);
 		}
 		
 		// Add virtual servers from model
-		List<Node> vServers = ModelFacade.getInstance().getAllServersOfNetwork(vNet.getName());
+		final List<Node> vServers = ModelFacade.getInstance().getAllServersOfNetwork(vNet.getName());
 		for (final Node n : vServers) {
 			virtualServers.add((VirtualServer) n);
 		}
 		
 		// Add substrate servers from model
-		List<Node> sServers = ModelFacade.getInstance().getAllServersOfNetwork(sNet.getName());
+		final List<Node> sServers = ModelFacade.getInstance().getAllServersOfNetwork(sNet.getName());
 		for (final Node n : sServers) {
 			substrateServers.add((SubstrateServer) n);
 		}
@@ -419,18 +470,6 @@ public class TafAlgorithm {
 		
 		return sorted;
 	}
-	
-	/**
-	 * Compares two servers based on there names/IDs.
-	 * 
-	 * @param me First server to compare.
-	 * @param o Other server to compare.
-	 * @return Value based on the name/ID comparison.
-	 */
-	@Deprecated
-	private int compareServers(final Server me, final Server o) {
-		return me.getName().compareTo(o.getName());
-	}
 
 	/**
 	 * Creates the initial T vector.
@@ -454,7 +493,6 @@ public class TafAlgorithm {
 					if (targetLink.getTarget() instanceof Server &&
 							!targetLink.getTarget().equals(sourceLink.getSource())) {
 						final int interVmTraffic = Math.max(
-								// TODO: May this better be residual bandwidth?
 								sourceLink.getBandwidth(), targetLink.getBandwidth());
 						tVector.add(new TafTVectorData(
 								(VirtualServer) sourceLink.getSource(),
@@ -559,7 +597,7 @@ public class TafAlgorithm {
 	 * @return Set of all rack switches for all substrate servers with a mapped virtual switch.
 	 */
 	private Set<Switch> getRackSwitches() {
-		Set<Switch> rackSwitches = new HashSet<Switch>();
+		final Set<Switch> rackSwitches = new HashSet<Switch>();
 		
 		// Iterate over all substrate servers with planned mappings
 		for (final SubstrateServer s : placedVms.values()) {
