@@ -711,8 +711,20 @@ public class ModelFacade {
 	 * Loads the model from file.
 	 */
 	public void loadModel() {
-//		eMoflonEMFUtil.saveModel(root, "/dev/null");
-		root = (Root) eMoflonEMFUtil.loadModel(PERSISTANT_MODEL_PATH);
+		loadModel(PERSISTANT_MODEL_PATH);
+	}
+	
+	/**
+	 * Loads the model from given file path.
+	 * 
+	 * @param path File path as string.
+	 */
+	public void loadModel(final String path) {
+		checkStringValid(path);
+		// TODO: Figure out, why the load mechanism does not work if there wasn't
+		// any save operation beforehand.
+		eMoflonEMFUtil.saveModel(root, "/dev/null");
+		root = (Root) eMoflonEMFUtil.loadModel(path);
 	}
 	
 	/*
