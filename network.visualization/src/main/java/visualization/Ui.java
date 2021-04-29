@@ -47,8 +47,8 @@ public class Ui {
 	/**
 	 * Main method that starts the visualization process.
 	 * 
-	 * @param args First string is the path of the model to load and second string is the name/ID
-	 * of the network to visualize.
+	 * @param args First string is the path of the model to load, second string is the name/ID
+	 * of the network to visualize, and third parameter (0/1) enables automatic shaping.
 	 */
 	public static void main(final String[] args) {
 		System.setProperty("org.graphstream.ui", "swing");
@@ -120,7 +120,10 @@ public class Ui {
 		}
 		
 		final Viewer viewer = graph.display();
-		viewer.disableAutoLayout();
+		
+		if ("0".equals(args[2])) {
+			viewer.disableAutoLayout();
+		}
 	}
 	
 	/**
