@@ -2,6 +2,8 @@ package visualization;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,12 +32,12 @@ public class Ui {
 	/**
 	 * Servers (nodes) loaded from model.
 	 */
-	final static Set<model.Node> servers = new HashSet<model.Node>();
+	final static List<model.Node> servers = new LinkedList<model.Node>();
 	
 	/**
 	 * Switches (nodes) loaded from model.
 	 */
-	final static Set<model.Node> switches = new HashSet<model.Node>();
+	final static List<model.Node> switches = new LinkedList<model.Node>();
 	
 	/**
 	 * Links (edges) loaded from model.
@@ -118,7 +120,7 @@ public class Ui {
 		}
 		
 		final Viewer viewer = graph.display();
-		//viewer.disableAutoLayout();
+		viewer.disableAutoLayout();
 	}
 	
 	/**
