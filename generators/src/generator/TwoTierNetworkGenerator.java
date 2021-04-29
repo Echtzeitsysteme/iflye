@@ -76,8 +76,8 @@ public class TwoTierNetworkGenerator {
 		
 		// Links
 		// Connect all core switches to rack switches
-		for (String actCoreSwitch : coreSwitchIds) {
-			for (String actRackSwitch : rackSwitchIds) {
+		for (final String actCoreSwitch : coreSwitchIds) {
+			for (final String actRackSwitch : rackSwitchIds) {
 				// Direction 1
 				facade.addLinkToNetwork(GenUtils.getLinkdId(), networkId,
 						config.getCoreBandwidth(), actCoreSwitch, actRackSwitch);
@@ -90,7 +90,7 @@ public class TwoTierNetworkGenerator {
 		// Connect all rack switches to servers
 		final Iterator<String> it = serverIds.iterator();
 		// Iterate over all rack switches
-		for (String actRackSwitch : rackSwitchIds) {
+		for (final String actRackSwitch : rackSwitchIds) {
 			// Iterate over the next n servers for this particular rack switch
 			for (int i = 0; i < config.getRack().getNumberOfServers(); i++) {
 				final String actLinkId = it.next();

@@ -1,23 +1,19 @@
 package examples.generators;
 
-import config.OneTierConfig;
 import config.TwoTierConfig;
 import facade.ModelFacade;
 import generator.TwoTierNetworkGenerator;
 
-public class TempGeneratorRunner {
+/**
+ * Runnable example for the two tier network generator.
+ * Creates one substrate network within the model.
+ * 
+ * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ */
+public class TwoTierGeneratorExample {
+	
 	public static void main(final String[] args) {
-		// One tier network test
-//		final OneTierConfig config = new OneTierConfig(2, 1, false, 10, 10, 10, 20);
-//		OneTierNetworkGenerator.createOneTierNetwork("test", config, false);
-//		OneTierNetworkGenerator.createOneTierNetwork("test2", config, true);
-//		
-//		ModelFacade.getInstance().persistModel();
-//		ModelFacade.getInstance().resetAll();
-//		ModelFacade.getInstance().loadModel();
-//		ModelFacade.getInstance().dummy();
-		
-		// Two tier network test
+		// Two tier network generation
 		final TwoTierConfig config = new TwoTierConfig();
 		config.setCoreBandwidth(20);
 		config.getRack().setBandwidthPerLink(10);
@@ -26,8 +22,9 @@ public class TempGeneratorRunner {
 		config.getRack().setStoragePerServer(1);
 		config.setNumberOfRacks(4);
 		TwoTierNetworkGenerator.createTwoTierNetwork("test", config, false);
-		ModelFacade.getInstance().persistModel();
 		
+		// Save model to file
+		ModelFacade.getInstance().persistModel();
 		System.out.println("=> Execution finished.");
 	}
 	

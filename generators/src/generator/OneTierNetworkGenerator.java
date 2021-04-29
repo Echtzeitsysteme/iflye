@@ -2,7 +2,6 @@ package generator;
 
 import java.util.HashSet;
 
-import config.GlobalGeneratorConfig;
 import config.OneTierConfig;
 import facade.ModelFacade;
 import utils.GenUtils;
@@ -51,14 +50,14 @@ public class OneTierNetworkGenerator {
 		
 		// Switches
 		for (int i = 0; i < config.getNumberOfSwitches(); i++) {
-			final String currentId = GenUtils.getServerId();
+			final String currentId = GenUtils.getSwitchId();
 			switchIds.add(currentId);
 			facade.addSwitchToNetwork(String.valueOf(currentId), networkId, 0);
 		}
 		
 		// Links
-		for (String actServerId : serverIds) {
-			for (String actSwitchId : switchIds) {
+		for (final String actServerId : serverIds) {
+			for (final String actSwitchId : switchIds) {
 				// Direction 1
 				facade.addLinkToNetwork(GenUtils.getLinkdId(), networkId, 
 						config.getBandwidthPerLink(), actServerId, actSwitchId);
