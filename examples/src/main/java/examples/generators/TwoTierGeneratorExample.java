@@ -21,7 +21,7 @@ public class TwoTierGeneratorExample {
 		config.getRack().setMemoryPerServer(1);
 		config.getRack().setStoragePerServer(1);
 		config.setNumberOfRacks(4);
-		TwoTierNetworkGenerator.createTwoTierNetwork("test", config, false);
+		TwoTierNetworkGenerator.createTwoTierNetwork("sub", config, false);
 		
 		// Save model to file
 		ModelFacade.getInstance().persistModel();

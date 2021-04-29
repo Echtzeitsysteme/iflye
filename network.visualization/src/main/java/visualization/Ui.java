@@ -1,6 +1,8 @@
 package visualization;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.graphstream.graph.*;
@@ -16,6 +18,14 @@ import facade.ModelFacade;
  * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
  */
 public class Ui {
+	
+	/*
+	 * Configuration parameters.
+	 */
+	/**
+	 * Scaling of the placement.
+	 */
+	private static final double SCALE = 2;
 	
 	/**
 	 * Servers (nodes) loaded from model.
@@ -48,7 +58,8 @@ public class Ui {
 		graph.setAttribute("ui.quality");
 		graph.setAttribute("ui.antialias");
 		
-		// Add all server nodes
+		// Add all server nodes to graph
+		double srvCurrX = (-servers.size() + 1) * SCALE / 2;
 		for (final model.Node srv : servers) {
 			final Node srvNode = graph.addNode(srv.getName());
 			srvNode.setAttribute("ui.label", srv.getName());
@@ -59,10 +70,29 @@ public class Ui {
 					+ "text-size: 10;"
 					+ "size: 40px;"
 					+ "text-style: bold;");
+			
+			// Placement of the server
+			srvNode.setAttribute("xyz", srvCurrX, -srv.getDepth() * SCALE, 0);
+			srvCurrX += SCALE;
 		}
 		
-		// Add all switch nodes
+		// Calculate switch positions
+		final Map<Integer, Double> xMap = new HashMap<Integer, Double>();
+		final Map<Integer, Integer> depthCounters = new HashMap<Integer, Integer>();
 		for (final model.Node sw : switches) {
+			if (!depthCounters.containsKey(sw.getDepth())) {
+				depthCounters.put(sw.getDepth(), 1);
+			} else {
+				depthCounters.replace(sw.getDepth(), depthCounters.get(sw.getDepth()) + 1);
+			}
+		}
+		
+		for (final Integer i : depthCounters.keySet()) {
+			xMap.put(i, (-depthCounters.get(i) + 1) * SCALE / 2);
+		}
+		
+		// Add all switch nodes to graph
+		for (final model.Node sw : switches) {			
 			final Node swNode = graph.addNode(sw.getName());
 			swNode.setAttribute("ui.label", sw.getName());
 			swNode.setAttribute("ui.style", "fill-color: rgb(255,255,255); "
@@ -73,6 +103,11 @@ public class Ui {
 					+ "text-size: 10; "
 					+ "size: 40px; "
 					+ "text-style: bold;");
+			
+			// Placement of the switch
+			final double currX = xMap.get(sw.getDepth());
+			swNode.setAttribute("xyz", currX, -sw.getDepth() * SCALE, 0);
+			xMap.replace(sw.getDepth(), currX + SCALE);
 		}
 		
 		// Add all link edges
