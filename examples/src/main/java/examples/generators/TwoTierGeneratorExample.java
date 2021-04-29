@@ -1,8 +1,8 @@
 package examples.generators;
 
-import config.TwoTierConfig;
 import facade.ModelFacade;
-import generator.TwoTierNetworkGenerator;
+import generators.TwoTierNetworkGenerator;
+import generators.config.TwoTierConfig;
 
 /**
  * Runnable example for the two tier network generator.

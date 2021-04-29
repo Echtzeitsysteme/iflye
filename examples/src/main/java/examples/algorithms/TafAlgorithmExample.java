@@ -1,9 +1,9 @@
 package examples.algorithms;
 
 import algorithms.heuristics.TafAlgorithm;
-import config.OneTierConfig;
 import facade.ModelFacade;
-import generator.OneTierNetworkGenerator;
+import generators.OneTierNetworkGenerator;
+import generators.config.OneTierConfig;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 

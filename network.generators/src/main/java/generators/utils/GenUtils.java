@@ -1,7 +1,7 @@
-package utils;
+package generators.utils;
 
-import config.GlobalGeneratorConfig;
 import facade.ModelFacade;
+import generators.config.GlobalGeneratorConfig;
 
 /**
  * Network generator utilities.

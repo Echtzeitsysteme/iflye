@@ -1,8 +1,8 @@
 package examples.generators;
 
-import config.OneTierConfig;
 import facade.ModelFacade;
-import generator.OneTierNetworkGenerator;
+import generators.OneTierNetworkGenerator;
+import generators.config.OneTierConfig;
 
 /**
  * Runnable example for the one tier network generator.

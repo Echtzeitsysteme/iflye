@@ -1,10 +1,10 @@
-package generator;
+package generators;
 
 import java.util.HashSet;
 
-import config.OneTierConfig;
 import facade.ModelFacade;
-import utils.GenUtils;
+import generators.config.OneTierConfig;
+import generators.utils.GenUtils;
 
 /**
  * Basic implementation of a one tier network topology generator.

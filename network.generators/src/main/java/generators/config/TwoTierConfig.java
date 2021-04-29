@@ -1,4 +1,4 @@
-package config;
+package generators.config;
 
 /**
  * Configuration (container-)class for the two tier network generator.

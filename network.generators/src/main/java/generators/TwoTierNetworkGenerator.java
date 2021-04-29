@@ -1,11 +1,11 @@
-package generator;
+package generators;
 
 import java.util.HashSet;
 import java.util.Iterator;
 
-import config.TwoTierConfig;
 import facade.ModelFacade;
-import utils.GenUtils;
+import generators.config.TwoTierConfig;
+import generators.utils.GenUtils;
 
 /**
  * Basic implementation of a two tier network topology generator.

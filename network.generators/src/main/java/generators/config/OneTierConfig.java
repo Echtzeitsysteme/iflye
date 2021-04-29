@@ -1,4 +1,4 @@
-package config;
+package generators.config;
 
 /**
  * Configuration (container-)class for the one tier network generator.

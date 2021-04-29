@@ -1,9 +1,9 @@
 package examples.algorithms;
 
 import algorithms.simple.SimpleVne;
-import config.OneTierConfig;
 import facade.ModelFacade;
-import generator.OneTierNetworkGenerator;
+import generators.OneTierNetworkGenerator;
+import generators.config.OneTierConfig;
 
 /**
  * Runnable example for the simple VNE algorithm.

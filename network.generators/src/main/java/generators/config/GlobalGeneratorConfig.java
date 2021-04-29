@@ -1,4 +1,4 @@
-package config;
+package generators.config;
 
 /**
  * Global configuration parameters for all network generators.
