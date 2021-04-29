@@ -21,7 +21,7 @@ public class Ui {
 	public static void main(final String[] args) {
 		System.setProperty("org.graphstream.ui", "swing");
 //		readModel(args[0], args[1]);
-		readModel("model.xmi", "sub");
+		readModel("../examples/model.xmi", "sub");
 		
 		final Graph graph = new SingleGraph("network.model visualizer");
 		graph.setAttribute("ui.quality");
@@ -31,7 +31,10 @@ public class Ui {
 			final Node srvNode = graph.addNode(srv.getName());
 			srvNode.setAttribute("ui.label", srv.getName());
 			srvNode.setAttribute("ui.style", "fill-color: rgb(000,155,000);"
-					+ "text-size: 12;"
+					+ "stroke-color: rgb(0,0,0);"
+					+ "stroke-width: 1px;"
+					+ "stroke-mode: plain;"
+					+ "text-size: 10;"
 					+ "size: 40px;"
 					+ "text-style: bold;");
 		}
@@ -44,7 +47,7 @@ public class Ui {
 					+ "stroke-color: rgb(000,155,000); "
 					+ "stroke-width: 4px; "
 					+ "stroke-mode: plain; "
-					+ "text-size: 12; "
+					+ "text-size: 10; "
 					+ "size: 40px; "
 					+ "text-style: bold;");
 		}
@@ -52,7 +55,7 @@ public class Ui {
 		for (final model.Link l : links) {
 			final Edge lnEdge = graph.addEdge(l.getName(), l.getSource().getName(),
 					l.getTarget().getName(), true);
-			lnEdge.setAttribute("ui.label", l.getName());
+//			lnEdge.setAttribute("ui.label", l.getName());
 		}
 		
 		final Viewer viewer = graph.display();
