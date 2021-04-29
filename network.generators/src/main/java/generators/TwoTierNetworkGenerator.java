@@ -107,6 +107,9 @@ public class TwoTierNetworkGenerator {
 		if (config.isCoreSwitchesConnected()) {
 			throw new UnsupportedOperationException("Not implemented, yet!");
 		}
+		
+		// Generate paths
+		ModelFacade.getInstance().createAllPathsForNetwork(networkId);
 	}
 	
 }

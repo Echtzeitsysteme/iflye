@@ -71,6 +71,9 @@ public class OneTierNetworkGenerator {
 		if (config.isSwitchesConnected()) {
 			throw new UnsupportedOperationException("Not implemented, yet!");
 		}
+		
+		// Generate paths
+		ModelFacade.getInstance().createAllPathsForNetwork(networkId);
 	}
 	
 }
