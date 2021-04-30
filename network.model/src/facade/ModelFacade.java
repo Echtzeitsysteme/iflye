@@ -5,12 +5,14 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.moflon.core.utilities.eMoflonEMFUtil;
 
+import facade.dijkstra.Dijkstra;
 import model.Link;
 import model.ModelFactory;
 import model.Network;
@@ -408,8 +410,7 @@ public class ModelFacade {
 	
 	/**
 	 * This method creates all necessary paths *after* all other components are added to the
-	 * network. Please notice: Currently, the method is only suited for tree-based networks that
-	 * do not have any cycles.
+	 * network.
 	 * 
 	 * Assumptions: Every server of the given network is only connected to one switch.
 	 * 
@@ -417,108 +418,80 @@ public class ModelFacade {
 	 */
 	public void createAllPathsForNetwork(final String networkdId) {
 		checkStringValid(networkdId);
+		final Network net = getNetworkById(networkdId);
 		
-		if (getNetworkById(networkdId) instanceof VirtualNetwork) {
+		if (net instanceof VirtualNetwork) {
 			throw new UnsupportedOperationException("Given network ID is virtual,"
 					+ " which is not supported!");
 		}
 		
+		final SubstrateNetwork snet = (SubstrateNetwork) net;
+		
 		// Iterate over all servers
-		for (Node s : getAllServersOfNetwork(networkdId)) {
+		for (final Node s : getAllServersOfNetwork(networkdId)) {
 			final SubstrateServer srv = (SubstrateServer) s;
-			recursivePathGen(srv, srv);
+			final Map<SubstrateNode, List<SubstrateLink>> actMap = Dijkstra.getAllPaths(snet, srv);
 			
-			// Reset visited nodes -> This collection has to be empty for every new server
-			// we start the recursion with.
-			visitedNodes.clear();
-			linksUntilNode.clear();
-		}
-		
-		// Add attributes to meta paths and add them to model after all.
-		// The attributes are: (1) bandwidth, (2) hops, (3) name/ID,(4) network.
-		for (Path m : generatedMetaPaths) {
-			// Check if path with specific source and target already exist.
-			// TODO: This is quite a workaround and should be replaced in the future.
-			if (doesPathWithSourceAndTargetExist(networkdId, m.getSource().getName(), 
-					m.getTarget().getName())) {
-				continue;
+			// Iterate over all "paths" of the current node
+			for (final SubstrateNode n : actMap.keySet()) {
+				createBidirectionalPathFromLinks(actMap.get(n));
 			}
-			
-			// (1) bandwidth
-			int minFoundBw = Integer.MAX_VALUE;
-			for (Link l : m.getLinks()) {
-				if (l.getBandwidth() < minFoundBw) {
-					minFoundBw = l.getBandwidth();
-				}
-			}
-			m.setBandwidth(minFoundBw);
-			
-			// (2) hops
-			m.setHops(m.getLinks().size());
-			
-			// (3) name
-			m.setName(getNextId());
-			
-			// (4) Network, this also adds the paths to the network model
-			m.setNetwork(getNetworkById(networkdId));
 		}
-		
-		System.out.println("=> Dummy.");
 	}
 	
-	/**
-	 * Recursive path generator method that takes a given source node and a current node and
-	 * calls itself recursively until all nodes are visited.
-	 * Please notice: The source node is always the same node as this the node on which the method
-	 * was first called.
-	 * 
-	 * @param source Source node of the recursive function call.
-	 * @param node Current node to generate paths to.
-	 */
-	private void recursivePathGen(final Node source, final Node node) {
-		// End of recursion: The given node was already visited before.
-		if (visitedNodes.contains(node)) {
-			return;
+	private void createBidirectionalPathFromLinks(final List<SubstrateLink> links) {
+		// Get all nodes from links
+		final Set<Node> nodes = new HashSet<Node>();
+		
+		for (final SubstrateLink l : links) {
+			nodes.add(l.getSource());
+			nodes.add(l.getTarget());
 		}
 		
-		// Add current node to set of visited nodes
-		visitedNodes.add(node);
+		final int lastIndex = links.size() - 1;
+		final Node source = links.get(0).getSource();
+		final Node target = links.get(lastIndex).getTarget();
 		
-		// Iterate over all outgoing links
-		for(Link l : node.getOutgoingLinks()) {			
-			// TODO: This is also quite a dirty workaround
-			if (!linksUntilNode.contains(l) && !visitedNodes.contains(l.getTarget())) {
-				linksUntilNode.add(l);
-			}
+		// Create forward path
+		if (!doesPathWithSourceAndTargetExist(
+				source.getNetwork(), source, target)) {
+			final Path forward = genMetaPath(source, target);
+			forward.setHops(links.size());
+			forward.setNetwork(links.get(0).getNetwork());
+			forward.setName(getNextId());
+			forward.getNodes().addAll(nodes);
+			forward.getLinks().addAll(links);
 			
-			// Create path from current node to target of current link
-			if (!visitedNodes.contains(l.getTarget())) {
-				SubstratePath current = genMetaPath(source, l.getTarget());
-				current.getLinks().addAll(linksUntilNode);
-				current.getNodes().add(source);
-				current.getNodes().add(node);
-				current.getNodes().add(l.getTarget());
-				generatedMetaPaths.add(current);
-				
-				// If target node is a link, also create the opposite path
-				// (It will not be created automatically!)
-				if (l.getTarget() instanceof Switch) {
-					SubstratePath opposite = genMetaPath(l.getTarget(), source);
-					
-					// This link collection has to be "inverted" -> We need the opposite
-					// links instead of the forward ones!
-					opposite.getLinks().addAll(getOppositeLinks(linksUntilNode));
-					
-					opposite.getNodes().add(source);
-					opposite.getNodes().add(l.getTarget());
-					generatedMetaPaths.add(opposite);
-				}
-			}
-
-			
-			// Call method for target of current link
-			recursivePathGen(source, l.getTarget());
+			// Determine bandwidth
+			forward.setBandwidth(getMinimumBandwidthFromSubstrateLinks(links));
 		}
+		
+		// Create reverse path
+		if (!doesPathWithSourceAndTargetExist(
+				target.getNetwork(), target, source)) {
+			final Path reverse = genMetaPath(target, source);
+			reverse.setHops(links.size());
+			reverse.setNetwork(links.get(0).getNetwork());
+			reverse.setName(getNextId());
+			reverse.getNodes().addAll(nodes);
+			
+			// Get all reversed links
+			final Set<SubstrateLink> reversedLinks = getOppositeLinks(links);
+			reverse.getLinks().addAll(reversedLinks);
+			reverse.setBandwidth(getMinimumBandwidthFromSubstrateLinks(reversedLinks));	
+		}
+	}
+	
+	private int getMinimumBandwidthFromSubstrateLinks(final Collection<SubstrateLink> links) {
+		int val = Integer.MAX_VALUE;
+		
+		for (final Link l : links) {
+			if (l.getBandwidth() < val) {
+				val = l.getBandwidth();
+			}
+		}
+		
+		return val;
 	}
 	
 	/**
@@ -546,16 +519,16 @@ public class ModelFacade {
 	
 	/**
 	 * Returns a set of all opposite links for a given set of links. Basically, it calls the method
-	 * {@link #getOppositeLink(Link)} for every link in the incoming set.
+	 * {@link #getOppositeLink(Link)} for every link in the incoming collection.
 	 * 
-	 * @param links Set of links to get opposites for.
+	 * @param links Collection of links to get opposites for.
 	 * @return Set of opposite links.
 	 */
-	private Set<Link> getOppositeLinks(Set<Link> links) {
-		final Set<Link> opposites = new HashSet<Link>();
+	private Set<SubstrateLink> getOppositeLinks(final Collection<SubstrateLink> links) {
+		final Set<SubstrateLink> opposites = new HashSet<SubstrateLink>();
 		
 		for(Link l: links) {
-			opposites.add(getOppositeLink(l));
+			opposites.add((SubstrateLink) getOppositeLink(l));
 		}
 		
 		return opposites;
@@ -577,20 +550,20 @@ public class ModelFacade {
 	}
 	
 	/**
-	 * This method checks the availability of a path with given source and target node ID and the
-	 * given network ID.
+	 * This method checks the availability of a path with given source and target node and the
+	 * given network.
 	 * 
-	 * @param networkdId Network ID to search path for.
-	 * @param sourceId Source ID to search path for.
-	 * @param targetId Target ID to search path for.
-	 * @return True if a path with given IDs already exists.
+	 * @param networkd Network to search path for.
+	 * @param source Source to search path for.
+	 * @param target Target to search path for.
+	 * @return True if a path with given parameters already exists.
 	 */
-	public boolean doesPathWithSourceAndTargetExist(final String networkdId, 
-			final String sourceId, final String targetId) {
-		SubstrateNetwork net = (SubstrateNetwork) getNetworkById(networkdId);
-		for (Path p : net.getPaths()) {
-			if (p.getSource().getName().equals(sourceId)
-					&& p.getTarget().getName().equals(targetId)) {
+	public boolean doesPathWithSourceAndTargetExist(final Network net, 
+			final Node source, final Node target) {
+		SubstrateNetwork snet = (SubstrateNetwork) net;
+		for (Path p : snet.getPaths()) {
+			if (p.getSource().equals(source)
+					&& p.getTarget().equals(target)) {
 				return true;
 			}
 		}
