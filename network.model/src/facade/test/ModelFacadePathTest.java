@@ -159,7 +159,75 @@ public class ModelFacadePathTest {
 	}
 	
 	@Test
-	public void testNumberOfHopsPerPath() {
+	public void testTwoTierPathCreationFourServersTwoCoreSwitches() {
+		twoTierSetupFourServersTwoCoreSwitches();
+		
+		ModelFacade.getInstance().createAllPathsForNetwork("net");
+		final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+		assertFalse(allPaths.isEmpty());
+		
+		// Check total number of paths
+		assertEquals(44, allPaths.size());
+		
+		// Check individual source and targets
+		final Map<String, String> mapping = new HashMap<String, String>();
+		mapping.put("srv1", "rsw1");
+		mapping.put("srv1", "csw1");
+		mapping.put("srv1", "csw2");
+		mapping.put("srv1", "rsw2");
+		mapping.put("srv1", "srv2");
+		mapping.put("srv1", "srv3");
+		mapping.put("srv1", "srv4");
+		
+		mapping.put("srv2", "srv1");
+		mapping.put("srv2", "srv3");
+		mapping.put("srv2", "srv4");
+		mapping.put("srv2", "rsw1");
+		mapping.put("srv2", "rsw2");
+		mapping.put("srv2", "csw1");
+		mapping.put("srv2", "csw2");
+		
+		mapping.put("srv3", "srv1");
+		mapping.put("srv3", "srv2");
+		mapping.put("srv3", "srv4");
+		mapping.put("srv3", "rsw1");
+		mapping.put("srv3", "rsw2");
+		mapping.put("srv3", "csw1");
+		mapping.put("srv3", "csw2");
+		
+		mapping.put("srv4", "srv1");
+		mapping.put("srv4", "srv2");
+		mapping.put("srv4", "srv3");
+		mapping.put("srv4", "rsw1");
+		mapping.put("srv4", "rsw2");
+		mapping.put("srv4", "csw1");
+		mapping.put("srv4", "csw2");
+		
+		mapping.put("rsw1", "srv1");
+		mapping.put("rsw1", "srv2");
+		mapping.put("rsw1", "srv3");
+		mapping.put("rsw1", "srv4");
+		
+		mapping.put("rsw2", "srv1");
+		mapping.put("rsw2", "srv2");
+		mapping.put("rsw2", "srv3");
+		mapping.put("rsw2", "srv4");
+		
+		mapping.put("csw1", "srv1");
+		mapping.put("csw1", "srv2");
+		mapping.put("csw1", "srv3");
+		mapping.put("csw1", "srv4");
+		
+		mapping.put("csw2", "srv1");
+		mapping.put("csw2", "srv2");
+		mapping.put("csw2", "srv3");
+		mapping.put("csw2", "srv4");
+
+		checkPathSourcesAndTargets(mapping, allPaths);
+	}
+	
+	@Test
+	public void testOneTierNumberOfHopsPerPath() {
 		oneTierSetupTwoServers();
 		
 		ModelFacade.getInstance().createAllPathsForNetwork("net");
@@ -175,7 +243,7 @@ public class ModelFacadePathTest {
 	}
 	
 	@Test
-	public void testBandwidthAmoutPerPath() {
+	public void testOneTierBandwidthAmoutPerPath() {
 		oneTierSetupTwoServers();
 		
 		ModelFacade.getInstance().createAllPathsForNetwork("net");
@@ -193,7 +261,7 @@ public class ModelFacadePathTest {
 	}
 	
 	@Test
-	public void testContainedLinksAmount() {
+	public void testOneTierContainedLinksAmount() {
 		oneTierSetupTwoServers();
 		
 		ModelFacade.getInstance().createAllPathsForNetwork("net");
@@ -208,9 +276,8 @@ public class ModelFacadePathTest {
 		}
 	}
 	
-	// TODO
 	@Test
-	public void testContainedLinksNames() {
+	public void testOneTierContainedLinksNames() {
 		oneTierSetupTwoServers();
 		
 		ModelFacade.getInstance().createAllPathsForNetwork("net");
@@ -228,7 +295,7 @@ public class ModelFacadePathTest {
 	}
 	
 	@Test
-	public void testContainedNodesAmount() {
+	public void testOneTierContainedNodesAmount() {
 		oneTierSetupTwoServers();
 		
 		ModelFacade.getInstance().createAllPathsForNetwork("net");
@@ -244,7 +311,7 @@ public class ModelFacadePathTest {
 	}
 	
 	@Test
-	public void testContainedNodesNames() {
+	public void testOneTierContainedNodesNames() {
 		oneTierSetupTwoServers();
 		
 		ModelFacade.getInstance().createAllPathsForNetwork("net");
@@ -263,7 +330,7 @@ public class ModelFacadePathTest {
 	}
 	
 	@Test
-	public void testNoNameIsNull() {
+	public void testTwoTierNoNameIsNull() {
 		twoTierSetupFourServers();
 		
 		ModelFacade.getInstance().createAllPathsForNetwork("net");
@@ -401,13 +468,13 @@ public class ModelFacadePathTest {
 	private static void twoTierSetupFourServers() {
 		ModelFacade.getInstance().addNetworkToRoot("net", false);
 		ModelFacade.getInstance().addSwitchToNetwork("csw1", "net", 0);
-		ModelFacade.getInstance().addSwitchToNetwork("rsw1", "net", 0);
-		ModelFacade.getInstance().addSwitchToNetwork("rsw2", "net", 0);
+		ModelFacade.getInstance().addSwitchToNetwork("rsw1", "net", 1);
+		ModelFacade.getInstance().addSwitchToNetwork("rsw2", "net", 1);
 		
-		ModelFacade.getInstance().addServerToNetwork("srv1", "net", 0, 0, 0, 1);
-		ModelFacade.getInstance().addServerToNetwork("srv2", "net", 0, 0, 0, 1);
-		ModelFacade.getInstance().addServerToNetwork("srv3", "net", 0, 0, 0, 1);
-		ModelFacade.getInstance().addServerToNetwork("srv4", "net", 0, 0, 0, 1);
+		ModelFacade.getInstance().addServerToNetwork("srv1", "net", 0, 0, 0, 2);
+		ModelFacade.getInstance().addServerToNetwork("srv2", "net", 0, 0, 0, 2);
+		ModelFacade.getInstance().addServerToNetwork("srv3", "net", 0, 0, 0, 2);
+		ModelFacade.getInstance().addServerToNetwork("srv4", "net", 0, 0, 0, 2);
 		
 		ModelFacade.getInstance().addLinkToNetwork("ln1", "net", 0, "srv1", "rsw1");
 		ModelFacade.getInstance().addLinkToNetwork("ln2", "net", 0, "srv2", "rsw1");
@@ -422,6 +489,21 @@ public class ModelFacadePathTest {
 		ModelFacade.getInstance().addLinkToNetwork("ln10", "net", 0, "rsw2", "csw1");
 		ModelFacade.getInstance().addLinkToNetwork("ln11", "net", 0, "csw1", "rsw1");
 		ModelFacade.getInstance().addLinkToNetwork("ln12", "net", 0, "csw1", "rsw2");
+	}
+	
+	/**
+	 * Creates a two tier network with four servers total, two rack switches, and two
+	 * core switches.
+	 */
+	private static void twoTierSetupFourServersTwoCoreSwitches() {
+		twoTierSetupFourServers();
+		
+		ModelFacade.getInstance().addSwitchToNetwork("csw2", "net", 0);
+		
+		ModelFacade.getInstance().addLinkToNetwork("ln13", "net", 0, "rsw1", "csw2");
+		ModelFacade.getInstance().addLinkToNetwork("ln14", "net", 0, "rsw2", "csw2");
+		ModelFacade.getInstance().addLinkToNetwork("ln15", "net", 0, "csw2", "rsw1");
+		ModelFacade.getInstance().addLinkToNetwork("ln16", "net", 0, "csw2", "rsw2");
 	}
 	
 }
