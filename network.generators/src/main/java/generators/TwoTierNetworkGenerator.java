@@ -111,7 +111,9 @@ public class TwoTierNetworkGenerator {
 		}
 		
 		// Generate paths
-		ModelFacade.getInstance().createAllPathsForNetwork(networkId);
+		if (!isVirtual) {
+			ModelFacade.getInstance().createAllPathsForNetwork(networkId);
+		}
 	}
 	
 }
