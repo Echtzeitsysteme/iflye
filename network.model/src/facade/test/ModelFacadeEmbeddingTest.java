@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import facade.ModelFacade;
+import facade.config.ModelFacadeConfig;
 import model.SubstrateNetwork;
 import model.SubstrateServer;
 import model.VirtualServer;
@@ -161,6 +162,29 @@ public class ModelFacadeEmbeddingTest {
 		Assertions.assertThrows(UnsupportedOperationException.class, () -> {
 			ModelFacade.getInstance().embedLinkToLink("3", "6");
 		});
+	}
+	
+	@Test
+	public void testEmbedLinkBwIgnore() {
+		// Set ignore bandwidth to true in ModelFacadeConfig.
+		ModelFacadeConfig.IGNORE_BW = true;
+		
+		ModelFacade.getInstance().addServerToNetwork("1", "sub", 0, 0, 0, 0);
+		ModelFacade.getInstance().addServerToNetwork("2", "sub", 0, 0, 0, 0);
+		ModelFacade.getInstance().addLinkToNetwork("3","sub", 10, "1", "2");
+		
+		ModelFacade.getInstance().addServerToNetwork("4", "virt", 0, 0, 0, 0);
+		ModelFacade.getInstance().addServerToNetwork("5", "virt", 0, 0, 0, 0);
+		ModelFacade.getInstance().addLinkToNetwork("6","virt", 12, "4", "5");
+		
+		ModelFacade.getInstance().embedLinkToLink("3", "6");
+		
+		final SubstrateLink subLink = (SubstrateLink) ModelFacade.getInstance().getLinkById("3");
+		assertEquals(1, subLink.getGuestLinks().size());
+		assertEquals("6", subLink.getGuestLinks().get(0).getName());
+		
+		// Reset configuration afterwards
+		ModelFacadeConfig.IGNORE_BW = false;
 	}
 	
 	@Ignore

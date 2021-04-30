@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.moflon.core.utilities.eMoflonEMFUtil;
 
+import facade.config.ModelFacadeConfig;
 import facade.dijkstra.Dijkstra;
 import model.Link;
 import model.ModelFactory;
@@ -811,17 +812,19 @@ public class ModelFacade {
 		final VirtualLink virtLink = (VirtualLink) getLinkById(virtualId);
 		boolean success = true;
 		
-		if (subLink.getResidualBandwidth() >= virtLink.getBandwidth()) {
-			success &= subLink.getGuestLinks().add(virtLink);
-			virtLink.getHosts().add(subLink);
-			
-			// Update residual values of the host
-			final int oldResBw = subLink.getResidualBandwidth();
-			subLink.setResidualBandwidth(oldResBw - virtLink.getBandwidth());
-		} else {
-			throw new UnsupportedOperationException("Embeding of link not possible due resource "
-					+ "constraint violation.");
+		if (!ModelFacadeConfig.IGNORE_BW) {
+			if (subLink.getResidualBandwidth() < virtLink.getBandwidth()) {
+				throw new UnsupportedOperationException("Embeding of link not possible due resource "
+						+ "constraint violation.");
+			}
 		}
+
+		success &= subLink.getGuestLinks().add(virtLink);
+		virtLink.getHosts().add(subLink);
+		
+		// Update residual values of the host
+		final int oldResBw = subLink.getResidualBandwidth();
+		subLink.setResidualBandwidth(oldResBw - virtLink.getBandwidth());
 		
 		return success;
 	}
