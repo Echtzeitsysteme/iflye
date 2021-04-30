@@ -439,6 +439,15 @@ public class ModelFacade {
 		}
 	}
 	
+	/**
+	 * Creates the bidirectional path (forward and backward) from a given list of links.
+	 * The order of the list elements is important: The source node of the forward path is
+	 * determined by the source node of the first link and the target node of the forward
+	 * path is determined by the target node of the last link.
+	 * For the backward path, both nodes described above are swapped.
+	 * 
+	 * @param links Input list of links to generate paths from.
+	 */
 	private void createBidirectionalPathFromLinks(final List<SubstrateLink> links) {
 		// Get all nodes from links
 		final Set<Node> nodes = new HashSet<Node>();
@@ -482,6 +491,13 @@ public class ModelFacade {
 		}
 	}
 	
+	/**
+	 * Calculates the minimum bandwidth found in a collection of links. This method is used
+	 * to calculate the actual bandwidth of a path.
+	 * 
+	 * @param links Collection of links to search the minimal value in.
+	 * @return Minimal bandwidth value of all links from the collection.
+	 */
 	private int getMinimumBandwidthFromSubstrateLinks(final Collection<SubstrateLink> links) {
 		int val = Integer.MAX_VALUE;
 		
