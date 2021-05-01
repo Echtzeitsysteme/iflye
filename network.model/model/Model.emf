@@ -1,5 +1,5 @@
 @GenModel(documentation="Meta-model for networks")
-@namespace(uri="platform:/resource/network.model/model/metamodel.ecore", prefix="netowrk.model")
+@namespace(uri="platform:/resource/network.model/model/Model.ecore", prefix="network.model")
 package model;
 
 @GenModel(documentation="A root node as entry point.")

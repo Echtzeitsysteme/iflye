@@ -2,6 +2,6 @@
 <?eclipse version="3.0"?><!--
 --><plugin>
   <extension point="org.eclipse.emf.ecore.generated_package">
-    <package class="model.ModelPackage" genModel="model/metamodel.genmodel" uri="platform:/resource/network.model/model/metamodel.ecore"/>
+    <package class="model.ModelPackage" genModel="model/Model.genmodel" uri="platform:/resource/network.model/model/Model.ecore"/>
   </extension>
 </plugin>
