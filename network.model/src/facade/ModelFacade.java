@@ -565,18 +565,6 @@ public class ModelFacade {
   }
 
   /**
-   * Returns all links from a given path. This method exists to convert from EList Set.
-   * 
-   * @param p Path to return all links from.
-   * @return All links from given path p.
-   */
-  public Set<Link> getAllLinksFromPath(final Path p) {
-    final Set<Link> links = new HashSet<Link>();
-    links.addAll(p.getLinks());
-    return links;
-  }
-
-  /**
    * Returns true, if a given node ID exists in a given network model.
    * 
    * @param id Node ID to check.
@@ -614,46 +602,6 @@ public class ModelFacade {
     generatedMetaPaths.clear();
     visitedNodes.clear();
     linksUntilNode.clear();
-  }
-
-  /**
-   * Returns all outgoing links from provided server. This method is necessary to convert from EList
-   * to List.
-   * 
-   * @param s Server to return all outgoing links from.
-   * @return List of outgoing links from server s.
-   */
-  public List<Link> getOutgoingLinksFromServer(final Server s) {
-    final List<Link> outgoingLinks = new LinkedList<Link>();
-    outgoingLinks.addAll(s.getOutgoingLinks());
-    return outgoingLinks;
-  }
-
-  /**
-   * Returns all outgoing paths from provided server. This method is necessary to convert from EList
-   * to List.
-   * 
-   * @param s Server to return all outgoing paths from.
-   * @return List of outgoing paths from server s.
-   */
-  public List<Path> getOutgoingPathsFromServer(final Server s) {
-    final List<Path> outgoingPaths = new LinkedList<Path>();
-    outgoingPaths.addAll(s.getOutgoingPaths());
-    return outgoingPaths;
-  }
-
-  /**
-   * Returns all switches from a given path.
-   * 
-   * @param p Path to get all switches from.
-   * @return Set of all switches from path p.
-   */
-  public Set<Switch> getSwitchesFromPath(final Path p) {
-    final Set<Switch> switches = new HashSet<Switch>();
-    p.getNodes().stream().filter(pa -> pa instanceof Switch).forEach(pa -> {
-      switches.add((Switch) pa);
-    });
-    return switches;
   }
 
   /**

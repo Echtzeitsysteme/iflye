@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 import algorithms.AbstractAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
@@ -223,7 +224,7 @@ public class TafAlgorithm extends AbstractAlgorithm {
   private void checkPreConditions() {
     // Every substrate server must be connected to exactly one switch
     for (final SubstrateServer s : substrateServers) {
-      if (ModelFacade.getInstance().getOutgoingLinksFromServer(s).size() != 1) {
+      if (s.getOutgoingLinks().size() != 1) {
         throw new UnsupportedOperationException(
             "Substrate server connected to more than one other node.");
       }
@@ -333,8 +334,9 @@ public class TafAlgorithm extends AbstractAlgorithm {
 
     // Search for all switches that are part of the new embedding
     for (final SubstrateServer s : servers) {
-      for (final Path p : ModelFacade.getInstance().getOutgoingPathsFromServer(s)) {
-        switches.addAll(ModelFacade.getInstance().getSwitchesFromPath(p));
+      for (final Path p : s.getOutgoingPaths()) {
+        switches.addAll(p.getNodes().stream().filter(Switch.class::isInstance)
+            .map(Switch.class::cast).collect(Collectors.toSet()));
       }
     }
 
@@ -591,8 +593,7 @@ public class TafAlgorithm extends AbstractAlgorithm {
       final SubstrateServer serverS) {
     int cost;
     final Set<Switch> rackSwitches = getRackSwitches();
-    final SubstrateLink link =
-        (SubstrateLink) ModelFacade.getInstance().getOutgoingLinksFromServer(serverS).get(0);
+    final SubstrateLink link = (SubstrateLink) serverS.getOutgoingLinks().get(0);
     final SubstrateNode node = (SubstrateNode) link.getTarget();
     if (node instanceof Switch) {
       rackSwitches.add((Switch) node);
@@ -633,7 +634,7 @@ public class TafAlgorithm extends AbstractAlgorithm {
     // Iterate over all substrate servers with planned mappings
     for (final SubstrateServer s : placedVms.values()) {
       // Iterate over all outgoing links of this particular server
-      for (final Link l : ModelFacade.getInstance().getOutgoingLinksFromServer(s)) {
+      for (final Link l : s.getOutgoingLinks()) {
         // Check if link target is a switch
         final Node n = l.getTarget();
         if (n instanceof Switch) {
