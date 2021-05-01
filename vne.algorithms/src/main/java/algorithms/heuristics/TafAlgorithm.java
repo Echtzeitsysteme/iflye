@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import algorithms.AbstractAlgorithm;
 import facade.ModelFacade;
 import model.Link;
 import model.Node;
@@ -39,12 +40,7 @@ import model.VirtualServer;
  * @author Stefan Tomaszek (stefan.tomaszek@es.tu-darmstadt.de)
  * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
  */
-public class TafAlgorithm {
-
-  /**
-   * The instance of the TAF algorithm. Ensures Singleton pattern use only.
-   */
-  private static TafAlgorithm instance;
+public class TafAlgorithm extends AbstractAlgorithm {
 
   /*
    * Algorithm specific constants.
@@ -81,16 +77,6 @@ public class TafAlgorithm {
    * All substrate servers of the substrate network.
    */
   final List<SubstrateServer> substrateServers = new LinkedList<SubstrateServer>();
-
-  /**
-   * The virtual network (model).
-   */
-  final VirtualNetwork vNet;
-
-  /**
-   * The substrate network (model).
-   */
-  final SubstrateNetwork sNet;
 
   /**
    * Map of virtual -> substrate server.
@@ -195,29 +181,16 @@ public class TafAlgorithm {
 
   }
 
-
-  /**
-   * Initializes a instance of this algorithm if there was none before.
-   * 
-   * @param vNet Virtual network to generate embedding for.
-   * @param sNet Substrate network to embed virtual network in.
-   * @return Instance of the TAF algorithm.
-   */
-  public static TafAlgorithm init(final VirtualNetwork vNet, final SubstrateNetwork sNet) {
-    if (instance == null) {
-      instance = new TafAlgorithm(vNet, sNet);
-    }
-    return instance;
-  }
-
   /**
    * Private constructor that initializes the instance of this algorithm. Only gets called by the
    * public initialization method {@link #init(VirtualNetwork, SubstrateNetwork)}.
    * 
-   * @param vNet Virtual network to generate embedding for.
    * @param sNet Substrate network to embed virtual network in.
+   * @param vNet Virtual network to generate embedding for.
    */
-  private TafAlgorithm(final VirtualNetwork vNet, final SubstrateNetwork sNet) {
+  public TafAlgorithm(final SubstrateNetwork sNet, final VirtualNetwork vNet) {
+    super(sNet, vNet);
+
     // Add virtual links from model
     final List<Link> vLinks = ModelFacade.getInstance().getAllLinksOfNetwork(vNet.getName());
     for (final Link l : vLinks) {
@@ -235,10 +208,6 @@ public class TafAlgorithm {
     for (final Node n : sServers) {
       substrateServers.add((SubstrateServer) n);
     }
-
-    // Save network objects
-    this.vNet = vNet;
-    this.sNet = sNet;
 
     // Check pre-conditions
     checkPreConditions();
@@ -268,6 +237,7 @@ public class TafAlgorithm {
    * 
    * @return True if execution was successful and a valid embedding was found.
    */
+  @Override
   public boolean execute() {
     final boolean success = algorithm1();
     if (success) {
@@ -443,7 +413,7 @@ public class TafAlgorithm {
    * @param servers Collection of servers to sort.
    * @return Sorted list of provided substrate servers.
    */
-  private List<SubstrateServer> sortServerCollection(Collection<SubstrateServer> servers) {
+  private List<SubstrateServer> sortServerCollection(final Collection<SubstrateServer> servers) {
     final List<SubstrateServer> sorted = new LinkedList<SubstrateServer>();
     final List<String> names = new LinkedList<String>();
 

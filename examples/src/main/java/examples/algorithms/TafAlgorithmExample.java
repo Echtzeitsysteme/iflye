@@ -28,7 +28,7 @@ public class TafAlgorithmExample {
     final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
     // Initialize and execute algorithm
-    final TafAlgorithm taf = TafAlgorithm.init(vNet, sNet);
+    final TafAlgorithm taf = new TafAlgorithm(sNet, vNet);
     taf.execute();
 
     // Save model to file
