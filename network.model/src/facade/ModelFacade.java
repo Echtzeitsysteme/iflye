@@ -896,16 +896,28 @@ public class ModelFacade {
     success &= subPath.getGuestLinks().add(virtLink);
     virtLink.getHosts().add(subPath);
 
+    // Add guest link to all substrate links contained in the path?
+    if (ModelFacadeConfig.LINK_HOST_EMBED_PATH) {
+      for (final Link l : subPath.getLinks()) {
+        SubstrateLink sl = (SubstrateLink) l;
+        sl.getGuestLinks().add(virtLink);
+      }
+    }
+
     // Update residual values of the host path
     if (!ModelFacadeConfig.IGNORE_BW) {
       final int oldResBw = subPath.getResidualBandwidth();
       subPath.setResidualBandwidth(oldResBw - virtLink.getBandwidth());
 
       // Update all residual bandwidths of all links of the path
-      for (Link actLink : subPath.getLinks()) {
-        SubstrateLink actSubLink = (SubstrateLink) actLink;
-        final int resBw = actSubLink.getResidualBandwidth();
-        actSubLink.setResidualBandwidth(resBw - virtLink.getBandwidth());
+      // This should only be done, if the virtual links are *not* embedded to the substrate ones
+      // before, because else we would subtract the virtual bandwidth twice.
+      if (!ModelFacadeConfig.LINK_HOST_EMBED_PATH) {
+        for (Link actLink : subPath.getLinks()) {
+          SubstrateLink actSubLink = (SubstrateLink) actLink;
+          final int resBw = actSubLink.getResidualBandwidth();
+          actSubLink.setResidualBandwidth(resBw - virtLink.getBandwidth());
+        }
       }
     }
 
