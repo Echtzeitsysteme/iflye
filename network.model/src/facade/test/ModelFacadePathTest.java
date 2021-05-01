@@ -11,6 +11,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,9 +31,32 @@ import model.Switch;
  */
 public class ModelFacadePathTest {
 
+	/*
+	 * Variables to save the ModelFacade's configuration of path limits to.
+	 */
+	/**
+	 * Old lower limit value.
+	 */
+	int oldLowerLimit;
+
+	/**
+	 * Old upper limit value.
+	 */
+	int oldUpperLimit;
+	
 	@BeforeEach
 	public void resetModel() {
 		ModelFacade.getInstance().resetAll();
+		
+		// Save old values
+		oldLowerLimit = ModelFacadeConfig.MIN_PATH_LENGTH;
+		oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
+	}
+	
+	@AfterEach
+	public void restoreConfig() {
+		ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
+		ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
 	}
 	
 	@Test
@@ -43,6 +68,8 @@ public class ModelFacadePathTest {
 	@Test
 	public void testOneTierPathCreationTwoServers() {
 		oneTierSetupTwoServers();
+		ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+		ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 		
 		ModelFacade.getInstance().createAllPathsForNetwork("net");
 		final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
@@ -66,6 +93,8 @@ public class ModelFacadePathTest {
 	@Test
 	public void testOneTierPathCreationFourServers() {
 		oneTierSetupFourServers();
+		ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+		ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 		
 		ModelFacade.getInstance().createAllPathsForNetwork("net");
 		final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
@@ -103,6 +132,8 @@ public class ModelFacadePathTest {
 	@Test
 	public void testTwoTierPathCreationFourServers() {
 		twoTierSetupFourServers();
+		ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+		ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 		
 		ModelFacade.getInstance().createAllPathsForNetwork("net");
 		final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
@@ -162,6 +193,8 @@ public class ModelFacadePathTest {
 	@Test
 	public void testTwoTierPathCreationFourServersTwoCoreSwitches() {
 		twoTierSetupFourServersTwoCoreSwitches();
+		ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+		ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 		
 		ModelFacade.getInstance().createAllPathsForNetwork("net");
 		final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
@@ -246,6 +279,8 @@ public class ModelFacadePathTest {
 	@Test
 	public void testTwoTierNumberOfHopsPerPath() {
 		twoTierSetupFourServers();
+		ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+		ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 		
 		ModelFacade.getInstance().createAllPathsForNetwork("net");
 		final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
@@ -314,6 +349,8 @@ public class ModelFacadePathTest {
 	@Test
 	public void testOneTierContainedLinksNames() {
 		oneTierSetupTwoServers();
+		ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+		ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 		
 		ModelFacade.getInstance().createAllPathsForNetwork("net");
 		final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
@@ -348,6 +385,8 @@ public class ModelFacadePathTest {
 	@Test
 	public void testOneTierContainedNodesNames() {
 		oneTierSetupTwoServers();
+		ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+		ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 		
 		ModelFacade.getInstance().createAllPathsForNetwork("net");
 		final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
@@ -378,10 +417,6 @@ public class ModelFacadePathTest {
 	
 	@Test
 	public void testNoPathsLowerLimit() {
-		// Save old values
-		final int oldLowerLimit = ModelFacadeConfig.MIN_PATH_LENGTH;
-		final int oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
-		
 		// Setup for this test
 		ModelFacadeConfig.MIN_PATH_LENGTH = 10;
 		oneTierSetupFourServers();
@@ -389,18 +424,10 @@ public class ModelFacadePathTest {
 		
 		final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
 		assertTrue(generatedPaths.isEmpty());
-		
-		// Restore old values
-		ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
-		ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
 	}
 	
 	@Test
 	public void testNoPathsUpperLimit() {
-		// Save old values
-		final int oldLowerLimit = ModelFacadeConfig.MIN_PATH_LENGTH;
-		final int oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
-		
 		// Setup for this test
 		ModelFacadeConfig.MAX_PATH_LENGTH = 0;
 		oneTierSetupFourServers();
@@ -408,18 +435,10 @@ public class ModelFacadePathTest {
 		
 		final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
 		assertTrue(generatedPaths.isEmpty());
-		
-		// Restore old values
-		ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
-		ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
 	}
 	
 	@Test
-	public void testOnlyPathsWithTwoHops() {
-		// Save old values
-		final int oldLowerLimit = ModelFacadeConfig.MIN_PATH_LENGTH;
-		final int oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
-		
+	public void testOnlyPathsWithTwoHops() {		
 		// Setup for this test
 		ModelFacadeConfig.MIN_PATH_LENGTH = 2;
 		ModelFacadeConfig.MAX_PATH_LENGTH = 2;
@@ -434,18 +453,10 @@ public class ModelFacadePathTest {
 			assertEquals(2, p.getLinks().size());
 			assertEquals(3, p.getNodes().size());
 		}
-		
-		// Restore old values
-		ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
-		ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
 	}
 	
 	@Test
 	public void testOnlyPathsWithThreeHops() {
-		// Save old values
-		final int oldLowerLimit = ModelFacadeConfig.MIN_PATH_LENGTH;
-		final int oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
-		
 		// Setup for this test
 		ModelFacadeConfig.MIN_PATH_LENGTH = 3;
 		ModelFacadeConfig.MAX_PATH_LENGTH = 3;
@@ -460,10 +471,6 @@ public class ModelFacadePathTest {
 			assertEquals(3, p.getLinks().size());
 			assertEquals(4, p.getNodes().size());
 		}
-		
-		// Restore old values
-		ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
-		ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
 	}
 	
 	/*
