@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import facade.ModelFacade;
+import facade.config.ModelFacadeConfig;
 import model.Link;
 import model.Node;
 import model.Path;
@@ -373,6 +374,96 @@ public class ModelFacadePathTest {
 		for (final Path p : allPaths) {
 			assertNotNull(p.getName());
 		}
+	}
+	
+	@Test
+	public void testNoPathsLowerLimit() {
+		// Save old values
+		final int oldLowerLimit = ModelFacadeConfig.MIN_PATH_LENGTH;
+		final int oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
+		
+		// Setup for this test
+		ModelFacadeConfig.MIN_PATH_LENGTH = 10;
+		oneTierSetupFourServers();
+		ModelFacade.getInstance().createAllPathsForNetwork("net");
+		
+		final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+		assertTrue(generatedPaths.isEmpty());
+		
+		// Restore old values
+		ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
+		ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
+	}
+	
+	@Test
+	public void testNoPathsUpperLimit() {
+		// Save old values
+		final int oldLowerLimit = ModelFacadeConfig.MIN_PATH_LENGTH;
+		final int oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
+		
+		// Setup for this test
+		ModelFacadeConfig.MAX_PATH_LENGTH = 0;
+		oneTierSetupFourServers();
+		ModelFacade.getInstance().createAllPathsForNetwork("net");
+		
+		final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+		assertTrue(generatedPaths.isEmpty());
+		
+		// Restore old values
+		ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
+		ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
+	}
+	
+	@Test
+	public void testOnlyPathsWithTwoHops() {
+		// Save old values
+		final int oldLowerLimit = ModelFacadeConfig.MIN_PATH_LENGTH;
+		final int oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
+		
+		// Setup for this test
+		ModelFacadeConfig.MIN_PATH_LENGTH = 2;
+		ModelFacadeConfig.MAX_PATH_LENGTH = 2;
+		twoTierSetupFourServers();
+		ModelFacade.getInstance().createAllPathsForNetwork("net");
+		
+		final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+		assertFalse(generatedPaths.isEmpty());
+		
+		for (final Path p : generatedPaths) {
+			assertEquals(2, p.getHops());
+			assertEquals(2, p.getLinks().size());
+			assertEquals(3, p.getNodes().size());
+		}
+		
+		// Restore old values
+		ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
+		ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
+	}
+	
+	@Test
+	public void testOnlyPathsWithThreeHops() {
+		// Save old values
+		final int oldLowerLimit = ModelFacadeConfig.MIN_PATH_LENGTH;
+		final int oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
+		
+		// Setup for this test
+		ModelFacadeConfig.MIN_PATH_LENGTH = 3;
+		ModelFacadeConfig.MAX_PATH_LENGTH = 3;
+		twoTierSetupFourServers();
+		ModelFacade.getInstance().createAllPathsForNetwork("net");
+		
+		final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+		assertFalse(generatedPaths.isEmpty());
+		
+		for (final Path p : generatedPaths) {
+			assertEquals(3, p.getHops());
+			assertEquals(3, p.getLinks().size());
+			assertEquals(4, p.getNodes().size());
+		}
+		
+		// Restore old values
+		ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
+		ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
 	}
 	
 	/*

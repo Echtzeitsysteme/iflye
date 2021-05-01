@@ -450,6 +450,12 @@ public class ModelFacade {
 	 * @param links Input list of links to generate paths from.
 	 */
 	private void createBidirectionalPathFromLinks(final List<SubstrateLink> links) {
+		// Check path limits
+		if (links.size() < ModelFacadeConfig.MIN_PATH_LENGTH ||
+				links.size() > ModelFacadeConfig.MAX_PATH_LENGTH) {
+			return;
+		}
+		
 		// Get all nodes from links
 		final Set<Node> nodes = new HashSet<Node>();
 		
