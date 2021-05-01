@@ -243,6 +243,13 @@ public class TafAlgorithm extends AbstractAlgorithm {
     if (!ModelFacadeConfig.IGNORE_BW) {
       throw new UnsupportedOperationException("Bandwidth ignore flag must be set.");
     }
+
+    // There must be generated substrate paths
+    if (sNet.getPaths().isEmpty()) {
+      throw new UnsupportedOperationException("Generated paths are missing in substrate network.");
+    }
+
+    // TODO: Maybe check for total amount of paths here!
   }
 
   /**
