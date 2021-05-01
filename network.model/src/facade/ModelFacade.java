@@ -452,7 +452,7 @@ public class ModelFacade {
     final Node target = links.get(lastIndex).getTarget();
 
     // Create forward path
-    if (!doesPathWithSourceAndTargetExist(source.getNetwork(), source, target)) {
+    if (!doesPathWithSourceAndTargetExist(source, target)) {
       final Path forward = genMetaPath(source, target);
       forward.setHops(links.size());
       forward.setNetwork(links.get(0).getNetwork());
@@ -465,7 +465,7 @@ public class ModelFacade {
     }
 
     // Create reverse path
-    if (!doesPathWithSourceAndTargetExist(target.getNetwork(), target, source)) {
+    if (!doesPathWithSourceAndTargetExist(target, source)) {
       final Path reverse = genMetaPath(target, source);
       reverse.setHops(links.size());
       reverse.setNetwork(links.get(0).getNetwork());
@@ -554,25 +554,14 @@ public class ModelFacade {
   }
 
   /**
-   * This method checks the availability of a path with given source and target node and the given
-   * network.
+   * This method checks the availability of a path with given source and target node.
    * 
-   * @param networkd Network to search path for.
    * @param source Source to search path for.
    * @param target Target to search path for.
    * @return True if a path with given parameters already exists.
    */
-  public boolean doesPathWithSourceAndTargetExist(final Network net, final Node source,
-      final Node target) {
-    SubstrateNetwork snet = (SubstrateNetwork) net;
-    for (Path p : snet.getPaths()) {
-      if (p.getSource().equals(source) && p.getTarget().equals(target)) {
-        return true;
-      }
-    }
-
-    return false;
-    // TODO: Refactor this method using #getPathFromSourceToTarget(Node,Node)
+  public boolean doesPathWithSourceAndTargetExist(final Node source, final Node target) {
+    return getPathFromSourceToTarget(source, target) != null;
   }
 
   /**
