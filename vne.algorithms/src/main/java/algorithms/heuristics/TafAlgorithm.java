@@ -14,13 +14,16 @@ import java.util.Set;
 import java.util.TreeSet;
 import algorithms.AbstractAlgorithm;
 import facade.ModelFacade;
+import facade.config.ModelFacadeConfig;
 import model.Link;
 import model.Node;
+import model.Path;
 import model.Server;
 import model.SubstrateLink;
 import model.SubstrateNetwork;
 import model.SubstrateNode;
 import model.SubstrateServer;
+import model.SubstrateSwitch;
 import model.Switch;
 import model.VirtualLink;
 import model.VirtualNetwork;
@@ -230,6 +233,23 @@ public class TafAlgorithm extends AbstractAlgorithm {
     if (virtualServers.size() <= 1) {
       throw new UnsupportedOperationException("There are not enough virtual servers available.");
     }
+
+    // Path creation has to be enabled for paths with length = 1
+    if (ModelFacadeConfig.MIN_PATH_LENGTH != 1) {
+      throw new UnsupportedOperationException("Minimum path length must be 1.");
+    }
+
+    // Bandwidth ignore must be true
+    if (!ModelFacadeConfig.IGNORE_BW) {
+      throw new UnsupportedOperationException("Bandwidth ignore flag must be set.");
+    }
+
+    // There must be generated substrate paths
+    if (sNet.getPaths().isEmpty()) {
+      throw new UnsupportedOperationException("Generated paths are missing in substrate network.");
+    }
+
+    // TODO: Maybe check for total amount of paths here!
   }
 
   /**
@@ -260,23 +280,75 @@ public class TafAlgorithm extends AbstractAlgorithm {
     }
 
     // Embed all links and the switch
+    final String vSwitchId =
+        ModelFacade.getInstance().getAllSwitchesOfNetwork(vNet.getName()).get(0).getName();
+
     if (allVirtualServersToOneSubstrateServer()) {
       // If the virtual network can be placed onto one substrate server
       // Switch
-      Iterator<SubstrateServer> sServerIt = placedVms.values().iterator();
+      final Iterator<SubstrateServer> sServerIt = placedVms.values().iterator();
       final String sServerId = sServerIt.next().getName();
-      final String vSwitchId =
-          ModelFacade.getInstance().getAllSwitchesOfNetwork(vNet.getName()).get(0).getName();
       ModelFacade.getInstance().embedSwitchToNode(sServerId, vSwitchId);
 
       // Links
-      for (VirtualLink l : virtualLinks) {
+      for (final VirtualLink l : virtualLinks) {
         ModelFacade.getInstance().embedLinkToServer(sServerId, l.getName());
       }
     } else {
       // If the virtual network can *not* be placed onto one substrate server
-      throw new UnsupportedOperationException("Not implemented, yet!");
+      // throw new UnsupportedOperationException("Not implemented, yet!");
+      // TODO
+
+      // Get lowest common substrate switch -> Place virtual switch there
+      final SubstrateSwitch lowestCommonSwitch = getLowestCommonSwitch(placedVms.values());
+      ModelFacade.getInstance().embedSwitchToNode(lowestCommonSwitch.getName(), vSwitchId);
+
+      // Get links from servers to that switch -> Embed virtual links onto them
+      for (final VirtualLink l : virtualLinks) {
+        Node source = null;
+        Node target = null;
+
+        // links source = server -> links target = switch
+        if (l.getSource() instanceof Server) {
+          source = placedVms.get(l.getSource());
+          target = lowestCommonSwitch;
+        } else {
+          // links source = switch -> links target = server
+          source = lowestCommonSwitch;
+          target = placedVms.get(l.getTarget());
+
+        }
+
+        // Forward only, because all backward links are part of the collection virtualLinks
+        final Path sPath = ModelFacade.getInstance().getPathFromSourceToTarget(source, target);
+        // final Set<Link> sLinks = ModelFacade.getInstance().getAllLinksFromPath(sPath);
+        ModelFacade.getInstance().embedLinkToPath(sPath.getName(), l.getName());
+      }
     }
+  }
+
+  private SubstrateSwitch getLowestCommonSwitch(final Collection<SubstrateServer> serverCol) {
+    final List<SubstrateServer> servers = new LinkedList<SubstrateServer>(serverCol);
+    final Set<Switch> switches = new HashSet<Switch>();
+
+    // Search for all switches that are part of the new embedding
+    for (final SubstrateServer s : servers) {
+      for (final Path p : ModelFacade.getInstance().getOutgoingPathsFromServer(s)) {
+        switches.addAll(ModelFacade.getInstance().getSwitchesFromPath(p));
+      }
+    }
+
+    // Find highest placed switch (lowest depth value)
+    int lowestDepth = Integer.MAX_VALUE;
+    Switch lowestSwitch = null;
+    for (final Switch s : switches) {
+      if (s.getDepth() < lowestDepth) {
+        lowestDepth = s.getDepth();
+        lowestSwitch = s;
+      }
+    }
+
+    return (SubstrateSwitch) lowestSwitch;
   }
 
   /**
