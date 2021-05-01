@@ -572,6 +572,19 @@ public class ModelFacade {
     }
 
     return false;
+    // TODO: Refactor this method using #getPathFromSourceToTarget(Node,Node)
+  }
+
+  /**
+   * Returns all links from a given path. This method exists to convert from EList Set.
+   * 
+   * @param p Path to return all links from.
+   * @return All links from given path p.
+   */
+  public Set<Link> getAllLinksFromPath(final Path p) {
+    final Set<Link> links = new HashSet<Link>();
+    links.addAll(p.getLinks());
+    return links;
   }
 
   /**
@@ -622,9 +635,55 @@ public class ModelFacade {
    * @return List of outgoing links from server s.
    */
   public List<Link> getOutgoingLinksFromServer(final Server s) {
-    List<Link> outgoingLinks = new LinkedList<Link>();
+    final List<Link> outgoingLinks = new LinkedList<Link>();
     outgoingLinks.addAll(s.getOutgoingLinks());
     return outgoingLinks;
+  }
+
+  /**
+   * Returns all outgoing paths from provided server. This method is necessary to convert from EList
+   * to List.
+   * 
+   * @param s Server to return all outgoing paths from.
+   * @return List of outgoing paths from server s.
+   */
+  public List<Path> getOutgoingPathsFromServer(final Server s) {
+    final List<Path> outgoingPaths = new LinkedList<Path>();
+    outgoingPaths.addAll(s.getOutgoingPaths());
+    return outgoingPaths;
+  }
+
+  /**
+   * Returns all switches from a given path.
+   * 
+   * @param p Path to get all switches from.
+   * @return Set of all switches from path p.
+   */
+  public Set<Switch> getSwitchesFromPath(final Path p) {
+    final Set<Switch> switches = new HashSet<Switch>();
+    p.getNodes().stream().filter(pa -> pa instanceof Switch).forEach(pa -> {
+      switches.add((Switch) pa);
+    });
+    return switches;
+  }
+
+  /**
+   * Returns a path from source node to target node if such a path exists. Else it returns null.
+   * 
+   * @param source Source node.
+   * @param target Target node.
+   * @return Path if a path between source and target does exist.
+   */
+  public Path getPathFromSourceToTarget(final Node source, final Node target) {
+    final List<Path> allPaths = getAllPathsOfNetwork(source.getNetwork().getName());
+
+    for (final Path p : allPaths) {
+      if (p.getSource().equals(source) && p.getTarget().equals(target)) {
+        return p;
+      }
+    }
+
+    return null;
   }
 
   /**
@@ -807,8 +866,10 @@ public class ModelFacade {
     virtLink.getHosts().add(subLink);
 
     // Update residual values of the host
-    final int oldResBw = subLink.getResidualBandwidth();
-    subLink.setResidualBandwidth(oldResBw - virtLink.getBandwidth());
+    if (!ModelFacadeConfig.IGNORE_BW) {
+      final int oldResBw = subLink.getResidualBandwidth();
+      subLink.setResidualBandwidth(oldResBw - virtLink.getBandwidth());
+    }
 
     return success;
   }
@@ -825,23 +886,27 @@ public class ModelFacade {
     final VirtualLink virtLink = (VirtualLink) getLinkById(virtualId);
     boolean success = true;
 
-    if (subPath.getResidualBandwidth() >= virtLink.getBandwidth()) {
-      success &= subPath.getGuestLinks().add(virtLink);
-      virtLink.getHosts().add(subPath);
-
-      // Update residual values of the host path
-      final int oldResBw = subPath.getResidualBandwidth();
-      subPath.setResidualBandwidth(oldResBw - virtLink.getBandwidth());
-    } else {
-      throw new UnsupportedOperationException(
-          "Embeding of link not possible due resource " + "constraint violation.");
+    if (!ModelFacadeConfig.IGNORE_BW) {
+      if (subPath.getResidualBandwidth() < virtLink.getBandwidth()) {
+        throw new UnsupportedOperationException(
+            "Embeding of link not possible due resource constraint violation.");
+      }
     }
 
-    // Update all residual bandwidths of all links of the path
-    for (Link actLink : subPath.getLinks()) {
-      SubstrateLink actSubLink = (SubstrateLink) actLink;
-      final int resBw = actSubLink.getResidualBandwidth();
-      actSubLink.setResidualBandwidth(resBw - virtLink.getBandwidth());
+    success &= subPath.getGuestLinks().add(virtLink);
+    virtLink.getHosts().add(subPath);
+
+    // Update residual values of the host path
+    if (!ModelFacadeConfig.IGNORE_BW) {
+      final int oldResBw = subPath.getResidualBandwidth();
+      subPath.setResidualBandwidth(oldResBw - virtLink.getBandwidth());
+
+      // Update all residual bandwidths of all links of the path
+      for (Link actLink : subPath.getLinks()) {
+        SubstrateLink actSubLink = (SubstrateLink) actLink;
+        final int resBw = actSubLink.getResidualBandwidth();
+        actSubLink.setResidualBandwidth(resBw - virtLink.getBandwidth());
+      }
     }
 
     return success;
