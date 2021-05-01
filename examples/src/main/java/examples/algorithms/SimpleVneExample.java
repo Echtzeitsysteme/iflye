@@ -4,6 +4,8 @@ import algorithms.simple.SimpleVne;
 import facade.ModelFacade;
 import generators.OneTierNetworkGenerator;
 import generators.config.OneTierConfig;
+import model.SubstrateNetwork;
+import model.VirtualNetwork;
 
 /**
  * Runnable example for the simple VNE algorithm.
@@ -21,8 +23,13 @@ public class SimpleVneExample {
     final OneTierConfig virtualConfig = new OneTierConfig(2, 1, false, 1, 1, 1, 5);
     OneTierNetworkGenerator.createOneTierNetwork("virt", virtualConfig, true);
 
-    // Execute algorithm
-    SimpleVne.execute("sub", "virt");
+    final SubstrateNetwork sNet =
+        (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
+    final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
+
+    // Create and execute algorithm
+    final SimpleVne svne = new SimpleVne(sNet, vNet);
+    svne.execute();
 
     // Save model to file
     ModelFacade.getInstance().persistModel();
