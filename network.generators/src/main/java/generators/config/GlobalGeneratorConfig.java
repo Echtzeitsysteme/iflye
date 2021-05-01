@@ -7,9 +7,9 @@ package generators.config;
  */
 public interface GlobalGeneratorConfig {
 
-	public static String SEPARATOR = "_";
-	public static String SERVER = "srv";
-	public static String SWITCH = "sw";
-	public static String LINK = "ln";
-	
+  public static String SEPARATOR = "_";
+  public static String SERVER = "srv";
+  public static String SWITCH = "sw";
+  public static String LINK = "ln";
+
 }
