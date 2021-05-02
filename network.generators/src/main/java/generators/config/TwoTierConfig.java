@@ -5,7 +5,7 @@ package generators.config;
  * 
  * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
  */
-public class TwoTierConfig {
+public class TwoTierConfig implements IGeneratorConfig {
 
   /**
    * One OneTierConfig is a rack in a two tier network.

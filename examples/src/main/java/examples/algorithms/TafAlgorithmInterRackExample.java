@@ -27,12 +27,13 @@ public class TafAlgorithmInterRackExample {
     final TwoTierConfig substrateConfig = new TwoTierConfig();
     substrateConfig.setNumberOfRacks(2);
     substrateConfig.setRack(sRackConfig);
-
-    TwoTierNetworkGenerator.createTwoTierNetwork("sub", substrateConfig, false);
+    final TwoTierNetworkGenerator subGen = new TwoTierNetworkGenerator(substrateConfig);
+    subGen.createNetwork("sub", false);
 
     // Virtual network = one tier network
     final OneTierConfig virtualConfig = new OneTierConfig(4, 1, false, 1, 1, 1, 5);
-    OneTierNetworkGenerator.createOneTierNetwork("virt", virtualConfig, true);
+    final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
+    virtGen.createNetwork("virt", true);
 
     final SubstrateNetwork sNet =
         (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
