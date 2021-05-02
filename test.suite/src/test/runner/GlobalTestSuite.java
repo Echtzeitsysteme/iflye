@@ -6,6 +6,8 @@ import algorithms.heuristics.TafAlgorithmTest;
 import facade.test.ModelFacadeCreationTest;
 import facade.test.ModelFacadeEmbeddingTest;
 import facade.test.ModelFacadePathTest;
+import generators.OneTierNetworkGeneratorTest;
+import generators.TwoTierNetworkGeneratorTest;
 
 /**
  * Global test suite class that enables running all registered junit tests at once in Eclipse.
@@ -15,7 +17,8 @@ import facade.test.ModelFacadePathTest;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ModelFacadeCreationTest.class, ModelFacadeEmbeddingTest.class,
-    ModelFacadePathTest.class, TafAlgorithmTest.class})
+    ModelFacadePathTest.class, TafAlgorithmTest.class, OneTierNetworkGeneratorTest.class,
+    TwoTierNetworkGeneratorTest.class})
 public class GlobalTestSuite {
 
 }

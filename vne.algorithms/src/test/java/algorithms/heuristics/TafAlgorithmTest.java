@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import facade.ModelFacade;
@@ -24,9 +25,26 @@ import model.VirtualSwitch;
  */
 public class TafAlgorithmTest {
 
+  /*
+   * Variables to save the ModelFacade's configuration of path limits to.
+   */
+  /**
+   * Old lower limit value.
+   */
+  int oldLowerLimit;
+
+  /**
+   * Old upper limit value.
+   */
+  int oldUpperLimit;
+
   @Before
   public void resetModel() {
     ModelFacade.getInstance().resetAll();
+
+    // Save old values
+    oldLowerLimit = ModelFacadeConfig.MIN_PATH_LENGTH;
+    oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
 
     // Network setup
     ModelFacade.getInstance().addNetworkToRoot("sub", false);
@@ -35,6 +53,12 @@ public class TafAlgorithmTest {
     // Normal model setup
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
     ModelFacadeConfig.IGNORE_BW = true;
+  }
+
+  @After
+  public void restoreConfig() {
+    ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
+    ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
   }
 
   /*
