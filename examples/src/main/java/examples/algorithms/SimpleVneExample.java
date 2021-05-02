@@ -17,11 +17,13 @@ public class SimpleVneExample {
   public static void main(final String[] args) {
     // Substrate network = one tier network
     final OneTierConfig substrateConfig = new OneTierConfig(2, 1, false, 10, 10, 10, 20);
-    OneTierNetworkGenerator.createOneTierNetwork("sub", substrateConfig, false);
+    final OneTierNetworkGenerator subGen = new OneTierNetworkGenerator(substrateConfig);
+    subGen.createNetwork("sub", false);
 
     // Virtual network = one tier network
     final OneTierConfig virtualConfig = new OneTierConfig(2, 1, false, 1, 1, 1, 5);
-    OneTierNetworkGenerator.createOneTierNetwork("virt", virtualConfig, true);
+    final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
+    virtGen.createNetwork("virt", true);
 
     final SubstrateNetwork sNet =
         (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");

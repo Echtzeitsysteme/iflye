@@ -2,6 +2,7 @@ package generators;
 
 import java.util.HashSet;
 import facade.ModelFacade;
+import generators.config.IGeneratorConfig;
 import generators.config.OneTierConfig;
 import generators.utils.GenUtils;
 
@@ -10,27 +11,34 @@ import generators.utils.GenUtils;
  * 
  * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
  */
-public class OneTierNetworkGenerator {
+public class OneTierNetworkGenerator implements INetworkGenerator {
+
+  /**
+   * Configuration of this network generator instance.
+   */
+  private final OneTierConfig config;
 
   /**
    * Private constructor to avoid direct instantiation of this class.
+   * 
+   * @param config Configuration for this generator.
    */
-  private OneTierNetworkGenerator() {}
+  public OneTierNetworkGenerator(final IGeneratorConfig config) {
+    if (!(config instanceof OneTierConfig)) {
+      throw new IllegalArgumentException("Configuration instance is not an OneTierConfig.");
+    }
 
-  /**
-   * ModelFacade instance.
-   */
-  static private ModelFacade facade = ModelFacade.getInstance();
+    this.config = (OneTierConfig) config;
+  }
 
   /**
    * Method to create the network.
    * 
    * @param networkId ID of the network to create.
-   * @param config OneTierConfig with all settings.
    * @param isVirtual True if network should be virtual.
    */
-  public static void createOneTierNetwork(final String networkId, final OneTierConfig config,
-      boolean isVirtual) {
+  @Override
+  public void createNetwork(final String networkId, boolean isVirtual) {
     final HashSet<String> serverIds = new HashSet<String>();
     final HashSet<String> switchIds = new HashSet<String>();
 

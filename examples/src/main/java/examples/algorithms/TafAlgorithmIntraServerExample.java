@@ -2,6 +2,7 @@ package examples.algorithms;
 
 import algorithms.heuristics.TafAlgorithm;
 import facade.ModelFacade;
+import facade.config.ModelFacadeConfig;
 import generators.OneTierNetworkGenerator;
 import generators.config.OneTierConfig;
 import model.SubstrateNetwork;
@@ -15,13 +16,19 @@ import model.VirtualNetwork;
 public class TafAlgorithmIntraServerExample {
 
   public static void main(final String[] args) {
+    // Setup
+    ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+    ModelFacadeConfig.IGNORE_BW = true;
+
     // Substrate network = one tier network
     final OneTierConfig substrateConfig = new OneTierConfig(2, 1, false, 10, 10, 10, 20);
-    OneTierNetworkGenerator.createOneTierNetwork("sub", substrateConfig, false);
+    final OneTierNetworkGenerator subGen = new OneTierNetworkGenerator(substrateConfig);
+    subGen.createNetwork("sub", false);
 
     // Virtual network = one tier network
     final OneTierConfig virtualConfig = new OneTierConfig(2, 1, false, 1, 1, 1, 5);
-    OneTierNetworkGenerator.createOneTierNetwork("virt", virtualConfig, true);
+    final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
+    virtGen.createNetwork("virt", true);
 
     final SubstrateNetwork sNet =
         (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");

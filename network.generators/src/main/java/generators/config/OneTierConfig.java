@@ -5,7 +5,7 @@ package generators.config;
  * 
  * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
  */
-public class OneTierConfig {
+public class OneTierConfig implements IGeneratorConfig {
 
   private int numberOfServers;
   private int numberOfSwitches;
