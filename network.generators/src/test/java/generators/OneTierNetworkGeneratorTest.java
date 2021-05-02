@@ -1,7 +1,9 @@
 package generators;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import java.util.List;
@@ -32,6 +34,10 @@ public class OneTierNetworkGeneratorTest {
   public void resetModel() {
     ModelFacade.getInstance().resetAll();
   }
+
+  /*
+   * Positive tests
+   */
 
   @Test
   public void testNoNetworksAfterInit() {
@@ -232,6 +238,30 @@ public class OneTierNetworkGeneratorTest {
   @Test
   public void testSwitchesConnected() {
     // TODO: Implement after implementing the feature.
+  }
+
+  @Test
+  public void allowNetworkIdAlreadyExists() {
+    final OneTierConfig config = new OneTierConfig(4, 2, false, 1, 1, 1, 1);
+    ModelFacade.getInstance().addNetworkToRoot("a", false);
+
+    final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(config);
+    gen.createNetwork("a", false);
+
+    assertFalse(ModelFacade.getInstance().getNetworkById("a").getNodes().isEmpty());
+    assertFalse(ModelFacade.getInstance().getNetworkById("a").getLinks().isEmpty());
+    assertFalse(ModelFacade.getInstance().getNetworkById("a").getPaths().isEmpty());
+  }
+
+  /*
+   * Negative tests
+   */
+
+  @Test
+  public void rejectConfigIsNull() {
+    assertThrows(IllegalArgumentException.class, () -> {
+      new OneTierNetworkGenerator(null);
+    });
   }
 
 }
