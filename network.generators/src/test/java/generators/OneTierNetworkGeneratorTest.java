@@ -114,8 +114,8 @@ public class OneTierNetworkGeneratorTest {
     // Links
     assertEquals(1000, net.getLinks().size());
 
-    // Paths, only 100 * 100 - 100 because of the default values for path limits
-    assertEquals(100 * 100 - 100, net.getPaths().size());
+    // Paths, only 100 * (100 1) because of the default values for path limits
+    assertEquals(100 * (100 - 1), net.getPaths().size());
   }
 
   @Test
