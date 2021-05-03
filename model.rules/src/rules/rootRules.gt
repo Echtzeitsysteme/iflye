@@ -1,5 +1,5 @@
 import "http://www.eclipse.org/emf/2002/Ecore"
-import "platform:/resource/network.model/model/metamodel.ecore"
+import "platform:/resource/network.model/model/Model.ecore"
 
 //
 // Root
