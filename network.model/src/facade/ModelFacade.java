@@ -602,6 +602,7 @@ public class ModelFacade {
     generatedMetaPaths.clear();
     visitedNodes.clear();
     linksUntilNode.clear();
+    counter.set(0);
   }
 
   /**

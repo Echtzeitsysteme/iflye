@@ -4,16 +4,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import model.Link;
@@ -41,7 +41,7 @@ public class ModelFacadePathTest {
    */
   int oldUpperLimit;
 
-  @BeforeEach
+  @Before
   public void resetModel() {
     ModelFacade.getInstance().resetAll();
 
@@ -50,7 +50,7 @@ public class ModelFacadePathTest {
     oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
   }
 
-  @AfterEach
+  @After
   public void restoreConfig() {
     ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
     ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
@@ -549,7 +549,7 @@ public class ModelFacadePathTest {
       }
     }
 
-    Assertions.fail("No matching path was found for tuple: " + sourceId + " - " + targetId);
+    fail("No matching path was found for tuple: " + sourceId + " - " + targetId);
   }
 
   /**

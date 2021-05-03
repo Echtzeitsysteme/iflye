@@ -2,11 +2,11 @@ package facade.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import model.SubstrateLink;
@@ -24,7 +24,7 @@ import model.VirtualSwitch;
  */
 public class ModelFacadeEmbeddingTest {
 
-  @BeforeEach
+  @Before
   public void resetModel() {
     ModelFacade.getInstance().resetAll();
 
@@ -64,7 +64,7 @@ public class ModelFacadeEmbeddingTest {
     ModelFacade.getInstance().addServerToNetwork("1", "sub", 1, 1, 1, 0);
     ModelFacade.getInstance().addServerToNetwork("2", "virt", 2, 1, 1, 0);
 
-    Assertions.assertThrows(UnsupportedOperationException.class, () -> {
+    assertThrows(UnsupportedOperationException.class, () -> {
       ModelFacade.getInstance().embedServerToServer("1", "2");
     });
   }
@@ -74,7 +74,7 @@ public class ModelFacadeEmbeddingTest {
     ModelFacade.getInstance().addServerToNetwork("1", "sub", 1, 1, 1, 0);
     ModelFacade.getInstance().addServerToNetwork("2", "virt", 1, 2, 1, 0);
 
-    Assertions.assertThrows(UnsupportedOperationException.class, () -> {
+    assertThrows(UnsupportedOperationException.class, () -> {
       ModelFacade.getInstance().embedServerToServer("1", "2");
     });
   }
@@ -84,7 +84,7 @@ public class ModelFacadeEmbeddingTest {
     ModelFacade.getInstance().addServerToNetwork("1", "sub", 1, 1, 1, 0);
     ModelFacade.getInstance().addServerToNetwork("2", "virt", 1, 1, 2, 0);
 
-    Assertions.assertThrows(UnsupportedOperationException.class, () -> {
+    assertThrows(UnsupportedOperationException.class, () -> {
       ModelFacade.getInstance().embedServerToServer("1", "2");
     });
   }
@@ -157,7 +157,7 @@ public class ModelFacadeEmbeddingTest {
     ModelFacade.getInstance().addServerToNetwork("5", "virt", 0, 0, 0, 0);
     ModelFacade.getInstance().addLinkToNetwork("6", "virt", 12, "4", "5");
 
-    Assertions.assertThrows(UnsupportedOperationException.class, () -> {
+    assertThrows(UnsupportedOperationException.class, () -> {
       ModelFacade.getInstance().embedLinkToLink("3", "6");
     });
   }
