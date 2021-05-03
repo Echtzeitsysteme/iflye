@@ -11,18 +11,16 @@ import model.SubstrateNetwork;
 public class AcceptedVnrMetric implements IMetric {
 
   /**
-   * SubstrateNetwork to get metrics from.
-   */
-  final SubstrateNetwork sNet;
-
-  /**
    * Calculated value of this metric.
    */
   final int value;
 
+  /**
+   * Creates a new instance of this metric for the provided substrate network.
+   * 
+   * @param sNet Substrate network to calculate the metric for.
+   */
   public AcceptedVnrMetric(final SubstrateNetwork sNet) {
-    this.sNet = sNet;
-
     // value = number of guest networks in substrate network
     this.value = sNet.getGuests().size();
   }
