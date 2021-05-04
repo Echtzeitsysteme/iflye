@@ -30,6 +30,11 @@ public class TotalTafCommunicationCostMetric implements IMetric {
    */
   double cost;
 
+  /**
+   * Creates a new instance of this metric for the provided substrate network.
+   * 
+   * @param sNet Substrate network to calculate the metric for.
+   */
   public TotalTafCommunicationCostMetric(final SubstrateNetwork sNet) {
     checkPreConditions(sNet);
     double cost = 0;
