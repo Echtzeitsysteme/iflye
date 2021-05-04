@@ -1,0 +1,124 @@
+package metrics;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.Before;
+import org.junit.Test;
+import model.Path;
+import model.SubstrateNetwork;
+
+/**
+ * Test class for the metric of the average path length.
+ * 
+ * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ */
+public class AveragePathLengthMetricTest extends AMetricTest {
+
+  @Before
+  public void setup() {
+    createSubstrateNetwork();
+    createVirtualNetwork();
+  }
+
+  @Test
+  public void testNoEmbeddings() {
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+
+    final AveragePathLengthMetric metric = new AveragePathLengthMetric(sNet);
+    assertEquals(0, metric.getValue());
+  }
+
+  @Test
+  public void testEmbeddingSameHost() {
+    facade.embedNetworkToNetwork("sub", "virt");
+    facade.embedSwitchToNode("ssrv1", "vsw");
+    facade.embedServerToServer("ssrv1", "vsrv1");
+    facade.embedServerToServer("ssrv1", "vsrv2");
+    facade.embedLinkToServer("ssrv1", "vln1");
+    facade.embedLinkToServer("ssrv1", "vln2");
+    facade.embedLinkToServer("ssrv1", "vln3");
+    facade.embedLinkToServer("ssrv1", "vln4");
+
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+
+    final AveragePathLengthMetric metric = new AveragePathLengthMetric(sNet);
+    assertEquals(0, metric.getValue());
+  }
+
+  @Test
+  public void testEmbeddingTwoHosts() {
+    facade.embedNetworkToNetwork("sub", "virt");
+    facade.embedSwitchToNode("ssw", "vsw");
+    facade.embedServerToServer("ssrv1", "vsrv1");
+    facade.embedServerToServer("ssrv2", "vsrv2");
+    facade.embedLinkToLink("sln1", "vln1");
+    facade.embedLinkToLink("sln2", "vln2");
+    facade.embedLinkToLink("sln3", "vln3");
+    facade.embedLinkToLink("sln4", "vln4");
+
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+
+    final AveragePathLengthMetric metric = new AveragePathLengthMetric(sNet);
+    assertEquals(1, metric.getValue());
+  }
+
+  @Test
+  public void testEmbeddingTwoHops() {
+    // facade.addNetworkToRoot("virt", true);
+    // facade.addSwitchToNetwork("vsw", "virt", 0);
+    // facade.addServerToNetwork("vsrv1", "virt", 0, 0, 0, 0);
+    // facade.addLinkToNetwork("vln1", "virt", 0, "vsw", "vsrv1");
+    // facade.addLinkToNetwork("vln2", "virt", 0, "vsrv1", "vsw");
+
+    facade.createAllPathsForNetwork("sub");
+
+    facade.embedNetworkToNetwork("sub", "virt");
+    facade.embedSwitchToNode("ssrv2", "vsw");
+    facade.embedServerToServer("ssrv1", "vsrv1");
+
+    final Path pa = facade.getPathFromSourceToTarget(facade.getServerById("ssrv1"),
+        facade.getServerById("ssrv2"));
+    final Path pb = facade.getPathFromSourceToTarget(facade.getServerById("ssrv2"),
+        facade.getServerById("ssrv1"));
+
+    facade.embedLinkToPath(pa.getName(), "vln1");
+    facade.embedLinkToPath(pb.getName(), "vln3");
+
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+
+    final AveragePathLengthMetric metric = new AveragePathLengthMetric(sNet);
+    assertEquals(2, metric.getValue());
+  }
+
+  /*
+   * Utility methods
+   */
+
+  /**
+   * Creates the substrate network to test on.
+   */
+  private void createSubstrateNetwork() {
+    facade.addNetworkToRoot("sub", false);
+    facade.addServerToNetwork("ssrv1", "sub", 0, 0, 0, 0);
+    facade.addServerToNetwork("ssrv2", "sub", 0, 0, 0, 0);
+    facade.addSwitchToNetwork("ssw", "sub", 0);
+    facade.addLinkToNetwork("sln1", "sub", 0, "ssw", "ssrv1");
+    facade.addLinkToNetwork("sln2", "sub", 0, "ssw", "ssrv2");
+    facade.addLinkToNetwork("sln3", "sub", 0, "ssrv1", "ssw");
+    facade.addLinkToNetwork("sln4", "sub", 0, "ssrv2", "ssw");
+  }
+
+  /**
+   * Creates the virtual network to test on.
+   */
+  private void createVirtualNetwork() {
+    facade.addNetworkToRoot("virt", true);
+    facade.addSwitchToNetwork("vsw", "virt", 0);
+    facade.addServerToNetwork("vsrv1", "virt", 0, 0, 0, 0);
+    facade.addServerToNetwork("vsrv2", "virt", 0, 0, 0, 0);
+    facade.addLinkToNetwork("vln1", "virt", 0, "vsw", "vsrv1");
+    facade.addLinkToNetwork("vln2", "virt", 0, "vsw", "vsrv2");
+    facade.addLinkToNetwork("vln3", "virt", 0, "vsrv1", "vsw");
+    facade.addLinkToNetwork("vln4", "virt", 0, "vsrv2", "vsw");
+  }
+
+}

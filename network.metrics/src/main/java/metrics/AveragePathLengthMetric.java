@@ -1,7 +1,9 @@
 package metrics;
 
+import model.Element;
 import model.Link;
 import model.SubstrateNetwork;
+import model.SubstratePath;
 import model.VirtualLink;
 import model.VirtualNetwork;
 
@@ -25,18 +27,35 @@ public class AveragePathLengthMetric implements IMetric {
    */
   public AveragePathLengthMetric(final SubstrateNetwork sNet) {
     int allSubstrateLinks = 0;
-    int allVirtualLinks = 0;
+    int allEmbeddedVirtualLinks = 0;
 
     // Collect all virtual links of all virtual networks that are embedded to sNet
     for (final VirtualNetwork actVNet : sNet.getGuests()) {
       for (final Link l : actVNet.getLinks()) {
         final VirtualLink vl = (VirtualLink) l;
-        allVirtualLinks++;
-        allSubstrateLinks += vl.getHosts().size();
+
+        if (vl.getHosts().size() > 1) {
+          throw new UnsupportedOperationException(
+              "Embedding of virtual links to more than one substrate element "
+                  + "is currently not supported by this metric.");
+        } else if (vl.getHosts().size() == 0) {
+          continue;
+        }
+
+        allEmbeddedVirtualLinks++;
+        final Element e = vl.getHosts().get(0);
+
+        if (e instanceof Link) {
+          allSubstrateLinks += 1;
+        } else if (e instanceof SubstratePath) {
+          allSubstrateLinks += ((SubstratePath) e).getHops();
+        }
+
       }
     }
 
-    this.value = allVirtualLinks == 0 ? 0 : allSubstrateLinks * 1.0 / allVirtualLinks;
+    this.value =
+        (allEmbeddedVirtualLinks == 0) ? 0 : allSubstrateLinks * 1.0 / allEmbeddedVirtualLinks;
   }
 
   @Override
