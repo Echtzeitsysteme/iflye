@@ -453,7 +453,7 @@ public class ModelFacade {
 
     // Create forward path
     if (!doesPathWithSourceAndTargetExist(source, target)) {
-      final Path forward = genMetaPath(source, target);
+      final SubstratePath forward = genMetaPath(source, target);
       forward.setHops(links.size());
       forward.setNetwork(links.get(0).getNetwork());
       forward.setName(getNextId());
@@ -461,12 +461,14 @@ public class ModelFacade {
       forward.getLinks().addAll(links);
 
       // Determine bandwidth
-      forward.setBandwidth(getMinimumBandwidthFromSubstrateLinks(links));
+      final int bw = getMinimumBandwidthFromSubstrateLinks(links);
+      forward.setBandwidth(bw);
+      forward.setResidualBandwidth(bw);
     }
 
     // Create reverse path
     if (!doesPathWithSourceAndTargetExist(target, source)) {
-      final Path reverse = genMetaPath(target, source);
+      final SubstratePath reverse = genMetaPath(target, source);
       reverse.setHops(links.size());
       reverse.setNetwork(links.get(0).getNetwork());
       reverse.setName(getNextId());
@@ -475,7 +477,9 @@ public class ModelFacade {
       // Get all reversed links
       final Set<SubstrateLink> reversedLinks = getOppositeLinks(links);
       reverse.getLinks().addAll(reversedLinks);
-      reverse.setBandwidth(getMinimumBandwidthFromSubstrateLinks(reversedLinks));
+      final int bw = getMinimumBandwidthFromSubstrateLinks(reversedLinks);
+      reverse.setBandwidth(bw);
+      reverse.setResidualBandwidth(bw);
     }
   }
 
