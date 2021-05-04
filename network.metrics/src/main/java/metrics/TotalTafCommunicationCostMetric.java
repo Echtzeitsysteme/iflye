@@ -207,7 +207,7 @@ public class TotalTafCommunicationCostMetric implements IMetric {
       final Set<SubstrateServer> srvs) {
     for (final SubstrateServer srv : srvs) {
       if (!srv.getOutgoingLinks().get(0).getTarget().equals(sw)
-          || srv.getIncomingLinks().get(0).getSource().equals(sw)) {
+          || !srv.getIncomingLinks().get(0).getSource().equals(sw)) {
         return false;
       }
     }
