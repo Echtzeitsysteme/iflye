@@ -7,11 +7,11 @@ import model.Path;
 import model.SubstrateNetwork;
 
 /**
- * Test class for the metric of the average path length.
+ * Test class for the metric of total path cost.
  * 
  * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
  */
-public class AveragePathLengthMetricTest extends AMetricTest {
+public class TotalPathCostMetricTest extends AMetricTest {
 
   @Before
   public void setup() {
@@ -23,7 +23,7 @@ public class AveragePathLengthMetricTest extends AMetricTest {
   public void testNoEmbeddings() {
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
 
-    final AveragePathLengthMetric metric = new AveragePathLengthMetric(sNet);
+    final TotalPathCostMetric metric = new TotalPathCostMetric(sNet);
     assertEquals(0, metric.getValue());
   }
 
@@ -40,8 +40,11 @@ public class AveragePathLengthMetricTest extends AMetricTest {
 
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
 
-    final AveragePathLengthMetric metric = new AveragePathLengthMetric(sNet);
-    assertEquals(0, metric.getValue());
+    final TotalPathCostMetric metric = new TotalPathCostMetric(sNet);
+
+    // cost = 2 * SrvToSrv + 1 * SwToSrv + 4 * LnToSrv
+    // cost = 2 * 1 + 1 * 2 + 4 * 1
+    assertEquals(8, metric.getValue());
   }
 
   @Test
@@ -57,8 +60,11 @@ public class AveragePathLengthMetricTest extends AMetricTest {
 
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
 
-    final AveragePathLengthMetric metric = new AveragePathLengthMetric(sNet);
-    assertEquals(1, metric.getValue());
+    final TotalPathCostMetric metric = new TotalPathCostMetric(sNet);
+
+    // cost = 2 * SrvToSrv + 1 * SwToSw + 4 * LnToLn(1hop)
+    // cost = 2 * 1 + 1 * 1 + 4 * 2
+    assertEquals(11, metric.getValue());
   }
 
   @Test
@@ -67,6 +73,7 @@ public class AveragePathLengthMetricTest extends AMetricTest {
     facade.embedNetworkToNetwork("sub", "virt");
     facade.embedSwitchToNode("ssrv2", "vsw");
     facade.embedServerToServer("ssrv1", "vsrv1");
+    facade.embedServerToServer("ssrv1", "vsrv2");
 
     final Path pa = facade.getPathFromSourceToTarget(facade.getServerById("ssrv1"),
         facade.getServerById("ssrv2"));
@@ -74,12 +81,17 @@ public class AveragePathLengthMetricTest extends AMetricTest {
         facade.getServerById("ssrv1"));
 
     facade.embedLinkToPath(pa.getName(), "vln1");
+    facade.embedLinkToPath(pa.getName(), "vln2");
     facade.embedLinkToPath(pb.getName(), "vln3");
+    facade.embedLinkToPath(pb.getName(), "vln4");
 
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
 
-    final AveragePathLengthMetric metric = new AveragePathLengthMetric(sNet);
-    assertEquals(2, metric.getValue());
+    final TotalPathCostMetric metric = new TotalPathCostMetric(sNet);
+
+    // cost = 2 * SrvToSrv + 1 * SwToSrv + 4 * LnToPath(2hop)
+    // cost = 2 * 1 + 1 * 2 + 4 * (4^2)
+    assertEquals((2 + 2 + 4 * Math.pow(4, 2)), metric.getValue());
   }
 
 }
