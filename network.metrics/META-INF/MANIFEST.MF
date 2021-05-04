@@ -3,4 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: test
 Bundle-SymbolicName: test; singleton:=true
 Bundle-Version: 0.1.0.qualifier
-Require-Bundle: org.eclipse.emf.ecore
+Require-Bundle: org.eclipse.emf.ecore,
+ org.junit,
+ org.junit.jupiter.api

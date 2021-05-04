@@ -710,8 +710,19 @@ public class ModelFacade {
    * @return True if embedding was successful.
    */
   public boolean embedNetworkToNetwork(final String substrateId, final String virtualId) {
+    // Check that both networks exist
+    if (!networkExists(substrateId) || !networkExists(virtualId)) {
+      throw new IllegalArgumentException("One of the two networks does not exist.");
+    }
+
     final SubstrateNetwork subNet = (SubstrateNetwork) getNetworkById(substrateId);
     final VirtualNetwork virtNet = (VirtualNetwork) getNetworkById(virtualId);
+
+    // Check that the virtual network was not embedded before
+    if (virtNet.getHost() != null) {
+      throw new IllegalArgumentException("Virtual network was embedded before.");
+    }
+
     virtNet.setHost(subNet);
     return subNet.getGuests().add(virtNet);
   }

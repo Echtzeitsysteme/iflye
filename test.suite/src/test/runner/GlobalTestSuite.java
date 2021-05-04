@@ -8,6 +8,13 @@ import facade.test.ModelFacadeEmbeddingTest;
 import facade.test.ModelFacadePathTest;
 import generators.OneTierNetworkGeneratorTest;
 import generators.TwoTierNetworkGeneratorTest;
+import metrics.AcceptedVnrMetricTest;
+import metrics.ActiveSubstrateServerMetricTest;
+import metrics.ActiveSubstrateSwitchMetricTest;
+import metrics.AveragePathLengthMetricTest;
+import metrics.TotalCommunicationCostMetricTest;
+import metrics.TotalPathCostMetricTest;
+import metrics.TotalTafCommunicationCostMetricTest;
 
 /**
  * Global test suite class that enables running all registered junit tests at once in Eclipse.
@@ -18,7 +25,10 @@ import generators.TwoTierNetworkGeneratorTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ModelFacadeCreationTest.class, ModelFacadeEmbeddingTest.class,
     ModelFacadePathTest.class, TafAlgorithmTest.class, OneTierNetworkGeneratorTest.class,
-    TwoTierNetworkGeneratorTest.class})
+    TwoTierNetworkGeneratorTest.class, AcceptedVnrMetricTest.class,
+    ActiveSubstrateServerMetricTest.class, ActiveSubstrateSwitchMetricTest.class,
+    AveragePathLengthMetricTest.class, TotalCommunicationCostMetricTest.class,
+    TotalPathCostMetricTest.class, TotalTafCommunicationCostMetricTest.class})
 public class GlobalTestSuite {
 
 }
