@@ -12,6 +12,7 @@ import metrics.AcceptedVnrMetricTest;
 import metrics.ActiveSubstrateServerMetricTest;
 import metrics.ActiveSubstrateSwitchMetricTest;
 import metrics.AveragePathLengthMetricTest;
+import metrics.RuntimeMetricTest;
 import metrics.TotalCommunicationCostMetricTest;
 import metrics.TotalPathCostMetricTest;
 import metrics.TotalTafCommunicationCostMetricTest;
@@ -28,7 +29,8 @@ import metrics.TotalTafCommunicationCostMetricTest;
     TwoTierNetworkGeneratorTest.class, AcceptedVnrMetricTest.class,
     ActiveSubstrateServerMetricTest.class, ActiveSubstrateSwitchMetricTest.class,
     AveragePathLengthMetricTest.class, TotalCommunicationCostMetricTest.class,
-    TotalPathCostMetricTest.class, TotalTafCommunicationCostMetricTest.class})
+    TotalPathCostMetricTest.class, TotalTafCommunicationCostMetricTest.class,
+    RuntimeMetricTest.class})
 public class GlobalTestSuite {
 
 }
