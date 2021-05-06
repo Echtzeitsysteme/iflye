@@ -45,17 +45,13 @@ public class TotalPathCostMetric implements IMetric {
       for (final Link l : guest.getLinks()) {
         final VirtualLink vl = (VirtualLink) l;
 
-        if (vl.getHosts().size() == 1 && vl.getHosts().get(0) instanceof SubstrateLink) {
+        if (vl.getHost() instanceof SubstrateLink) {
           // Virtual link to substrate link cost = Hop cost with only one hop.
           cost += 2;
         }
-        // TODO: Currently, the model(facade) of this project only allows mapping of one virtual
-        // link to one substrate link or to one substrate path. If (in future developments) the
-        // model will be extended to support the embedding of one virtual link to more than one
-        // substrate link or substrate path, this implementation must be updated to be accurate.
 
-        if (vl.getHosts().size() == 1 && vl.getHosts().get(0) instanceof SubstratePath) {
-          final SubstratePath sp = (SubstratePath) vl.getHosts().get(0);
+        if (vl.getHost() instanceof SubstratePath) {
+          final SubstratePath sp = (SubstratePath) vl.getHost();
 
           // Virtual link to substrate path cost = Hop cost
           if (sp.getHops() == 1) {
@@ -66,20 +62,13 @@ public class TotalPathCostMetric implements IMetric {
         }
 
 
-        if (vl.getHosts().size() == 1 && vl.getHosts().get(0) instanceof SubstrateServer) {
+        if (vl.getHost() instanceof SubstrateServer) {
           // Virtual link to substrate server cost
           cost += 1;
         }
         // TODO: The paper also mentions virtual links embedded on substrate switches. This is
         // currently not supported by the ModelFacade. If it will get supported in the future, add
         // it to this cost function.
-
-        // A check to remind the future me to update this implementation once a virtual link may be
-        // embedded to more than one substrate element.
-        if (vl.getHosts().size() > 1) {
-          throw new UnsupportedOperationException("Virtual links embedded on more than one"
-              + " substrate element is not supported by this metric, yet.");
-        }
       }
 
       // Nodes

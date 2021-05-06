@@ -792,7 +792,7 @@ public class ModelFacade {
     final VirtualLink virtLink = (VirtualLink) getLinkById(virtualId);
 
     // No constraints to check!
-    virtLink.getHosts().add(subServ);
+    virtLink.setHost(subServ);
     return subServ.getGuestLinks().add(virtLink);
   }
 
@@ -816,7 +816,7 @@ public class ModelFacade {
     }
 
     success &= subLink.getGuestLinks().add(virtLink);
-    virtLink.getHosts().add(subLink);
+    virtLink.setHost(subLink);
 
     // Update residual values of the host
     if (!ModelFacadeConfig.IGNORE_BW) {
@@ -847,12 +847,12 @@ public class ModelFacade {
     }
 
     success &= subPath.getGuestLinks().add(virtLink);
-    virtLink.getHosts().add(subPath);
+    virtLink.setHost(subPath);
 
     // Add guest link to all substrate links contained in the path?
     if (ModelFacadeConfig.LINK_HOST_EMBED_PATH) {
       for (final Link l : subPath.getLinks()) {
-        SubstrateLink sl = (SubstrateLink) l;
+        final SubstrateLink sl = (SubstrateLink) l;
         sl.getGuestLinks().add(virtLink);
       }
     }

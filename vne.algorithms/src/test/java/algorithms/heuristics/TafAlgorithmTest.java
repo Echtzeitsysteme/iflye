@@ -91,11 +91,8 @@ public class TafAlgorithmTest {
     // Test all vLink hosts
     for (final Link l : ModelFacade.getInstance().getAllLinksOfNetwork("virt")) {
       final VirtualLink vl = (VirtualLink) l;
-      // Ensure that there is only one host set
-      assertEquals(1, vl.getHosts().size());
-
       // This one host must be substrate server 1
-      assertEquals("sub_srv1", vl.getHosts().get(0).getName());
+      assertEquals("sub_srv1", vl.getHost().getName());
     }
   }
 
@@ -131,26 +128,22 @@ public class TafAlgorithmTest {
     final VirtualLink vLn4 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln4");
 
     // Link 1
-    assertEquals(1, vLn1.getHosts().size());
-    final Path pLn1 = (Path) vLn1.getHosts().get(0);
+    final Path pLn1 = (Path) vLn1.getHost();
     assertEquals("sub_srv1", pLn1.getSource().getName());
     assertEquals("sub_sw", pLn1.getTarget().getName());
 
     // Link 2
-    assertEquals(1, vLn2.getHosts().size());
-    final Path pLn2 = (Path) vLn2.getHosts().get(0);
+    final Path pLn2 = (Path) vLn2.getHost();
     assertEquals("sub_srv2", pLn2.getSource().getName());
     assertEquals("sub_sw", pLn2.getTarget().getName());
 
     // Link 3
-    assertEquals(1, vLn3.getHosts().size());
-    final Path pLn3 = (Path) vLn3.getHosts().get(0);
+    final Path pLn3 = (Path) vLn3.getHost();
     assertEquals("sub_sw", pLn3.getSource().getName());
     assertEquals("sub_srv1", pLn3.getTarget().getName());
 
     // Link 4
-    assertEquals(1, vLn4.getHosts().size());
-    final Path pLn4 = (Path) vLn4.getHosts().get(0);
+    final Path pLn4 = (Path) vLn4.getHost();
     assertEquals("sub_sw", pLn4.getSource().getName());
     assertEquals("sub_srv2", pLn4.getTarget().getName());
   }
@@ -195,38 +188,32 @@ public class TafAlgorithmTest {
     final VirtualLink vLn6 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln6");
 
     // Link 1
-    assertEquals(1, vLn1.getHosts().size());
-    final Path pLn1 = (Path) vLn1.getHosts().get(0);
+    final Path pLn1 = (Path) vLn1.getHost();
     assertEquals("sub_srv1", pLn1.getSource().getName());
     assertEquals("sub_csw1", pLn1.getTarget().getName());
 
     // Link 2
-    assertEquals(1, vLn1.getHosts().size());
-    final Path pLn2 = (Path) vLn2.getHosts().get(0);
+    final Path pLn2 = (Path) vLn2.getHost();
     assertEquals("sub_srv2", pLn2.getSource().getName());
     assertEquals("sub_csw1", pLn2.getTarget().getName());
 
     // Link 3
-    assertEquals(1, vLn1.getHosts().size());
-    final Path pLn3 = (Path) vLn3.getHosts().get(0);
+    final Path pLn3 = (Path) vLn3.getHost();
     assertEquals("sub_srv3", pLn3.getSource().getName());
     assertEquals("sub_csw1", pLn3.getTarget().getName());
 
     // Link 4
-    assertEquals(1, vLn4.getHosts().size());
-    final Path pLn4 = (Path) vLn4.getHosts().get(0);
+    final Path pLn4 = (Path) vLn4.getHost();
     assertEquals("sub_csw1", pLn4.getSource().getName());
     assertEquals("sub_srv1", pLn4.getTarget().getName());
 
     // Link 5
-    assertEquals(1, vLn5.getHosts().size());
-    final Path pLn5 = (Path) vLn5.getHosts().get(0);
+    final Path pLn5 = (Path) vLn5.getHost();
     assertEquals("sub_csw1", pLn5.getSource().getName());
     assertEquals("sub_srv2", pLn5.getTarget().getName());
 
     // Link 6
-    assertEquals(1, vLn6.getHosts().size());
-    final Path pLn6 = (Path) vLn6.getHosts().get(0);
+    final Path pLn6 = (Path) vLn6.getHost();
     assertEquals("sub_csw1", pLn6.getSource().getName());
     assertEquals("sub_srv3", pLn6.getTarget().getName());
   }
