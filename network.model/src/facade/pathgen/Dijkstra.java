@@ -1,4 +1,4 @@
-package facade.dijkstra;
+package facade.pathgen;
 
 import java.util.Collection;
 import java.util.HashMap;

@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import org.moflon.core.utilities.eMoflonEMFUtil;
 import facade.config.ModelFacadeConfig;
-import facade.dijkstra.Dijkstra;
+import facade.pathgen.Dijkstra;
 import model.Link;
 import model.ModelFactory;
 import model.Network;
