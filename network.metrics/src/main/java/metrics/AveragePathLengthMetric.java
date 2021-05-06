@@ -34,16 +34,12 @@ public class AveragePathLengthMetric implements IMetric {
       for (final Link l : actVNet.getLinks()) {
         final VirtualLink vl = (VirtualLink) l;
 
-        if (vl.getHosts().size() > 1) {
-          throw new UnsupportedOperationException(
-              "Embedding of virtual links to more than one substrate element "
-                  + "is currently not supported by this metric.");
-        } else if (vl.getHosts().size() == 0) {
+        if (vl.getHost() == null) {
           continue;
         }
 
         allEmbeddedVirtualLinks++;
-        final Element e = vl.getHosts().get(0);
+        final Element e = vl.getHost();
 
         if (e instanceof Link) {
           allSubstrateLinks += 1;
