@@ -19,28 +19,23 @@ import model.SubstrateNode;
  * 
  * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
  */
-public class Dijkstra {
+public class Dijkstra implements IPathGen {
 
   /**
    * Mapping: Node -> Distance.
    */
-  final static Map<SubstrateNode, Integer> dists = new HashMap<SubstrateNode, Integer>();
+  private final Map<SubstrateNode, Integer> dists = new HashMap<SubstrateNode, Integer>();
 
   /**
    * Mapping: Node -> Previous node.
    */
-  final static Map<SubstrateNode, SubstrateNode> prevs =
+  private final Map<SubstrateNode, SubstrateNode> prevs =
       new HashMap<SubstrateNode, SubstrateNode>();
 
   /**
    * List of all nodes.
    */
-  final static Set<SubstrateNode> nodes = new HashSet<SubstrateNode>();
-
-  /**
-   * Private constructor to avoid instantiation.
-   */
-  private Dijkstra() {}
+  private final Set<SubstrateNode> nodes = new HashSet<SubstrateNode>();
 
   /**
    * Starts the whole algorithm for a given substrate network and one given substrate node as start.
@@ -49,7 +44,7 @@ public class Dijkstra {
    * @param start SubstrateNode to start with.
    * @return List of nodes with all previous visited nodes.
    */
-  private static List<Node> dijkstra(final SubstrateNetwork net, final SubstrateNode start) {
+  private List<Node> dijkstra(final SubstrateNetwork net, final SubstrateNode start) {
     final List<Node> prev = new LinkedList<Node>();
 
     init(net, start);
@@ -75,7 +70,7 @@ public class Dijkstra {
    * @param net SubstrateNetwork to use.
    * @param start SubstrateNode to use as a start.
    */
-  private static void init(final SubstrateNetwork net, final SubstrateNode start) {
+  private void init(final SubstrateNetwork net, final SubstrateNode start) {
     for (final Node n : net.getNodes()) {
       final SubstrateNode sn = (SubstrateNode) n;
       dists.put(sn, Integer.MAX_VALUE);
@@ -91,7 +86,7 @@ public class Dijkstra {
    * 
    * @return SubstrateNode with smallest distance.
    */
-  private static SubstrateNode getSmallestDistNode() {
+  private SubstrateNode getSmallestDistNode() {
     int dist = Integer.MAX_VALUE;
     SubstrateNode nearest = null;
 
@@ -113,7 +108,7 @@ public class Dijkstra {
    * @param u SubstrateNode u.
    * @param v SubstrateNode v.
    */
-  private static void distanceUpdate(final SubstrateNode u, final SubstrateNode v) {
+  private void distanceUpdate(final SubstrateNode u, final SubstrateNode v) {
     final int alt = dists.get(u) + 1;
 
     if (alt < dists.get(v)) {
@@ -129,7 +124,7 @@ public class Dijkstra {
    * @param target Target node to calculate path for.
    * @return List of substrate links that form the shortest path from start to target.
    */
-  private static List<SubstrateLink> shortestPath(final SubstrateNode target) {
+  private List<SubstrateLink> shortestPath(final SubstrateNode target) {
     final List<SubstrateLink> links = new LinkedList<SubstrateLink>();
     SubstrateNode u = target;
     while (prevs.get(u) != null) {
@@ -149,8 +144,7 @@ public class Dijkstra {
    * @param links Collection of links to search the one with corresponding source node in.
    * @return SubstrateLink found in the collection with given source node.
    */
-  private static SubstrateLink getLinkFrom(final SubstrateNode source,
-      final Collection<Link> links) {
+  private SubstrateLink getLinkFrom(final SubstrateNode source, final Collection<Link> links) {
     for (final Link l : links) {
       if (l.getSource().equals(source)) {
         return (SubstrateLink) l;
@@ -169,7 +163,7 @@ public class Dijkstra {
    * @param start SubstrateNode as start/source node of all paths.
    * @return Map of SubstrateNodes to lists of SubstrateLinks that form the corresponding paths.
    */
-  public static Map<SubstrateNode, List<SubstrateLink>> getAllPaths(final SubstrateNetwork net,
+  public Map<SubstrateNode, List<SubstrateLink>> getAllPaths(final SubstrateNetwork net,
       final SubstrateNode start) {
     final Map<SubstrateNode, List<SubstrateLink>> paths =
         new HashMap<SubstrateNode, List<SubstrateLink>>();
