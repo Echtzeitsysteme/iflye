@@ -1,11 +1,14 @@
 package facade.dijkstra;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import facade.ModelFacade;
 import model.Link;
+import model.Node;
 import model.SubstrateLink;
 import model.SubstrateNetwork;
 import model.SubstrateNode;
@@ -124,6 +127,72 @@ public class Yen {
 
     candidates.remove(candidate);
     return candidate;
+  }
+
+  /**
+   * Calculates and returns the first k fastest paths from a given start node in a given network.
+   * (More specific: It calculates the first k paths with the smallest amount of hops from the start
+   * node to all other nodes.) This method returns a map of all substrate nodes mapped to a list of
+   * of lists of substrate links from start node to the key of the map.
+   * 
+   * @param net Network to search all paths for.
+   * @param start SubstrateNode as start/source node of all paths.
+   * @param k Create first k paths.
+   * @return Map of SubstrateNodes to lists of lists of SubstrateLinks that form the corresponding
+   *         paths.
+   */
+  public static Map<SubstrateNode, List<List<SubstrateLink>>> getAllPaths(
+      final SubstrateNetwork net, final SubstrateNode start, final int k) {
+    final Map<SubstrateNode, List<List<SubstrateLink>>> paths =
+        new HashMap<SubstrateNode, List<List<SubstrateLink>>>();
+
+    // Iterate over all nodes and execute path generation if the current node is not the start node
+    for (final Node n : net.getNodes()) {
+      SubstrateNode sn = (SubstrateNode) n;
+      if (!sn.equals(start)) {
+        List<List<SubstrateNode>> candidates = yen(net, start, sn, k);
+        paths.put(sn, translateAll(candidates));
+      }
+    }
+
+    return paths;
+  }
+
+  /**
+   * Translates a list of lists of substrate nodes to a list of lists of substrate links connecting
+   * the nodes together. This one is a wrapper that calls {@link #translate(List)} for every item in
+   * the outer list given.
+   * 
+   * @param input List of lists of substrate nodes to convert.
+   * @return List of list of substrate links that form the path of all given substrate nodes.
+   */
+  private static List<List<SubstrateLink>> translateAll(final List<List<SubstrateNode>> input) {
+    final List<List<SubstrateLink>> output = new LinkedList<List<SubstrateLink>>();
+
+    for (final List<SubstrateNode> act : input) {
+      output.add(translate(act));
+    }
+
+    return output;
+  }
+
+  /**
+   * Translates a list of substrate nodes to a list of substrate links connecting the nodes
+   * together.
+   * 
+   * @param nodes List of substrate nodes to convert.
+   * @return List of substrate links that form the path of all given substrate nodes.
+   */
+  private static List<SubstrateLink> translate(final List<SubstrateNode> nodes) {
+    final List<SubstrateLink> links = new LinkedList<SubstrateLink>();
+
+    for (int i = 0; i < nodes.size() - 1; i++) {
+      final Link l =
+          ModelFacade.getInstance().getLinkFromSourceToTarget(nodes.get(i), nodes.get(i + 1));
+      links.add((SubstrateLink) l);
+    }
+
+    return links;
   }
 
 }
