@@ -185,6 +185,23 @@ public class ModelFacadeEmbeddingTest {
     ModelFacadeConfig.IGNORE_BW = false;
   }
 
+  @Test
+  public void testEmbedMultipleNetworksToNetwork() {
+    ModelFacade.getInstance().embedNetworkToNetwork("sub", "virt");
+
+    ModelFacade.getInstance().addNetworkToRoot("virt_2", true);
+    ModelFacade.getInstance().embedNetworkToNetwork("sub", "virt_2");
+
+    assertFalse(
+        ((SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub")).getGuests().isEmpty());
+    assertEquals(2,
+        ((SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub")).getGuests().size());
+    assertEquals("virt", ((SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub"))
+        .getGuests().get(0).getName());
+    assertEquals("virt_2", ((SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub"))
+        .getGuests().get(1).getName());
+  }
+
   @Ignore
   @Test
   public void testEmbedLinkToPath() {

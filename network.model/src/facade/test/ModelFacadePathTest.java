@@ -19,6 +19,7 @@ import facade.config.ModelFacadeConfig;
 import model.Link;
 import model.Node;
 import model.Path;
+import model.SubstratePath;
 import model.Switch;
 
 /**
@@ -466,6 +467,22 @@ public class ModelFacadePathTest {
       assertEquals(3, p.getHops());
       assertEquals(3, p.getLinks().size());
       assertEquals(4, p.getNodes().size());
+    }
+  }
+
+  @Test
+  public void testResidualBandwidth() {
+    oneTierSetupTwoServers();
+    ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    assertFalse(allPaths.isEmpty());
+
+    for (final Path p : allPaths) {
+      final SubstratePath sp = (SubstratePath) p;
+      assertEquals(sp.getBandwidth(), sp.getResidualBandwidth());
     }
   }
 
