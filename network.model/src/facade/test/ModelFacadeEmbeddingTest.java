@@ -125,7 +125,7 @@ public class ModelFacadeEmbeddingTest {
     assertEquals(1,
         ((SubstrateServer) ModelFacade.getInstance().getServerById("1")).getGuestLinks().size());
     assertEquals("1",
-        ((VirtualLink) ModelFacade.getInstance().getLinkById("4")).getHosts().get(0).getName());
+        ((VirtualLink) ModelFacade.getInstance().getLinkById("4")).getHost().getName());
   }
 
   @Test
@@ -142,7 +142,7 @@ public class ModelFacadeEmbeddingTest {
     assertEquals(1,
         ((SubstrateLink) ModelFacade.getInstance().getLinkById("3")).getGuestLinks().size());
     assertEquals("3",
-        ((VirtualLink) ModelFacade.getInstance().getLinkById("6")).getHosts().get(0).getName());
+        ((VirtualLink) ModelFacade.getInstance().getLinkById("6")).getHost().getName());
     assertEquals(2,
         ((SubstrateLink) ModelFacade.getInstance().getLinkById("3")).getResidualBandwidth());
   }
