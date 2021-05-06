@@ -1,6 +1,5 @@
 package facade.dijkstra;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -16,6 +15,10 @@ import model.SubstrateNode;
 /**
  * Dijkstra path finding algorithm that is used to generate the paths for all models. Heavily based
  * on this Wikipedia article: https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+ * 
+ * This is a slightly adapted version compared to the normal Dijkstra implementation. It gets a set
+ * of nodes and links to ignore during the path finding process. This is a needed behavior, because
+ * the Yen algorithm needs to delete nodes and links but the model itself should not be changed.
  * 
  * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
  */
@@ -49,16 +52,22 @@ public class Dijkstra2 {
    * @param start SubstrateNode to start with.
    * @return List of nodes with all previous visited nodes.
    */
-  protected static List<Node> dijkstra(final SubstrateNetwork net, final SubstrateNode start) {
+  protected static List<Node> dijkstra(final SubstrateNetwork net, final SubstrateNode start,
+      final Set<SubstrateNode> ignoredNodes, final Set<SubstrateLink> ignoredLinks) {
     final List<Node> prev = new LinkedList<Node>();
 
-    init(net, start);
+    init(net, start, ignoredNodes);
 
     while (!nodes.isEmpty()) {
-      final SubstrateNode u = getSmallestDistNode();
+      final SubstrateNode u = getSmallestDistNode(ignoredNodes);
       nodes.remove(u);
 
       for (final Link out : u.getOutgoingLinks()) {
+        // Check that link gets ignored if its contained in the ignored links set
+        if (ignoredLinks.contains(out)) {
+          continue;
+        }
+
         SubstrateNode next = (SubstrateNode) out.getTarget();
         if (nodes.contains(next)) {
           distanceUpdate(u, next);
@@ -75,9 +84,16 @@ public class Dijkstra2 {
    * @param net SubstrateNetwork to use.
    * @param start SubstrateNode to use as a start.
    */
-  private static void init(final SubstrateNetwork net, final SubstrateNode start) {
+  private static void init(final SubstrateNetwork net, final SubstrateNode start,
+      final Set<SubstrateNode> ignoredNodes) {
     for (final Node n : net.getNodes()) {
       final SubstrateNode sn = (SubstrateNode) n;
+
+      // Check if sn must be ignored
+      if (ignoredNodes.contains(sn)) {
+        continue;
+      }
+
       dists.put(sn, Integer.MAX_VALUE);
       prevs.put(sn, null);
       nodes.add(sn);
@@ -91,11 +107,16 @@ public class Dijkstra2 {
    * 
    * @return SubstrateNode with smallest distance.
    */
-  private static SubstrateNode getSmallestDistNode() {
+  private static SubstrateNode getSmallestDistNode(final Set<SubstrateNode> ignoredNodes) {
     int dist = Integer.MAX_VALUE;
     SubstrateNode nearest = null;
 
     for (final SubstrateNode n : nodes) {
+      // Check if n must be ignored
+      if (ignoredNodes.contains(n)) {
+        continue;
+      }
+
       final int nDist = dists.get(n);
       if (nDist < dist) {
         nearest = n;
@@ -123,26 +144,6 @@ public class Dijkstra2 {
   }
 
   /**
-   * Returns a list of substrate links that form the shortest path from the global start to a given
-   * target node.
-   * 
-   * @param target Target node to calculate path for.
-   * @return List of substrate links that form the shortest path from start to target.
-   */
-  private static List<SubstrateLink> shortestPath(final SubstrateNode target) {
-    final List<SubstrateLink> links = new LinkedList<SubstrateLink>();
-    SubstrateNode u = target;
-    while (prevs.get(u) != null) {
-      final List<Link> uIngressLinks = u.getIncomingLinks();
-      u = prevs.get(u);
-      final SubstrateLink l = getLinkFrom(u, uIngressLinks);
-      links.add(0, l);
-    }
-
-    return links;
-  }
-
-  /**
    * Returns a list of substrate nodes that form the shortest path from the global start to a given
    * target node.
    * 
@@ -159,49 +160,6 @@ public class Dijkstra2 {
     }
 
     return nodes;
-  }
-
-  /**
-   * Searches for a link in a given collection that has the given substrate node as source node.
-   * 
-   * @param source Source node to search for.
-   * @param links Collection of links to search the one with corresponding source node in.
-   * @return SubstrateLink found in the collection with given source node.
-   */
-  private static SubstrateLink getLinkFrom(final SubstrateNode source,
-      final Collection<Link> links) {
-    for (final Link l : links) {
-      if (l.getSource().equals(source)) {
-        return (SubstrateLink) l;
-      }
-    }
-
-    return null;
-  }
-
-  /**
-   * Calculates and returns all paths from a given start node in a given network. This method
-   * returns a map of all substrate nodes mapped to a list of substrate link from start node to the
-   * key of the map.
-   * 
-   * @param net Network to search all paths for.
-   * @param start SubstrateNode as start/source node of all paths.
-   * @return Map of SubstrateNodes to lists of SubstrateLinks that form the corresponding paths.
-   */
-  public static Map<SubstrateNode, List<SubstrateLink>> getAllPaths(final SubstrateNetwork net,
-      final SubstrateNode start) {
-    final Map<SubstrateNode, List<SubstrateLink>> paths =
-        new HashMap<SubstrateNode, List<SubstrateLink>>();
-    dijkstra(net, start);
-
-    for (final Node n : net.getNodes()) {
-      SubstrateNode sn = (SubstrateNode) n;
-      if (!sn.equals(start)) {
-        paths.put(sn, shortestPath(sn));
-      }
-    }
-
-    return paths;
   }
 
 }

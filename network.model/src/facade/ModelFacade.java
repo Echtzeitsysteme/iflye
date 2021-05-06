@@ -629,6 +629,25 @@ public class ModelFacade {
   }
 
   /**
+   * Returns a link from source node to target node if such a link exists. Else it returns null.
+   * 
+   * @param source Source node.
+   * @param target Target node.
+   * @return Link if a link between source and target does exist.
+   */
+  public Link getLinkFromSourceToTarget(final Node source, final Node target) {
+    final List<Link> allLinks = getAllLinksOfNetwork(source.getNetwork().getName());
+
+    for (final Link l : allLinks) {
+      if (l.getSource().equals(source) && l.getTarget().equals(target)) {
+        return l;
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * Checks string validity (null and blank).
    * 
    * @param strings Possible array of strings to check.

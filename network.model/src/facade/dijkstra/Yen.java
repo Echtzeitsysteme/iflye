@@ -1,7 +1,12 @@
 package facade.dijkstra;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import facade.ModelFacade;
+import model.Link;
+import model.SubstrateLink;
 import model.SubstrateNetwork;
 import model.SubstrateNode;
 
@@ -21,7 +26,8 @@ public class Yen {
     final List<List<SubstrateNode>> A = new LinkedList<List<SubstrateNode>>();
 
     // Determine the shortest path from the source to the sink.
-    Dijkstra2.dijkstra(net, source);
+    // No need to ignore any nodes or links here
+    Dijkstra2.dijkstra(net, source, new HashSet<SubstrateNode>(), new HashSet<SubstrateLink>());
     A.add(0, Dijkstra2.shortestPathNodes(target));
 
     // Initialize the set to store the potential kth shortest path.
@@ -31,6 +37,10 @@ public class Yen {
       // The spur node ranges from the first node to the next to last node in the previous
       // k-shortest path.
       for (int i = 0; i <= A.get(k - 1).size() - 2; i++) {
+        // Setup for the nodes and links to ignore
+        final Set<SubstrateNode> ignoredNodes = new HashSet<SubstrateNode>();
+        final Set<SubstrateLink> ignoredLinks = new HashSet<SubstrateLink>();
+
         // Spur node is retrieved from the previous k-shortest path, k − 1.
         final SubstrateNode spurNode = A.get(k - 1).get(i);
         // The sequence of nodes from the source to the spur node of the previous k-shortest path.
@@ -40,20 +50,22 @@ public class Yen {
           if (rootPath.equals(p.subList(0, i))) {
             // Remove the links that are part of the previous shortest paths which share the same
             // root path.
-            removeLink(p.get(i), p.get(i + 1), net);
+            final Link toIgnore =
+                ModelFacade.getInstance().getLinkFromSourceToTarget(p.get(i), p.get(i + 1));
+            ignoredLinks.add((SubstrateLink) toIgnore);
           }
         }
 
         for (final SubstrateNode rootPathNode : rootPath) {
           // Except spurNode
           if (!rootPathNode.equals(spurNode)) {
-            removeNode(rootPathNode, net);
+            ignoredNodes.add(rootPathNode);
           }
         }
 
         // Calculate the spur path from the spur node to the sink.
         // Consider also checking if any spurPath found
-        Dijkstra2.dijkstra(net, spurNode);
+        Dijkstra2.dijkstra(net, spurNode, ignoredNodes, ignoredLinks);
         final List<SubstrateNode> spurPath = Dijkstra2.shortestPathNodes(target);
 
         if (spurPath.isEmpty()) {
@@ -72,7 +84,7 @@ public class Yen {
         // Add back the edges and nodes that were removed from the graph.
         // restore edges to Graph;
         // restore nodes in rootPath to Graph;
-        // TODO!
+        // The sets for ignored nodes and ignored links will implicit be restored by the loop.
       }
 
       if (B.isEmpty()) {
@@ -90,15 +102,6 @@ public class Yen {
     }
 
     return A;
-  }
-
-  private static void removeLink(final SubstrateNode source, final SubstrateNode target,
-      final SubstrateNetwork net) {
-    // TODO!
-  }
-
-  private static void removeNode(final SubstrateNode node, final SubstrateNetwork net) {
-    // TODO!
   }
 
   /**
