@@ -90,6 +90,76 @@ public class ModelFacadePathYenTest {
   }
 
   @Test
+  public void testOneTierPathCreationTwoServersTwoCoreSwitches() {
+    ModelFacadeConfig.MIN_PATH_LENGTH = 2;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 2;
+    ModelFacadePathBasicTest.oneTierSetupTwoServers();
+
+    ModelFacade.getInstance().addSwitchToNetwork("sw2", "net", 0);
+    ModelFacade.getInstance().addLinkToNetwork("ln5", "net", 1, "srv1", "sw2");
+    ModelFacade.getInstance().addLinkToNetwork("ln6", "net", 2, "srv2", "sw2");
+    ModelFacade.getInstance().addLinkToNetwork("ln7", "net", 1, "sw2", "srv1");
+    ModelFacade.getInstance().addLinkToNetwork("ln8", "net", 2, "sw2", "srv2");
+
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+
+    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    assertFalse(allPaths.isEmpty());
+
+    // Check total number of paths
+    assertEquals(4, allPaths.size());
+  }
+
+  @Test
+  public void testOneTierPathCreationTwoServersTwoCoreSwitchesConnected() {
+    ModelFacadeConfig.MIN_PATH_LENGTH = 3;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 3;
+    ModelFacadePathBasicTest.oneTierSetupTwoServers();
+
+    ModelFacade.getInstance().addSwitchToNetwork("sw2", "net", 0);
+    // Removed the links from srv1 to sw2 and vice versa on purpose
+    ModelFacade.getInstance().addLinkToNetwork("ln6", "net", 2, "srv2", "sw2");
+    ModelFacade.getInstance().addLinkToNetwork("ln8", "net", 2, "sw2", "srv2");
+    ModelFacade.getInstance().addLinkToNetwork("ln9", "net", 10, "sw", "sw2");
+    ModelFacade.getInstance().addLinkToNetwork("ln10", "net", 10, "sw2", "sw");
+
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+
+    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    assertFalse(allPaths.isEmpty());
+
+    // Check total number of paths
+    assertEquals(2, allPaths.size());
+  }
+
+  @Test
+  public void testOneTierPathCreationTwoServersThreeCoreSwitches() {
+    ModelFacadeConfig.MIN_PATH_LENGTH = 2;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 2;
+    ModelFacadeConfig.YEN_K = 3;
+    ModelFacadePathBasicTest.oneTierSetupTwoServers();
+
+    ModelFacade.getInstance().addSwitchToNetwork("sw2", "net", 0);
+    ModelFacade.getInstance().addSwitchToNetwork("sw3", "net", 0);
+    ModelFacade.getInstance().addLinkToNetwork("ln5", "net", 1, "srv1", "sw2");
+    ModelFacade.getInstance().addLinkToNetwork("ln6", "net", 2, "srv2", "sw2");
+    ModelFacade.getInstance().addLinkToNetwork("ln7", "net", 1, "sw2", "srv1");
+    ModelFacade.getInstance().addLinkToNetwork("ln8", "net", 2, "sw2", "srv2");
+    ModelFacade.getInstance().addLinkToNetwork("ln9", "net", 1, "srv1", "sw3");
+    ModelFacade.getInstance().addLinkToNetwork("ln10", "net", 2, "srv2", "sw3");
+    ModelFacade.getInstance().addLinkToNetwork("ln11", "net", 1, "sw3", "srv1");
+    ModelFacade.getInstance().addLinkToNetwork("ln12", "net", 2, "sw3", "srv2");
+
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+
+    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    assertFalse(allPaths.isEmpty());
+
+    // Check total number of paths
+    assertEquals(6, allPaths.size());
+  }
+
+  @Test
   public void testTwoTierPathCreationFourServersTwoCoreSwitches() {
     ModelFacadePathBasicTest.twoTierSetupFourServersTwoCoreSwitches();
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
@@ -101,6 +171,49 @@ public class ModelFacadePathYenTest {
 
     // Check total number of paths
     assertEquals(56, allPaths.size());
+  }
+
+  /**
+   * Setup: Two servers and three switches srv1 -> sw1; srv2 -> sw2; sw1 -> sw3; sw2 -> sw3; sw1 ->
+   * sw4; sw2 -> sw4;
+   */
+  @Test
+  public void testOneTierPathCreationTwoServersTwoCoreSwitchesFourHops() {
+    // Setup
+    ModelFacade.getInstance().addNetworkToRoot("net", false);
+    ModelFacade.getInstance().addSwitchToNetwork("sw1", "net", 0);
+    ModelFacade.getInstance().addSwitchToNetwork("sw2", "net", 0);
+    ModelFacade.getInstance().addSwitchToNetwork("sw3", "net", 0);
+    ModelFacade.getInstance().addSwitchToNetwork("sw4", "net", 0);
+
+    ModelFacade.getInstance().addServerToNetwork("srv1", "net", 0, 0, 0, 1);
+    ModelFacade.getInstance().addServerToNetwork("srv2", "net", 0, 0, 0, 1);
+
+    ModelFacade.getInstance().addLinkToNetwork("ln1", "net", 0, "srv1", "sw1");
+    ModelFacade.getInstance().addLinkToNetwork("ln2", "net", 0, "srv2", "sw2");
+    ModelFacade.getInstance().addLinkToNetwork("ln3", "net", 0, "sw1", "sw3");
+    ModelFacade.getInstance().addLinkToNetwork("ln4", "net", 0, "sw1", "sw4");
+    ModelFacade.getInstance().addLinkToNetwork("ln5", "net", 0, "sw2", "sw3");
+    ModelFacade.getInstance().addLinkToNetwork("ln6", "net", 0, "sw2", "sw4");
+
+    ModelFacade.getInstance().addLinkToNetwork("ln7", "net", 0, "sw1", "srv1");
+    ModelFacade.getInstance().addLinkToNetwork("ln8", "net", 0, "sw2", "srv2");
+    ModelFacade.getInstance().addLinkToNetwork("ln9", "net", 0, "sw3", "sw1");
+    ModelFacade.getInstance().addLinkToNetwork("ln10", "net", 0, "sw4", "sw1");
+    ModelFacade.getInstance().addLinkToNetwork("ln11", "net", 0, "sw3", "sw2");
+    ModelFacade.getInstance().addLinkToNetwork("ln12", "net", 0, "sw4", "sw2");
+
+    ModelFacadeConfig.MIN_PATH_LENGTH = 4;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+    ModelFacadeConfig.YEN_K = 2;
+
+    // Create paths and check values
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    assertFalse(allPaths.isEmpty());
+
+    // Check total number of paths
+    assertEquals(4, allPaths.size());
   }
 
   @Test

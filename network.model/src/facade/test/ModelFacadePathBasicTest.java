@@ -573,7 +573,7 @@ public class ModelFacadePathBasicTest {
    * Creates a one tier network with two servers and one switch. The bandwidth of the servers is
    * different (1 vs 2).
    */
-  private static void oneTierSetupTwoServers() {
+  protected static void oneTierSetupTwoServers() {
     ModelFacade.getInstance().addNetworkToRoot("net", false);
     ModelFacade.getInstance().addSwitchToNetwork("sw", "net", 0);
     ModelFacade.getInstance().addServerToNetwork("srv1", "net", 0, 0, 0, 1);
