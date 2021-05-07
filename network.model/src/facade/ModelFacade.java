@@ -13,6 +13,7 @@ import org.moflon.core.utilities.eMoflonEMFUtil;
 import facade.config.ModelFacadeConfig;
 import facade.pathgen.Dijkstra;
 import facade.pathgen.IPathGen;
+import facade.pathgen.Yen;
 import model.Link;
 import model.ModelFactory;
 import model.Network;
@@ -416,7 +417,13 @@ public class ModelFacade {
     // Iterate over all servers
     for (final Node s : getAllServersOfNetwork(networkdId)) {
       final SubstrateServer srv = (SubstrateServer) s;
-      final IPathGen gen = new Dijkstra();
+      final IPathGen gen;
+      if (ModelFacadeConfig.YEN_PATH_GEN) {
+        gen = new Yen();
+      } else {
+        gen = new Dijkstra();
+      }
+
       final Map<SubstrateNode, List<SubstrateLink>> actMap = gen.getAllFastestPaths(snet, srv);
 
       // Iterate over all "paths" of the current node
