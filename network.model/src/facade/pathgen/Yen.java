@@ -14,7 +14,7 @@ import model.SubstrateNetwork;
 import model.SubstrateNode;
 
 /**
- * Yen path finding algorithm that is used to generate the shortest n paths for all models. Uses the
+ * Yen path finding algorithm that is used to generate the shortest K paths for all models. Uses the
  * base Dijkstra implementation. Heavily based on this Wikipedia article:
  * https://en.wikipedia.org/wiki/Yen%27s_algorithm
  * 
@@ -22,6 +22,16 @@ import model.SubstrateNode;
  */
 public class Yen implements IPathGen {
 
+  /**
+   * Implementation of the path finding algorithm by Yen (see reference above). Finds the K shortest
+   * paths from a source to a given target node in a given substrate network.
+   * 
+   * @param net Substrate network to work with.
+   * @param source Source node for all paths to find.
+   * @param target Target node for all paths to find.
+   * @param K Parameter for the fastest K paths.
+   * @return List of lists of substrate nodes which form the paths.
+   */
   private List<List<SubstrateNode>> yen(final SubstrateNetwork net, final SubstrateNode source,
       final SubstrateNode target, final int K) {
 
@@ -171,7 +181,7 @@ public class Yen implements IPathGen {
         new HashMap<SubstrateNode, List<SubstrateLink>>();
 
     final Map<SubstrateNode, List<List<SubstrateLink>>> kOutput =
-        getAllKFastestPaths(net, start, 2);
+        getAllKFastestPaths(net, start, 1);
 
     for (final SubstrateNode sn : kOutput.keySet()) {
       output.put(sn, kOutput.get(sn).get(0));
