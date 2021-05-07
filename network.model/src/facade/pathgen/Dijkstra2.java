@@ -55,6 +55,13 @@ public class Dijkstra2 {
 
     while (!nodes.isEmpty()) {
       final SubstrateNode u = getSmallestDistNode(ignoredNodes);
+
+      // If no node with the smallest distance can be found, the graph is not fully connected ->
+      // Break the loop and return.
+      if (u == null) {
+        break;
+      }
+
       nodes.remove(u);
 
       for (final Link out : u.getOutgoingLinks()) {
