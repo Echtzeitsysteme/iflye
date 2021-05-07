@@ -418,17 +418,30 @@ public class ModelFacade {
     for (final Node s : getAllServersOfNetwork(networkdId)) {
       final SubstrateServer srv = (SubstrateServer) s;
       final IPathGen gen;
+
+      // Decide whether the paths should be generated using the algorithm of Dijkstra (shortest
+      // path) or the algorithm of Yen (K shortest paths).
       if (ModelFacadeConfig.YEN_PATH_GEN) {
         gen = new Yen();
+
+        final Map<SubstrateNode, List<List<SubstrateLink>>> actMap =
+            gen.getAllKFastestPaths(snet, srv, ModelFacadeConfig.YEN_K);
+
+        // Iterate over all "paths" of the current node
+        for (final SubstrateNode n : actMap.keySet()) {
+          for (final List<SubstrateLink> l : actMap.get(n)) {
+            createBidirectionalPathFromLinks(l);
+          }
+        }
       } else {
         gen = new Dijkstra();
-      }
 
-      final Map<SubstrateNode, List<SubstrateLink>> actMap = gen.getAllFastestPaths(snet, srv);
+        final Map<SubstrateNode, List<SubstrateLink>> actMap = gen.getAllFastestPaths(snet, srv);
 
-      // Iterate over all "paths" of the current node
-      for (final SubstrateNode n : actMap.keySet()) {
-        createBidirectionalPathFromLinks(actMap.get(n));
+        // Iterate over all "paths" of the current node
+        for (final SubstrateNode n : actMap.keySet()) {
+          createBidirectionalPathFromLinks(actMap.get(n));
+        }
       }
     }
   }
@@ -461,7 +474,7 @@ public class ModelFacade {
     final Node target = links.get(lastIndex).getTarget();
 
     // Create forward path
-    if (!doesPathWithSourceAndTargetExist(source, target)) {
+    if (!doesSpecificPathWithSourceAndTargetExist(source, target, nodes, links)) {
       final SubstratePath forward = genMetaPath(source, target);
       forward.setHops(links.size());
       forward.setNetwork(links.get(0).getNetwork());
@@ -486,9 +499,9 @@ public class ModelFacade {
       // Get all reversed links
       final Set<SubstrateLink> reversedLinks = getOppositeLinks(links);
       reverse.getLinks().addAll(reversedLinks);
-      final int bw = getMinimumBandwidthFromSubstrateLinks(reversedLinks);
-      reverse.setBandwidth(bw);
-      reverse.setResidualBandwidth(bw);
+      final int revBw = getMinimumBandwidthFromSubstrateLinks(reversedLinks);
+      reverse.setBandwidth(revBw);
+      reverse.setResidualBandwidth(revBw);
     }
   }
 
@@ -578,6 +591,30 @@ public class ModelFacade {
   }
 
   /**
+   * This method checks the availability of a specific path with given source and target node.
+   * 
+   * @param source Source to search path for.
+   * @param target Target to search path for.
+   * @param nodes Set of nodes that must be contained in the found path.
+   * @param links List of links that must be contained in the found path.
+   * @return True if a path with given parameters already exists.
+   */
+  private boolean doesSpecificPathWithSourceAndTargetExist(final Node source, final Node target,
+      final Set<Node> nodes, final List<SubstrateLink> links) {
+    final Set<Path> foundPaths = getPathsFromSourceToTarget(source, target);
+
+    for (final Path p : foundPaths) {
+      // Check that both "sets" of nodes and links are equal
+      if (nodes.containsAll(p.getNodes()) && p.getNodes().containsAll(nodes)
+          && links.containsAll(p.getLinks()) && p.getLinks().containsAll(links)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
    * Returns true, if a given node ID exists in a given network model.
    * 
    * @param id Node ID to check.
@@ -635,6 +672,26 @@ public class ModelFacade {
     }
 
     return null;
+  }
+
+  /**
+   * Returns all paths from source node to target node if any exists. Else it returns an empty set.
+   * 
+   * @param source Source node.
+   * @param target Target node.
+   * @return Set of paths if any exists or else an empty set.
+   */
+  public Set<Path> getPathsFromSourceToTarget(final Node source, final Node target) {
+    final List<Path> allPaths = getAllPathsOfNetwork(source.getNetwork().getName());
+    final Set<Path> foundPaths = new HashSet<Path>();
+
+    for (final Path p : allPaths) {
+      if (p.getSource().equals(source) && p.getTarget().equals(target)) {
+        foundPaths.add(p);
+      }
+    }
+
+    return foundPaths;
   }
 
   /**

@@ -71,7 +71,7 @@ public class Dijkstra2 {
         }
 
         SubstrateNode next = (SubstrateNode) out.getTarget();
-        if (nodes.contains(next)) {
+        if (nodes.contains(next) && !ignoredNodes.contains(next)) {
           distanceUpdate(u, next);
         }
       }
@@ -155,7 +155,9 @@ public class Dijkstra2 {
   protected List<SubstrateNode> shortestPathNodes(final SubstrateNode target) {
     final List<SubstrateNode> nodes = new LinkedList<SubstrateNode>();
     SubstrateNode u = target;
-    nodes.add(0, u);
+    if (prevs.get(u) != null) {
+      nodes.add(0, u);
+    }
     while (prevs.get(u) != null) {
       u = prevs.get(u);
       nodes.add(0, u);

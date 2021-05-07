@@ -61,7 +61,7 @@ public class Yen implements IPathGen {
         // Spur node is retrieved from the previous k-shortest path, k − 1.
         final SubstrateNode spurNode = A.get(k - 1).get(i);
         // The sequence of nodes from the source to the spur node of the previous k-shortest path.
-        final List<SubstrateNode> rootPath = A.get(k - 1).subList(0, i);
+        final List<SubstrateNode> rootPath = A.get(k - 1).subList(0, i + 1);
 
         for (final List<SubstrateNode> p : A) {
           if (rootPath.equals(p.subList(0, i + 1))) {
@@ -87,8 +87,14 @@ public class Yen implements IPathGen {
         final List<SubstrateNode> spurPath = extendedDijkstra.shortestPathNodes(target);
 
         if (spurPath.isEmpty()) {
-          throw new UnsupportedOperationException("Spur path was empty!");
+          // throw new UnsupportedOperationException("Spur path was empty!");
+          // break;
+          continue;
         }
+
+        // Remove first node in spurPath, because it is the same as the spurNode and it is also
+        // contained in rootPath.
+        spurPath.remove(0);
 
         // Entire path is made up of the root path and spur path.
         final List<SubstrateNode> totalPath = new LinkedList<SubstrateNode>();
