@@ -24,18 +24,18 @@ public class Dijkstra implements IPathGen {
   /**
    * Mapping: Node -> Distance.
    */
-  private final Map<SubstrateNode, Integer> dists = new HashMap<SubstrateNode, Integer>();
+  protected final Map<SubstrateNode, Integer> dists = new HashMap<SubstrateNode, Integer>();
 
   /**
    * Mapping: Node -> Previous node.
    */
-  private final Map<SubstrateNode, SubstrateNode> prevs =
+  protected final Map<SubstrateNode, SubstrateNode> prevs =
       new HashMap<SubstrateNode, SubstrateNode>();
 
   /**
    * List of all nodes.
    */
-  private final Set<SubstrateNode> nodes = new HashSet<SubstrateNode>();
+  protected final Set<SubstrateNode> nodes = new HashSet<SubstrateNode>();
 
   /**
    * Starts the whole algorithm for a given substrate network and one given substrate node as start.
@@ -86,7 +86,7 @@ public class Dijkstra implements IPathGen {
    * 
    * @return SubstrateNode with smallest distance.
    */
-  private SubstrateNode getSmallestDistNode() {
+  protected SubstrateNode getSmallestDistNode() {
     int dist = Integer.MAX_VALUE;
     SubstrateNode nearest = null;
 
@@ -108,7 +108,7 @@ public class Dijkstra implements IPathGen {
    * @param u SubstrateNode u.
    * @param v SubstrateNode v.
    */
-  private void distanceUpdate(final SubstrateNode u, final SubstrateNode v) {
+  protected void distanceUpdate(final SubstrateNode u, final SubstrateNode v) {
     final int alt = dists.get(u) + 1;
 
     if (alt < dists.get(v)) {

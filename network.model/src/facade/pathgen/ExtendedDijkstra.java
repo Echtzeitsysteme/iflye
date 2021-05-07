@@ -1,10 +1,7 @@
 package facade.pathgen;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import model.Link;
 import model.Node;
@@ -17,28 +14,13 @@ import model.SubstrateNode;
  * on this Wikipedia article: https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
  * 
  * This is a slightly adapted version compared to the normal Dijkstra implementation. It gets a set
- * of nodes and links to ignore during the path finding process. This is a needed behavior, because
- * the Yen algorithm needs to delete nodes and links but the model itself should not be changed.
+ * of nodes and links to ignore during the path finding process. This is a must-have behavior,
+ * because Yen's algorithm needs to delete nodes and links but the model itself should not be
+ * changed.
  * 
  * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
  */
-public class Dijkstra2 {
-
-  /**
-   * Mapping: Node -> Distance.
-   */
-  private final Map<SubstrateNode, Integer> dists = new HashMap<SubstrateNode, Integer>();
-
-  /**
-   * Mapping: Node -> Previous node.
-   */
-  private final Map<SubstrateNode, SubstrateNode> prevs =
-      new HashMap<SubstrateNode, SubstrateNode>();
-
-  /**
-   * List of all nodes.
-   */
-  private final Set<SubstrateNode> nodes = new HashSet<SubstrateNode>();
+public class ExtendedDijkstra extends Dijkstra {
 
   /**
    * Starts the whole algorithm for a given substrate network and one given substrate node as start.
@@ -127,22 +109,6 @@ public class Dijkstra2 {
     }
 
     return nearest;
-  }
-
-  /**
-   * Performs an update of the distance between to given substrate nodes. The value will be
-   * incremented by 1.
-   * 
-   * @param u SubstrateNode u.
-   * @param v SubstrateNode v.
-   */
-  private void distanceUpdate(final SubstrateNode u, final SubstrateNode v) {
-    final int alt = dists.get(u) + 1;
-
-    if (alt < dists.get(v)) {
-      dists.replace(v, alt);
-      prevs.replace(v, u);
-    }
   }
 
   /**

@@ -41,7 +41,7 @@ public class Yen implements IPathGen {
     // Determine the shortest path from the source to the sink.
     // No need to ignore any nodes or links here
     {
-      final Dijkstra2 extendedDijkstra = new Dijkstra2();
+      final ExtendedDijkstra extendedDijkstra = new ExtendedDijkstra();
       extendedDijkstra.dijkstra(net, source, new HashSet<SubstrateNode>(),
           new HashSet<SubstrateLink>());
       A.add(0, extendedDijkstra.shortestPathNodes(target));
@@ -82,7 +82,7 @@ public class Yen implements IPathGen {
 
         // Calculate the spur path from the spur node to the sink.
         // Consider also checking if any spurPath found
-        final Dijkstra2 extendedDijkstra = new Dijkstra2();
+        final ExtendedDijkstra extendedDijkstra = new ExtendedDijkstra();
         extendedDijkstra.dijkstra(net, spurNode, ignoredNodes, ignoredLinks);
         final List<SubstrateNode> spurPath = extendedDijkstra.shortestPathNodes(target);
 
