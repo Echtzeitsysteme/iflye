@@ -20,10 +20,10 @@ import model.SubstrateNode;
  * 
  * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
  */
-public class Yen {
+public class Yen implements IPathGen {
 
-  private static List<List<SubstrateNode>> yen(final SubstrateNetwork net,
-      final SubstrateNode source, final SubstrateNode target, final int K) {
+  private List<List<SubstrateNode>> yen(final SubstrateNetwork net, final SubstrateNode source,
+      final SubstrateNode target, final int K) {
 
     // K shortest paths
     final List<List<SubstrateNode>> A = new LinkedList<List<SubstrateNode>>();
@@ -114,7 +114,7 @@ public class Yen {
    * @param candidates List of substrate node lists.
    * @return Substrate node list with the smallest amount of nodes.
    */
-  private static List<SubstrateNode> popBestCandidate(final List<List<SubstrateNode>> candidates) {
+  private List<SubstrateNode> popBestCandidate(final List<List<SubstrateNode>> candidates) {
     int minHops = Integer.MAX_VALUE;
     List<SubstrateNode> candidate = null;
 
@@ -141,7 +141,8 @@ public class Yen {
    * @return Map of SubstrateNodes to lists of lists of SubstrateLinks that form the corresponding
    *         paths.
    */
-  public static Map<SubstrateNode, List<List<SubstrateLink>>> getAllPaths(
+  @Override
+  public Map<SubstrateNode, List<List<SubstrateLink>>> getAllKFastestPaths(
       final SubstrateNetwork net, final SubstrateNode start, final int k) {
     final Map<SubstrateNode, List<List<SubstrateLink>>> paths =
         new HashMap<SubstrateNode, List<List<SubstrateLink>>>();
@@ -158,6 +159,22 @@ public class Yen {
     return paths;
   }
 
+  @Override
+  public Map<SubstrateNode, List<SubstrateLink>> getAllFastestPaths(final SubstrateNetwork net,
+      final SubstrateNode start) {
+    final Map<SubstrateNode, List<SubstrateLink>> output =
+        new HashMap<SubstrateNode, List<SubstrateLink>>();
+
+    final Map<SubstrateNode, List<List<SubstrateLink>>> kOutput =
+        getAllKFastestPaths(net, start, 1);
+
+    for (final SubstrateNode sn : kOutput.keySet()) {
+      output.put(sn, kOutput.get(sn).get(0));
+    }
+
+    return output;
+  }
+
   /**
    * Translates a list of lists of substrate nodes to a list of lists of substrate links connecting
    * the nodes together. This one is a wrapper that calls {@link #translate(List)} for every item in
@@ -166,7 +183,7 @@ public class Yen {
    * @param input List of lists of substrate nodes to convert.
    * @return List of list of substrate links that form the path of all given substrate nodes.
    */
-  private static List<List<SubstrateLink>> translateAll(final List<List<SubstrateNode>> input) {
+  private List<List<SubstrateLink>> translateAll(final List<List<SubstrateNode>> input) {
     final List<List<SubstrateLink>> output = new LinkedList<List<SubstrateLink>>();
 
     for (final List<SubstrateNode> act : input) {
@@ -183,7 +200,7 @@ public class Yen {
    * @param nodes List of substrate nodes to convert.
    * @return List of substrate links that form the path of all given substrate nodes.
    */
-  private static List<SubstrateLink> translate(final List<SubstrateNode> nodes) {
+  private List<SubstrateLink> translate(final List<SubstrateNode> nodes) {
     final List<SubstrateLink> links = new LinkedList<SubstrateLink>();
 
     for (int i = 0; i < nodes.size() - 1; i++) {

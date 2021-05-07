@@ -417,7 +417,7 @@ public class ModelFacade {
     for (final Node s : getAllServersOfNetwork(networkdId)) {
       final SubstrateServer srv = (SubstrateServer) s;
       final IPathGen gen = new Dijkstra();
-      final Map<SubstrateNode, List<SubstrateLink>> actMap = gen.getAllPaths(snet, srv);
+      final Map<SubstrateNode, List<SubstrateLink>> actMap = gen.getAllFastestPaths(snet, srv);
 
       // Iterate over all "paths" of the current node
       for (final SubstrateNode n : actMap.keySet()) {

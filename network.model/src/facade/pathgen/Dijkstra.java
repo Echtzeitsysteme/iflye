@@ -163,7 +163,8 @@ public class Dijkstra implements IPathGen {
    * @param start SubstrateNode as start/source node of all paths.
    * @return Map of SubstrateNodes to lists of SubstrateLinks that form the corresponding paths.
    */
-  public Map<SubstrateNode, List<SubstrateLink>> getAllPaths(final SubstrateNetwork net,
+  @Override
+  public Map<SubstrateNode, List<SubstrateLink>> getAllFastestPaths(final SubstrateNetwork net,
       final SubstrateNode start) {
     final Map<SubstrateNode, List<SubstrateLink>> paths =
         new HashMap<SubstrateNode, List<SubstrateLink>>();
@@ -173,6 +174,31 @@ public class Dijkstra implements IPathGen {
       SubstrateNode sn = (SubstrateNode) n;
       if (!sn.equals(start)) {
         paths.put(sn, shortestPath(sn));
+      }
+    }
+
+    return paths;
+  }
+
+  @Override
+  public Map<SubstrateNode, List<List<SubstrateLink>>> getAllKFastestPaths(SubstrateNetwork net,
+      SubstrateNode start, int K) {
+    if (K != 1) {
+      throw new UnsupportedOperationException(
+          "Due to its nature, the Dijkstra algorithm is only able to calculate the K=1 fastest "
+              + "paths for all nodes.");
+    }
+
+    final Map<SubstrateNode, List<List<SubstrateLink>>> paths =
+        new HashMap<SubstrateNode, List<List<SubstrateLink>>>();
+    dijkstra(net, start);
+
+    for (final Node n : net.getNodes()) {
+      SubstrateNode sn = (SubstrateNode) n;
+      if (!sn.equals(start)) {
+        final List<List<SubstrateLink>> act = new LinkedList<List<SubstrateLink>>();
+        act.add(shortestPath(sn));
+        paths.put(sn, act);
       }
     }
 
