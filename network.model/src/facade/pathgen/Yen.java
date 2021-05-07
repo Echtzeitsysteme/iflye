@@ -30,8 +30,12 @@ public class Yen implements IPathGen {
 
     // Determine the shortest path from the source to the sink.
     // No need to ignore any nodes or links here
-    Dijkstra2.dijkstra(net, source, new HashSet<SubstrateNode>(), new HashSet<SubstrateLink>());
-    A.add(0, Dijkstra2.shortestPathNodes(target));
+    {
+      final Dijkstra2 extendedDijkstra = new Dijkstra2();
+      extendedDijkstra.dijkstra(net, source, new HashSet<SubstrateNode>(),
+          new HashSet<SubstrateLink>());
+      A.add(0, extendedDijkstra.shortestPathNodes(target));
+    }
 
     // Initialize the set to store the potential kth shortest path.
     final List<List<SubstrateNode>> B = new LinkedList<List<SubstrateNode>>();
@@ -50,7 +54,7 @@ public class Yen implements IPathGen {
         final List<SubstrateNode> rootPath = A.get(k - 1).subList(0, i);
 
         for (final List<SubstrateNode> p : A) {
-          if (rootPath.equals(p.subList(0, i))) {
+          if (rootPath.equals(p.subList(0, i + 1))) {
             // Remove the links that are part of the previous shortest paths which share the same
             // root path.
             final Link toIgnore =
@@ -68,8 +72,9 @@ public class Yen implements IPathGen {
 
         // Calculate the spur path from the spur node to the sink.
         // Consider also checking if any spurPath found
-        Dijkstra2.dijkstra(net, spurNode, ignoredNodes, ignoredLinks);
-        final List<SubstrateNode> spurPath = Dijkstra2.shortestPathNodes(target);
+        final Dijkstra2 extendedDijkstra = new Dijkstra2();
+        extendedDijkstra.dijkstra(net, spurNode, ignoredNodes, ignoredLinks);
+        final List<SubstrateNode> spurPath = extendedDijkstra.shortestPathNodes(target);
 
         if (spurPath.isEmpty()) {
           throw new UnsupportedOperationException("Spur path was empty!");
@@ -151,7 +156,7 @@ public class Yen implements IPathGen {
     for (final Node n : net.getNodes()) {
       SubstrateNode sn = (SubstrateNode) n;
       if (!sn.equals(start)) {
-        List<List<SubstrateNode>> candidates = yen(net, start, sn, K);
+        final List<List<SubstrateNode>> candidates = yen(net, start, sn, K);
         paths.put(sn, translateAll(candidates));
       }
     }
@@ -166,7 +171,7 @@ public class Yen implements IPathGen {
         new HashMap<SubstrateNode, List<SubstrateLink>>();
 
     final Map<SubstrateNode, List<List<SubstrateLink>>> kOutput =
-        getAllKFastestPaths(net, start, 1);
+        getAllKFastestPaths(net, start, 2);
 
     for (final SubstrateNode sn : kOutput.keySet()) {
       output.put(sn, kOutput.get(sn).get(0));

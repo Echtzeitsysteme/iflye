@@ -27,23 +27,18 @@ public class Dijkstra2 {
   /**
    * Mapping: Node -> Distance.
    */
-  final static Map<SubstrateNode, Integer> dists = new HashMap<SubstrateNode, Integer>();
+  private final Map<SubstrateNode, Integer> dists = new HashMap<SubstrateNode, Integer>();
 
   /**
    * Mapping: Node -> Previous node.
    */
-  final static Map<SubstrateNode, SubstrateNode> prevs =
+  private final Map<SubstrateNode, SubstrateNode> prevs =
       new HashMap<SubstrateNode, SubstrateNode>();
 
   /**
    * List of all nodes.
    */
-  final static Set<SubstrateNode> nodes = new HashSet<SubstrateNode>();
-
-  /**
-   * Private constructor to avoid instantiation.
-   */
-  private Dijkstra2() {}
+  private final Set<SubstrateNode> nodes = new HashSet<SubstrateNode>();
 
   /**
    * Starts the whole algorithm for a given substrate network and one given substrate node as start.
@@ -52,7 +47,7 @@ public class Dijkstra2 {
    * @param start SubstrateNode to start with.
    * @return List of nodes with all previous visited nodes.
    */
-  protected static List<Node> dijkstra(final SubstrateNetwork net, final SubstrateNode start,
+  protected List<Node> dijkstra(final SubstrateNetwork net, final SubstrateNode start,
       final Set<SubstrateNode> ignoredNodes, final Set<SubstrateLink> ignoredLinks) {
     final List<Node> prev = new LinkedList<Node>();
 
@@ -84,7 +79,7 @@ public class Dijkstra2 {
    * @param net SubstrateNetwork to use.
    * @param start SubstrateNode to use as a start.
    */
-  private static void init(final SubstrateNetwork net, final SubstrateNode start,
+  private void init(final SubstrateNetwork net, final SubstrateNode start,
       final Set<SubstrateNode> ignoredNodes) {
     for (final Node n : net.getNodes()) {
       final SubstrateNode sn = (SubstrateNode) n;
@@ -107,7 +102,7 @@ public class Dijkstra2 {
    * 
    * @return SubstrateNode with smallest distance.
    */
-  private static SubstrateNode getSmallestDistNode(final Set<SubstrateNode> ignoredNodes) {
+  private SubstrateNode getSmallestDistNode(final Set<SubstrateNode> ignoredNodes) {
     int dist = Integer.MAX_VALUE;
     SubstrateNode nearest = null;
 
@@ -134,7 +129,7 @@ public class Dijkstra2 {
    * @param u SubstrateNode u.
    * @param v SubstrateNode v.
    */
-  private static void distanceUpdate(final SubstrateNode u, final SubstrateNode v) {
+  private void distanceUpdate(final SubstrateNode u, final SubstrateNode v) {
     final int alt = dists.get(u) + 1;
 
     if (alt < dists.get(v)) {
@@ -150,7 +145,7 @@ public class Dijkstra2 {
    * @param target Target node to calculate path for.
    * @return List of substrate nodes that form the shortest path from start to target.
    */
-  protected static List<SubstrateNode> shortestPathNodes(final SubstrateNode target) {
+  protected List<SubstrateNode> shortestPathNodes(final SubstrateNode target) {
     final List<SubstrateNode> nodes = new LinkedList<SubstrateNode>();
     SubstrateNode u = target;
     nodes.add(0, u);
