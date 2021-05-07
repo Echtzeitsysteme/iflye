@@ -36,10 +36,10 @@ public class Yen implements IPathGen {
     // Initialize the set to store the potential kth shortest path.
     final List<List<SubstrateNode>> B = new LinkedList<List<SubstrateNode>>();
 
-    for (int k = 1; k <= K; k++) {
+    for (int k = 1; k < K; k++) {
       // The spur node ranges from the first node to the next to last node in the previous
       // k-shortest path.
-      for (int i = 0; i <= A.get(k - 1).size() - 2; i++) {
+      for (int i = 0; i < A.get(k - 1).size() - 2; i++) {
         // Setup for the nodes and links to ignore
         final Set<SubstrateNode> ignoredNodes = new HashSet<SubstrateNode>();
         final Set<SubstrateLink> ignoredLinks = new HashSet<SubstrateLink>();
@@ -130,20 +130,20 @@ public class Yen implements IPathGen {
   }
 
   /**
-   * Calculates and returns the first k fastest paths from a given start node in a given network.
-   * (More specific: It calculates the first k paths with the smallest amount of hops from the start
+   * Calculates and returns the first K fastest paths from a given start node in a given network.
+   * (More specific: It calculates the first K paths with the smallest amount of hops from the start
    * node to all other nodes.) This method returns a map of all substrate nodes mapped to a list of
    * of lists of substrate links from start node to the key of the map.
    * 
    * @param net Network to search all paths for.
    * @param start SubstrateNode as start/source node of all paths.
-   * @param k Create first k paths.
+   * @param K Create first K paths.
    * @return Map of SubstrateNodes to lists of lists of SubstrateLinks that form the corresponding
    *         paths.
    */
   @Override
   public Map<SubstrateNode, List<List<SubstrateLink>>> getAllKFastestPaths(
-      final SubstrateNetwork net, final SubstrateNode start, final int k) {
+      final SubstrateNetwork net, final SubstrateNode start, final int K) {
     final Map<SubstrateNode, List<List<SubstrateLink>>> paths =
         new HashMap<SubstrateNode, List<List<SubstrateLink>>>();
 
@@ -151,7 +151,7 @@ public class Yen implements IPathGen {
     for (final Node n : net.getNodes()) {
       SubstrateNode sn = (SubstrateNode) n;
       if (!sn.equals(start)) {
-        List<List<SubstrateNode>> candidates = yen(net, start, sn, k);
+        List<List<SubstrateNode>> candidates = yen(net, start, sn, K);
         paths.put(sn, translateAll(candidates));
       }
     }
