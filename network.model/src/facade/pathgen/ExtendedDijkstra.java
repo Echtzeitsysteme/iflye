@@ -23,20 +23,28 @@ import model.SubstrateNode;
 public class ExtendedDijkstra extends Dijkstra {
 
   /**
+   * Set of substrate nodes to ignore during the path finding process.
+   */
+  private Set<SubstrateNode> ignoredNodes;
+
+  /**
    * Starts the whole algorithm for a given substrate network and one given substrate node as start.
    * 
    * @param net SubstrateNetwork to generate all paths for.
    * @param start SubstrateNode to start with.
+   * @param ignoredNodes Set of substrate nodes to ignore.
+   * @param ignoredLinks Set of substrate links to ignore.
    * @return List of nodes with all previous visited nodes.
    */
   protected List<Node> dijkstra(final SubstrateNetwork net, final SubstrateNode start,
       final Set<SubstrateNode> ignoredNodes, final Set<SubstrateLink> ignoredLinks) {
+    this.ignoredNodes = ignoredNodes;
     final List<Node> prev = new LinkedList<Node>();
 
-    init(net, start, ignoredNodes);
+    init(net, start);
 
     while (!nodes.isEmpty()) {
-      final SubstrateNode u = getSmallestDistNode(ignoredNodes);
+      final SubstrateNode u = getSmallestDistNode();
 
       // If no node with the smallest distance can be found, the graph is not fully connected ->
       // Break the loop and return.
@@ -68,8 +76,7 @@ public class ExtendedDijkstra extends Dijkstra {
    * @param net SubstrateNetwork to use.
    * @param start SubstrateNode to use as a start.
    */
-  private void init(final SubstrateNetwork net, final SubstrateNode start,
-      final Set<SubstrateNode> ignoredNodes) {
+  private void init(final SubstrateNetwork net, final SubstrateNode start) {
     for (final Node n : net.getNodes()) {
       final SubstrateNode sn = (SubstrateNode) n;
 
@@ -91,7 +98,8 @@ public class ExtendedDijkstra extends Dijkstra {
    * 
    * @return SubstrateNode with smallest distance.
    */
-  private SubstrateNode getSmallestDistNode(final Set<SubstrateNode> ignoredNodes) {
+  @Override
+  protected SubstrateNode getSmallestDistNode() {
     int dist = Integer.MAX_VALUE;
     SubstrateNode nearest = null;
 
