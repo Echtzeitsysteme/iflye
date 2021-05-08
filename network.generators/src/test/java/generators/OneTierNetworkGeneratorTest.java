@@ -10,7 +10,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import facade.ModelFacade;
 import generators.config.OneTierConfig;
 import model.Link;
 import model.Network;
@@ -28,11 +27,11 @@ import model.VirtualNetwork;
  * 
  * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
  */
-public class OneTierNetworkGeneratorTest {
+public class OneTierNetworkGeneratorTest implements IGeneratorTest {
 
   @Before
   public void resetModel() {
-    ModelFacade.getInstance().resetAll();
+    facade.resetAll();
   }
 
   /*
@@ -43,7 +42,7 @@ public class OneTierNetworkGeneratorTest {
   public void testNoNetworksAfterInit() {
     final OneTierConfig config = new OneTierConfig(2, 1, false, 1, 1, 1, 1);
     new OneTierNetworkGenerator(config);
-    assertTrue(ModelFacade.getInstance().getAllNetworks().isEmpty());
+    assertTrue(facade.getAllNetworks().isEmpty());
   }
 
   @Test
@@ -52,16 +51,16 @@ public class OneTierNetworkGeneratorTest {
     final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(config);
     gen.createNetwork("test", false);
 
-    final Network net = ModelFacade.getInstance().getNetworkById("test");
+    final Network net = facade.getNetworkById("test");
 
     // Number of nodes
     assertEquals(3, net.getNodes().size());
 
     // Servers
-    assertEquals(2, ModelFacade.getInstance().getAllServersOfNetwork("test").size());
+    assertEquals(2, facade.getAllServersOfNetwork("test").size());
 
     // Switches
-    assertEquals(1, ModelFacade.getInstance().getAllSwitchesOfNetwork("test").size());
+    assertEquals(1, facade.getAllSwitchesOfNetwork("test").size());
 
     // Links
     assertEquals(4, net.getLinks().size());
@@ -76,16 +75,16 @@ public class OneTierNetworkGeneratorTest {
     final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(config);
     gen.createNetwork("test", true);
 
-    final Network net = ModelFacade.getInstance().getNetworkById("test");
+    final Network net = facade.getNetworkById("test");
 
     // Number of nodes
     assertEquals(3, net.getNodes().size());
 
     // Servers
-    assertEquals(2, ModelFacade.getInstance().getAllServersOfNetwork("test").size());
+    assertEquals(2, facade.getAllServersOfNetwork("test").size());
 
     // Switches
-    assertEquals(1, ModelFacade.getInstance().getAllSwitchesOfNetwork("test").size());
+    assertEquals(1, facade.getAllSwitchesOfNetwork("test").size());
 
     // Links
     assertEquals(4, net.getLinks().size());
@@ -100,16 +99,16 @@ public class OneTierNetworkGeneratorTest {
     final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(config);
     gen.createNetwork("test", false);
 
-    final Network net = ModelFacade.getInstance().getNetworkById("test");
+    final Network net = facade.getNetworkById("test");
 
     // Number of nodes
     assertEquals(105, net.getNodes().size());
 
     // Servers
-    assertEquals(100, ModelFacade.getInstance().getAllServersOfNetwork("test").size());
+    assertEquals(100, facade.getAllServersOfNetwork("test").size());
 
     // Switches
-    assertEquals(5, ModelFacade.getInstance().getAllSwitchesOfNetwork("test").size());
+    assertEquals(5, facade.getAllSwitchesOfNetwork("test").size());
 
     // Links
     assertEquals(1000, net.getLinks().size());
@@ -125,9 +124,9 @@ public class OneTierNetworkGeneratorTest {
     gen.createNetwork("sub", false);
     gen.createNetwork("virt", true);
 
-    assertEquals(2, ModelFacade.getInstance().getAllNetworks().size());
-    assertTrue(ModelFacade.getInstance().getNetworkById("sub") instanceof SubstrateNetwork);
-    assertTrue(ModelFacade.getInstance().getNetworkById("virt") instanceof VirtualNetwork);
+    assertEquals(2, facade.getAllNetworks().size());
+    assertTrue(facade.getNetworkById("sub") instanceof SubstrateNetwork);
+    assertTrue(facade.getNetworkById("virt") instanceof VirtualNetwork);
   }
 
   @Test
@@ -136,7 +135,7 @@ public class OneTierNetworkGeneratorTest {
     final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(config);
     gen.createNetwork("sub", false);
 
-    for (final Node n : ModelFacade.getInstance().getAllServersOfNetwork("sub")) {
+    for (final Node n : facade.getAllServersOfNetwork("sub")) {
       final SubstrateServer srv = (SubstrateServer) n;
       assertEquals(1, srv.getCpu());
       assertEquals(2, srv.getMemory());
@@ -150,7 +149,7 @@ public class OneTierNetworkGeneratorTest {
     final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(config);
     gen.createNetwork("sub", false);
 
-    for (final Node n : ModelFacade.getInstance().getAllServersOfNetwork("sub")) {
+    for (final Node n : facade.getAllServersOfNetwork("sub")) {
       final SubstrateServer srv = (SubstrateServer) n;
       assertEquals(srv.getCpu(), srv.getResidualCpu());
       assertEquals(srv.getMemory(), srv.getResidualMemory());
@@ -164,7 +163,7 @@ public class OneTierNetworkGeneratorTest {
     final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(config);
     gen.createNetwork("sub", false);
 
-    for (final Node n : ModelFacade.getInstance().getAllServersOfNetwork("sub")) {
+    for (final Node n : facade.getAllServersOfNetwork("sub")) {
       final SubstrateServer srv = (SubstrateServer) n;
       assertEquals(1, srv.getOutgoingLinks().size());
       assertEquals(1, srv.getIncomingLinks().size());
@@ -177,7 +176,7 @@ public class OneTierNetworkGeneratorTest {
     final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(config);
     gen.createNetwork("sub", false);
 
-    final List<Link> links = ModelFacade.getInstance().getAllLinksOfNetwork("sub");
+    final List<Link> links = facade.getAllLinksOfNetwork("sub");
 
     for (final Link l : links) {
       final SubstrateLink sl = (SubstrateLink) l;
@@ -194,7 +193,7 @@ public class OneTierNetworkGeneratorTest {
     final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(config);
     gen.createNetwork("sub", false);
 
-    for (final Node n : ModelFacade.getInstance().getNetworkById("sub").getNodes()) {
+    for (final Node n : facade.getNetworkById("sub").getNodes()) {
       if (n instanceof Server) {
         assertEquals(1, ((Server) n).getDepth());
       } else if (n instanceof Switch) {
@@ -211,7 +210,7 @@ public class OneTierNetworkGeneratorTest {
     final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(config);
     gen.createNetwork("sub", false);
 
-    final List<Link> links = ModelFacade.getInstance().getAllLinksOfNetwork("sub");
+    final List<Link> links = facade.getAllLinksOfNetwork("sub");
     assertEquals("srv_0", links.get(0).getSource().getName());
     assertEquals("sw_2", links.get(0).getTarget().getName());
     assertEquals("sw_2", links.get(1).getSource().getName());
@@ -228,7 +227,7 @@ public class OneTierNetworkGeneratorTest {
     final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(config);
     gen.createNetwork("sub", false);
 
-    for (final Path p : ModelFacade.getInstance().getNetworkById("sub").getPaths()) {
+    for (final Path p : facade.getNetworkById("sub").getPaths()) {
       assertNotNull(p.getSource());
       assertNotNull(p.getTarget());
     }
@@ -243,14 +242,14 @@ public class OneTierNetworkGeneratorTest {
   @Test
   public void allowNetworkIdAlreadyExists() {
     final OneTierConfig config = new OneTierConfig(4, 2, false, 1, 1, 1, 1);
-    ModelFacade.getInstance().addNetworkToRoot("a", false);
+    facade.addNetworkToRoot("a", false);
 
     final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(config);
     gen.createNetwork("a", false);
 
-    assertFalse(ModelFacade.getInstance().getNetworkById("a").getNodes().isEmpty());
-    assertFalse(ModelFacade.getInstance().getNetworkById("a").getLinks().isEmpty());
-    assertFalse(ModelFacade.getInstance().getNetworkById("a").getPaths().isEmpty());
+    assertFalse(facade.getNetworkById("a").getNodes().isEmpty());
+    assertFalse(facade.getNetworkById("a").getLinks().isEmpty());
+    assertFalse(facade.getNetworkById("a").getPaths().isEmpty());
   }
 
   /*

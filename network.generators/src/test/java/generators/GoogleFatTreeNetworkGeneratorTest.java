@@ -27,7 +27,7 @@ public class GoogleFatTreeNetworkGeneratorTest implements IGeneratorTest {
 
   @Before
   public void resetModel() {
-    ModelFacade.getInstance().resetAll();
+    facade.resetAll();
   }
 
   /*
