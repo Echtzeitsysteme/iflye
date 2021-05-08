@@ -37,6 +37,9 @@ public class GoogleFatTreeConfig implements IGeneratorConfig {
     if (kparameter >= this.k && kparameter % 2 == 0) {
       this.k = kparameter;
     }
+
+    // Default values for the rack configuration
+    this.rack = new OneTierConfig(getServersPerEdgeSwitch(), 1, false, 1, 1, 1, 10);
   }
 
   public OneTierConfig getRack() {
