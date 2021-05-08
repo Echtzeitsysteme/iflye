@@ -61,28 +61,28 @@ public class GoogleFatTreeNetworkGenerator implements INetworkGenerator {
 
     // Core switches
     for (int i = 0; i < config.getCoreSwitches(); i++) {
-      final String id = getNextCoreSwitchId();
+      final String id = getNextCoreSwitchId(networkId);
       coreSwitchIds.add(id);
       facade.addSwitchToNetwork(id, networkId, 0);
     }
 
     // Aggregation switches
     for (int i = 0; i < config.getAggregationSwitchesPerPod() * config.getPods(); i++) {
-      final String id = getNextAggrSwitchId();
+      final String id = getNextAggrSwitchId(networkId);
       aggregationSwitchIds.add(id);
       facade.addSwitchToNetwork(id, networkId, 1);
     }
 
     // Edge switches
     for (int i = 0; i < config.getEdgeSwitchesPerPod() * config.getPods(); i++) {
-      final String id = getNextEdgeSwitchId();
+      final String id = getNextEdgeSwitchId(networkId);
       edgeSwitchIds.add(id);
       facade.addSwitchToNetwork(id, networkId, 2);
     }
 
     // Servers
     for (int i = 0; i < config.getServersPerPod() * config.getPods(); i++) {
-      final String id = getNextServerId();
+      final String id = getNextServerId(networkId);
       serverIds.add(id);
       facade.addServerToNetwork(id, networkId, config.getRack().getCpuPerServer(),
           config.getRack().getMemoryPerServer(), config.getRack().getStoragePerServer(), 3);
@@ -112,11 +112,11 @@ public class GoogleFatTreeNetworkGenerator implements INetworkGenerator {
       // Create actual links
       for (final String cswId : coreSwitches) {
         // Aggregation switch -> Core switch
-        facade.addLinkToNetwork(getNextLinkId(), networkId, config.getBwCoreToAggr(),
+        facade.addLinkToNetwork(getNextLinkId(networkId), networkId, config.getBwCoreToAggr(),
             aggregationSwitch, cswId);
         // Core switch -> Aggregation switch
-        facade.addLinkToNetwork(getNextLinkId(), networkId, config.getBwCoreToAggr(), cswId,
-            aggregationSwitch);
+        facade.addLinkToNetwork(getNextLinkId(networkId), networkId, config.getBwCoreToAggr(),
+            cswId, aggregationSwitch);
       }
     }
 
@@ -128,11 +128,11 @@ public class GoogleFatTreeNetworkGenerator implements INetworkGenerator {
         for (int k = 0; k < config.getEdgeSwitchesPerPod(); k++) {
           final String edgeSwId = edgeSwitchIds.get((i * config.getEdgeSwitchesPerPod()) + k);
           // Edge switch -> Aggregation switch
-          facade.addLinkToNetwork(getNextLinkId(), networkId, config.getBwAggrToEdge(), edgeSwId,
-              aggrSwId);
+          facade.addLinkToNetwork(getNextLinkId(networkId), networkId, config.getBwAggrToEdge(),
+              edgeSwId, aggrSwId);
           // Aggregation switch -> Edge switch
-          facade.addLinkToNetwork(getNextLinkId(), networkId, config.getBwAggrToEdge(), aggrSwId,
-              edgeSwId);
+          facade.addLinkToNetwork(getNextLinkId(networkId), networkId, config.getBwAggrToEdge(),
+              aggrSwId, edgeSwId);
         }
       }
     }
@@ -143,11 +143,11 @@ public class GoogleFatTreeNetworkGenerator implements INetworkGenerator {
       for (int j = 0; j < config.getServersPerEdgeSwitch(); j++) {
         final String srvId = serverIds.get((i * config.getServersPerEdgeSwitch()) + j);
         // Server -> Edge switch
-        facade.addLinkToNetwork(getNextLinkId(), networkId, config.getRack().getBandwidthPerLink(),
-            srvId, edgeSwId);
+        facade.addLinkToNetwork(getNextLinkId(networkId), networkId,
+            config.getRack().getBandwidthPerLink(), srvId, edgeSwId);
         // Edge switch -> Server
-        facade.addLinkToNetwork(getNextLinkId(), networkId, config.getRack().getBandwidthPerLink(),
-            edgeSwId, srvId);
+        facade.addLinkToNetwork(getNextLinkId(networkId), networkId,
+            config.getRack().getBandwidthPerLink(), edgeSwId, srvId);
       }
     }
 
@@ -161,24 +161,29 @@ public class GoogleFatTreeNetworkGenerator implements INetworkGenerator {
    * Utility methods
    */
 
-  private String getNextCoreSwitchId() {
-    return CORE_SWITCH_PREFIX + GlobalGeneratorConfig.SEPARATOR + coreSwitchIds.size();
+  private String getNextCoreSwitchId(final String networkId) {
+    return networkId + GlobalGeneratorConfig.SEPARATOR + CORE_SWITCH_PREFIX
+        + GlobalGeneratorConfig.SEPARATOR + coreSwitchIds.size();
   }
 
-  private String getNextAggrSwitchId() {
-    return AGGR_SWITCH_PREFIX + GlobalGeneratorConfig.SEPARATOR + aggregationSwitchIds.size();
+  private String getNextAggrSwitchId(final String networkId) {
+    return networkId + GlobalGeneratorConfig.SEPARATOR + AGGR_SWITCH_PREFIX
+        + GlobalGeneratorConfig.SEPARATOR + aggregationSwitchIds.size();
   }
 
-  private String getNextEdgeSwitchId() {
-    return EDGE_SWITCH_PREFIX + GlobalGeneratorConfig.SEPARATOR + edgeSwitchIds.size();
+  private String getNextEdgeSwitchId(final String networkId) {
+    return networkId + GlobalGeneratorConfig.SEPARATOR + EDGE_SWITCH_PREFIX
+        + GlobalGeneratorConfig.SEPARATOR + edgeSwitchIds.size();
   }
 
-  private String getNextServerId() {
-    return GlobalGeneratorConfig.SERVER + GlobalGeneratorConfig.SEPARATOR + serverIds.size();
+  private String getNextServerId(final String networkId) {
+    return networkId + GlobalGeneratorConfig.SEPARATOR + GlobalGeneratorConfig.SERVER
+        + GlobalGeneratorConfig.SEPARATOR + serverIds.size();
   }
 
-  private String getNextLinkId() {
-    return GlobalGeneratorConfig.LINK + GlobalGeneratorConfig.SEPARATOR + linkIdCounter++;
+  private String getNextLinkId(final String networkId) {
+    return networkId + GlobalGeneratorConfig.SEPARATOR + GlobalGeneratorConfig.LINK
+        + GlobalGeneratorConfig.SEPARATOR + linkIdCounter++;
   }
 
 }

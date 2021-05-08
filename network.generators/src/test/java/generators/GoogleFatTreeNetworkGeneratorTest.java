@@ -94,6 +94,20 @@ public class GoogleFatTreeNetworkGeneratorTest implements IGeneratorTest {
     }
   }
 
+  @Test
+  public void testTwoSubstrateNetworks() {
+    final GoogleFatTreeConfig config = new GoogleFatTreeConfig(4);
+    final OneTierConfig rack = new OneTierConfig(-1, -1, false, 8, 9, 10, 1);
+    config.setRack(rack);
+    final GoogleFatTreeNetworkGenerator genA = new GoogleFatTreeNetworkGenerator(config);
+    genA.createNetwork("test1", false);
+    final GoogleFatTreeNetworkGenerator genB = new GoogleFatTreeNetworkGenerator(config);
+    genB.createNetwork("test2", false);
+
+    assertFalse(facade.getAllServersOfNetwork("test1").isEmpty());
+    assertFalse(facade.getAllServersOfNetwork("test2").isEmpty());
+  }
+
   /*
    * Negative tests
    */
