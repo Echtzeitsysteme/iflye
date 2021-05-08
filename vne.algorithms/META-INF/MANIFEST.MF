@@ -4,3 +4,4 @@ Bundle-Name: test
 Bundle-SymbolicName: test; singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Require-Bundle: org.eclipse.emf.ecore
+Import-Package: generators.config
