@@ -5,7 +5,8 @@ import org.junit.runners.Suite;
 import algorithms.heuristics.TafAlgorithmTest;
 import facade.test.ModelFacadeCreationTest;
 import facade.test.ModelFacadeEmbeddingTest;
-import facade.test.ModelFacadePathTest;
+import facade.test.ModelFacadePathBasicTest;
+import facade.test.ModelFacadePathYenTest;
 import generators.OneTierNetworkGeneratorTest;
 import generators.TwoTierNetworkGeneratorTest;
 import metrics.AcceptedVnrMetricTest;
@@ -25,12 +26,12 @@ import metrics.TotalTafCommunicationCostMetricTest;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ModelFacadeCreationTest.class, ModelFacadeEmbeddingTest.class,
-    ModelFacadePathTest.class, TafAlgorithmTest.class, OneTierNetworkGeneratorTest.class,
-    TwoTierNetworkGeneratorTest.class, AcceptedVnrMetricTest.class,
-    ActiveSubstrateServerMetricTest.class, ActiveSubstrateSwitchMetricTest.class,
-    AveragePathLengthMetricTest.class, TotalCommunicationCostMetricTest.class,
-    TotalPathCostMetricTest.class, TotalTafCommunicationCostMetricTest.class,
-    RuntimeMetricTest.class})
+    ModelFacadePathBasicTest.class, ModelFacadePathYenTest.class, TafAlgorithmTest.class,
+    OneTierNetworkGeneratorTest.class, TwoTierNetworkGeneratorTest.class,
+    AcceptedVnrMetricTest.class, ActiveSubstrateServerMetricTest.class,
+    ActiveSubstrateSwitchMetricTest.class, AveragePathLengthMetricTest.class,
+    TotalCommunicationCostMetricTest.class, TotalPathCostMetricTest.class,
+    TotalTafCommunicationCostMetricTest.class, RuntimeMetricTest.class})
 public class GlobalTestSuite {
 
 }

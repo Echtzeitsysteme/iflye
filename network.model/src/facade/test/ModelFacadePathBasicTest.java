@@ -23,11 +23,11 @@ import model.SubstratePath;
 import model.Switch;
 
 /**
- * Test class for the ModelFacade that tests all path related creations.
+ * Test class for the ModelFacade that tests all basic path related creations.
  * 
  * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
  */
-public class ModelFacadePathTest {
+public class ModelFacadePathBasicTest {
 
   /*
    * Variables to save the ModelFacade's configuration of path limits to.
@@ -573,7 +573,7 @@ public class ModelFacadePathTest {
    * Creates a one tier network with two servers and one switch. The bandwidth of the servers is
    * different (1 vs 2).
    */
-  private static void oneTierSetupTwoServers() {
+  protected static void oneTierSetupTwoServers() {
     ModelFacade.getInstance().addNetworkToRoot("net", false);
     ModelFacade.getInstance().addSwitchToNetwork("sw", "net", 0);
     ModelFacade.getInstance().addServerToNetwork("srv1", "net", 0, 0, 0, 1);
@@ -636,7 +636,7 @@ public class ModelFacadePathTest {
   /**
    * Creates a two tier network with four servers total, two rack switches, and two core switches.
    */
-  private static void twoTierSetupFourServersTwoCoreSwitches() {
+  protected static void twoTierSetupFourServersTwoCoreSwitches() {
     twoTierSetupFourServers();
 
     ModelFacade.getInstance().addSwitchToNetwork("csw2", "net", 0);

@@ -28,4 +28,16 @@ public class ModelFacadeConfig {
    */
   public static boolean LINK_HOST_EMBED_PATH = false;
 
+  /**
+   * If true, all virtual paths will be generated using Yen's algorithm with the parameter
+   * {@link #YEN_K} for the number of K fastest links per node pair.
+   */
+  public static boolean YEN_PATH_GEN = false;
+
+  /**
+   * Number of K fastest links per node pair if {@link #YEN_PATH_GEN} is true. (Else the parameter
+   * does not matter.)
+   */
+  public static int YEN_K = 2;
+
 }
