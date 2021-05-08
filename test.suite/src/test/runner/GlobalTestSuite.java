@@ -7,6 +7,7 @@ import facade.test.ModelFacadeCreationTest;
 import facade.test.ModelFacadeEmbeddingTest;
 import facade.test.ModelFacadePathBasicTest;
 import facade.test.ModelFacadePathYenTest;
+import generators.GoogleFatTreeNetworkGeneratorTest;
 import generators.OneTierNetworkGeneratorTest;
 import generators.TwoTierNetworkGeneratorTest;
 import metrics.AcceptedVnrMetricTest;
@@ -28,10 +29,11 @@ import metrics.TotalTafCommunicationCostMetricTest;
 @Suite.SuiteClasses({ModelFacadeCreationTest.class, ModelFacadeEmbeddingTest.class,
     ModelFacadePathBasicTest.class, ModelFacadePathYenTest.class, TafAlgorithmTest.class,
     OneTierNetworkGeneratorTest.class, TwoTierNetworkGeneratorTest.class,
-    AcceptedVnrMetricTest.class, ActiveSubstrateServerMetricTest.class,
-    ActiveSubstrateSwitchMetricTest.class, AveragePathLengthMetricTest.class,
-    TotalCommunicationCostMetricTest.class, TotalPathCostMetricTest.class,
-    TotalTafCommunicationCostMetricTest.class, RuntimeMetricTest.class})
+    GoogleFatTreeNetworkGeneratorTest.class, AcceptedVnrMetricTest.class,
+    ActiveSubstrateServerMetricTest.class, ActiveSubstrateSwitchMetricTest.class,
+    AveragePathLengthMetricTest.class, TotalCommunicationCostMetricTest.class,
+    TotalPathCostMetricTest.class, TotalTafCommunicationCostMetricTest.class,
+    RuntimeMetricTest.class})
 public class GlobalTestSuite {
 
 }
