@@ -3,9 +3,9 @@ package generators;
 import facade.ModelFacade;
 
 /**
- * An super type interface that acts as a common type for network generator tests.
+ * A super type interface that acts as a common type for network generator tests.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public interface IGeneratorTest {
 

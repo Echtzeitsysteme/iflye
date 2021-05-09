@@ -17,13 +17,14 @@ import facade.ModelFacade;
  * Visualization UI based on GraphStream, that can show network topologies based on models read from
  * XMI files.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class Ui {
 
   /*
    * Configuration parameters.
    */
+
   /**
    * Scaling of the placement.
    */

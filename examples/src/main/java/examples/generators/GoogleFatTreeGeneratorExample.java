@@ -8,7 +8,7 @@ import generators.config.GoogleFatTreeConfig;
  * Runnable example for the Google fat tree network generator. Creates one substrate network within
  * the model.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class GoogleFatTreeGeneratorExample {
 

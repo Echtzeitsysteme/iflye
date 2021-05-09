@@ -3,7 +3,7 @@ package generators.config;
 /**
  * Configuration (container-)class for the two tier network generator.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class TwoTierConfig implements IGeneratorConfig {
 

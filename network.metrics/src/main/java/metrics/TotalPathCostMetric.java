@@ -18,7 +18,7 @@ import model.VirtualSwitch;
  * Techniques. In: Rensink A., Sánchez Cuadrado J. (eds) Theory and Practice of Model
  * Transformation. ICMT 2018. Lecture Notes in Computer Science, vol 10888. Springer, Cham
  *
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class TotalPathCostMetric implements IMetric {
 

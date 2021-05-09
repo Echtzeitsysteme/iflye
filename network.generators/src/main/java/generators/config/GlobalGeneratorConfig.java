@@ -3,7 +3,7 @@ package generators.config;
 /**
  * Global configuration parameters for all network generators.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public interface GlobalGeneratorConfig {
 

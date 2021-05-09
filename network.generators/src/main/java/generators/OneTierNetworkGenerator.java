@@ -9,7 +9,7 @@ import generators.config.OneTierConfig;
 /**
  * Basic implementation of a one tier network topology generator.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class OneTierNetworkGenerator implements INetworkGenerator {
 

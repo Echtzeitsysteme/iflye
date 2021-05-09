@@ -13,7 +13,7 @@ import model.Path;
 /**
  * Test class for the ModelFacade that tests all Yen path related creations.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class ModelFacadePathYenTest {
 
@@ -174,8 +174,8 @@ public class ModelFacadePathYenTest {
   }
 
   /**
-   * Setup: Two servers and three switches srv1 -> sw1; srv2 -> sw2; sw1 -> sw3; sw2 -> sw3; sw1 ->
-   * sw4; sw2 -> sw4;
+   * Setup: Two servers and three switches srv1 - sw1; srv2 - sw2; sw1 - sw3; sw2 - sw3; sw1 - sw4;
+   * sw2 - sw4;
    */
   @Test
   public void testOneTierPathCreationTwoServersTwoCoreSwitchesFourHops() {

@@ -25,7 +25,7 @@ import model.Switch;
 /**
  * Test class for the ModelFacade that tests all basic path related creations.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class ModelFacadePathBasicTest {
 

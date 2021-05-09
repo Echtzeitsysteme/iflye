@@ -35,7 +35,7 @@ import model.VirtualSwitch;
 /**
  * Facade to access and manipulate the underlying model.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class ModelFacade {
 

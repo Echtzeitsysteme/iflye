@@ -25,7 +25,7 @@ import model.VirtualNetwork;
 /**
  * Test class for the OneTierNetworkGenerator.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class OneTierNetworkGeneratorTest implements IGeneratorTest {
 

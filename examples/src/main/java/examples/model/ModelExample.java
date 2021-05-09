@@ -5,7 +5,7 @@ import facade.ModelFacade;
 /**
  * Runnable example for simple interaction with the model.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class ModelExample {
 

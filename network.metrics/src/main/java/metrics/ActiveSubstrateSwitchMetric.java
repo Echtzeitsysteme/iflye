@@ -8,7 +8,7 @@ import model.SubstrateSwitch;
  * Active substrate switches metric. This one equals the number of substrate switches that have one
  * or more embedded virtual networks on them.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class ActiveSubstrateSwitchMetric implements IMetric {
 

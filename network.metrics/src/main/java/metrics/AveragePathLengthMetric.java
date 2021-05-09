@@ -11,7 +11,7 @@ import model.VirtualNetwork;
  * Average path length metric. This one equals the sum of all substrate links from substrate paths
  * with embedded virtual links on them divided by the number of virtual links.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class AveragePathLengthMetric implements IMetric {
 

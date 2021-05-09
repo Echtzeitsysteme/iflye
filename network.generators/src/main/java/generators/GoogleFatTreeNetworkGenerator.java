@@ -14,7 +14,7 @@ import generators.config.IGeneratorConfig;
  * Architecture. In: Proceedings of the ACM SIGCOMM 2008 conference on Data communication. (2008),
  * S. pp. 63–74
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class GoogleFatTreeNetworkGenerator implements INetworkGenerator {
 

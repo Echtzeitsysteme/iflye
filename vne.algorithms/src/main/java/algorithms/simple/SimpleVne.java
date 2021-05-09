@@ -16,7 +16,7 @@ import model.VirtualServer;
  * If it does not, the algorithm is unable to embed the request. The resources are added all
  * together.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class SimpleVne extends AbstractAlgorithm {
 

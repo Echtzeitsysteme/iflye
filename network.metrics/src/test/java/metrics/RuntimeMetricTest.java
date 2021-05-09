@@ -8,7 +8,7 @@ import org.junit.Test;
 /**
  * Test class for the metric of runtime.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class RuntimeMetricTest extends AMetricTest {
 

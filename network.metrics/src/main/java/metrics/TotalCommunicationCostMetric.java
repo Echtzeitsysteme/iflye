@@ -19,7 +19,7 @@ import model.VirtualServer;
  * 
  * "D_ij denotes traffic rate from VM i to j."
  *
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class TotalCommunicationCostMetric implements IMetric {
 
