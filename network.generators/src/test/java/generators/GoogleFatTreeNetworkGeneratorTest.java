@@ -58,9 +58,7 @@ public class GoogleFatTreeNetworkGeneratorTest implements IGeneratorTest {
 
   @Test
   public void testAtLeastOnePathGenerated() {
-    final GoogleFatTreeConfig config = new GoogleFatTreeConfig(4);
-    final GoogleFatTreeNetworkGenerator gen = new GoogleFatTreeNetworkGenerator(config);
-    gen.createNetwork("test", false);
+    basicKFourSetup();
 
     assertTrue(1 < facade.getAllPathsOfNetwork("test").size());
   }
@@ -108,6 +106,37 @@ public class GoogleFatTreeNetworkGeneratorTest implements IGeneratorTest {
     assertFalse(facade.getAllServersOfNetwork("test2").isEmpty());
   }
 
+  @Test
+  public void testServerDepth() {
+    basicKFourSetup();
+
+    final List<Node> servers = facade.getAllServersOfNetwork("test");
+    for (final Node s : servers) {
+      assertEquals(3, s.getDepth());
+    }
+  }
+
+  @Test
+  public void testServerOnlyOneBidirectionalLink() {
+    basicKFourSetup();
+
+    final List<Node> servers = facade.getAllServersOfNetwork("test");
+    for (final Node s : servers) {
+      assertEquals(1, s.getOutgoingLinks().size());
+      assertEquals(1, s.getIncomingLinks().size());
+    }
+  }
+
+  @Test
+  public void testInvalidKParameterModulo() {
+    final GoogleFatTreeConfig config = new GoogleFatTreeConfig(11);
+    final GoogleFatTreeNetworkGenerator gen = new GoogleFatTreeNetworkGenerator(config);
+    gen.createNetwork("test", false);
+
+    // k % 2 != 0 must result in k = 4 (default value)
+    assertEquals(4, filterNodesByDepth(facade.getAllSwitchesOfNetwork("test"), 0).size());
+  }
+
   /*
    * Negative tests
    */
@@ -122,6 +151,15 @@ public class GoogleFatTreeNetworkGeneratorTest implements IGeneratorTest {
   /*
    * Utility methods
    */
+
+  /**
+   * Sets a default GoogleFatTree Network with k = 4 up. It's name/ID is "test".
+   */
+  private void basicKFourSetup() {
+    final GoogleFatTreeConfig config = new GoogleFatTreeConfig(4);
+    final GoogleFatTreeNetworkGenerator gen = new GoogleFatTreeNetworkGenerator(config);
+    gen.createNetwork("test", false);
+  }
 
   /**
    * Checks the amount of elements (servers, switches, links) for a given parameter k. This method
