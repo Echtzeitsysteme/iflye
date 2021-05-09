@@ -32,12 +32,12 @@ public class TafAlgorithmTest {
   /**
    * Old lower limit value.
    */
-  int oldLowerLimit;
+  private int oldLowerLimit;
 
   /**
    * Old upper limit value.
    */
-  int oldUpperLimit;
+  private int oldUpperLimit;
 
   @Before
   public void resetModel() {

@@ -72,22 +72,22 @@ public class TafAlgorithm extends AbstractAlgorithm {
   /**
    * All virtual links of the virtual network.
    */
-  final List<VirtualLink> virtualLinks = new LinkedList<VirtualLink>();
+  private final List<VirtualLink> virtualLinks = new LinkedList<VirtualLink>();
 
   /**
    * All virtual servers of the virtual network.
    */
-  final List<VirtualServer> virtualServers = new LinkedList<VirtualServer>();
+  private final List<VirtualServer> virtualServers = new LinkedList<VirtualServer>();
 
   /**
    * All substrate servers of the substrate network.
    */
-  final List<SubstrateServer> substrateServers = new LinkedList<SubstrateServer>();
+  private final List<SubstrateServer> substrateServers = new LinkedList<SubstrateServer>();
 
   /**
    * Map of virtual -> substrate server.
    */
-  final Map<VirtualServer, SubstrateServer> placedVms =
+  private final Map<VirtualServer, SubstrateServer> placedVms =
       new HashMap<VirtualServer, SubstrateServer>();
 
   /**

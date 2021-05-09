@@ -16,34 +16,34 @@ import model.Path;
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class ModelFacadePathYenTest {
-
   /*
    * Variables to save the ModelFacade's configuration of path limits to.
    */
+
   /**
    * Old lower limit value.
    */
-  int oldLowerLimit;
+  private int oldLowerLimit;
 
   /**
    * Old upper limit value.
    */
-  int oldUpperLimit;
+  private int oldUpperLimit;
 
   /**
    * Old K parameter.
    */
-  int oldK;
+  private int oldK;
 
   /**
    * Old Yen flag.
    */
-  boolean oldYen;
+  private boolean oldYen;
 
   /**
    * Basic tests to run.
    */
-  ModelFacadePathBasicTest basic;
+  private ModelFacadePathBasicTest basic;
 
   @Before
   public void resetModel() {

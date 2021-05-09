@@ -14,7 +14,7 @@ public abstract class AMetricTest {
   /**
    * ModelFacade object to work with.
    */
-  final ModelFacade facade = ModelFacade.getInstance();
+  protected final ModelFacade facade = ModelFacade.getInstance();
 
   @Before
   public void resetModel() {

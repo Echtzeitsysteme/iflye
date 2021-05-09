@@ -14,12 +14,12 @@ public class RuntimeMetric implements IMetric {
   /**
    * Start time stamp.
    */
-  final long start;
+  private final long start;
 
   /**
    * End time stamp.
    */
-  long end = 0;
+  private long end = 0;
 
   /**
    * Creates a new instance of this metric. The time of creation will be used as starting time

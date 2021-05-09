@@ -20,7 +20,6 @@ import facade.ModelFacade;
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class Ui {
-
   /*
    * Configuration parameters.
    */
@@ -33,17 +32,17 @@ public class Ui {
   /**
    * Servers (nodes) loaded from model.
    */
-  final static List<model.Node> servers = new LinkedList<model.Node>();
+  private final static List<model.Node> servers = new LinkedList<model.Node>();
 
   /**
    * Switches (nodes) loaded from model.
    */
-  final static List<model.Node> switches = new LinkedList<model.Node>();
+  private final static List<model.Node> switches = new LinkedList<model.Node>();
 
   /**
    * Links (edges) loaded from model.
    */
-  final static Set<model.Link> links = new HashSet<model.Link>();
+  private final static Set<model.Link> links = new HashSet<model.Link>();
 
   /**
    * Main method that starts the visualization process.

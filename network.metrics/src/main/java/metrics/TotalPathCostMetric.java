@@ -25,7 +25,7 @@ public class TotalPathCostMetric implements IMetric {
   /**
    * Calculated cost.
    */
-  double cost;
+  private double cost;
 
   /**
    * Creates a new instance of this metric for the provided substrate network.

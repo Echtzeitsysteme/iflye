@@ -18,7 +18,7 @@ public class AveragePathLengthMetric implements IMetric {
   /**
    * Calculated value of this metric.
    */
-  final double value;
+  private final double value;
 
   /**
    * Creates a new instance of this metric for the provided substrate network.

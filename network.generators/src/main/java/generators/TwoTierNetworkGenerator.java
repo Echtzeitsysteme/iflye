@@ -24,17 +24,17 @@ public class TwoTierNetworkGenerator implements INetworkGenerator {
   /**
    * Set for the core switch ID generation.
    */
-  final HashSet<String> coreSwitchIds = new HashSet<String>();
+  private final HashSet<String> coreSwitchIds = new HashSet<String>();
 
   /**
    * Set for the rack switch ID generation.
    */
-  final HashSet<String> rackSwitchIds = new HashSet<String>();
+  private final HashSet<String> rackSwitchIds = new HashSet<String>();
 
   /**
    * Set for the server ID generation.
    */
-  final HashSet<String> serverIds = new HashSet<String>();
+  private final HashSet<String> serverIds = new HashSet<String>();
 
   /**
    * Counter for the link ID generation.

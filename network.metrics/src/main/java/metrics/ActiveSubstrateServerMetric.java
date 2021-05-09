@@ -15,7 +15,7 @@ public class ActiveSubstrateServerMetric implements IMetric {
   /**
    * Calculated value of this metric.
    */
-  final int value;
+  private final int value;
 
   /**
    * Creates a new instance of this metric for the provided substrate network.

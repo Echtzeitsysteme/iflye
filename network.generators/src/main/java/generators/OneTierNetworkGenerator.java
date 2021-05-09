@@ -21,12 +21,12 @@ public class OneTierNetworkGenerator implements INetworkGenerator {
   /**
    * Set for the switch ID generation.
    */
-  final HashSet<String> switchIds = new HashSet<String>();
+  private final HashSet<String> switchIds = new HashSet<String>();
 
   /**
    * Set for the server ID generation.
    */
-  final HashSet<String> serverIds = new HashSet<String>();
+  private final HashSet<String> serverIds = new HashSet<String>();
 
   /**
    * Counter for the link ID generation.
