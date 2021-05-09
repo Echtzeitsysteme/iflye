@@ -231,7 +231,7 @@ public class TwoTierNetworkGeneratorTest implements IGeneratorTest {
         assertEquals(2, ((Server) n).getDepth());
       } else if (n instanceof Switch) {
         // First (and only) core switch has a '0' in its name
-        if (n.getName().contains("0")) {
+        if (n.getName().contains("csw")) {
           assertEquals(0, ((Switch) n).getDepth());
         } else {
           assertEquals(1, ((Switch) n).getDepth());
@@ -252,14 +252,14 @@ public class TwoTierNetworkGeneratorTest implements IGeneratorTest {
     gen.createNetwork("sub", false);
 
     final List<Link> links = facade.getAllLinksOfNetwork("sub");
-    assertEquals("sw_0", links.get(0).getSource().getName());
-    assertEquals("sw_1", links.get(0).getTarget().getName());
-    assertEquals("sw_1", links.get(1).getSource().getName());
-    assertEquals("sw_0", links.get(1).getTarget().getName());
-    assertEquals("sw_1", links.get(2).getSource().getName());
-    assertEquals("srv_2", links.get(2).getTarget().getName());
-    assertEquals("srv_2", links.get(3).getSource().getName());
-    assertEquals("sw_1", links.get(3).getTarget().getName());
+    assertEquals("sub_csw_0", links.get(0).getSource().getName());
+    assertEquals("sub_rsw_0", links.get(0).getTarget().getName());
+    assertEquals("sub_rsw_0", links.get(1).getSource().getName());
+    assertEquals("sub_csw_0", links.get(1).getTarget().getName());
+    assertEquals("sub_rsw_0", links.get(2).getSource().getName());
+    assertEquals("sub_srv_0", links.get(2).getTarget().getName());
+    assertEquals("sub_srv_0", links.get(3).getSource().getName());
+    assertEquals("sub_rsw_0", links.get(3).getTarget().getName());
   }
 
   @Test
