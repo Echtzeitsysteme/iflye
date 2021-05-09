@@ -211,14 +211,14 @@ public class OneTierNetworkGeneratorTest implements IGeneratorTest {
     gen.createNetwork("sub", false);
 
     final List<Link> links = facade.getAllLinksOfNetwork("sub");
-    assertEquals("srv_0", links.get(0).getSource().getName());
-    assertEquals("sw_2", links.get(0).getTarget().getName());
-    assertEquals("sw_2", links.get(1).getSource().getName());
-    assertEquals("srv_0", links.get(1).getTarget().getName());
-    assertEquals("srv_1", links.get(2).getSource().getName());
-    assertEquals("sw_2", links.get(2).getTarget().getName());
-    assertEquals("sw_2", links.get(3).getSource().getName());
-    assertEquals("srv_1", links.get(3).getTarget().getName());
+    assertEquals("sub_srv_0", links.get(0).getSource().getName());
+    assertEquals("sub_sw_0", links.get(0).getTarget().getName());
+    assertEquals("sub_sw_0", links.get(1).getSource().getName());
+    assertEquals("sub_srv_0", links.get(1).getTarget().getName());
+    assertEquals("sub_srv_1", links.get(2).getSource().getName());
+    assertEquals("sub_sw_0", links.get(2).getTarget().getName());
+    assertEquals("sub_sw_0", links.get(3).getSource().getName());
+    assertEquals("sub_srv_1", links.get(3).getTarget().getName());
   }
 
   @Test

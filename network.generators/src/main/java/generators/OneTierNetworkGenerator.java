@@ -2,9 +2,9 @@ package generators;
 
 import java.util.HashSet;
 import facade.ModelFacade;
+import generators.config.GlobalGeneratorConfig;
 import generators.config.IGeneratorConfig;
 import generators.config.OneTierConfig;
-import generators.utils.GenUtils;
 
 /**
  * Basic implementation of a one tier network topology generator.
@@ -17,6 +17,21 @@ public class OneTierNetworkGenerator implements INetworkGenerator {
    * Configuration of this network generator instance.
    */
   private final OneTierConfig config;
+
+  /**
+   * Set for the switch ID generation.
+   */
+  final HashSet<String> switchIds = new HashSet<String>();
+
+  /**
+   * Set for the server ID generation.
+   */
+  final HashSet<String> serverIds = new HashSet<String>();
+
+  /**
+   * Counter for the link ID generation.
+   */
+  private int linkCounter = 0;
 
   /**
    * Private constructor to avoid direct instantiation of this class.
@@ -39,8 +54,10 @@ public class OneTierNetworkGenerator implements INetworkGenerator {
    */
   @Override
   public void createNetwork(final String networkId, boolean isVirtual) {
-    final HashSet<String> serverIds = new HashSet<String>();
-    final HashSet<String> switchIds = new HashSet<String>();
+    // Reset sets and counter
+    switchIds.clear();
+    serverIds.clear();
+    linkCounter = 0;
 
     // Network
     if (!facade.networkExists(networkId)) {
@@ -49,27 +66,27 @@ public class OneTierNetworkGenerator implements INetworkGenerator {
 
     // Servers
     for (int i = 0; i < config.getNumberOfServers(); i++) {
-      final String currentId = GenUtils.getServerId();
+      final String currentId = getNextServerId(networkId);
       serverIds.add(currentId);
-      facade.addServerToNetwork(String.valueOf(currentId), networkId, config.getCpuPerServer(),
+      facade.addServerToNetwork(currentId, networkId, config.getCpuPerServer(),
           config.getMemoryPerServer(), config.getStoragePerServer(), 1);
     }
 
     // Switches
     for (int i = 0; i < config.getNumberOfSwitches(); i++) {
-      final String currentId = GenUtils.getSwitchId();
+      final String currentId = getNextSwitchId(networkId);
       switchIds.add(currentId);
-      facade.addSwitchToNetwork(String.valueOf(currentId), networkId, 0);
+      facade.addSwitchToNetwork(currentId, networkId, 0);
     }
 
     // Links
     for (final String actServerId : serverIds) {
       for (final String actSwitchId : switchIds) {
         // Direction 1
-        facade.addLinkToNetwork(GenUtils.getLinkdId(), networkId, config.getBandwidthPerLink(),
+        facade.addLinkToNetwork(getNextLinkId(networkId), networkId, config.getBandwidthPerLink(),
             actServerId, actSwitchId);
         // Direction 2
-        facade.addLinkToNetwork(GenUtils.getLinkdId(), networkId, config.getBandwidthPerLink(),
+        facade.addLinkToNetwork(getNextLinkId(networkId), networkId, config.getBandwidthPerLink(),
             actSwitchId, actServerId);
       }
     }
@@ -83,6 +100,39 @@ public class OneTierNetworkGenerator implements INetworkGenerator {
     if (!isVirtual) {
       ModelFacade.getInstance().createAllPathsForNetwork(networkId);
     }
+  }
+
+  /**
+   * Generated the next free switch ID for this particular network.
+   * 
+   * @param networkId Network ID.
+   * @return Next free switch ID for this particular network.
+   */
+  private String getNextSwitchId(final String networkId) {
+    return networkId + GlobalGeneratorConfig.SEPARATOR + GlobalGeneratorConfig.SWITCH
+        + GlobalGeneratorConfig.SEPARATOR + switchIds.size();
+  }
+
+  /**
+   * Generated the next free server ID for this particular network.
+   * 
+   * @param networkId Network ID.
+   * @return Next free server ID for this particular network.
+   */
+  private String getNextServerId(final String networkId) {
+    return networkId + GlobalGeneratorConfig.SEPARATOR + GlobalGeneratorConfig.SERVER
+        + GlobalGeneratorConfig.SEPARATOR + serverIds.size();
+  }
+
+  /**
+   * Generated the next free link ID for this particular network.
+   * 
+   * @param networkId Network ID.
+   * @return Next free link ID for this particular network.
+   */
+  private String getNextLinkId(final String networkId) {
+    return networkId + GlobalGeneratorConfig.SEPARATOR + GlobalGeneratorConfig.LINK
+        + GlobalGeneratorConfig.SEPARATOR + linkCounter++;
   }
 
 }
