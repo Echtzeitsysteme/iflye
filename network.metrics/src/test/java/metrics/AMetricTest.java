@@ -18,7 +18,7 @@ public abstract class AMetricTest {
 
   @Before
   public void resetModel() {
-    ModelFacade.getInstance().resetAll();
+    facade.resetAll();
   }
 
   /*
@@ -73,6 +73,7 @@ public abstract class AMetricTest {
    * switch.
    */
   protected void setupEmbeddingTwoHosts() {
+    facade.createAllPathsForNetwork("sub");
     facade.embedNetworkToNetwork("sub", "virt");
     facade.embedSwitchToNode("ssw", "vsw");
     facade.embedServerToServer("ssrv1", "vsrv1");

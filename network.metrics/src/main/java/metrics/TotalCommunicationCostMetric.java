@@ -59,9 +59,13 @@ public class TotalCommunicationCostMetric implements IMetric {
             // Get path from source substrate to source target virtual server
             final Path p = facade.getPathFromSourceToTarget(sourceHost, targetHost);
 
-            // Incremental cost is the number of switches = number of hops - 1 times the source
-            // bandwidth
-            cost += ((p.getHops() - 1) * sourceBw);
+            // If a path exists
+            if (p != null) {
+              // Incremental cost is the number of switches = number of hops - 1 times the source
+              // bandwidth
+              cost += ((p.getHops() - 1) * sourceBw);
+            }
+
           }
         }
       }

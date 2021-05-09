@@ -136,11 +136,9 @@ public class TotalTafCommunicationCostMetric implements IMetric {
     /*
      * Substrate network
      */
-
     // (1) All servers must only have one outgoing and one incoming link
     // (2) All servers must be connected to one switch only
     checkAllServerConnections(sNet);
-
 
     /*
      * Virtual network
@@ -152,7 +150,6 @@ public class TotalTafCommunicationCostMetric implements IMetric {
       // (3) All virtual networks must only have one layer of switches
       checkOnlyOneLayerOfSwitches(vNet);
     }
-
   }
 
   /**
