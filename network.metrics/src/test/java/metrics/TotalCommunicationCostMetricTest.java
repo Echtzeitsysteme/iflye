@@ -1,8 +1,10 @@
 package metrics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.Before;
 import org.junit.Test;
+import facade.config.ModelFacadeConfig;
 import model.Path;
 import model.SubstrateNetwork;
 
@@ -17,6 +19,10 @@ public class TotalCommunicationCostMetricTest extends AMetricTest {
   public void setup() {
     createVirtualNetwork();
   }
+
+  /*
+   * Positive tests
+   */
 
   @Test
   public void testNoEmbeddings() {
@@ -53,6 +59,23 @@ public class TotalCommunicationCostMetricTest extends AMetricTest {
     final TotalCommunicationCostMetric metric = new TotalCommunicationCostMetric(sNet);
 
     assertEquals((4 - 1) * 2 * 3, metric.getValue());
+  }
+
+  /*
+   * Negative tests
+   */
+
+  @Test
+  public void testPathConfigIsWrong() {
+    int oldMaxPathLength = ModelFacadeConfig.MAX_PATH_LENGTH;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 1;
+    createTwoTierSubstrateNetwork();
+    ModelFacadeConfig.MAX_PATH_LENGTH = oldMaxPathLength;
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+
+    assertThrows(UnsupportedOperationException.class, () -> {
+      new TotalCommunicationCostMetric(sNet);
+    });
   }
 
   /*
@@ -93,10 +116,12 @@ public class TotalCommunicationCostMetricTest extends AMetricTest {
     final Path pd = facade.getPathFromSourceToTarget(facade.getSwitchById("cssw"),
         facade.getServerById("ssrv2"));
 
-    facade.embedLinkToPath(pa.getName(), "vln1");
-    facade.embedLinkToPath(pc.getName(), "vln2");
-    facade.embedLinkToPath(pb.getName(), "vln3");
-    facade.embedLinkToPath(pd.getName(), "vln4");
+    if (pa != null && pb != null && pc != null && pd != null) {
+      facade.embedLinkToPath(pa.getName(), "vln1");
+      facade.embedLinkToPath(pc.getName(), "vln2");
+      facade.embedLinkToPath(pb.getName(), "vln3");
+      facade.embedLinkToPath(pd.getName(), "vln4");
+    }
   }
 
 }

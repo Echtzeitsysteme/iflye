@@ -64,8 +64,14 @@ public class TotalCommunicationCostMetric implements IMetric {
               // Incremental cost is the number of switches = number of hops - 1 times the source
               // bandwidth
               cost += ((p.getHops() - 1) * sourceBw);
+            } else if (sourceHost.equals(targetHost)) {
+              // If source and target host are the same, the cost must not be incremented.
+              // (Embedding on the same host has cost = 0.)
+            } else {
+              throw new UnsupportedOperationException(
+                  "There is no path between source and target host. "
+                      + "Maybe, the configuration of the path generation is wrong.");
             }
-
           }
         }
       }

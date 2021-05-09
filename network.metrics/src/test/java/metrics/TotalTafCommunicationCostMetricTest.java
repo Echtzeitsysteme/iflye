@@ -63,6 +63,10 @@ public class TotalTafCommunicationCostMetricTest extends AMetricTest {
     assertEquals(2 * TafAlgorithm.C_GAMMA * 3, metric.getValue());
   }
 
+  /*
+   * Utility methods
+   */
+
   /**
    * Sets a two tier substrate network with two servers, two rack switches and one core switch up.
    * Also includes all links and paths.
