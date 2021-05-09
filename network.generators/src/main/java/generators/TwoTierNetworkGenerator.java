@@ -2,12 +2,9 @@ package generators;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import facade.ModelFacade;
+import generators.config.GlobalGeneratorConfig;
 import generators.config.IGeneratorConfig;
 import generators.config.TwoTierConfig;
-import generators.utils.GenUtils;
 
 /**
  * Basic implementation of a two tier network topology generator.
@@ -16,10 +13,33 @@ import generators.utils.GenUtils;
  */
 public class TwoTierNetworkGenerator implements INetworkGenerator {
 
+  public static String CORE_SWITCH_PREFIX = "c" + GlobalGeneratorConfig.SWITCH;
+  public static String RACK_SWITCH_PREFIX = "r" + GlobalGeneratorConfig.SWITCH;
+
   /**
    * Configuration of this network generator instance.
    */
   private final TwoTierConfig config;
+
+  /**
+   * Set for the core switch ID generation.
+   */
+  final HashSet<String> coreSwitchIds = new HashSet<String>();
+
+  /**
+   * Set for the rack switch ID generation.
+   */
+  final HashSet<String> rackSwitchIds = new HashSet<String>();
+
+  /**
+   * Set for the server ID generation.
+   */
+  final HashSet<String> serverIds = new HashSet<String>();
+
+  /**
+   * Counter for the link ID generation.
+   */
+  private int linkCounter = 0;
 
   /**
    * Private constructor to avoid direct instantiation of this class.
@@ -42,9 +62,11 @@ public class TwoTierNetworkGenerator implements INetworkGenerator {
    */
   @Override
   public void createNetwork(final String networkId, boolean isVirtual) {
-    final List<String> serverIds = new LinkedList<String>();
-    final HashSet<String> coreSwitchIds = new HashSet<String>();
-    final List<String> rackSwitchIds = new LinkedList<String>();
+    // Reset sets and counter
+    coreSwitchIds.clear();
+    rackSwitchIds.clear();
+    serverIds.clear();
+    linkCounter = 0;
 
     // Network
     if (!facade.networkExists(networkId)) {
@@ -53,7 +75,7 @@ public class TwoTierNetworkGenerator implements INetworkGenerator {
 
     // Core switches
     for (int i = 0; i < config.getNumberOfCoreSwitches(); i++) {
-      final String currentId = GenUtils.getSwitchId();
+      final String currentId = getNextCoreSwitchId(networkId);
       coreSwitchIds.add(currentId);
       facade.addSwitchToNetwork(currentId, networkId, 0);
     }
@@ -66,7 +88,7 @@ public class TwoTierNetworkGenerator implements INetworkGenerator {
     }
 
     for (int i = 0; i < config.getNumberOfRacks(); i++) {
-      final String currentId = GenUtils.getSwitchId();
+      final String currentId = getNextRackSwitchId(networkId);
       rackSwitchIds.add(currentId);
       facade.addSwitchToNetwork(currentId, networkId, 1);
     }
@@ -75,7 +97,7 @@ public class TwoTierNetworkGenerator implements INetworkGenerator {
     final int totalNumberOfServers =
         config.getNumberOfRacks() * config.getRack().getNumberOfServers();
     for (int i = 0; i < totalNumberOfServers; i++) {
-      final String currentId = GenUtils.getServerId();
+      final String currentId = getNextServerId(networkId);
       serverIds.add(currentId);
       facade.addServerToNetwork(currentId, networkId, config.getRack().getCpuPerServer(),
           config.getRack().getMemoryPerServer(), config.getRack().getStoragePerServer(), 2);
@@ -86,10 +108,10 @@ public class TwoTierNetworkGenerator implements INetworkGenerator {
     for (final String actCoreSwitch : coreSwitchIds) {
       for (final String actRackSwitch : rackSwitchIds) {
         // Direction 1
-        facade.addLinkToNetwork(GenUtils.getLinkdId(), networkId, config.getCoreBandwidth(),
+        facade.addLinkToNetwork(getNextLinkId(networkId), networkId, config.getCoreBandwidth(),
             actCoreSwitch, actRackSwitch);
         // Direction 2
-        facade.addLinkToNetwork(GenUtils.getLinkdId(), networkId, config.getCoreBandwidth(),
+        facade.addLinkToNetwork(getNextLinkId(networkId), networkId, config.getCoreBandwidth(),
             actRackSwitch, actCoreSwitch);
       }
     }
@@ -102,10 +124,10 @@ public class TwoTierNetworkGenerator implements INetworkGenerator {
       for (int i = 0; i < config.getRack().getNumberOfServers(); i++) {
         final String actLinkId = it.next();
         // Direction 1
-        facade.addLinkToNetwork(GenUtils.getLinkdId(), networkId,
+        facade.addLinkToNetwork(getNextLinkId(networkId), networkId,
             config.getRack().getBandwidthPerLink(), actRackSwitch, actLinkId);
         // Direction 2
-        facade.addLinkToNetwork(GenUtils.getLinkdId(), networkId,
+        facade.addLinkToNetwork(getNextLinkId(networkId), networkId,
             config.getRack().getBandwidthPerLink(), actLinkId, actRackSwitch);
       }
     }
@@ -117,8 +139,52 @@ public class TwoTierNetworkGenerator implements INetworkGenerator {
 
     // Generate paths
     if (!isVirtual) {
-      ModelFacade.getInstance().createAllPathsForNetwork(networkId);
+      facade.createAllPathsForNetwork(networkId);
     }
+  }
+
+  /**
+   * Generated the next free core switch ID for this particular network.
+   * 
+   * @param networkId Network ID.
+   * @return Next free core switch ID for this particular network.
+   */
+  private String getNextCoreSwitchId(final String networkId) {
+    return networkId + GlobalGeneratorConfig.SEPARATOR + CORE_SWITCH_PREFIX
+        + GlobalGeneratorConfig.SEPARATOR + coreSwitchIds.size();
+  }
+
+  /**
+   * Generated the next free rack switch ID for this particular network.
+   * 
+   * @param networkId Network ID.
+   * @return Next free rack switch ID for this particular network.
+   */
+  private String getNextRackSwitchId(final String networkId) {
+    return networkId + GlobalGeneratorConfig.SEPARATOR + RACK_SWITCH_PREFIX
+        + GlobalGeneratorConfig.SEPARATOR + rackSwitchIds.size();
+  }
+
+  /**
+   * Generated the next free server ID for this particular network.
+   * 
+   * @param networkId Network ID.
+   * @return Next free server ID for this particular network.
+   */
+  private String getNextServerId(final String networkId) {
+    return networkId + GlobalGeneratorConfig.SEPARATOR + GlobalGeneratorConfig.SERVER
+        + GlobalGeneratorConfig.SEPARATOR + serverIds.size();
+  }
+
+  /**
+   * Generated the next free link ID for this particular network.
+   * 
+   * @param networkId Network ID.
+   * @return Next free link ID for this particular network.
+   */
+  private String getNextLinkId(final String networkId) {
+    return networkId + GlobalGeneratorConfig.SEPARATOR + GlobalGeneratorConfig.LINK
+        + GlobalGeneratorConfig.SEPARATOR + linkCounter++;
   }
 
 }
