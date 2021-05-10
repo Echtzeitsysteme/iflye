@@ -115,3 +115,5 @@ hs_err_pid*
 ilp/lib/cplex-12.8/
 
 ilp/lib/gurobi-javadoc-8.1.1/
+
+ilp/lpex1.lp
