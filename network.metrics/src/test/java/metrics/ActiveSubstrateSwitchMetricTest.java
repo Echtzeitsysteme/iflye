@@ -50,7 +50,7 @@ public class ActiveSubstrateSwitchMetricTest extends AMetricTest {
   }
 
   /*
-   * Utility method
+   * Utility methods
    */
 
   /**

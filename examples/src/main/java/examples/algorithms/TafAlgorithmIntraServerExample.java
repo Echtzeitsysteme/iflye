@@ -9,12 +9,18 @@ import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
 /**
- * Runnable example for the TAF algorithm implementation.
+ * Runnable example for the TAF algorithm implementation which implements the virtual networks
+ * within one server.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class TafAlgorithmIntraServerExample {
 
+  /**
+   * Main method to start the example. String array of arguments will be ignored.
+   * 
+   * @param args Will be ignored.
+   */
   public static void main(final String[] args) {
     // Setup
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;

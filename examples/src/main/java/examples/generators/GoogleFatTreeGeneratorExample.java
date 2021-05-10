@@ -12,6 +12,11 @@ import generators.config.GoogleFatTreeConfig;
  */
 public class GoogleFatTreeGeneratorExample {
 
+  /**
+   * Main method to start the example. String array of arguments will be ignored.
+   * 
+   * @param args Will be ignored.
+   */
   public static void main(final String[] args) {
     // Google fat tree network generation
     final GoogleFatTreeConfig config = new GoogleFatTreeConfig(4);

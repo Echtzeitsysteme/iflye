@@ -9,6 +9,11 @@ import facade.ModelFacade;
  */
 public class ModelExample {
 
+  /**
+   * Main method to start the example. String array of arguments will be ignored.
+   * 
+   * @param args Will be ignored.
+   */
   public static void main(final String[] args) {
     // Create a network
     final String networkId = "test";

@@ -13,7 +13,14 @@ import generators.config.TwoTierConfig;
  */
 public class TwoTierNetworkGenerator implements INetworkGenerator {
 
+  /**
+   * Core switch ID prefix.
+   */
   public static String CORE_SWITCH_PREFIX = "c" + GlobalGeneratorConfig.SWITCH;
+
+  /**
+   * Rack switch ID prefix.
+   */
   public static String RACK_SWITCH_PREFIX = "r" + GlobalGeneratorConfig.SWITCH;
 
   /**

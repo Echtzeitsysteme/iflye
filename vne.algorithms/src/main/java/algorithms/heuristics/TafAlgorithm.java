@@ -329,6 +329,12 @@ public class TafAlgorithm extends AbstractAlgorithm {
     }
   }
 
+  /**
+   * Returns the lowest common switch for a given collection of substrate servers.
+   * 
+   * @param serverCol Collection of substrate servers.
+   * @return Lowest common switch for a given collection of substrate servers.
+   */
   private SubstrateSwitch getLowestCommonSwitch(final Collection<SubstrateServer> serverCol) {
     final List<SubstrateServer> servers = new LinkedList<SubstrateServer>(serverCol);
     final Set<Switch> switches = new HashSet<Switch>();

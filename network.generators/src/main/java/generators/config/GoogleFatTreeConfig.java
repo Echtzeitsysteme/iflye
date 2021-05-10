@@ -10,6 +10,9 @@ package generators.config;
  */
 public class GoogleFatTreeConfig implements IGeneratorConfig {
 
+  /**
+   * Parameter k that defines the network size.
+   */
   private int k = 4;
 
   /**
@@ -124,6 +127,5 @@ public class GoogleFatTreeConfig implements IGeneratorConfig {
     // servers_per_pod / edge switches_per_pod
     return getServersPerPod() / getEdgeSwitchesPerPod();
   }
-
 
 }

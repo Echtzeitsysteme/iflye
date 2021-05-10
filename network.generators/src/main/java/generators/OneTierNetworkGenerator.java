@@ -7,7 +7,7 @@ import generators.config.IGeneratorConfig;
 import generators.config.OneTierConfig;
 
 /**
- * Basic implementation of a one tier network topology generator.
+ * Basic implementation of an one tier network topology generator.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */

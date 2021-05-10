@@ -18,8 +18,19 @@ import generators.config.IGeneratorConfig;
  */
 public class GoogleFatTreeNetworkGenerator implements INetworkGenerator {
 
+  /**
+   * Core switch ID prefix.
+   */
   public static String CORE_SWITCH_PREFIX = "c" + GlobalGeneratorConfig.SWITCH;
+
+  /**
+   * Aggregation switch ID prefix.
+   */
   public static String AGGR_SWITCH_PREFIX = "aggr" + GlobalGeneratorConfig.SWITCH;
+
+  /**
+   * Edge switch (rack switch) ID prefix.
+   */
   public static String EDGE_SWITCH_PREFIX = "egde" + GlobalGeneratorConfig.SWITCH;
 
   /**
@@ -27,11 +38,29 @@ public class GoogleFatTreeNetworkGenerator implements INetworkGenerator {
    */
   private final GoogleFatTreeConfig config;
 
+  /**
+   * List of generated core switch IDs.
+   */
   private final List<String> coreSwitchIds;
+
+  /**
+   * List of generated aggregation switch IDs.
+   */
   private final List<String> aggregationSwitchIds;
+
+  /**
+   * List of generated edge switch IDs.
+   */
   private final List<String> edgeSwitchIds;
+
+  /**
+   * List of generated server IDs.
+   */
   private final List<String> serverIds;
 
+  /**
+   * Counter of the generated links. Will be used to generate the next free link ID.
+   */
   private int linkIdCounter = 0;
 
   /**
@@ -161,26 +190,56 @@ public class GoogleFatTreeNetworkGenerator implements INetworkGenerator {
    * Utility methods
    */
 
+  /**
+   * Returns the next free core switch ID.
+   * 
+   * @param networkId Network ID to work with.
+   * @return Next free core switch ID.
+   */
   private String getNextCoreSwitchId(final String networkId) {
     return networkId + GlobalGeneratorConfig.SEPARATOR + CORE_SWITCH_PREFIX
         + GlobalGeneratorConfig.SEPARATOR + coreSwitchIds.size();
   }
 
+  /**
+   * Returns the next free aggregation switch ID.
+   * 
+   * @param networkId Network ID to work with.
+   * @return Next free aggregation switch ID.
+   */
   private String getNextAggrSwitchId(final String networkId) {
     return networkId + GlobalGeneratorConfig.SEPARATOR + AGGR_SWITCH_PREFIX
         + GlobalGeneratorConfig.SEPARATOR + aggregationSwitchIds.size();
   }
 
+  /**
+   * Returns the next free edge switch ID.
+   * 
+   * @param networkId Network ID to work with.
+   * @return Next free edge switch ID.
+   */
   private String getNextEdgeSwitchId(final String networkId) {
     return networkId + GlobalGeneratorConfig.SEPARATOR + EDGE_SWITCH_PREFIX
         + GlobalGeneratorConfig.SEPARATOR + edgeSwitchIds.size();
   }
 
+  /**
+   * Returns the next free server ID.
+   * 
+   * @param networkId Network ID to work with.
+   * @return Next free server ID.
+   */
   private String getNextServerId(final String networkId) {
     return networkId + GlobalGeneratorConfig.SEPARATOR + GlobalGeneratorConfig.SERVER
         + GlobalGeneratorConfig.SEPARATOR + serverIds.size();
   }
 
+  /**
+   * Returns the next free link ID.
+   * 
+   * @param networkId Network ID to work with.
+   * @return Next free link ID.
+   */
   private String getNextLinkId(final String networkId) {
     return networkId + GlobalGeneratorConfig.SEPARATOR + GlobalGeneratorConfig.LINK
         + GlobalGeneratorConfig.SEPARATOR + linkIdCounter++;

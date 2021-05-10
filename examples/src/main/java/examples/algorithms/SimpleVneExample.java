@@ -14,6 +14,11 @@ import model.VirtualNetwork;
  */
 public class SimpleVneExample {
 
+  /**
+   * Main method to start the example. String array of arguments will be ignored.
+   * 
+   * @param args Will be ignored.
+   */
   public static void main(final String[] args) {
     // Substrate network = one tier network
     final OneTierConfig substrateConfig = new OneTierConfig(2, 1, false, 10, 10, 10, 20);

@@ -50,7 +50,7 @@ public class ActiveSubstrateServerMetricTest extends AMetricTest {
   }
 
   /*
-   * Utility method
+   * Utility methods
    */
 
   /**

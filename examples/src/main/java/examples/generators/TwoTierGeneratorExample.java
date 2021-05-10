@@ -12,6 +12,11 @@ import generators.config.TwoTierConfig;
  */
 public class TwoTierGeneratorExample {
 
+  /**
+   * Main method to start the example. String array of arguments will be ignored.
+   * 
+   * @param args Will be ignored.
+   */
   public static void main(final String[] args) {
     // Two tier network generation
     final TwoTierConfig config = new TwoTierConfig();

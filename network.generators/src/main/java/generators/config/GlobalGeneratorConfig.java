@@ -7,9 +7,24 @@ package generators.config;
  */
 public interface GlobalGeneratorConfig {
 
+  /**
+   * ID separator.
+   */
   public static String SEPARATOR = "_";
+
+  /**
+   * Server ID name.
+   */
   public static String SERVER = "srv";
+
+  /**
+   * Switch ID name.
+   */
   public static String SWITCH = "sw";
+
+  /**
+   * Link ID name.
+   */
   public static String LINK = "ln";
 
 }
