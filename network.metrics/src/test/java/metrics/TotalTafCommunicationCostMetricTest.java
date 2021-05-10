@@ -10,7 +10,7 @@ import model.SubstrateNetwork;
 /**
  * Test class for the metric of total TAF (traffic amount first) communication cost.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class TotalTafCommunicationCostMetricTest extends AMetricTest {
 
@@ -62,6 +62,10 @@ public class TotalTafCommunicationCostMetricTest extends AMetricTest {
     // cost = 2 * C_GAMMA * 3
     assertEquals(2 * TafAlgorithm.C_GAMMA * 3, metric.getValue());
   }
+
+  /*
+   * Utility methods
+   */
 
   /**
    * Sets a two tier substrate network with two servers, two rack switches and one core switch up.

@@ -7,19 +7,19 @@ package metrics;
  * Please keep in mind that this implementation adds around 0.05 to 0.1 milliseconds of latency to
  * the measurement. Therefore, it is not well suited for capturing very small time frames.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class RuntimeMetric implements IMetric {
 
   /**
    * Start time stamp.
    */
-  final long start;
+  private final long start;
 
   /**
    * End time stamp.
    */
-  long end = 0;
+  private long end = 0;
 
   /**
    * Creates a new instance of this metric. The time of creation will be used as starting time

@@ -35,7 +35,7 @@ import model.VirtualSwitch;
 /**
  * Facade to access and manipulate the underlying model.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class ModelFacade {
 
@@ -57,9 +57,9 @@ public class ModelFacade {
   /*
    * Collections for the path creation methods.
    */
-  final Set<Node> visitedNodes = new HashSet<Node>();
-  final List<SubstratePath> generatedMetaPaths = new LinkedList<SubstratePath>();
-  final Set<Link> linksUntilNode = new HashSet<Link>();
+  private final Set<Node> visitedNodes = new HashSet<Node>();
+  private final List<SubstratePath> generatedMetaPaths = new LinkedList<SubstratePath>();
+  private final Set<Link> linksUntilNode = new HashSet<Link>();
 
   /**
    * Private constructor to disable direct object instantiation.

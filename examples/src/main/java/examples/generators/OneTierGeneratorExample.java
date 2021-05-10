@@ -8,10 +8,15 @@ import generators.config.OneTierConfig;
  * Runnable example for the one tier network generator. Creates one substrate and one virtual one
  * tier network within the model.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class OneTierGeneratorExample {
 
+  /**
+   * Main method to start the example. String array of arguments will be ignored.
+   * 
+   * @param args Will be ignored.
+   */
   public static void main(final String[] args) {
     // One tier network generation
     final OneTierConfig config = new OneTierConfig(2, 1, false, 10, 10, 10, 20);

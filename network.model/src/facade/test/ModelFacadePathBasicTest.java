@@ -25,22 +25,23 @@ import model.Switch;
 /**
  * Test class for the ModelFacade that tests all basic path related creations.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class ModelFacadePathBasicTest {
 
   /*
    * Variables to save the ModelFacade's configuration of path limits to.
    */
+
   /**
    * Old lower limit value.
    */
-  int oldLowerLimit;
+  private int oldLowerLimit;
 
   /**
    * Old upper limit value.
    */
-  int oldUpperLimit;
+  private int oldUpperLimit;
 
   @Before
   public void resetModel() {

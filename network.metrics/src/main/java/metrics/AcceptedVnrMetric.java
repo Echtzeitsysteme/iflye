@@ -6,14 +6,14 @@ import model.SubstrateNetwork;
  * Accepted virtual network request metrics. This one equals the number of virtual networks embedded
  * in a given substrate network.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class AcceptedVnrMetric implements IMetric {
 
   /**
    * Calculated value of this metric.
    */
-  final int value;
+  private final int value;
 
   /**
    * Creates a new instance of this metric for the provided substrate network.

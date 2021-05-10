@@ -7,7 +7,7 @@ import model.SubstrateNetwork;
 /**
  * Test class for the metric of active substrate servers.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class ActiveSubstrateServerMetricTest extends AMetricTest {
 
@@ -50,7 +50,7 @@ public class ActiveSubstrateServerMetricTest extends AMetricTest {
   }
 
   /*
-   * Utility method
+   * Utility methods
    */
 
   /**

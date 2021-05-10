@@ -41,14 +41,15 @@ import model.VirtualServer;
  * Centers with Architectural and Resource Constraints,” International Journal of Autonomous and
  * Adaptive Communications Systems, vol. 8, no. 4, pp. 392–406, 2015.
  *
- * @author Stefan Tomaszek (stefan.tomaszek@es.tu-darmstadt.de)
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Stefan Tomaszek (ES TU Darmstadt)
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class TafAlgorithm extends AbstractAlgorithm {
 
   /*
    * Algorithm specific constants.
    */
+
   /**
    * Cost for a VNE inside one substrate server.
    */
@@ -67,25 +68,26 @@ public class TafAlgorithm extends AbstractAlgorithm {
   /*
    * Data from model (will be imported in initialization method).
    */
+
   /**
    * All virtual links of the virtual network.
    */
-  final List<VirtualLink> virtualLinks = new LinkedList<VirtualLink>();
+  private final List<VirtualLink> virtualLinks = new LinkedList<VirtualLink>();
 
   /**
    * All virtual servers of the virtual network.
    */
-  final List<VirtualServer> virtualServers = new LinkedList<VirtualServer>();
+  private final List<VirtualServer> virtualServers = new LinkedList<VirtualServer>();
 
   /**
    * All substrate servers of the substrate network.
    */
-  final List<SubstrateServer> substrateServers = new LinkedList<SubstrateServer>();
+  private final List<SubstrateServer> substrateServers = new LinkedList<SubstrateServer>();
 
   /**
    * Map of virtual -> substrate server.
    */
-  final Map<VirtualServer, SubstrateServer> placedVms =
+  private final Map<VirtualServer, SubstrateServer> placedVms =
       new HashMap<VirtualServer, SubstrateServer>();
 
   /**
@@ -186,8 +188,7 @@ public class TafAlgorithm extends AbstractAlgorithm {
   }
 
   /**
-   * Private constructor that initializes the instance of this algorithm. Only gets called by the
-   * public initialization method {@link #init(VirtualNetwork, SubstrateNetwork)}.
+   * Public constructor that initializes the instance of this algorithm.
    * 
    * @param sNet Substrate network to embed virtual network in.
    * @param vNet Virtual network to generate embedding for.
@@ -328,6 +329,12 @@ public class TafAlgorithm extends AbstractAlgorithm {
     }
   }
 
+  /**
+   * Returns the lowest common switch for a given collection of substrate servers.
+   * 
+   * @param serverCol Collection of substrate servers.
+   * @return Lowest common switch for a given collection of substrate servers.
+   */
   private SubstrateSwitch getLowestCommonSwitch(final Collection<SubstrateServer> serverCol) {
     final List<SubstrateServer> servers = new LinkedList<SubstrateServer>(serverCol);
     final Set<Switch> switches = new HashSet<Switch>();

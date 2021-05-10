@@ -6,10 +6,13 @@ package generators.config;
  * Architecture. In: Proceedings of the ACM SIGCOMM 2008 conference on Data communication. (2008),
  * S. pp. 63–74
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class GoogleFatTreeConfig implements IGeneratorConfig {
 
+  /**
+   * Parameter k that defines the network size.
+   */
   private int k = 4;
 
   /**
@@ -124,6 +127,5 @@ public class GoogleFatTreeConfig implements IGeneratorConfig {
     // servers_per_pod / edge switches_per_pod
     return getServersPerPod() / getEdgeSwitchesPerPod();
   }
-
 
 }

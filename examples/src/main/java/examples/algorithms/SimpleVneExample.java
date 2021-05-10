@@ -10,10 +10,15 @@ import model.VirtualNetwork;
 /**
  * Runnable example for the simple VNE algorithm.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class SimpleVneExample {
 
+  /**
+   * Main method to start the example. String array of arguments will be ignored.
+   * 
+   * @param args Will be ignored.
+   */
   public static void main(final String[] args) {
     // Substrate network = one tier network
     final OneTierConfig substrateConfig = new OneTierConfig(2, 1, false, 10, 10, 10, 20);

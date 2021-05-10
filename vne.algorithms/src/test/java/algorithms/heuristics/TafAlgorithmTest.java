@@ -21,22 +21,23 @@ import model.VirtualSwitch;
 /**
  * Test class for the TAF algorithm implementation.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class TafAlgorithmTest {
 
   /*
    * Variables to save the ModelFacade's configuration of path limits to.
    */
+
   /**
    * Old lower limit value.
    */
-  int oldLowerLimit;
+  private int oldLowerLimit;
 
   /**
    * Old upper limit value.
    */
-  int oldUpperLimit;
+  private int oldUpperLimit;
 
   @Before
   public void resetModel() {

@@ -7,9 +7,9 @@ import generators.config.IGeneratorConfig;
 import generators.config.OneTierConfig;
 
 /**
- * Basic implementation of a one tier network topology generator.
+ * Basic implementation of an one tier network topology generator.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class OneTierNetworkGenerator implements INetworkGenerator {
 
@@ -21,12 +21,12 @@ public class OneTierNetworkGenerator implements INetworkGenerator {
   /**
    * Set for the switch ID generation.
    */
-  final HashSet<String> switchIds = new HashSet<String>();
+  private final HashSet<String> switchIds = new HashSet<String>();
 
   /**
    * Set for the server ID generation.
    */
-  final HashSet<String> serverIds = new HashSet<String>();
+  private final HashSet<String> serverIds = new HashSet<String>();
 
   /**
    * Counter for the link ID generation.

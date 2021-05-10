@@ -17,22 +17,23 @@ import model.VirtualNetwork;
 /**
  * Test class for the TAF algorithm implementation using GoogleFatTree based substrate networks.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class TafAlgorithmGoogleFatTreeTest {
 
   /*
    * Variables to save the ModelFacade's configuration of path limits to.
    */
+
   /**
    * Old lower limit value.
    */
-  int oldLowerLimit;
+  private int oldLowerLimit;
 
   /**
    * Old upper limit value.
    */
-  int oldUpperLimit;
+  private int oldUpperLimit;
 
   @Before
   public void resetModel() {

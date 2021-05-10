@@ -9,11 +9,18 @@ import generators.config.TwoTierConfig;
 /**
  * Basic implementation of a two tier network topology generator.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class TwoTierNetworkGenerator implements INetworkGenerator {
 
+  /**
+   * Core switch ID prefix.
+   */
   public static String CORE_SWITCH_PREFIX = "c" + GlobalGeneratorConfig.SWITCH;
+
+  /**
+   * Rack switch ID prefix.
+   */
   public static String RACK_SWITCH_PREFIX = "r" + GlobalGeneratorConfig.SWITCH;
 
   /**
@@ -24,17 +31,17 @@ public class TwoTierNetworkGenerator implements INetworkGenerator {
   /**
    * Set for the core switch ID generation.
    */
-  final HashSet<String> coreSwitchIds = new HashSet<String>();
+  private final HashSet<String> coreSwitchIds = new HashSet<String>();
 
   /**
    * Set for the rack switch ID generation.
    */
-  final HashSet<String> rackSwitchIds = new HashSet<String>();
+  private final HashSet<String> rackSwitchIds = new HashSet<String>();
 
   /**
    * Set for the server ID generation.
    */
-  final HashSet<String> serverIds = new HashSet<String>();
+  private final HashSet<String> serverIds = new HashSet<String>();
 
   /**
    * Counter for the link ID generation.

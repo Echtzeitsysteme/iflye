@@ -7,18 +7,18 @@ import model.Path;
 /**
  * Abstract metric test class.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public abstract class AMetricTest {
 
   /**
    * ModelFacade object to work with.
    */
-  final ModelFacade facade = ModelFacade.getInstance();
+  protected final ModelFacade facade = ModelFacade.getInstance();
 
   @Before
   public void resetModel() {
-    ModelFacade.getInstance().resetAll();
+    facade.resetAll();
   }
 
   /*
@@ -73,6 +73,7 @@ public abstract class AMetricTest {
    * switch.
    */
   protected void setupEmbeddingTwoHosts() {
+    facade.createAllPathsForNetwork("sub");
     facade.embedNetworkToNetwork("sub", "virt");
     facade.embedSwitchToNode("ssw", "vsw");
     facade.embedServerToServer("ssrv1", "vsrv1");

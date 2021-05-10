@@ -6,7 +6,7 @@ import model.VirtualNetwork;
 /**
  * An abstract algorithm class that acts as a common type for embedding algorithms.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public abstract class AbstractAlgorithm {
 
@@ -34,7 +34,6 @@ public abstract class AbstractAlgorithm {
    * @param vNet Virtual network to work with.
    */
   public AbstractAlgorithm(final SubstrateNetwork sNet, final VirtualNetwork vNet) {
-
     if (sNet == null || vNet == null) {
       throw new IllegalArgumentException("One of the provided network objects was null!");
     }

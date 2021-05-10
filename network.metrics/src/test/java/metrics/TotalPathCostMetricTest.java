@@ -8,7 +8,7 @@ import model.SubstrateNetwork;
 /**
  * Test class for the metric of total path cost.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class TotalPathCostMetricTest extends AMetricTest {
 

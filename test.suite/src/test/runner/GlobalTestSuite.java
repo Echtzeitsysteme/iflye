@@ -24,7 +24,7 @@ import metrics.TotalTafCommunicationCostMetricTest;
  * Global test suite class that enables running all registered junit tests at once in Eclipse.
  * Reference for the "bug" in Eclipse: https://bugs.eclipse.org/bugs/show_bug.cgi?id=111126
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ModelFacadeCreationTest.class, ModelFacadeEmbeddingTest.class,

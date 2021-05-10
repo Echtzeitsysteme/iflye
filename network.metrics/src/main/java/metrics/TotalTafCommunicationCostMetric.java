@@ -21,14 +21,14 @@ import model.VirtualSwitch;
  * Constraints,” International Journal of Autonomous and Adaptive Communications Systems, vol. 8,
  * no. 4, pp. 392–406, 2015.
  *
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class TotalTafCommunicationCostMetric implements IMetric {
 
   /**
    * Calculated cost.
    */
-  double cost;
+  private double cost;
 
   /**
    * Creates a new instance of this metric for the provided substrate network.
@@ -136,11 +136,9 @@ public class TotalTafCommunicationCostMetric implements IMetric {
     /*
      * Substrate network
      */
-
     // (1) All servers must only have one outgoing and one incoming link
     // (2) All servers must be connected to one switch only
     checkAllServerConnections(sNet);
-
 
     /*
      * Virtual network
@@ -152,7 +150,6 @@ public class TotalTafCommunicationCostMetric implements IMetric {
       // (3) All virtual networks must only have one layer of switches
       checkOnlyOneLayerOfSwitches(vNet);
     }
-
   }
 
   /**

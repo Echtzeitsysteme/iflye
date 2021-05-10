@@ -21,7 +21,7 @@ import model.VirtualNetwork;
 /**
  * Test class for the GoogleFatTreeNetworkGenerator.
  * 
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class GoogleFatTreeNetworkGeneratorTest implements IGeneratorTest {
 

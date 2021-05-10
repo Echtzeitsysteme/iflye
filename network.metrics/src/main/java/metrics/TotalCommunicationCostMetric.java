@@ -19,14 +19,14 @@ import model.VirtualServer;
  * 
  * "D_ij denotes traffic rate from VM i to j."
  *
- * @author Maximilian Kratz <maximilian.kratz@stud.tu-darmstadt.de>
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class TotalCommunicationCostMetric implements IMetric {
 
   /**
    * Calculated cost.
    */
-  double cost;
+  private double cost;
 
   /**
    * Creates a new instance of this metric for the provided substrate network.
@@ -59,9 +59,19 @@ public class TotalCommunicationCostMetric implements IMetric {
             // Get path from source substrate to source target virtual server
             final Path p = facade.getPathFromSourceToTarget(sourceHost, targetHost);
 
-            // Incremental cost is the number of switches = number of hops - 1 times the source
-            // bandwidth
-            cost += ((p.getHops() - 1) * sourceBw);
+            // If a path exists
+            if (p != null) {
+              // Incremental cost is the number of switches = number of hops - 1 times the source
+              // bandwidth
+              cost += ((p.getHops() - 1) * sourceBw);
+            } else if (sourceHost.equals(targetHost)) {
+              // If source and target host are the same, the cost must not be incremented.
+              // (Embedding on the same host has cost = 0.)
+            } else {
+              throw new UnsupportedOperationException(
+                  "There is no path between source and target host. "
+                      + "Maybe, the configuration of the path generation is wrong.");
+            }
           }
         }
       }
