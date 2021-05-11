@@ -11,7 +11,8 @@ import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
 /**
- * Evaluation scenario of the dissertation [1].
+ * Adapted evaluation scenario of the dissertation [1]. For further description, please check
+ * {@link MdvneAdaptedScenario}.
  * 
  * [1] Tomaszek, S., Modellbasierte Einbettung von virtuellen Netzwerken in Rechenzentren,
  * http://dx.doi.org/10.12921/TUPRINTS-00017362. – DOI 10.12921/TUPRINTS– 00017362, 2020.

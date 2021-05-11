@@ -21,6 +21,15 @@ import generators.config.OneTierConfig;
 public abstract class AMdvneAdaptedScenario implements IScenario {
 
   /**
+   * Pseudo random number generator with a seed.
+   */
+  private final Random randGen = new Random(0);
+
+  /*
+   * Substrate parameters
+   */
+
+  /**
    * Amount of CPU per substrate server.
    */
   public final int substrateCpu = 32;
@@ -45,6 +54,15 @@ public abstract class AMdvneAdaptedScenario implements IScenario {
    */
   public final int substrateBwCore = 10_000;
 
+  /**
+   * Number of substrate servers per rack.
+   */
+  public final int serversPerRack = 10;
+
+  /*
+   * Virtual parameters
+   */
+
   public final int virtualCpuMin = 1;
   public final int virtualCpuMax = 32;
   public final int virtualMemMin = 1;
@@ -57,16 +75,6 @@ public abstract class AMdvneAdaptedScenario implements IScenario {
 
   public final int virtualServersMin = 2;
   public final int virtualServersMax = 10;
-
-  /**
-   * Number of substrate servers per rack.
-   */
-  public final int serversPerRack = 10;
-
-  /**
-   * Pseudo random number generator with a seed.
-   */
-  private final Random randGen = new Random(0);
 
   /*
    * Utility methods
