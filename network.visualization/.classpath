@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="libs/gs/gs-core-2.0-sources.jar"/>
 	<classpathentry kind="lib" path="libs/gs/gs-ui-swing-2.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/network.model"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/network.generators"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -12,6 +12,7 @@ import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.view.Viewer;
 import facade.ModelFacade;
+import generators.config.GlobalGeneratorConfig;
 
 /**
  * Visualization UI based on GraphStream, that can show network topologies based on models read from
@@ -50,6 +51,11 @@ public class Ui {
   private final static Set<model.Link> links = new HashSet<model.Link>();
 
   /**
+   * Network ID.
+   */
+  private static String subNetworkId;
+
+  /**
    * Main method that starts the visualization process.
    * 
    * @param args First string is the path of the model to load, second string is the name/ID of the
@@ -69,10 +75,10 @@ public class Ui {
     double srvCurrX = (-servers.size() + 1) * SCALE_X / 2;
     for (final model.Node srv : servers) {
       final Node srvNode = graph.addNode(srv.getName());
-      srvNode.setAttribute("ui.label", srv.getName());
+      srvNode.setAttribute("ui.label", removeNetworkId(srv.getName()));
       srvNode.setAttribute("ui.style",
           "fill-color: rgb(000,155,000);" + "stroke-color: rgb(0,0,0);" + "stroke-width: 1px;"
-              + "stroke-mode: plain;" + "text-size: 10;" + "size: 40px;" + "text-style: bold;");
+              + "stroke-mode: plain;" + "text-size: 8;" + "size: 40px;" + "text-style: bold;");
 
       // Placement of the server
       srvNode.setAttribute("xyz", srvCurrX, -srv.getDepth() * SCALE_Y, 0);
@@ -97,11 +103,11 @@ public class Ui {
     // Add all switch nodes to graph
     for (final model.Node sw : switches) {
       final Node swNode = graph.addNode(sw.getName());
-      swNode.setAttribute("ui.label", sw.getName());
+      swNode.setAttribute("ui.label", removeNetworkId(sw.getName()));
       swNode.setAttribute("ui.style",
           "fill-color: rgb(255,255,255); " + "shape: rounded-box; "
               + "stroke-color: rgb(000,155,000); " + "stroke-width: 4px; " + "stroke-mode: plain; "
-              + "text-size: 10; " + "size: 40px; " + "text-style: bold;");
+              + "text-size: 8; " + "size: 40px; " + "text-style: bold;");
 
       // Placement of the switch
       final double currX = xMap.get(sw.getDepth());
@@ -130,6 +136,7 @@ public class Ui {
    * @param networkId Network ID of the network to visualize.
    */
   private static void readModel(final String path, final String networkId) {
+    Ui.subNetworkId = networkId;
     ModelFacade.getInstance().loadModel(path);
 
     // Servers
@@ -140,6 +147,16 @@ public class Ui {
 
     // Links
     links.addAll(ModelFacade.getInstance().getAllLinksOfNetwork(networkId));
+  }
+
+  /**
+   * Removes the saved substrate network ID from a given name.
+   * 
+   * @param name Input name.
+   * @return Given name without the saved substrate network ID.
+   */
+  private static String removeNetworkId(final String name) {
+    return name.replace(subNetworkId + GlobalGeneratorConfig.SEPARATOR, "");
   }
 
 }
