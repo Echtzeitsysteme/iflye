@@ -36,7 +36,7 @@ public class VneIlpPathAlgorithmExample {
     subGen.createNetwork("sub", false);
 
     // Virtual network = one tier network
-    final OneTierConfig virtualConfig = new OneTierConfig(2, 1, false, 1, 1, 1, 5);
+    final OneTierConfig virtualConfig = new OneTierConfig(2, 1, false, 1, 1, 1, 1);
     final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
     virtGen.createNetwork("virt", true);
 

@@ -196,9 +196,14 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
   private final Map<VirtualLink, List<SubstrateElement>> resultVirtualToSubstrateLink =
       new HashMap<>();
 
+  /**
+   * Creates a new instance of this VNE ILP path algorithm.
+   * 
+   * @param sNet Substrate network to work with.
+   * @param vNet Virtual network to work with.
+   */
   public VneIlpPathAlgorithm(final SubstrateNetwork sNet, final VirtualNetwork vNet) {
     super(sNet, vNet);
-    // TODO!
   }
 
   @Override
@@ -243,6 +248,8 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
           }
         }
       }
+    } else {
+      System.err.println("Problem was infeasible.");
     }
 
     createEmbeddings();
@@ -317,7 +324,7 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
       if (substrateNode instanceof SubstrateServer) {
         return 1;
       } else {
-        return 0;
+        return Integer.MAX_VALUE;
       }
     } else {
       throw new UnsupportedOperationException();
@@ -371,7 +378,6 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
       allSubstratePaths.add(new VneIlpPath((SubstratePath) p));
     }
   }
-
 
   private void createAllVariables() {
     nodeVariables = new BinaryVar[virtualNodes.size()][substrateNodes.size()];
