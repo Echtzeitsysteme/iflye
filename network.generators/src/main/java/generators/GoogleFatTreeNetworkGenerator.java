@@ -26,12 +26,12 @@ public class GoogleFatTreeNetworkGenerator implements INetworkGenerator {
   /**
    * Aggregation switch ID prefix.
    */
-  public static String AGGR_SWITCH_PREFIX = "aggr" + GlobalGeneratorConfig.SWITCH;
+  public static String AGGR_SWITCH_PREFIX = "a" + GlobalGeneratorConfig.SWITCH;
 
   /**
    * Edge switch (rack switch) ID prefix.
    */
-  public static String EDGE_SWITCH_PREFIX = "egde" + GlobalGeneratorConfig.SWITCH;
+  public static String EDGE_SWITCH_PREFIX = "e" + GlobalGeneratorConfig.SWITCH;
 
   /**
    * Configuration of this network generator instance.
