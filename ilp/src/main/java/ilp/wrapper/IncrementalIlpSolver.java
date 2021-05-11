@@ -119,7 +119,7 @@ public interface IncrementalIlpSolver {
 
   void addLessOrEqualsConstraints(final Constraint[] constraints) throws IlpSolverException;
 
-  void addToVariableWeight(final String m, final double change) throws IlpSolverException;
+  void addToVariableWeight(final String name, final double change) throws IlpSolverException;
 
   void addVariable(final String name, final double solutionWeight) throws IlpSolverException;
 
