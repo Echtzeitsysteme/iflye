@@ -4,31 +4,38 @@ import algorithms.AbstractAlgorithm;
 import algorithms.heuristics.TafAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
-import generators.TwoTierNetworkGenerator;
+import generators.GoogleFatTreeNetworkGenerator;
+import generators.config.GoogleFatTreeConfig;
 import generators.config.OneTierConfig;
-import generators.config.TwoTierConfig;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
 /**
- * Evaluation scenario of the dissertation [1].
+ * Evaluation scenario of the dissertation [1]. In comparison to the evaluation section of the
+ * dissertation [1], this scenario uses a Google Fat Tree based substrate network. All other
+ * parameters are left as in {@link MdvneAdaptedScenario}.
  * 
  * [1] Tomaszek, S., Modellbasierte Einbettung von virtuellen Netzwerken in Rechenzentren,
  * http://dx.doi.org/10.12921/TUPRINTS-00017362. – DOI 10.12921/TUPRINTS– 00017362, 2020.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class MdvneAdaptedScenario extends AMdvneAdaptedScenario implements IScenario {
+public class MdvneGoogleFatTreeAdaptedScenario extends AMdvneAdaptedScenario implements IScenario {
 
   /**
-   * Number of substrate racks.
+   * Google Fat Tree scaling parameter.
    */
-  private static int racks = 8;
+  private static int k = 8;
 
   /**
    * Number of virtual network requests (VNRs).
    */
   private static int numberOfVnrs = 40;
+
+  /**
+   * Amount of bandwidth for all links between rack and aggregation switches.
+   */
+  public final int substrateBwAggr = 10_000;
 
   /**
    * Entry point method for this scenario.
@@ -39,9 +46,9 @@ public class MdvneAdaptedScenario extends AMdvneAdaptedScenario implements IScen
     // TODO: Remove bandwidth ignoring after changing the VNE algorithm instance below.
     ModelFacadeConfig.IGNORE_BW = true;
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
-    ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 6;
 
-    final MdvneAdaptedScenario scen = new MdvneAdaptedScenario();
+    final MdvneGoogleFatTreeAdaptedScenario scen = new MdvneGoogleFatTreeAdaptedScenario();
 
     scen.substrateSetup("sub");
     final SubstrateNetwork sub = (SubstrateNetwork) facade.getNetworkById("sub");
@@ -74,12 +81,11 @@ public class MdvneAdaptedScenario extends AMdvneAdaptedScenario implements IScen
   private void substrateSetup(final String substrateNetworkId) {
     final OneTierConfig substrateRackConfig = new OneTierConfig(serversPerRack, 1, false,
         substrateCpu, substrateMem, substrateSto, substrateBwSrv);
-    final TwoTierConfig substrateConfig = new TwoTierConfig();
+    final GoogleFatTreeConfig substrateConfig = new GoogleFatTreeConfig(k);
     substrateConfig.setRack(substrateRackConfig);
-    substrateConfig.setNumberOfCoreSwitches(2);
-    substrateConfig.setNumberOfRacks(racks);
-    substrateConfig.setCoreBandwidth(substrateBwCore);
-    final TwoTierNetworkGenerator subGen = new TwoTierNetworkGenerator(substrateConfig);
+    substrateConfig.setBwCoreToAggr(substrateBwCore);
+    substrateConfig.setBwAggrToEdge(substrateBwAggr);
+    final GoogleFatTreeNetworkGenerator subGen = new GoogleFatTreeNetworkGenerator(substrateConfig);
     subGen.createNetwork(substrateNetworkId, false);
   }
 
