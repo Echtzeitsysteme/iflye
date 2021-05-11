@@ -13,77 +13,67 @@ import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
 /**
- * Evaluation scenario of paper [1]. There are some changes and assumptions: (1) Every virtual
- * network is a one tier network with exactly one switch. (2) Every virtual machine of one
- * particular virtual network has the same amount of CPU, memory and bandwidth. The same applies to
- * every link of a virtual network. (3) The substrate network is a two tier network with two core
- * switches and parameters as configured below (see variables and constants).
+ * Evaluation scenario of the dissertation [1]. There are some changes and assumptions: (1)
  * 
- * [1] Zeng, D., Guo, S., Huang, H., Yu, S., and Leung, V. C.M., Optimal VM Placement in Data
- * Centers with Architectural and Resource Constraints, International Journal of Autonomous and
- * Adaptive Communications Systems, vol. 8, no. 4, pp. 392-406, 2015.
+ * [1] Tomaszek, S., Modellbasierte Einbettung von virtuellen Netzwerken in Rechenzentren,
+ * http://dx.doi.org/10.12921/TUPRINTS-00017362. – DOI 10.12921/TUPRINTS– 00017362, 2020.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class OptimalVmScenario implements IScenario {
+public class MdvneAdaptedScenario implements IScenario {
 
   /**
    * Amount of CPU per substrate server.
    */
-  public static final int substrateCpu = 1500;
+  public static final int substrateCpu = 32;
 
   /**
    * Amount of memory per substrate server.
    */
-  public static final int substrateMem = 1500;
+  public static final int substrateMem = 512;
 
   /**
-   * Amount of storage per substrate server. The paper [1] uses this value for I/O instead of
-   * storage.
+   * Amount of storage per substrate server.
    */
-  public static final int substrateSto = 300;
+  public static final int substrateSto = 1000;
 
   /**
-   * Amount of bandwidth per link that connects a substrate server. This value was not explicitly
-   * given in the paper [1].
+   * Amount of bandwidth per link that connects a substrate server.
    */
   public static final int substrateBwSrv = 1000;
 
   /**
-   * Amount of bandwidth for all links between rack and core switches. This values was not
-   * explicitly given in the paper [1].
+   * Amount of bandwidth for all links between rack and core switches.
    */
   public static final int substrateBwCore = 10_000;
 
-  public static final int virtualCpuMin = 0;
-  public static final int virtualCpuMax = 300;
-  public static final int virtualMemMin = 0;
-  public static final int virtualMemMax = 500;
-  public static final int virtualStoMin = 0;
-  public static final int virtualStoMax = 50;
+  public static final int virtualCpuMin = 1;
+  public static final int virtualCpuMax = 32;
+  public static final int virtualMemMin = 1;
+  public static final int virtualMemMax = 511;
+  public static final int virtualStoMin = 50;
+  public static final int virtualStoMax = 300;
 
-  public static final int virtualTrafficMin = 0;
-  public static final int virtualTrafficMax = 10;
+  public static final int virtualTrafficMin = 100;
+  public static final int virtualTrafficMax = 1000;
 
-  /**
-   * Number of virtual servers per request.
-   */
-  private static int L = 5;
+  public static final int virtualServersMin = 2;
+  public static final int virtualServersMax = 10;
 
   /**
    * Number of substrate racks.
    */
-  private static int M = 2;
+  private static int racks = 8;
 
   /**
    * Number of substrate servers per rack.
    */
-  private static int N = 2;
+  public static final int serversPerRack = 10;
 
   /**
    * Number of virtual network requests (VNRs).
    */
-  private static int numberOfVnrs = 10;
+  private static int numberOfVnrs = 40;
 
   /**
    * Pseudo random number generator with a seed.
@@ -141,12 +131,12 @@ public class OptimalVmScenario implements IScenario {
    * @param substrateNetworkId The ID for the substrate network to build.
    */
   private static void substrateSetup(final String substrateNetworkId) {
-    final OneTierConfig substrateRackConfig =
-        new OneTierConfig(N, 1, false, substrateCpu, substrateMem, substrateSto, substrateBwSrv);
+    final OneTierConfig substrateRackConfig = new OneTierConfig(serversPerRack, 1, false,
+        substrateCpu, substrateMem, substrateSto, substrateBwSrv);
     final TwoTierConfig substrateConfig = new TwoTierConfig();
     substrateConfig.setRack(substrateRackConfig);
     substrateConfig.setNumberOfCoreSwitches(2);
-    substrateConfig.setNumberOfRacks(M);
+    substrateConfig.setNumberOfRacks(racks);
     final TwoTierNetworkGenerator subGen = new TwoTierNetworkGenerator(substrateConfig);
     subGen.createNetwork(substrateNetworkId, false);
   }
@@ -162,9 +152,10 @@ public class OptimalVmScenario implements IScenario {
     final int memory = getNextRandIntInterval(virtualMemMin, virtualMemMax);
     final int storage = getNextRandIntInterval(virtualStoMin, virtualStoMax);
     final int bandwidth = getNextRandIntInterval(virtualTrafficMin, virtualTrafficMax);
+    final int numberOfServers = getNextRandIntInterval(virtualServersMin, virtualServersMax);
 
     final OneTierConfig virtualConfig =
-        new OneTierConfig(L, 1, false, cpu, memory, storage, bandwidth);
+        new OneTierConfig(numberOfServers, 1, false, cpu, memory, storage, bandwidth);
     final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
     virtGen.createNetwork(virtualNetworkId, true);
   }
