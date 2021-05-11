@@ -2,6 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/network.generators"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/network.model"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ilp"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-13">
 		<attributes>
 			<attribute name="module" value="true"/>
@@ -13,7 +16,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/network.model"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/network.generators"/>
+	<classpathentry kind="lib" path="/ilp/lib/ilp-0.2.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

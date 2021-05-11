@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="lib/cplex-12.8.jar"/>
 	<classpathentry kind="lib" path="lib/gurobi-8.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/gurobi-javadoc-8.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/ilp-0.2.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

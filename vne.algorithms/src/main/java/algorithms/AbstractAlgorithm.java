@@ -1,5 +1,6 @@
 package algorithms;
 
+import facade.ModelFacade;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
@@ -9,6 +10,11 @@ import model.VirtualNetwork;
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public abstract class AbstractAlgorithm {
+
+  /**
+   * ModelFacade instance.
+   */
+  public static ModelFacade facade = ModelFacade.getInstance();
 
   /**
    * The substrate network (model).

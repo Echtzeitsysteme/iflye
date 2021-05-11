@@ -2,6 +2,8 @@ package ilp.wrapper;
 
 public class IlpSolverException extends RuntimeException {
 
+  private static final long serialVersionUID = -7957152413203338752L;
+
   public IlpSolverException() {
     super();
   }
