@@ -84,7 +84,7 @@ public class Ui {
       srvNode.setAttribute("ui.label", removeNetworkId(srv.getName()));
       srvNode.setAttribute("ui.style",
           "fill-color: rgb(000,155,000);" + "stroke-color: rgb(0,0,0);" + "stroke-width: 1px;"
-              + "stroke-mode: plain;" + "text-size: 8;" + "size: 40px;" + "text-style: bold;");
+              + "stroke-mode: plain;" + "text-size: 10;" + "size: 50px;" + "text-style: bold;");
 
       // Placement of the server
       srvNode.setAttribute("xyz", srvCurrX, -srv.getDepth() * SCALE_Y, 0);
@@ -113,7 +113,7 @@ public class Ui {
       swNode.setAttribute("ui.style",
           "fill-color: rgb(255,255,255); " + "shape: rounded-box; "
               + "stroke-color: rgb(000,155,000); " + "stroke-width: 4px; " + "stroke-mode: plain; "
-              + "text-size: 8; " + "size: 40px; " + "text-style: bold;");
+              + "text-size: 10; " + "size: 50px; " + "text-style: bold;");
 
       // Placement of the switch
       final double currX = xMap.get(sw.getDepth());
