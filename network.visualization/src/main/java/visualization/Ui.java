@@ -25,9 +25,14 @@ public class Ui {
    */
 
   /**
-   * Scaling of the placement.
+   * X scaling of the placement.
    */
-  private static final double SCALE = 2;
+  private static final double SCALE_X = 2;
+
+  /**
+   * Y scaling of the placement.
+   */
+  private static final double SCALE_Y = 5;
 
   /**
    * Servers (nodes) loaded from model.
@@ -61,7 +66,7 @@ public class Ui {
     graph.setAttribute("ui.antialias");
 
     // Add all server nodes to graph
-    double srvCurrX = (-servers.size() + 1) * SCALE / 2;
+    double srvCurrX = (-servers.size() + 1) * SCALE_X / 2;
     for (final model.Node srv : servers) {
       final Node srvNode = graph.addNode(srv.getName());
       srvNode.setAttribute("ui.label", srv.getName());
@@ -70,8 +75,8 @@ public class Ui {
               + "stroke-mode: plain;" + "text-size: 10;" + "size: 40px;" + "text-style: bold;");
 
       // Placement of the server
-      srvNode.setAttribute("xyz", srvCurrX, -srv.getDepth() * SCALE, 0);
-      srvCurrX += SCALE;
+      srvNode.setAttribute("xyz", srvCurrX, -srv.getDepth() * SCALE_Y, 0);
+      srvCurrX += SCALE_X;
     }
 
     // Calculate switch positions
@@ -86,7 +91,7 @@ public class Ui {
     }
 
     for (final Integer i : depthCounters.keySet()) {
-      xMap.put(i, (-depthCounters.get(i) + 1) * SCALE / 2);
+      xMap.put(i, (-depthCounters.get(i) + 1) * SCALE_X / 2);
     }
 
     // Add all switch nodes to graph
@@ -100,8 +105,8 @@ public class Ui {
 
       // Placement of the switch
       final double currX = xMap.get(sw.getDepth());
-      swNode.setAttribute("xyz", currX, -sw.getDepth() * SCALE, 0);
-      xMap.replace(sw.getDepth(), currX + SCALE);
+      swNode.setAttribute("xyz", currX, -sw.getDepth() * SCALE_Y, 0);
+      xMap.replace(sw.getDepth(), currX + SCALE_X);
     }
 
     // Add all link edges
