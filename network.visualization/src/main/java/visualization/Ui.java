@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.graphstream.graph.Edge;
+import org.graphstream.graph.EdgeRejectedException;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
@@ -34,6 +35,11 @@ public class Ui {
    * Y scaling of the placement.
    */
   private static final double SCALE_Y = 5;
+
+  /**
+   * True if links should be displayed bidirectional.
+   */
+  private static final boolean LINK_BIDIRECTIONAL = true;
 
   /**
    * Servers (nodes) loaded from model.
@@ -117,9 +123,19 @@ public class Ui {
 
     // Add all link edges
     for (final model.Link l : links) {
-      final Edge lnEdge =
-          graph.addEdge(l.getName(), l.getSource().getName(), l.getTarget().getName(), true);
-      // lnEdge.setAttribute("ui.label", l.getName());
+      if (LINK_BIDIRECTIONAL) {
+        try {
+          graph.addEdge(l.getName(), l.getSource().getName(), l.getTarget().getName(), false);
+        } catch (final EdgeRejectedException ex) {
+          // Graphstream rejects 'addEdge' if there already is an undirected edge from a to b.
+          // Using the catch clause, the program does not have to track which edges were already
+          // created.
+        }
+      } else {
+        final Edge lnEdge =
+            graph.addEdge(l.getName(), l.getSource().getName(), l.getTarget().getName(), true);
+        // lnEdge.setAttribute("ui.label", l.getName());
+      }
     }
 
     final Viewer viewer = graph.display();
