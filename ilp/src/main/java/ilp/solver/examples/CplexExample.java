@@ -1,4 +1,4 @@
-package ilp.examples;
+package ilp.solver.examples;
 
 import ilog.concert.IloException;
 import ilog.concert.IloMPModeler;

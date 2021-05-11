@@ -1,4 +1,4 @@
-package ilp.examples;
+package ilp.solver.examples;
 
 import gurobi.GRB;
 import gurobi.GRBEnv;

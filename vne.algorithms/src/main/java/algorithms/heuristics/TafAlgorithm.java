@@ -41,7 +41,7 @@ import model.VirtualServer;
  * Centers with Architectural and Resource Constraints,” International Journal of Autonomous and
  * Adaptive Communications Systems, vol. 8, no. 4, pp. 392–406, 2015.
  *
- * @author Stefan Tomaszek (ES TU Darmstadt)
+ * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class TafAlgorithm extends AbstractAlgorithm {
