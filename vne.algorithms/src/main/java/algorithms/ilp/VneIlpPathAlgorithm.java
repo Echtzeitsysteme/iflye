@@ -287,7 +287,11 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
             links.get(links.size() - 1).getTarget());
         facade.embedLinkToPath(p.getName(), vl.getName());
       } else {
-        facade.embedLinkToServer(hosts.get(0).getName(), vl.getName());
+        if (hosts.get(0) instanceof SubstrateServer) {
+          facade.embedLinkToServer(hosts.get(0).getName(), vl.getName());
+        } else {
+          facade.embedLinkToLink(hosts.get(0).getName(), vl.getName());
+        }
       }
     }
   }
@@ -412,7 +416,7 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
 
         Param subParamServer;
         Param subParamSwitch;
-        if (substrateNodes.get(s) instanceof VirtualSwitch) {
+        if (substrateNodes.get(s) instanceof SubstrateServer) {
           subParamServer = param(1);
           subParamSwitch = param(0);
         } else {
