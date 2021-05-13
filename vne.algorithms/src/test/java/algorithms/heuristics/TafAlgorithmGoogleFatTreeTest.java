@@ -2,9 +2,9 @@ package algorithms.heuristics;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import algorithms.generic.AAlgorithmTest;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.GoogleFatTreeNetworkGenerator;
@@ -19,43 +19,16 @@ import model.VirtualNetwork;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class TafAlgorithmGoogleFatTreeTest {
+public class TafAlgorithmGoogleFatTreeTest extends AAlgorithmTest {
 
-  /*
-   * Variables to save the ModelFacade's configuration of path limits to.
-   */
-
-  /**
-   * Old lower limit value.
-   */
-  private int oldLowerLimit;
-
-  /**
-   * Old upper limit value.
-   */
-  private int oldUpperLimit;
-
-  @Before
-  public void resetModel() {
-    ModelFacade.getInstance().resetAll();
-
-    // Save old values
-    oldLowerLimit = ModelFacadeConfig.MIN_PATH_LENGTH;
-    oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
-
-    // Network setup
-    ModelFacade.getInstance().addNetworkToRoot("sub", false);
-    ModelFacade.getInstance().addNetworkToRoot("virt", true);
-
-    // Normal model setup
-    ModelFacadeConfig.MIN_PATH_LENGTH = 1;
-    ModelFacadeConfig.IGNORE_BW = true;
+  @Override
+  public void initAlgo(final SubstrateNetwork sNet, final VirtualNetwork vNet) {
+    algo = new TafAlgorithm(sNet, vNet);
   }
 
-  @After
-  public void restoreConfig() {
-    ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
-    ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
+  @Before
+  public void localSetup() {
+    ModelFacadeConfig.IGNORE_BW = true;
   }
 
   /*
@@ -76,8 +49,8 @@ public class TafAlgorithmGoogleFatTreeTest {
         (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
     final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-    final TafAlgorithm taf = new TafAlgorithm(sNet, vNet);
-    assertTrue(taf.execute());
+    initAlgo(sNet, vNet);
+    assertTrue(algo.execute());
   }
 
   @Test
@@ -99,8 +72,8 @@ public class TafAlgorithmGoogleFatTreeTest {
       final VirtualNetwork vNet =
           (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt" + i);
 
-      final TafAlgorithm taf = new TafAlgorithm(sNet, vNet);
-      assertTrue(taf.execute());
+      initAlgo(sNet, vNet);
+      assertTrue(algo.execute());
     }
   }
 
@@ -123,8 +96,8 @@ public class TafAlgorithmGoogleFatTreeTest {
       final VirtualNetwork vNet =
           (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt" + i);
 
-      final TafAlgorithm taf = new TafAlgorithm(sNet, vNet);
-      assertTrue(taf.execute());
+      initAlgo(sNet, vNet);
+      assertTrue(algo.execute());
     }
   }
 
@@ -144,8 +117,8 @@ public class TafAlgorithmGoogleFatTreeTest {
         (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
     final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-    final TafAlgorithm taf = new TafAlgorithm(sNet, vNet);
-    assertTrue(taf.execute());
+    initAlgo(sNet, vNet);
+    assertTrue(algo.execute());
   }
 
   @Test
@@ -164,8 +137,8 @@ public class TafAlgorithmGoogleFatTreeTest {
         (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
     final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-    final TafAlgorithm taf = new TafAlgorithm(sNet, vNet);
-    assertTrue(taf.execute());
+    initAlgo(sNet, vNet);
+    assertTrue(algo.execute());
   }
 
   @Test
@@ -184,13 +157,14 @@ public class TafAlgorithmGoogleFatTreeTest {
         (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
     final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-    final TafAlgorithm taf = new TafAlgorithm(sNet, vNet);
-    assertTrue(taf.execute());
+    initAlgo(sNet, vNet);
+    assertTrue(algo.execute());
   }
 
   /*
    * Negative tests
    */
+
   @Test
   public void testFullReject() {
     final GoogleFatTreeConfig subConfig = new GoogleFatTreeConfig(4);
@@ -210,12 +184,12 @@ public class TafAlgorithmGoogleFatTreeTest {
       final VirtualNetwork vNet =
           (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt" + i);
 
-      final TafAlgorithm taf = new TafAlgorithm(sNet, vNet);
+      initAlgo(sNet, vNet);
 
       if (i < 16) {
-        assertTrue(taf.execute());
+        assertTrue(algo.execute());
       } else {
-        assertFalse(taf.execute());
+        assertFalse(algo.execute());
       }
     }
   }
