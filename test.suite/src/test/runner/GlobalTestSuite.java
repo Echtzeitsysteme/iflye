@@ -7,6 +7,7 @@ import algorithms.heuristics.TafAlgorithmTest;
 import facade.test.ModelFacadeCreationTest;
 import facade.test.ModelFacadeEmbeddingTest;
 import facade.test.ModelFacadePathBasicTest;
+import facade.test.ModelFacadePathTwoTierDetailTest;
 import facade.test.ModelFacadePathYenTest;
 import generators.GoogleFatTreeNetworkGeneratorTest;
 import generators.OneTierNetworkGeneratorTest;
@@ -28,7 +29,8 @@ import metrics.TotalTafCommunicationCostMetricTest;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ModelFacadeCreationTest.class, ModelFacadeEmbeddingTest.class,
-    ModelFacadePathBasicTest.class, ModelFacadePathYenTest.class, TafAlgorithmTest.class,
+    ModelFacadePathBasicTest.class, ModelFacadePathYenTest.class,
+    ModelFacadePathTwoTierDetailTest.class, TafAlgorithmTest.class,
     TafAlgorithmGoogleFatTreeTest.class, OneTierNetworkGeneratorTest.class,
     TwoTierNetworkGeneratorTest.class, GoogleFatTreeNetworkGeneratorTest.class,
     AcceptedVnrMetricTest.class, ActiveSubstrateServerMetricTest.class,
