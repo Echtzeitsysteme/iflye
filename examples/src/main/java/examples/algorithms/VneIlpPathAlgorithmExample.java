@@ -28,7 +28,9 @@ public class VneIlpPathAlgorithmExample {
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 
     // Substrate network = one tier network
+    final OneTierConfig rackConfig = new OneTierConfig(2, 1, false, 10, 10, 10, 10);
     final TwoTierConfig substrateConfig = new TwoTierConfig();
+    substrateConfig.setRack(rackConfig);
     substrateConfig.setCoreBandwidth(100);
     substrateConfig.setNumberOfCoreSwitches(1);
     substrateConfig.setNumberOfRacks(2);
@@ -36,7 +38,7 @@ public class VneIlpPathAlgorithmExample {
     subGen.createNetwork("sub", false);
 
     // Virtual network = one tier network
-    final OneTierConfig virtualConfig = new OneTierConfig(2, 1, false, 1, 1, 1, 1);
+    final OneTierConfig virtualConfig = new OneTierConfig(4, 1, false, 10, 1, 1, 1);
     final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
     virtGen.createNetwork("virt", true);
 

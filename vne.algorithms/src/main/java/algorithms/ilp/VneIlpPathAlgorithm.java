@@ -214,12 +214,14 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
     createNetworkInformation();
     createAllVariables();
 
-    // Every virtual link is mapped to one substrate link (path) and that the start/target node
-    // of the virtual link are also mapped to the start/target node of the substrate node.
+    // Every virtual link is mapped to one substrate link (path)
     // Every virtual node must be mapped exactly to one substrate node
     addConstraintsEveryVirtualElementIsMappedExactlyOnce();
 
     createAllNodeConstraints();
+
+    // The start/target node of the virtual link are mapped to the start/target node of the
+    // substrate node. The bandwidth requirements are fulfilled.
     createAllLinkConstraints();
 
     createMinOveralCostsObjective();
