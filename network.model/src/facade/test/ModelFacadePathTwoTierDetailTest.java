@@ -2,7 +2,12 @@ package facade.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,6 +66,109 @@ public class ModelFacadePathTwoTierDetailTest {
     for (final Path p : allPaths) {
       checkPathLinksAgainstNodes(p);
     }
+  }
+
+  @Test
+  public void testTwoTierLinksDetailLengthOne() {
+    ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 1;
+    ModelFacadePathBasicTest.twoTierSetupFourServers();
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+
+    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    assertFalse(allPaths.isEmpty());
+
+    // Test if every path is present
+    final Set<List<String>> references = new HashSet<List<String>>();
+    references.add(Arrays.asList(new String[] {"srv1", "rsw1"}));
+    references.add(Arrays.asList(new String[] {"rsw1", "srv1"}));
+    references.add(Arrays.asList(new String[] {"srv2", "rsw1"}));
+    references.add(Arrays.asList(new String[] {"rsw1", "srv2"}));
+    references.add(Arrays.asList(new String[] {"srv3", "rsw2"}));
+    references.add(Arrays.asList(new String[] {"rsw2", "srv3"}));
+    references.add(Arrays.asList(new String[] {"srv4", "rsw2"}));
+    references.add(Arrays.asList(new String[] {"rsw2", "srv4"}));
+
+    checkPathNodesAgainstRef(allPaths, references);
+  }
+
+  @Test
+  public void testTwoTierLinksDetailLengthTwo() {
+    ModelFacadeConfig.MIN_PATH_LENGTH = 2;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 2;
+    ModelFacadePathBasicTest.twoTierSetupFourServers();
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+
+    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    assertFalse(allPaths.isEmpty());
+
+    // Test if every path is present
+    final Set<List<String>> references = new HashSet<List<String>>();
+    references.add(Arrays.asList(new String[] {"srv1", "rsw1", "csw1"}));
+    references.add(Arrays.asList(new String[] {"csw1", "rsw1", "srv1"}));
+    references.add(Arrays.asList(new String[] {"srv1", "rsw1", "srv2"}));
+    references.add(Arrays.asList(new String[] {"srv2", "rsw1", "csw1"}));
+    references.add(Arrays.asList(new String[] {"csw1", "rsw1", "srv2"}));
+    references.add(Arrays.asList(new String[] {"srv2", "rsw1", "srv1"}));
+
+    references.add(Arrays.asList(new String[] {"srv3", "rsw2", "csw1"}));
+    references.add(Arrays.asList(new String[] {"csw1", "rsw2", "srv3"}));
+    references.add(Arrays.asList(new String[] {"srv3", "rsw2", "srv4"}));
+    references.add(Arrays.asList(new String[] {"srv4", "rsw2", "csw1"}));
+    references.add(Arrays.asList(new String[] {"csw1", "rsw2", "srv4"}));
+    references.add(Arrays.asList(new String[] {"srv4", "rsw2", "srv3"}));
+
+    checkPathNodesAgainstRef(allPaths, references);
+  }
+
+  @Test
+  public void testTwoTierLinksDetailLengthFour() {
+    ModelFacadeConfig.MIN_PATH_LENGTH = 4;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+    ModelFacadePathBasicTest.twoTierSetupFourServers();
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+
+    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    assertFalse(allPaths.isEmpty());
+
+    // Test if every path is present
+    final Set<List<String>> references = new HashSet<List<String>>();
+    references.add(Arrays.asList(new String[] {"srv1", "rsw1", "csw1", "rsw2", "srv3"}));
+    references.add(Arrays.asList(new String[] {"srv1", "rsw1", "csw1", "rsw2", "srv4"}));
+    references.add(Arrays.asList(new String[] {"srv2", "rsw1", "csw1", "rsw2", "srv3"}));
+    references.add(Arrays.asList(new String[] {"srv2", "rsw1", "csw1", "rsw2", "srv4"}));
+
+    references.add(Arrays.asList(new String[] {"srv3", "rsw2", "csw1", "rsw1", "srv1"}));
+    references.add(Arrays.asList(new String[] {"srv3", "rsw2", "csw1", "rsw1", "srv2"}));
+    references.add(Arrays.asList(new String[] {"srv4", "rsw2", "csw1", "rsw1", "srv1"}));
+    references.add(Arrays.asList(new String[] {"srv4", "rsw2", "csw1", "rsw1", "srv2"}));
+
+    checkPathNodesAgainstRef(allPaths, references);
+  }
+
+  /**
+   * Checks nodes of paths against a given reference set.
+   * 
+   * @param paths List of paths to check.
+   * @param references Set of lists of node names to check against.
+   */
+  private void checkPathNodesAgainstRef(final List<Path> paths,
+      final Set<List<String>> references) {
+    assertEquals(paths.size(), references.size());
+
+    final Set<List<String>> referencesCopy = new HashSet<List<String>>(references);
+
+    for (final Path p : paths) {
+      List<String> pNodes = new LinkedList<String>();
+      for (final Node n : p.getNodes()) {
+        pNodes.add(n.getName());
+      }
+
+      assertTrue(referencesCopy.contains(pNodes));
+      referencesCopy.remove(pNodes);
+    }
+
+    assertEquals(0, referencesCopy.size());
   }
 
   /**
