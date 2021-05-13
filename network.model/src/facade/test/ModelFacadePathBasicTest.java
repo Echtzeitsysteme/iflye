@@ -608,7 +608,7 @@ public class ModelFacadePathBasicTest {
   /**
    * Creates a two tier network with four servers total, two rack switches, and one core switch.
    */
-  private static void twoTierSetupFourServers() {
+  protected static void twoTierSetupFourServers() {
     ModelFacade.getInstance().addNetworkToRoot("net", false);
     ModelFacade.getInstance().addSwitchToNetwork("csw1", "net", 0);
     ModelFacade.getInstance().addSwitchToNetwork("rsw1", "net", 1);

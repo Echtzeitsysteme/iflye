@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import org.moflon.core.utilities.eMoflonEMFUtil;
+import com.google.common.collect.Lists;
 import facade.config.ModelFacadeConfig;
 import facade.pathgen.Dijkstra;
 import facade.pathgen.IPathGen;
@@ -462,7 +463,7 @@ public class ModelFacade {
     }
 
     // Get all nodes from links
-    final Set<Node> nodes = new HashSet<Node>();
+    final List<Node> nodes = new LinkedList<Node>();
 
     for (final SubstrateLink l : links) {
       nodes.add(l.getSource());
@@ -494,12 +495,12 @@ public class ModelFacade {
       reverse.setHops(links.size());
       reverse.setNetwork(links.get(0).getNetwork());
       reverse.setName(getNextId());
-      reverse.getNodes().addAll(nodes);
+      reverse.getNodes().addAll(Lists.reverse(nodes));
 
-      // Get all reversed links
-      final Set<SubstrateLink> reversedLinks = getOppositeLinks(links);
-      reverse.getLinks().addAll(reversedLinks);
-      final int revBw = getMinimumBandwidthFromSubstrateLinks(reversedLinks);
+      // Get all opposite links
+      final List<SubstrateLink> oppositeLinks = getOppositeLinks(links);
+      reverse.getLinks().addAll(Lists.reverse(oppositeLinks));
+      final int revBw = getMinimumBandwidthFromSubstrateLinks(oppositeLinks);
       reverse.setBandwidth(revBw);
       reverse.setResidualBandwidth(revBw);
     }
@@ -548,14 +549,14 @@ public class ModelFacade {
   }
 
   /**
-   * Returns a set of all opposite links for a given set of links. Basically, it calls the method
+   * Returns a list of all opposite links for a given set of links. Basically, it calls the method
    * {@link #getOppositeLink(Link)} for every link in the incoming collection.
    * 
    * @param links Collection of links to get opposites for.
-   * @return Set of opposite links.
+   * @return List of opposite links.
    */
-  private Set<SubstrateLink> getOppositeLinks(final Collection<SubstrateLink> links) {
-    final Set<SubstrateLink> opposites = new HashSet<SubstrateLink>();
+  private List<SubstrateLink> getOppositeLinks(final Collection<SubstrateLink> links) {
+    final List<SubstrateLink> opposites = new LinkedList<SubstrateLink>();
 
     for (Link l : links) {
       opposites.add((SubstrateLink) getOppositeLink(l));
@@ -595,12 +596,12 @@ public class ModelFacade {
    * 
    * @param source Source to search path for.
    * @param target Target to search path for.
-   * @param nodes Set of nodes that must be contained in the found path.
+   * @param nodes List of nodes that must be contained in the found path.
    * @param links List of links that must be contained in the found path.
    * @return True if a path with given parameters already exists.
    */
   private boolean doesSpecificPathWithSourceAndTargetExist(final Node source, final Node target,
-      final Set<Node> nodes, final List<SubstrateLink> links) {
+      final List<Node> nodes, final List<SubstrateLink> links) {
     final Set<Path> foundPaths = getPathsFromSourceToTarget(source, target);
 
     for (final Path p : foundPaths) {
