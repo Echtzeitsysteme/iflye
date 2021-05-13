@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import algorithms.generic.AAlgorithmTest;
-import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.GoogleFatTreeNetworkGenerator;
 import generators.OneTierNetworkGenerator;
@@ -45,9 +44,8 @@ public class TafAlgorithmGoogleFatTreeTest extends AAlgorithmTest {
     final GoogleFatTreeNetworkGenerator subGen = new GoogleFatTreeNetworkGenerator(subConfig);
     subGen.createNetwork("sub", false);
 
-    final SubstrateNetwork sNet =
-        (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
-    final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+    final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
     initAlgo(sNet, vNet);
     assertTrue(algo.execute());
@@ -67,10 +65,8 @@ public class TafAlgorithmGoogleFatTreeTest extends AAlgorithmTest {
       final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtConfig);
       virtGen.createNetwork("virt" + i, true);
 
-      final SubstrateNetwork sNet =
-          (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
-      final VirtualNetwork vNet =
-          (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt" + i);
+      final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+      final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt" + i);
 
       initAlgo(sNet, vNet);
       assertTrue(algo.execute());
@@ -91,10 +87,8 @@ public class TafAlgorithmGoogleFatTreeTest extends AAlgorithmTest {
       final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtConfig);
       virtGen.createNetwork("virt" + i, true);
 
-      final SubstrateNetwork sNet =
-          (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
-      final VirtualNetwork vNet =
-          (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt" + i);
+      final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+      final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt" + i);
 
       initAlgo(sNet, vNet);
       assertTrue(algo.execute());
@@ -113,9 +107,8 @@ public class TafAlgorithmGoogleFatTreeTest extends AAlgorithmTest {
     final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtConfig);
     virtGen.createNetwork("virt", true);
 
-    final SubstrateNetwork sNet =
-        (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
-    final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+    final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
     initAlgo(sNet, vNet);
     assertTrue(algo.execute());
@@ -133,9 +126,8 @@ public class TafAlgorithmGoogleFatTreeTest extends AAlgorithmTest {
     final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtConfig);
     virtGen.createNetwork("virt", true);
 
-    final SubstrateNetwork sNet =
-        (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
-    final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+    final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
     initAlgo(sNet, vNet);
     assertTrue(algo.execute());
@@ -153,9 +145,8 @@ public class TafAlgorithmGoogleFatTreeTest extends AAlgorithmTest {
     final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtConfig);
     virtGen.createNetwork("virt", true);
 
-    final SubstrateNetwork sNet =
-        (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
-    final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+    final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
     initAlgo(sNet, vNet);
     assertTrue(algo.execute());
@@ -179,10 +170,8 @@ public class TafAlgorithmGoogleFatTreeTest extends AAlgorithmTest {
       final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtConfig);
       virtGen.createNetwork("virt" + i, true);
 
-      final SubstrateNetwork sNet =
-          (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
-      final VirtualNetwork vNet =
-          (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt" + i);
+      final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+      final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt" + i);
 
       initAlgo(sNet, vNet);
 

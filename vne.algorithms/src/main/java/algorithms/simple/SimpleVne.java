@@ -2,7 +2,6 @@ package algorithms.simple;
 
 import java.util.List;
 import algorithms.AbstractAlgorithm;
-import facade.ModelFacade;
 import model.Link;
 import model.Node;
 import model.SubstrateNetwork;
@@ -19,11 +18,6 @@ import model.VirtualServer;
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class SimpleVne extends AbstractAlgorithm {
-
-  /**
-   * ModelFacade instance.
-   */
-  private ModelFacade facade = ModelFacade.getInstance();
 
   /**
    * Initializes a new object of this simple VNE algorithm.

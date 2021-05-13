@@ -15,6 +15,11 @@ import model.VirtualNetwork;
  */
 public abstract class AAlgorithmTest {
 
+  /**
+   * ModelFacade instance.
+   */
+  protected ModelFacade facade = ModelFacade.getInstance();
+
   /*
    * Variables to save the ModelFacade's configuration of path limits to.
    */
@@ -36,15 +41,15 @@ public abstract class AAlgorithmTest {
 
   @Before
   public void resetModel() {
-    ModelFacade.getInstance().resetAll();
+    facade.resetAll();
 
     // Save old values
     oldLowerLimit = ModelFacadeConfig.MIN_PATH_LENGTH;
     oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
 
     // Network setup
-    ModelFacade.getInstance().addNetworkToRoot("sub", false);
-    ModelFacade.getInstance().addNetworkToRoot("virt", true);
+    facade.addNetworkToRoot("sub", false);
+    facade.addNetworkToRoot("virt", true);
 
     // Normal model setup
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;

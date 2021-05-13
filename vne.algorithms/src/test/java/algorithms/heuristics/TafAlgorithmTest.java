@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.Before;
 import org.junit.Test;
 import algorithms.generic.AAlgorithmTwoTierTest;
-import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
@@ -34,9 +33,8 @@ public class TafAlgorithmTest extends AAlgorithmTwoTierTest {
   public void testRejectIgnoreBandwidth() {
     ModelFacadeConfig.IGNORE_BW = false;
 
-    final SubstrateNetwork sNet =
-        (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
-    final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+    final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
     assertThrows(UnsupportedOperationException.class, () -> {
       new TafAlgorithm(sNet, vNet);
@@ -45,15 +43,14 @@ public class TafAlgorithmTest extends AAlgorithmTwoTierTest {
 
   @Test
   public void testRejectSubstrateServerConnections() {
-    ModelFacade.getInstance().addSwitchToNetwork("sw", "sub", 0);
-    ModelFacade.getInstance().addServerToNetwork("srv1", "sub", 1, 1, 1, 1);
-    ModelFacade.getInstance().addServerToNetwork("srv2", "sub", 1, 1, 1, 1);
-    ModelFacade.getInstance().addLinkToNetwork("ln1", "sub", 1, "srv1", "sw");
-    ModelFacade.getInstance().addLinkToNetwork("ln2", "sub", 1, "srv1", "srv2");
+    facade.addSwitchToNetwork("sw", "sub", 0);
+    facade.addServerToNetwork("srv1", "sub", 1, 1, 1, 1);
+    facade.addServerToNetwork("srv2", "sub", 1, 1, 1, 1);
+    facade.addLinkToNetwork("ln1", "sub", 1, "srv1", "sw");
+    facade.addLinkToNetwork("ln2", "sub", 1, "srv1", "srv2");
 
-    final SubstrateNetwork sNet =
-        (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
-    final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+    final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
     assertThrows(UnsupportedOperationException.class, () -> {
       new TafAlgorithm(sNet, vNet);
@@ -64,14 +61,13 @@ public class TafAlgorithmTest extends AAlgorithmTwoTierTest {
   public void testRejectOneVirtualServer() {
     oneTierSetupTwoServers("sub", 1);
 
-    ModelFacade.getInstance().addSwitchToNetwork("sw", "virt", 0);
-    ModelFacade.getInstance().addServerToNetwork("srv1", "virt", 1, 1, 1, 1);
-    ModelFacade.getInstance().addLinkToNetwork("ln1", "virt", 1, "srv1", "sw");
-    ModelFacade.getInstance().addLinkToNetwork("ln2", "virt", 1, "sw", "srv1");
+    facade.addSwitchToNetwork("sw", "virt", 0);
+    facade.addServerToNetwork("srv1", "virt", 1, 1, 1, 1);
+    facade.addLinkToNetwork("ln1", "virt", 1, "srv1", "sw");
+    facade.addLinkToNetwork("ln2", "virt", 1, "sw", "srv1");
 
-    final SubstrateNetwork sNet =
-        (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
-    final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+    final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
     assertThrows(UnsupportedOperationException.class, () -> {
       new TafAlgorithm(sNet, vNet);
@@ -82,9 +78,8 @@ public class TafAlgorithmTest extends AAlgorithmTwoTierTest {
   public void testRejectMinPathLength() {
     ModelFacadeConfig.MIN_PATH_LENGTH = 3;
 
-    final SubstrateNetwork sNet =
-        (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
-    final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+    final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
     assertThrows(UnsupportedOperationException.class, () -> {
       new TafAlgorithm(sNet, vNet);
@@ -97,9 +92,8 @@ public class TafAlgorithmTest extends AAlgorithmTwoTierTest {
     oneTierSetupTwoServers("sub", 2);
     // Path generation removed intentionally
 
-    final SubstrateNetwork sNet =
-        (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
-    final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+    final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
     assertThrows(UnsupportedOperationException.class, () -> {
       new TafAlgorithm(sNet, vNet);
