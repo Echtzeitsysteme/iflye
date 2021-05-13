@@ -27,6 +27,7 @@ import algorithms.AbstractAlgorithm;
 import model.Link;
 import model.Node;
 import model.Path;
+import model.Server;
 import model.SubstrateElement;
 import model.SubstrateLink;
 import model.SubstrateNetwork;
@@ -34,6 +35,8 @@ import model.SubstrateNode;
 import model.SubstratePath;
 import model.SubstrateServer;
 import model.SubstrateSwitch;
+import model.Switch;
+import model.VirtualElement;
 import model.VirtualLink;
 import model.VirtualNetwork;
 import model.VirtualNode;
@@ -310,14 +313,18 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
     final List<ArithExpr> expr = new LinkedList<>();
     for (int v = 0; v < nodeVariables.length; v++) {
       for (int s = 0; s < nodeVariables[v].length; s++) {
-        expr.add(mult(param(getNodeCost(virtualNodes.get(v), substrateNodes.get(s))),
+        // expr.add(mult(param(getNodeCost(virtualNodes.get(v), substrateNodes.get(s))),
+        // nodeVariables[v][s]));
+        expr.add(mult(param(getTotalPathCost(virtualNodes.get(v), substrateNodes.get(s))),
             nodeVariables[v][s]));
       }
     }
 
     for (int v = 0; v < pathVariables.length; v++) {
       for (int s = 0; s < pathVariables[v].length; s++) {
-        expr.add(mult(param(getLinkCost(virtualLinks.get(v), allSubstratePaths.get(s))),
+        // expr.add(mult(param(getLinkCost(virtualLinks.get(v), allSubstratePaths.get(s))),
+        // pathVariables[v][s]));
+        expr.add(mult(param(getTotalPathCost(virtualLinks.get(v), allSubstratePaths.get(s))),
             pathVariables[v][s]));
       }
     }
@@ -370,6 +377,55 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
     return cost;
   }
 
+  private double getTotalPathCost(final VirtualElement virtualElement,
+      final SubstrateElement substrateElement) {
+    // if (virtualElement instanceof Link) {
+    // if (substrateElement instanceof Link) {
+    // return 2;
+    // } else if (substrateElement instanceof Path) {
+    // if (((Path) substrateElement).getHops() == 1) {
+    // return 2;
+    // }
+    // return Math.pow(4.0, ((Path) substrateElement).getHops());
+    // } else if (substrateElement instanceof Server) {
+    // return 1;
+    // }
+    // } else
+    if (virtualElement instanceof Server) {
+      if (substrateElement instanceof Server) {
+        return 1;
+      }
+    } else if (virtualElement instanceof Switch) {
+      if (substrateElement instanceof Switch) {
+        return 1;
+      } else if (substrateElement instanceof Server) {
+        return 2;
+      }
+    }
+
+    // return Integer.MAX_VALUE;
+    return 0;
+    // throw new IllegalArgumentException(
+    // "Element(s) not matched: " + virtualElement + ";" + substrateElement);
+  }
+
+  private double getTotalPathCost(final VirtualLink virtualLink,
+      final VneIlpPath substrateElement) {
+    if (substrateElement.getLinksOrServer().size() == 1) {
+      if (substrateElement.getLinksOrServer().get(0) instanceof Server) {
+        return 1;
+      } else if (substrateElement.getLinksOrServer().get(0) instanceof Link) {
+        return 2;
+      }
+      return 1;
+    } else if (substrateElement.getLinksOrServer().size() > 1) {
+      final List<SubstrateElement> hosts = substrateElement.getLinksOrServer();
+      return Math.pow(4, hosts.size());
+    }
+
+    throw new IllegalArgumentException("Element(s) not matched.");
+  }
+
   /**
    * Creates the network information. This method extracts all nodes and links from given substrate
    * and virtual network as well as the substrate paths to generate.
@@ -391,14 +447,11 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
     // Substrate network
     for (final Node n : facade.getAllServersOfNetwork(sNet.getName())) {
       substrateNodes.add((SubstrateNode) n);
+      allSubstratePaths.add(new VneIlpPath((SubstrateServer) n));
     }
 
     for (final Node n : facade.getAllSwitchesOfNetwork(sNet.getName())) {
       substrateNodes.add((SubstrateNode) n);
-
-      if (n instanceof SubstrateServer) {
-        allSubstratePaths.add(new VneIlpPath((SubstrateServer) n));
-      }
     }
 
     for (final Link l : facade.getAllLinksOfNetwork(sNet.getName())) {
