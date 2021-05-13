@@ -22,8 +22,8 @@ import org.cardygan.ilp.api.model.ArithExpr;
 import org.cardygan.ilp.api.model.BinaryVar;
 import org.cardygan.ilp.api.model.Model;
 import org.cardygan.ilp.api.model.Param;
-import org.cardygan.ilp.api.solver.GurobiSolver;
 import algorithms.AbstractAlgorithm;
+import ilp.wrapper.config.IlpSolverConfig;
 import model.Link;
 import model.Node;
 import model.Path;
@@ -227,8 +227,7 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
 
     createMinOveralCostsObjective();
 
-    // TODO: Make solver configurable.
-    ilpResult = model.solve(new GurobiSolver());
+    ilpResult = model.solve(IlpSolverConfig.getSolver());
 
     if (isFeasible(ilpResult.getStatistics())) {
       // Node results
