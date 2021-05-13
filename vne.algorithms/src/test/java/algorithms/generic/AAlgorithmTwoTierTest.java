@@ -2,7 +2,9 @@ package algorithms.generic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.Test;
 import facade.ModelFacade;
 import model.Link;
@@ -95,25 +97,72 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
     final VirtualLink vLn3 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln3");
     final VirtualLink vLn4 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln4");
 
+    String sourceName = "";
+    String targetName = "";
+
     // Link 1
-    final Path pLn1 = (Path) vLn1.getHost();
-    assertEquals("sub_srv1", pLn1.getSource().getName());
-    assertEquals("sub_sw", pLn1.getTarget().getName());
+    if (vLn1.getHost() instanceof Path) {
+      final Path pLn1 = (Path) vLn1.getHost();
+      sourceName = pLn1.getSource().getName();
+      targetName = pLn1.getTarget().getName();
+    } else if (vLn1.getHost() instanceof Link) {
+      final Link lLn1 = (Link) vLn1.getHost();
+      sourceName = lLn1.getSource().getName();
+      targetName = lLn1.getTarget().getName();
+    } else {
+      fail();
+    }
+
+    assertEquals("sub_srv1", sourceName);
+    assertEquals("sub_sw", targetName);
 
     // Link 2
-    final Path pLn2 = (Path) vLn2.getHost();
-    assertEquals("sub_srv2", pLn2.getSource().getName());
-    assertEquals("sub_sw", pLn2.getTarget().getName());
+    if (vLn2.getHost() instanceof Path) {
+      final Path pLn2 = (Path) vLn2.getHost();
+      sourceName = pLn2.getSource().getName();
+      targetName = pLn2.getTarget().getName();
+    } else if (vLn2.getHost() instanceof Link) {
+      final Link lLn2 = (Link) vLn2.getHost();
+      sourceName = lLn2.getSource().getName();
+      targetName = lLn2.getTarget().getName();
+    } else {
+      fail();
+    }
+
+    assertEquals("sub_srv2", sourceName);
+    assertEquals("sub_sw", targetName);
 
     // Link 3
-    final Path pLn3 = (Path) vLn3.getHost();
-    assertEquals("sub_sw", pLn3.getSource().getName());
-    assertEquals("sub_srv1", pLn3.getTarget().getName());
+    if (vLn3.getHost() instanceof Path) {
+      final Path pLn3 = (Path) vLn3.getHost();
+      sourceName = pLn3.getSource().getName();
+      targetName = pLn3.getTarget().getName();
+    } else if (vLn3.getHost() instanceof Link) {
+      final Link lLn3 = (Link) vLn3.getHost();
+      sourceName = lLn3.getSource().getName();
+      targetName = lLn3.getTarget().getName();
+    } else {
+      fail();
+    }
+
+    assertEquals("sub_sw", sourceName);
+    assertEquals("sub_srv1", targetName);
 
     // Link 4
-    final Path pLn4 = (Path) vLn4.getHost();
-    assertEquals("sub_sw", pLn4.getSource().getName());
-    assertEquals("sub_srv2", pLn4.getTarget().getName());
+    if (vLn4.getHost() instanceof Path) {
+      final Path pLn4 = (Path) vLn4.getHost();
+      sourceName = pLn4.getSource().getName();
+      targetName = pLn4.getTarget().getName();
+    } else if (vLn4.getHost() instanceof Link) {
+      final Link lLn4 = (Link) vLn4.getHost();
+      sourceName = lLn4.getSource().getName();
+      targetName = lLn4.getTarget().getName();
+    } else {
+      fail();
+    }
+
+    assertEquals("sub_sw", sourceName);
+    assertEquals("sub_srv2", targetName);
   }
 
   @Test
@@ -130,8 +179,6 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
     initAlgo(sNet, vNet);
     assertTrue(algo.execute());
 
-    // TODO:
-
     // Test switch placement
     final VirtualSwitch virtSw = (VirtualSwitch) ModelFacade.getInstance().getSwitchById("virt_sw");
     assertEquals("sub_csw1", virtSw.getHost().getName());
@@ -143,9 +190,13 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
         (VirtualServer) ModelFacade.getInstance().getServerById("virt_srv2");
     final VirtualServer vSrv3 =
         (VirtualServer) ModelFacade.getInstance().getServerById("virt_srv3");
-    assertEquals("sub_srv1", vSrv1.getHost().getName());
-    assertEquals("sub_srv2", vSrv2.getHost().getName());
-    assertEquals("sub_srv3", vSrv3.getHost().getName());
+    final String serverHost1 = vSrv1.getHost().getName();
+    final String serverHost2 = vSrv2.getHost().getName();
+    final String serverHost3 = vSrv3.getHost().getName();
+
+    assertNotEquals(serverHost1, serverHost2);
+    assertNotEquals(serverHost1, serverHost3);
+    assertNotEquals(serverHost2, serverHost3);
 
     // Test link placements
     final VirtualLink vLn1 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln1");
@@ -157,33 +208,33 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 
     // Link 1
     final Path pLn1 = (Path) vLn1.getHost();
-    assertEquals("sub_srv1", pLn1.getSource().getName());
+    assertEquals(serverHost1, pLn1.getSource().getName());
     assertEquals("sub_csw1", pLn1.getTarget().getName());
 
     // Link 2
     final Path pLn2 = (Path) vLn2.getHost();
-    assertEquals("sub_srv2", pLn2.getSource().getName());
+    assertEquals(serverHost2, pLn2.getSource().getName());
     assertEquals("sub_csw1", pLn2.getTarget().getName());
 
     // Link 3
     final Path pLn3 = (Path) vLn3.getHost();
-    assertEquals("sub_srv3", pLn3.getSource().getName());
+    assertEquals(serverHost3, pLn3.getSource().getName());
     assertEquals("sub_csw1", pLn3.getTarget().getName());
 
     // Link 4
     final Path pLn4 = (Path) vLn4.getHost();
     assertEquals("sub_csw1", pLn4.getSource().getName());
-    assertEquals("sub_srv1", pLn4.getTarget().getName());
+    assertEquals(serverHost1, pLn4.getTarget().getName());
 
     // Link 5
     final Path pLn5 = (Path) vLn5.getHost();
     assertEquals("sub_csw1", pLn5.getSource().getName());
-    assertEquals("sub_srv2", pLn5.getTarget().getName());
+    assertEquals(serverHost2, pLn5.getTarget().getName());
 
     // Link 6
     final Path pLn6 = (Path) vLn6.getHost();
     assertEquals("sub_csw1", pLn6.getSource().getName());
-    assertEquals("sub_srv3", pLn6.getTarget().getName());
+    assertEquals(serverHost3, pLn6.getTarget().getName());
   }
 
   /*
@@ -283,30 +334,30 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
     ModelFacade.getInstance().addServerToNetwork(networkId + "_srv4", networkId, slotsPerServer,
         slotsPerServer, slotsPerServer, 2);
 
-    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln1", networkId, 0,
+    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln1", networkId, 1,
         networkId + "_srv1", networkId + "_rsw1");
-    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln2", networkId, 0,
+    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln2", networkId, 1,
         networkId + "_srv2", networkId + "_rsw1");
-    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln3", networkId, 0,
+    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln3", networkId, 1,
         networkId + "_rsw1", networkId + "_srv1");
-    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln4", networkId, 0,
+    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln4", networkId, 1,
         networkId + "_rsw1", networkId + "_srv2");
-    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln5", networkId, 0,
+    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln5", networkId, 1,
         networkId + "_srv3", networkId + "_rsw2");
-    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln6", networkId, 0,
+    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln6", networkId, 1,
         networkId + "_srv4", networkId + "_rsw2");
-    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln7", networkId, 0,
+    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln7", networkId, 1,
         networkId + "_rsw2", networkId + "_srv3");
-    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln8", networkId, 0,
+    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln8", networkId, 1,
         networkId + "_rsw2", networkId + "_srv4");
 
-    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln9", networkId, 0,
+    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln9", networkId, 10,
         networkId + "_rsw1", networkId + "_csw1");
-    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln10", networkId, 0,
+    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln10", networkId, 10,
         networkId + "_rsw2", networkId + "_csw1");
-    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln11", networkId, 0,
+    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln11", networkId, 10,
         networkId + "_csw1", networkId + "_rsw1");
-    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln12", networkId, 0,
+    ModelFacade.getInstance().addLinkToNetwork(networkId + "_ln12", networkId, 10,
         networkId + "_csw1", networkId + "_rsw2");
   }
 

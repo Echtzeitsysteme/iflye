@@ -34,14 +34,12 @@ import model.SubstrateNetwork;
 import model.SubstrateNode;
 import model.SubstratePath;
 import model.SubstrateServer;
-import model.SubstrateSwitch;
 import model.Switch;
 import model.VirtualElement;
 import model.VirtualLink;
 import model.VirtualNetwork;
 import model.VirtualNode;
 import model.VirtualServer;
-import model.VirtualSwitch;
 
 /**
  * Implementation of the ILP formulation of paper [1]. Keep in mind that this particular
@@ -313,8 +311,6 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
     final List<ArithExpr> expr = new LinkedList<>();
     for (int v = 0; v < nodeVariables.length; v++) {
       for (int s = 0; s < nodeVariables[v].length; s++) {
-        // expr.add(mult(param(getNodeCost(virtualNodes.get(v), substrateNodes.get(s))),
-        // nodeVariables[v][s]));
         expr.add(mult(param(getTotalPathCost(virtualNodes.get(v), substrateNodes.get(s))),
             nodeVariables[v][s]));
       }
@@ -322,8 +318,6 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
 
     for (int v = 0; v < pathVariables.length; v++) {
       for (int s = 0; s < pathVariables[v].length; s++) {
-        // expr.add(mult(param(getLinkCost(virtualLinks.get(v), allSubstratePaths.get(s))),
-        // pathVariables[v][s]));
         expr.add(mult(param(getTotalPathCost(virtualLinks.get(v), allSubstratePaths.get(s))),
             pathVariables[v][s]));
       }
@@ -335,62 +329,12 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
   /**
    * Returns the cost for a node to node embedding.
    * 
-   * @param virtualNode Virtual node to embed.
-   * @param substrateNode Substrate node to embed.
+   * @param virtualElement Virtual node to embed.
+   * @param substrateElement Substrate node to embed.
    * @return Cost for this particular mapping.
    */
-  private double getNodeCost(final VirtualNode virtualNode, final SubstrateNode substrateNode) {
-    if (virtualNode instanceof VirtualSwitch) {
-      if (substrateNode instanceof SubstrateSwitch) {
-        return 1;
-      } else if (substrateNode instanceof SubstrateServer) {
-        return 2;
-      } else {
-        throw new UnsupportedOperationException();
-      }
-    } else if (virtualNode instanceof VirtualServer) {
-      if (substrateNode instanceof SubstrateServer) {
-        return 1;
-      } else {
-        return Integer.MAX_VALUE;
-      }
-    } else {
-      throw new UnsupportedOperationException();
-    }
-  }
-
-  /**
-   * Returns the cost for a link to path embedding.
-   * 
-   * @param virtualLink Virtual link to embed.
-   * @param substratePath Substrate path to embed.
-   * @return Cost for this particular mapping.
-   */
-  private double getLinkCost(final VirtualLink virtualLink, final VneIlpPath substratePath) {
-    double cost = 0.0;
-    if (substratePath.getServer() != null) {
-      cost = 1;
-    } else {
-      final int hops = substratePath.getLinks().size();
-      cost = (hops == 1) ? 2 : Math.pow(4, hops);
-    }
-    return cost;
-  }
-
   private double getTotalPathCost(final VirtualElement virtualElement,
       final SubstrateElement substrateElement) {
-    // if (virtualElement instanceof Link) {
-    // if (substrateElement instanceof Link) {
-    // return 2;
-    // } else if (substrateElement instanceof Path) {
-    // if (((Path) substrateElement).getHops() == 1) {
-    // return 2;
-    // }
-    // return Math.pow(4.0, ((Path) substrateElement).getHops());
-    // } else if (substrateElement instanceof Server) {
-    // return 1;
-    // }
-    // } else
     if (virtualElement instanceof Server) {
       if (substrateElement instanceof Server) {
         return 1;
@@ -405,10 +349,15 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
 
     // return Integer.MAX_VALUE;
     return 0;
-    // throw new IllegalArgumentException(
-    // "Element(s) not matched: " + virtualElement + ";" + substrateElement);
   }
 
+  /**
+   * Returns the cost for a link to path embedding.
+   * 
+   * @param virtualLink Virtual link to embed.
+   * @param substratePath Substrate path to embed.
+   * @return Cost for this particular mapping.
+   */
   private double getTotalPathCost(final VirtualLink virtualLink,
       final VneIlpPath substrateElement) {
     if (substrateElement.getLinksOrServer().size() == 1) {

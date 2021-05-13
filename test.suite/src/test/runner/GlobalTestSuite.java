@@ -4,6 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import algorithms.heuristics.TafAlgorithmGoogleFatTreeTest;
 import algorithms.heuristics.TafAlgorithmTest;
+import algorithms.ilp.VneIlpPathAlgorithmTest;
 import facade.test.ModelFacadeCreationTest;
 import facade.test.ModelFacadeEmbeddingTest;
 import facade.test.ModelFacadePathBasicTest;
@@ -31,12 +32,13 @@ import metrics.TotalTafCommunicationCostMetricTest;
 @Suite.SuiteClasses({ModelFacadeCreationTest.class, ModelFacadeEmbeddingTest.class,
     ModelFacadePathBasicTest.class, ModelFacadePathYenTest.class,
     ModelFacadePathTwoTierDetailTest.class, TafAlgorithmTest.class,
-    TafAlgorithmGoogleFatTreeTest.class, OneTierNetworkGeneratorTest.class,
-    TwoTierNetworkGeneratorTest.class, GoogleFatTreeNetworkGeneratorTest.class,
-    AcceptedVnrMetricTest.class, ActiveSubstrateServerMetricTest.class,
-    ActiveSubstrateSwitchMetricTest.class, AveragePathLengthMetricTest.class,
-    TotalCommunicationCostMetricTest.class, TotalPathCostMetricTest.class,
-    TotalTafCommunicationCostMetricTest.class, RuntimeMetricTest.class})
+    TafAlgorithmGoogleFatTreeTest.class, VneIlpPathAlgorithmTest.class,
+    OneTierNetworkGeneratorTest.class, TwoTierNetworkGeneratorTest.class,
+    GoogleFatTreeNetworkGeneratorTest.class, AcceptedVnrMetricTest.class,
+    ActiveSubstrateServerMetricTest.class, ActiveSubstrateSwitchMetricTest.class,
+    AveragePathLengthMetricTest.class, TotalCommunicationCostMetricTest.class,
+    TotalPathCostMetricTest.class, TotalTafCommunicationCostMetricTest.class,
+    RuntimeMetricTest.class})
 public class GlobalTestSuite {
 
 }
