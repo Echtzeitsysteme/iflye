@@ -90,6 +90,15 @@ public class ModelFacade {
   }
 
   /**
+   * Returns the root node.
+   * 
+   * @return Root node.
+   */
+  public Root getRoot() {
+    return root;
+  }
+
+  /**
    * Returns a collection of all networks from the model.
    * 
    * @return Collection of all networks from the model.

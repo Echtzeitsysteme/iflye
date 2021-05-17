@@ -7,28 +7,28 @@ import java.util.function.BiConsumer;
 import org.eclipse.collections.impl.map.mutable.UnifiedMap;
 import model.Element;
 import model.Root;
-import model.VirtualNetwork;
 import patternmatching.IncrementalPatternMatcher;
 import patternmatching.PatternMatchingDelta;
 import rules.api.RulesAPI;
-import rules.api.RulesHiPEApp;
 
 public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
 
   private final RulesAPI api;
+  private final EmoflonPatternMatcherApp emoflonPatternMatcherApp;
   private PatternMatchingDelta currentDelta = new PatternMatchingDelta();
   // TODO: Collections for matches here
 
   // private SubstrateNetwork substrateNetwork;
 
   private final Map<Element, List<Element>> virtualMatches = new UnifiedMap<>();
-  private Map<String, Element> allElements;
-  private Map<String, VirtualNetwork> allVirtualNetworks;
+  // private Map<String, Element> allElements;
+  // private Map<String, VirtualNetwork> allVirtualNetworks;
 
   // TODO: Currently all update and add element functionality is missing!
 
   public EmoflonPatternMatcher(final Root root) {
-    api = new RulesHiPEApp().initAPI();
+    emoflonPatternMatcherApp = new EmoflonPatternMatcherApp(root);
+    api = emoflonPatternMatcherApp.initAPI();
 
     api.serverMatchPositive().subscribeAppearing(m -> {
       addMatch(currentDelta::addServerMatchPositive, m.getVirtualNode(), m.getSubstrateNode());
