@@ -676,6 +676,20 @@ public class ModelFacade {
   }
 
   /**
+   * Returns a path from source node ID to target node ID if such a path exists. Else it returns
+   * null.
+   * 
+   * @param sourceId Source node ID.
+   * @param targetId Target node ID.
+   * @return Path if a path between source and target does exist.
+   */
+  public Path getPathFromSourceToTarget(final String sourceId, final String targetId) {
+    final Node source = getNodeById(sourceId);
+    final Node target = getNodeById(targetId);
+    return getPathFromSourceToTarget(source, target);
+  }
+
+  /**
    * Returns all paths from source node to target node if any exists. Else it returns an empty set.
    * 
    * @param source Source node.
@@ -880,37 +894,6 @@ public class ModelFacade {
     // No constraints to check!
     virtLink.setHost(subServ);
     return subServ.getGuestLinks().add(virtLink);
-  }
-
-  /**
-   * Adds an embedding of one virtual link to one substrate link.
-   * 
-   * @param substrateId Substrate Id.
-   * @param virtualId Virtual Id.
-   * @return True if embedding was successful.
-   */
-  public boolean embedLinkToLink(final String substrateId, final String virtualId) {
-    final SubstrateLink subLink = (SubstrateLink) getLinkById(substrateId);
-    final VirtualLink virtLink = (VirtualLink) getLinkById(virtualId);
-    boolean success = true;
-
-    if (!ModelFacadeConfig.IGNORE_BW) {
-      if (subLink.getResidualBandwidth() < virtLink.getBandwidth()) {
-        throw new UnsupportedOperationException(
-            "Embeding of link not possible due resource " + "constraint violation.");
-      }
-    }
-
-    success &= subLink.getGuestLinks().add(virtLink);
-    virtLink.setHost(subLink);
-
-    // Update residual values of the host
-    if (!ModelFacadeConfig.IGNORE_BW) {
-      final int oldResBw = subLink.getResidualBandwidth();
-      subLink.setResidualBandwidth(oldResBw - virtLink.getBandwidth());
-    }
-
-    return success;
   }
 
   /**
