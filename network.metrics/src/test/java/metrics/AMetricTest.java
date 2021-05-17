@@ -78,10 +78,14 @@ public abstract class AMetricTest {
     facade.embedSwitchToNode("ssw", "vsw");
     facade.embedServerToServer("ssrv1", "vsrv1");
     facade.embedServerToServer("ssrv2", "vsrv2");
-    facade.embedLinkToLink("sln1", "vln1");
-    facade.embedLinkToLink("sln2", "vln2");
-    facade.embedLinkToLink("sln3", "vln3");
-    facade.embedLinkToLink("sln4", "vln4");
+    final Path p1 = facade.getPathFromSourceToTarget("ssw", "ssrv1");
+    final Path p2 = facade.getPathFromSourceToTarget("ssw", "ssrv2");
+    final Path p3 = facade.getPathFromSourceToTarget("ssrv1", "ssw");
+    final Path p4 = facade.getPathFromSourceToTarget("ssrv2", "ssw");
+    facade.embedLinkToPath(p1.getName(), "vln1");
+    facade.embedLinkToPath(p2.getName(), "vln2");
+    facade.embedLinkToPath(p3.getName(), "vln3");
+    facade.embedLinkToPath(p4.getName(), "vln4");
   }
 
   /**
