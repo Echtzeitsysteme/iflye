@@ -9,8 +9,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
-import model.SubstrateLink;
 import model.SubstrateNetwork;
+import model.SubstratePath;
 import model.SubstrateServer;
 import model.SubstrateSwitch;
 import model.VirtualLink;
@@ -129,57 +129,26 @@ public class ModelFacadeEmbeddingTest {
   }
 
   @Test
-  public void testEmbedLinkToLink() {
-    ModelFacade.getInstance().addServerToNetwork("1", "sub", 0, 0, 0, 0);
-    ModelFacade.getInstance().addServerToNetwork("2", "sub", 0, 0, 0, 0);
-    ModelFacade.getInstance().addLinkToNetwork("3", "sub", 10, "1", "2");
-
-    ModelFacade.getInstance().addServerToNetwork("4", "virt", 0, 0, 0, 0);
-    ModelFacade.getInstance().addServerToNetwork("5", "virt", 0, 0, 0, 0);
-    ModelFacade.getInstance().addLinkToNetwork("6", "virt", 8, "4", "5");
-
-    ModelFacade.getInstance().embedLinkToLink("3", "6");
-    assertEquals(1,
-        ((SubstrateLink) ModelFacade.getInstance().getLinkById("3")).getGuestLinks().size());
-    assertEquals("3",
-        ((VirtualLink) ModelFacade.getInstance().getLinkById("6")).getHost().getName());
-    assertEquals(2,
-        ((SubstrateLink) ModelFacade.getInstance().getLinkById("3")).getResidualBandwidth());
-  }
-
-  @Test
-  public void testEmbedLinkToLinkReject() {
-    ModelFacade.getInstance().addServerToNetwork("1", "sub", 0, 0, 0, 0);
-    ModelFacade.getInstance().addServerToNetwork("2", "sub", 0, 0, 0, 0);
-    ModelFacade.getInstance().addLinkToNetwork("3", "sub", 10, "1", "2");
-
-    ModelFacade.getInstance().addServerToNetwork("4", "virt", 0, 0, 0, 0);
-    ModelFacade.getInstance().addServerToNetwork("5", "virt", 0, 0, 0, 0);
-    ModelFacade.getInstance().addLinkToNetwork("6", "virt", 12, "4", "5");
-
-    assertThrows(UnsupportedOperationException.class, () -> {
-      ModelFacade.getInstance().embedLinkToLink("3", "6");
-    });
-  }
-
-  @Test
   public void testEmbedLinkBwIgnore() {
     // Set ignore bandwidth to true in ModelFacadeConfig.
     ModelFacadeConfig.IGNORE_BW = true;
 
-    ModelFacade.getInstance().addServerToNetwork("1", "sub", 0, 0, 0, 0);
-    ModelFacade.getInstance().addServerToNetwork("2", "sub", 0, 0, 0, 0);
-    ModelFacade.getInstance().addLinkToNetwork("3", "sub", 10, "1", "2");
+    ModelFacade.getInstance().addServerToNetwork("srv1", "sub", 0, 0, 0, 0);
+    ModelFacade.getInstance().addServerToNetwork("srv2", "sub", 0, 0, 0, 0);
+    ModelFacade.getInstance().addLinkToNetwork("l3", "sub", 10, "srv1", "srv2");
+    ModelFacade.getInstance().addLinkToNetwork("l4", "sub", 10, "srv2", "srv1");
 
-    ModelFacade.getInstance().addServerToNetwork("4", "virt", 0, 0, 0, 0);
-    ModelFacade.getInstance().addServerToNetwork("5", "virt", 0, 0, 0, 0);
-    ModelFacade.getInstance().addLinkToNetwork("6", "virt", 12, "4", "5");
+    ModelFacade.getInstance().addServerToNetwork("srv5", "virt", 0, 0, 0, 0);
+    ModelFacade.getInstance().addServerToNetwork("srv6", "virt", 0, 0, 0, 0);
+    ModelFacade.getInstance().addLinkToNetwork("l7", "virt", 12, "srv5", "srv6");
+    ModelFacade.getInstance().addLinkToNetwork("l8", "virt", 12, "srv6", "srv5");
+    ModelFacade.getInstance().createAllPathsForNetwork("sub");
 
-    ModelFacade.getInstance().embedLinkToLink("3", "6");
+    ModelFacade.getInstance().embedLinkToPath("0", "l7");
 
-    final SubstrateLink subLink = (SubstrateLink) ModelFacade.getInstance().getLinkById("3");
-    assertEquals(1, subLink.getGuestLinks().size());
-    assertEquals("6", subLink.getGuestLinks().get(0).getName());
+    final SubstratePath subPath = (SubstratePath) ModelFacade.getInstance().getPathById("0");
+    assertEquals(1, subPath.getGuestLinks().size());
+    assertEquals("l7", subPath.getGuestLinks().get(0).getName());
 
     // Reset configuration afterwards
     ModelFacadeConfig.IGNORE_BW = false;

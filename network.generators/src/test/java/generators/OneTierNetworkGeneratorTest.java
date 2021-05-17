@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import java.util.List;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import generators.config.OneTierConfig;
@@ -27,12 +26,7 @@ import model.VirtualNetwork;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class OneTierNetworkGeneratorTest implements IGeneratorTest {
-
-  @Before
-  public void resetModel() {
-    facade.resetAll();
-  }
+public class OneTierNetworkGeneratorTest extends IGeneratorTest {
 
   /*
    * Positive tests
