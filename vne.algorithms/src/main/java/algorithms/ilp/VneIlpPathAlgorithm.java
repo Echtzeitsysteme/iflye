@@ -160,9 +160,9 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
       return residualBandwidth;
     }
 
-    public SubstrateServer getServer() {
-      return server;
-    }
+    // public SubstrateServer getServer() {
+    // return server;
+    // }
 
     public SubstrateNode getSourceNode() {
       return sourceNode;
@@ -297,7 +297,9 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
         if (hosts.get(0) instanceof SubstrateServer) {
           facade.embedLinkToServer(hosts.get(0).getName(), vl.getName());
         } else {
-          facade.embedLinkToLink(hosts.get(0).getName(), vl.getName());
+          final Link l = (Link) hosts.get(0);
+          final Path p = facade.getPathFromSourceToTarget(l.getSource(), l.getTarget());
+          facade.embedLinkToPath(p.getName(), vl.getName());
         }
       }
     }
