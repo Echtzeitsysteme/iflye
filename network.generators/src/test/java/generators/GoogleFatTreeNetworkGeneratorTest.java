@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.junit.Before;
 import org.junit.Test;
 import facade.ModelFacade;
 import generators.config.GoogleFatTreeConfig;
@@ -23,12 +22,7 @@ import model.VirtualNetwork;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class GoogleFatTreeNetworkGeneratorTest implements IGeneratorTest {
-
-  @Before
-  public void resetModel() {
-    facade.resetAll();
-  }
+public class GoogleFatTreeNetworkGeneratorTest extends IGeneratorTest {
 
   /*
    * Positive tests
