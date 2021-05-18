@@ -25,16 +25,16 @@ import "platform:/resource/network.model/model/Model.ecore"
 //
 // Networks
 //
-
-pattern networkMatch() {
-	root: Root {
-		-networks -> substrateNetwork
-		-networks -> virtualNetwork
-	}
-	
-	substrateNetwork: SubstrateNetwork
-	virtualNetwork: VirtualNetwork
-}
+//
+//pattern networkMatch() {
+//	root: Root {
+//		-networks -> substrateNetwork
+//		-networks -> virtualNetwork
+//	}
+//	
+//	substrateNetwork: SubstrateNetwork
+//	virtualNetwork: VirtualNetwork
+//}
 
 //
 // Servers

@@ -3,8 +3,6 @@ package patternmatching;
 import java.util.HashSet;
 import java.util.Set;
 import model.Element;
-import model.SubstrateNetwork;
-import model.VirtualNetwork;
 
 public class PatternMatchingDelta {
 
@@ -95,7 +93,7 @@ public class PatternMatchingDelta {
   // private final Set<VirtualSwitch> newVirtualSwitches = new HashSet<>();
   // private final Set<VirtualLink> newVirtualLinks = new HashSet<>();
 
-  private final Set<Match> newNetworkMatches = new HashSet<>();
+  // private final Set<Match> newNetworkMatches = new HashSet<>();
   private final Set<Match> newServerMatchPositives = new HashSet<>();
   private final Set<Match> newServerMatchNegatives = new HashSet<>();
   private final Set<Match> newServerMatchSwitchNegatives = new HashSet<>();
@@ -131,10 +129,10 @@ public class PatternMatchingDelta {
   // public void addVirtualLink(final VirtualLink link) {
   // addValue(link, newVirtualLinks);
   // }
-
-  public void addNetworkMatch(final VirtualNetwork virt, final SubstrateNetwork sub) {
-    addValue(new Match(virt, sub), newNetworkMatches);
-  }
+  //
+  // public void addNetworkMatch(final VirtualNetwork virt, final SubstrateNetwork sub) {
+  // addValue(new Match(virt, sub), newNetworkMatches);
+  // }
 
   public void addServerMatchPositive(final Element virtual, final Element substrate) {
     addValue(new Match(virtual, substrate), newServerMatchPositives);
@@ -187,10 +185,10 @@ public class PatternMatchingDelta {
   // public Set<VirtualLink> getNewVirtualLinks() {
   // return newVirtualLinks;
   // }
-
-  public Set<Match> getNewNetworkMatches() {
-    return newNetworkMatches;
-  }
+  //
+  // public Set<Match> getNewNetworkMatches() {
+  // return newNetworkMatches;
+  // }
 
   public Set<Match> getNewServerMatchPositives() {
     return newServerMatchPositives;

@@ -226,7 +226,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     addElementsToSolver(gen);
 
     // add new matches
-    delta.getNewNetworkMatches().forEach(gen::addNewNetworkMatch);
+    // delta.getNewNetworkMatches().forEach(gen::addNewNetworkMatch);
     delta.getNewServerMatchPositives().forEach(gen::addServerMatch);
     delta.getNewServerMatchNegatives().forEach(gen::addServerMatch);
     // TODO: This has to be changed:
@@ -281,6 +281,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
         gen.addNewVirtualLink((VirtualLink) l);
       }
     }
+
+    // Network match
+    gen.addNewNetworkMatch(new Match(vNet, sNet));
   }
 
   private void updateMappingsAndEmbed(final Map<String, Boolean> mappings) {
