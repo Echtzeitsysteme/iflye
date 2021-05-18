@@ -54,7 +54,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       delta.setVariableWeightForConstraint("vl" + match.getVirtual().getName(), 1, varName);
       delta.addLessOrEqualsConstraint("req" + varName, 0, new int[] {2, -1, -1},
           new String[] {varName, vLink.getSource().getName() + "_" + match.getSubstrate().getName(),
-              vLink.getSource().getName() + "_" + match.getSubstrate().getName()});
+              vLink.getTarget().getName() + "_" + match.getSubstrate().getName()});
       variablesToMatch.put(varName, match);
     }
 
@@ -287,6 +287,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
   }
 
   private void updateMappingsAndEmbed(final Map<String, Boolean> mappings) {
+    // Update mappings
     previousMappings = currentMappings;
     currentMappings = new HashSet<>();
 
@@ -305,16 +306,18 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       }
     }
 
+    // Embed elements
+    facade.embedNetworkToNetwork(sNet.getName(), vNet.getName());
     for (final String s : newMappings) {
       final Match m = variablesToMatch.get(s);
 
       final VirtualElement virtualElement = (VirtualElement) m.getVirtual();
       final SubstrateElement substrateElement = (SubstrateElement) m.getSubstrate();
 
-      // Network -> Network
-      if (virtualElement instanceof VirtualNetwork) {
-        facade.embedNetworkToNetwork(substrateElement.getName(), virtualElement.getName());
-      }
+      // // Network -> Network
+      // if (virtualElement instanceof VirtualNetwork) {
+      // facade.embedNetworkToNetwork(substrateElement.getName(), virtualElement.getName());
+      // }
 
       // Server -> Server
       if (virtualElement instanceof VirtualServer) {

@@ -900,6 +900,41 @@ public class ModelFacade {
     final SubstrateServer subServ = (SubstrateServer) getServerById(substrateId);
     final VirtualLink virtLink = (VirtualLink) getLinkById(virtualId);
 
+    // // Check conditions
+    // // Source
+    // if (virtLink.getSource() instanceof VirtualServer) {
+    // if (((VirtualServer) virtLink.getSource()).getHost() == null) {
+    // throw new UnsupportedOperationException("Virtual link source host is null.");
+    // }
+    // if (!((VirtualServer) virtLink.getSource()).getHost().equals(subServ)) {
+    // throw new UnsupportedOperationException();
+    // }
+    // } else if (virtLink.getSource() instanceof VirtualSwitch) {
+    // if (((VirtualSwitch) virtLink.getSource()).getHost() == null) {
+    // throw new UnsupportedOperationException("Virtual link source host is null.");
+    // }
+    // if (!((VirtualSwitch) virtLink.getSource()).getHost().equals(subServ)) {
+    // throw new UnsupportedOperationException();
+    // }
+    // }
+    //
+    // // Target
+    // if (virtLink.getTarget() instanceof VirtualServer) {
+    // if (((VirtualServer) virtLink.getTarget()).getHost() == null) {
+    // throw new UnsupportedOperationException("Virtual link target host is null.");
+    // }
+    // if (!((VirtualServer) virtLink.getTarget()).getHost().equals(subServ)) {
+    // throw new UnsupportedOperationException();
+    // }
+    // } else if (virtLink.getTarget() instanceof VirtualSwitch) {
+    // if (((VirtualSwitch) virtLink.getTarget()).getHost() == null) {
+    // throw new UnsupportedOperationException("Virtual link target host is null.");
+    // }
+    // if (!((VirtualSwitch) virtLink.getTarget()).getHost().equals(subServ)) {
+    // throw new UnsupportedOperationException();
+    // }
+    // }
+
     // No constraints to check!
     virtLink.setHost(subServ);
     return subServ.getGuestLinks().add(virtLink);
