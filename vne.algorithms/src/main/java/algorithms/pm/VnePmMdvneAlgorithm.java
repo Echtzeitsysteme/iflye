@@ -15,6 +15,7 @@ import ilp.wrapper.IncrementalIlpSolver;
 import ilp.wrapper.Statistics;
 import ilp.wrapper.impl.IncrementalGurobiSolver;
 import model.Link;
+import model.Node;
 import model.SubstrateElement;
 import model.SubstrateLink;
 import model.SubstrateNetwork;
@@ -217,11 +218,12 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     final IlpDeltaGenerator gen = new IlpDeltaGenerator();
 
     // add new elements
-    delta.getNewSubstrateServers().forEach(gen::addNewSubstrateServer);
-    delta.getNewSubstrateLinks().forEach(gen::addNewSubstrateLink);
-    delta.getNewVirtualServers().forEach(gen::addNewVirtualServer);
-    delta.getNewVirtualSwitches().forEach(gen::addNewVirtualSwitch);
-    delta.getNewVirtualLinks().forEach(gen::addNewVirtualLink);
+    // delta.getNewSubstrateServers().forEach(gen::addNewSubstrateServer);
+    // delta.getNewSubstrateLinks().forEach(gen::addNewSubstrateLink);
+    // delta.getNewVirtualServers().forEach(gen::addNewVirtualServer);
+    // delta.getNewVirtualSwitches().forEach(gen::addNewVirtualSwitch);
+    // delta.getNewVirtualLinks().forEach(gen::addNewVirtualLink);
+    addElementsToSolver(gen);
 
     // add new matches
     delta.getNewNetworkMatches().forEach(gen::addNewNetworkMatch);
@@ -249,12 +251,48 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     return true;
   }
 
+  private void addElementsToSolver(final IlpDeltaGenerator gen) {
+    // Substrate network
+    for (final Node n : sNet.getNodes()) {
+      if (n instanceof SubstrateServer) {
+        gen.addNewSubstrateServer((SubstrateServer) n);
+      } else if (n instanceof SubstrateSwitch) {
+        // Nothing to do here
+      }
+    }
+
+    for (final Link l : sNet.getLinks()) {
+      if (l instanceof SubstrateLink) {
+        gen.addNewSubstrateLink((SubstrateLink) l);
+      }
+    }
+
+    // Virtual network
+    for (final Node n : vNet.getNodes()) {
+      if (n instanceof VirtualServer) {
+        gen.addNewVirtualServer((VirtualServer) n);
+      } else if (n instanceof VirtualSwitch) {
+        gen.addNewVirtualSwitch((VirtualSwitch) n);
+      }
+    }
+
+    for (final Link l : vNet.getLinks()) {
+      if (l instanceof VirtualLink) {
+        gen.addNewVirtualLink((VirtualLink) l);
+      }
+    }
+  }
+
   private void updateMappingsAndEmbed(final Map<String, Boolean> mappings) {
     previousMappings = currentMappings;
     currentMappings = new HashSet<>();
 
     final List<String> newMappings = new LinkedList<>();
     for (final Entry<String, Boolean> entry : mappings.entrySet()) {
+
+      // TODO: Remove me:
+      // System.out.println(entry.getKey());
+
       if (entry.getValue()) {
         final String key = entry.getKey();
         currentMappings.add(key);

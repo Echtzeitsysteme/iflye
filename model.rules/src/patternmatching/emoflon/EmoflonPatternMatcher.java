@@ -31,16 +31,16 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
      * New elements
      */
 
-    api.substrateServer()
-        .subscribeAppearing(m -> currentDelta.addSubstrateServer(m.getSubstrateServer()));
-    api.substrateLink()
-        .subscribeAppearing(m -> currentDelta.addSubstrateLink(m.getSubstrateLink()));
-
-    api.virtualServer()
-        .subscribeAppearing(m -> currentDelta.addVirtualServer(m.getVirtualServer()));
-    api.virtualSwitch()
-        .subscribeAppearing(m -> currentDelta.addVirtualSwitch(m.getVirtualSwitch()));
-    api.virtualLink().subscribeAppearing(m -> currentDelta.addVirtualLink(m.getVirtualLink()));
+    // api.substrateServer()
+    // .subscribeAppearing(m -> currentDelta.addSubstrateServer(m.getSubstrateServer()));
+    // api.substrateLink()
+    // .subscribeAppearing(m -> currentDelta.addSubstrateLink(m.getSubstrateLink()));
+    //
+    // api.virtualServer()
+    // .subscribeAppearing(m -> currentDelta.addVirtualServer(m.getVirtualServer()));
+    // api.virtualSwitch()
+    // .subscribeAppearing(m -> currentDelta.addVirtualSwitch(m.getVirtualSwitch()));
+    // api.virtualLink().subscribeAppearing(m -> currentDelta.addVirtualLink(m.getVirtualLink()));
 
     /*
      * Matches

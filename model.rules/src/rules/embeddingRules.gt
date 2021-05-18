@@ -2,25 +2,25 @@ import "http://www.eclipse.org/emf/2002/Ecore"
 import "platform:/resource/network.model/model/Model.ecore"
 
 // Add elements
-pattern substrateServer() {
-	substrateServer: SubstrateServer
-}
-
-pattern substrateLink() {
-	substrateLink: SubstrateLink
-}
-
-pattern virtualServer() {
-	virtualServer: VirtualServer
-}
-
-pattern virtualSwitch() {
-	virtualSwitch: VirtualSwitch
-}
-
-pattern virtualLink() {
-	virtualLink: VirtualLink
-}
+//pattern substrateServer() {
+//	substrateServer: SubstrateServer
+//}
+//
+//pattern substrateLink() {
+//	substrateLink: SubstrateLink
+//}
+//
+//pattern virtualServer() {
+//	virtualServer: VirtualServer
+//}
+//
+//pattern virtualSwitch() {
+//	virtualSwitch: VirtualSwitch
+//}
+//
+//pattern virtualLink() {
+//	virtualLink: VirtualLink
+//}
 
 //
 // Networks
