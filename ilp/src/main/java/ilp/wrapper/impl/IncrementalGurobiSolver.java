@@ -49,6 +49,8 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
       if (!IlpSolverConfig.ENABLE_ILP_OUTPUT) {
         env.set(IntParam.OutputFlag, 0);
       }
+      // TODO: More threads?
+      // env.set(IntParam.Threads, 4);
       model = new GRBModel(env);
       model.set(DoubleParam.TimeLimit, timelimit);
       model.set(IntParam.Seed, randomSeed);
@@ -99,15 +101,61 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
       for (int j = 0; j < constrs.length; j++) {
         final Constraint c = constrs[j];
         final GRBLinExpr expr = new GRBLinExpr();
+
+        // if (c.getWeights().size() != c.getVarnames().size()) {
+        // System.out.println("=> Var size differs!");
+        // }
+
         expr.addTerms(c.getWeights().stream().mapToDouble(i -> i).toArray(),
             c.getVarnames().stream().map(variables::get).toArray(GRBVar[]::new));
+
+        for (int i = 0; i < expr.size(); i++) {
+          if (expr.getVar(i) == null) {
+            // System.out.println("Var null at i = " + i);
+            System.out.println(c.getName());
+            break;
+          }
+        }
+
         grbLinExprs[j] = expr;
       }
       final char[] senses = new char[constrs.length];
       Arrays.fill(senses, chr);
-      final GRBConstr[] addConstrs = model.addConstrs(grbLinExprs, senses,
-          Arrays.stream(constrs).mapToDouble(Constraint::getRight).toArray(),
-          Arrays.stream(constrs).map(Constraint::getName).toArray(String[]::new));
+      // System.out.println("grbLinExprs : " + grbLinExprs);
+      // System.out.println("senses: " + senses);
+      // System.out.println("constrs: " + constrs);
+      final double[] rhs = Arrays.stream(constrs).mapToDouble(Constraint::getRight).toArray();
+      final String[] names = Arrays.stream(constrs).map(Constraint::getName).toArray(String[]::new);
+
+      // for (final String k : variables.keySet()) {
+      // if (variables.get(k) == null) {
+      // System.out.println("=> variables is null at k = " + k);
+      // }
+      // }
+      //
+      // int counter = 0;
+      // for (GRBLinExpr g : grbLinExprs) {
+      // if (g == null) {
+      // throw new UnsupportedOperationException("Sit.");
+      // }
+      //
+      // for (int i = 0; i < g.size(); i++) {
+      // if (g.getVar(i) == null) {
+      // // throw new UnsupportedOperationException("Sit3." + counter);
+      // // System.out.println("Sit3 : " + counter + "; ");
+      // }
+      // }
+      //
+      // counter++;
+      // }
+      //
+      // for (final String n : names) {
+      // if (n == null) {
+      // throw new UnsupportedOperationException("Sit2.");
+      // }
+      // }
+
+      final GRBConstr[] addConstrs = model.addConstrs(grbLinExprs, senses, rhs, names);
       for (int i = 0; i < addConstrs.length; i++) {
         final GRBConstr constr = addConstrs[i];
         constraints.put(constrs[i].getName(), constr);
@@ -127,7 +175,7 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
           // v -> varConstraints.computeIfAbsent(v, k -> new HashSet<>())).add(constr);
         }
       }
-    } catch (final GRBException e) {
+    } catch (final GRBException | NullPointerException e) {
       throw new IlpSolverException(e);
     }
   }
@@ -458,6 +506,11 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
     final List<Double> weights = new LinkedList<>();
     for (final Entry<String, Map<String, Double>> entry : changeConstraitVariableWeights
         .entrySet()) {
+
+      // for (String c : constraints.keySet()) {
+      // System.out.println("c = " + c + "; constraint = " + constraints.get(c));
+      // }
+
       for (final Entry<String, Double> entry2 : entry.getValue().entrySet()) {
         constrs.add(constraints.get(entry.getKey()));
         vars.add(variables.get(entry2.getKey()));
@@ -468,7 +521,7 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
     try {
       model.chgCoeffs(constrs.toArray(new GRBConstr[constrs.size()]),
           vars.toArray(new GRBVar[vars.size()]), weights.stream().mapToDouble(d -> d).toArray());
-    } catch (final GRBException e) {
+    } catch (final GRBException | NullPointerException e) {
       throw new IlpSolverException(e);
     }
   }

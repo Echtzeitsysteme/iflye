@@ -1,6 +1,41 @@
 import "http://www.eclipse.org/emf/2002/Ecore"
 import "platform:/resource/network.model/model/Model.ecore"
 
+// Add elements
+pattern substrateServer() {
+	substrateServer: SubstrateServer
+}
+
+pattern substrateLink() {
+	substrateLink: SubstrateLink
+}
+
+pattern virtualServer() {
+	virtualServer: VirtualServer
+}
+
+pattern virtualSwitch() {
+	virtualSwitch: VirtualSwitch
+}
+
+pattern virtualLink() {
+	virtualLink: VirtualLink
+}
+
+//
+// Networks
+//
+
+pattern networkMatch() {
+	root: Root {
+		-networks -> substrateNetwork
+		-networks -> virtualNetwork
+	}
+	
+	substrateNetwork: SubstrateNetwork
+	virtualNetwork: VirtualNetwork
+}
+
 //
 // Servers
 //
@@ -50,6 +85,24 @@ pattern serverMatchNegative() {
 when serverMatchNotValid
 
 condition serverMatchNotValid = forbid serverMatchPositive
+
+pattern serverMatchSwitchNegative() {
+	root: Root {
+		-networks -> substrateNetwork
+		-networks -> virtualNetwork
+	}
+	
+	substrateNode: SubstrateSwitch
+	virtualNode: VirtualServer
+	
+	substrateNetwork: SubstrateNetwork {
+		-nodes -> substrateNode
+	}
+	
+	virtualNetwork: VirtualNetwork {
+		-nodes -> virtualNode
+	}
+}
 
 //
 // Switches

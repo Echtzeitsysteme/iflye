@@ -56,6 +56,10 @@ public class IlpDelta {
   public void addVariable(final String name, final double solutionWeight)
       throws IlpSolverException {
     addVariables.put(name, new Variable(name, solutionWeight));
+    // if (addVariables.put(name, new Variable(name, solutionWeight)) != null) {
+    // // throw new IllegalArgumentException(name);
+    // System.err.println("=> Doubled variable name: " + name);
+    // }
   }
 
   public void addVariables(final Variable[] variables) throws Exception {

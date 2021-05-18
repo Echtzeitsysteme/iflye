@@ -488,7 +488,7 @@ public class ModelFacade {
       final SubstratePath forward = genMetaPath(source, target);
       forward.setHops(links.size());
       forward.setNetwork(links.get(0).getNetwork());
-      forward.setName(getNextId());
+      forward.setName("Path_" + getNextId());
       forward.getNodes().addAll(nodes);
       forward.getLinks().addAll(links);
 
@@ -503,7 +503,7 @@ public class ModelFacade {
       final SubstratePath reverse = genMetaPath(target, source);
       reverse.setHops(links.size());
       reverse.setNetwork(links.get(0).getNetwork());
-      reverse.setName(getNextId());
+      reverse.setName("Path_" + getNextId());
       reverse.getNodes().addAll(Lists.reverse(nodes));
 
       // Get all opposite links

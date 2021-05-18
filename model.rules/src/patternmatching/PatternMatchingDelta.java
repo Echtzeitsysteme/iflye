@@ -3,6 +3,13 @@ package patternmatching;
 import java.util.HashSet;
 import java.util.Set;
 import model.Element;
+import model.SubstrateLink;
+import model.SubstrateNetwork;
+import model.SubstrateServer;
+import model.VirtualLink;
+import model.VirtualNetwork;
+import model.VirtualServer;
+import model.VirtualSwitch;
 
 public class PatternMatchingDelta {
 
@@ -89,10 +96,19 @@ public class PatternMatchingDelta {
 
   private final Set<Match> newServerMatchPositives = new HashSet<>();
   private final Set<Match> newServerMatchNegatives = new HashSet<>();
+  private final Set<Match> newServerMatchSwitchNegatives = new HashSet<>();
   private final Set<Match> newSwitchMatchPositives = new HashSet<>();
   private final Set<Match> newLinkPathMatchPositives = new HashSet<>();
   private final Set<Match> newLinkPathMatchNegatives = new HashSet<>();
   private final Set<Match> newLinkServerMatchPositives = new HashSet<>();
+
+  private final Set<Match> newNetworkMatches = new HashSet<>();
+
+  private final Set<SubstrateServer> newSubstrateServers = new HashSet<>();
+  private final Set<SubstrateLink> newSubstrateLinks = new HashSet<>();
+  private final Set<VirtualServer> newVirtualServers = new HashSet<>();
+  private final Set<VirtualSwitch> newVirtualSwitches = new HashSet<>();
+  private final Set<VirtualLink> newVirtualLinks = new HashSet<>();
 
   private <T> void addValue(final T value, final Set<T> newMatches) {
     newMatches.add(value);
@@ -108,6 +124,10 @@ public class PatternMatchingDelta {
 
   public void addServerMatchNegative(final Element virtual, final Element substrate) {
     addValue(new Match(virtual, substrate), newServerMatchNegatives);
+  }
+
+  public void addServerMatchSwitchNegative(final Element virtual, final Element substrate) {
+    addValue(new Match(virtual, substrate), newServerMatchSwitchNegatives);
   }
 
   public void addSwitchMatchPositive(final Element virtual, final Element substrate) {
@@ -126,6 +146,30 @@ public class PatternMatchingDelta {
     addValue(new Match(virtual, substrate), newLinkServerMatchPositives);
   }
 
+  public void addSubstrateServer(final SubstrateServer server) {
+    addValue(server, newSubstrateServers);
+  }
+
+  public void addSubstrateLink(final SubstrateLink link) {
+    addValue(link, newSubstrateLinks);
+  }
+
+  public void addVirtualServer(final VirtualServer server) {
+    addValue(server, newVirtualServers);
+  }
+
+  public void addVirtualSwitch(final VirtualSwitch sw) {
+    addValue(sw, newVirtualSwitches);
+  }
+
+  public void addVirtualLink(final VirtualLink link) {
+    addValue(link, newVirtualLinks);
+  }
+
+  public void addNetworkMatch(final VirtualNetwork virt, final SubstrateNetwork sub) {
+    addValue(new Match(virt, sub), newNetworkMatches);
+  }
+
   /*
    * Getters
    */
@@ -136,6 +180,10 @@ public class PatternMatchingDelta {
 
   public Set<Match> getNewServerMatchNegatives() {
     return newServerMatchNegatives;
+  }
+
+  public Set<Match> getNewServerMatchSwitchNegatives() {
+    return newServerMatchSwitchNegatives;
   }
 
   public Set<Match> getNewSwitchMatchPositives() {
@@ -152,6 +200,30 @@ public class PatternMatchingDelta {
 
   public Set<Match> getNewLinkServerMatchPositives() {
     return newLinkServerMatchPositives;
+  }
+
+  public Set<SubstrateServer> getNewSubstrateServers() {
+    return newSubstrateServers;
+  }
+
+  public Set<SubstrateLink> getNewSubstrateLinks() {
+    return newSubstrateLinks;
+  }
+
+  public Set<VirtualServer> getNewVirtualServers() {
+    return newVirtualServers;
+  }
+
+  public Set<VirtualSwitch> getNewVirtualSwitches() {
+    return newVirtualSwitches;
+  }
+
+  public Set<VirtualLink> getNewVirtualLinks() {
+    return newVirtualLinks;
+  }
+
+  public Set<Match> getNewNetworkMatches() {
+    return newNetworkMatches;
   }
 
 }

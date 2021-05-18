@@ -38,6 +38,29 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
       addMatch(currentDelta::addServerMatchNegative, m.getVirtualNode(), m.getSubstrateNode());
     });
 
+    // Test:
+    api.serverMatchSwitchNegative().subscribeAppearing(m -> {
+      addMatch(currentDelta::addServerMatchSwitchNegative, m.getVirtualNode(),
+          m.getSubstrateNode());
+    });
+
+    api.substrateServer()
+        .subscribeAppearing(m -> currentDelta.addSubstrateServer(m.getSubstrateServer()));
+
+    api.substrateLink()
+        .subscribeAppearing(m -> currentDelta.addSubstrateLink(m.getSubstrateLink()));
+
+    api.virtualServer()
+        .subscribeAppearing(m -> currentDelta.addVirtualServer(m.getVirtualServer()));
+    api.virtualSwitch()
+        .subscribeAppearing(m -> currentDelta.addVirtualSwitch(m.getVirtualSwitch()));
+    api.virtualLink().subscribeAppearing(m -> currentDelta.addVirtualLink(m.getVirtualLink()));
+
+    api.networkMatch().subscribeAppearing(
+        m -> currentDelta.addNetworkMatch(m.getVirtualNetwork(), m.getSubstrateNetwork()));
+
+    // Test end
+
     api.switchNodeMatchPositive().subscribeAppearing(m -> {
       addMatch(currentDelta::addSwitchMatchPositive, m.getVirtualSwitch(), m.getSubstrateNode());
     });

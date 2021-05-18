@@ -16,6 +16,7 @@ import ilp.wrapper.Statistics;
 import ilp.wrapper.impl.IncrementalGurobiSolver;
 import model.Link;
 import model.SubstrateElement;
+import model.SubstrateLink;
 import model.SubstrateNetwork;
 import model.SubstrateNode;
 import model.SubstratePath;
@@ -46,6 +47,10 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 
     public void addLinkServerMatch(final Match match) {
       final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
+
+
+      // System.out.println("LOOOOOL " + varName);
+
       final VirtualLink vLink = (VirtualLink) facade.getLinkById(match.getVirtual().getName());
       delta.addVariable(varName,
           getLinkToNodeEmbeddingCost(vLink, (SubstrateNode) match.getSubstrate()));
@@ -57,13 +62,14 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     }
 
     public void addLinkPathMatch(final Match match) {
-      final String varName = match.getVirtual().getName() + "_"
-          + match.getSubstrate().getName().replaceAll("SubstrateNetwork", "");
-      // TODO: ^why?
+      final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
+
+      System.out.println("addLinkPathMatch: " + varName);
 
       final VirtualLink vLink = (VirtualLink) facade.getLinkById(match.getVirtual().getName());
       final SubstratePath sPath =
           (SubstratePath) facade.getPathById(match.getSubstrate().getName());
+
       delta.addVariable(varName, getLinkToPathEmbeddingCost(vLink, sPath));
       delta.setVariableWeightForConstraint("vl" + match.getVirtual().getName(), 1, varName);
       delta.addLessOrEqualsConstraint("req" + varName, 0, new int[] {2, -1, -1},
@@ -91,12 +97,60 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       variablesToMatch.put(varName, match);
     }
 
+    public void addServerSwitchMatch(final Match match) {
+      // final VirtualServer vServer =
+      // (VirtualServer) facade.getServerById(match.getVirtual().getName());
+      final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
+      // TODO
+      delta.addVariable(varName, Integer.MAX_VALUE);
+      delta.setVariableWeightForConstraint("vs" + match.getVirtual().getName(), 1, varName);
+      variablesToMatch.put(varName, match);
+    }
+
     public void addSwitchMatch(final Match match) {
       final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
       delta.addVariable(varName, getSwitchEmbeddingCost((VirtualNode) match.getVirtual(),
           (SubstrateNode) match.getSubstrate()));
       delta.setVariableWeightForConstraint("vw" + match.getVirtual().getName(), 1, varName);
       variablesToMatch.put(varName, match);
+
+      System.out.println("Added switch match with substrate: " + match.getSubstrate().getName());
+    }
+
+    public void addNewSubstrateServer(final SubstrateServer server) {
+      // TODO: Residual resources here?
+      delta.addLessOrEqualsConstraint("cpu" + server.getName(), server.getCpu());
+      delta.addLessOrEqualsConstraint("mem" + server.getName(), server.getMemory());
+      delta.addLessOrEqualsConstraint("sto" + server.getName(), server.getStorage());
+    }
+
+    public void addNewSubstrateLink(final SubstrateLink link) {
+      // TODO: Residual resources here?
+      delta.addLessOrEqualsConstraint("sl" + link.getName(), link.getBandwidth());
+    }
+
+    public void addNewVirtualServer(final VirtualServer server) {
+      delta.addEqualsConstraint("vs" + server.getName(), 1);
+      delta.setVariableWeightForConstraint("vs" + server.getName(), 1,
+          "rej" + server.getNetwork().getName());
+    }
+
+    public void addNewVirtualSwitch(final VirtualSwitch sw) {
+      delta.addEqualsConstraint("vw" + sw.getName(), 1);
+      delta.setVariableWeightForConstraint("vw" + sw.getName(), 1,
+          "rej" + sw.getNetwork().getName());
+    }
+
+    public void addNewVirtualLink(final VirtualLink link) {
+      delta.addEqualsConstraint("vl" + link.getName(), 1);
+      delta.setVariableWeightForConstraint("vl" + link.getName(), 1,
+          "rej" + link.getNetwork().getName());
+    }
+
+    public void addNewNetworkMatch(final Match match) {
+      delta.addVariable("rej" + match.getVirtual().getName(),
+          getNetworkRejectionCost(match.getVirtual().getName()));
+      variablesToMatch.put("rej" + match.getVirtual().getName(), match);
     }
 
     public void apply() {
@@ -150,6 +204,10 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     return 1;
   }
 
+  private double getNetworkRejectionCost(final String network) {
+    return 1_000_000.0;
+  }
+
   public void dispose() {
     // if (instance == null) {
     // return;
@@ -170,9 +228,19 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 
     final IlpDeltaGenerator gen = new IlpDeltaGenerator();
 
+    // add new elements
+    delta.getNewSubstrateServers().forEach(gen::addNewSubstrateServer);
+    delta.getNewSubstrateLinks().forEach(gen::addNewSubstrateLink);
+    delta.getNewVirtualServers().forEach(gen::addNewVirtualServer);
+    delta.getNewVirtualSwitches().forEach(gen::addNewVirtualSwitch);
+    delta.getNewVirtualLinks().forEach(gen::addNewVirtualLink);
+
     // add new matches
+    delta.getNewNetworkMatches().forEach(gen::addNewNetworkMatch);
     delta.getNewServerMatchPositives().forEach(gen::addServerMatch);
     delta.getNewServerMatchNegatives().forEach(gen::addServerMatch);
+    // TODO:
+    delta.getNewServerMatchSwitchNegatives().forEach(gen::addServerSwitchMatch);
     delta.getNewSwitchMatchPositives().forEach(gen::addSwitchMatch);
     delta.getNewLinkPathMatchPositives().forEach(gen::addLinkPathMatch);
     delta.getNewLinkPathMatchNegatives().forEach(gen::addLinkPathMatch);
@@ -243,7 +311,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
   public void init() {
     if (ilpSolver == null) {
       // TODO: Make configurable.
-      ilpSolver = new IncrementalGurobiSolver(0, 0);
+      ilpSolver = new IncrementalGurobiSolver(Integer.MAX_VALUE, 0);
     }
 
     if (patternMatcher == null) {
