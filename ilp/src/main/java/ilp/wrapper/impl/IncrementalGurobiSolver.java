@@ -49,8 +49,6 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
       if (!IlpSolverConfig.ENABLE_ILP_OUTPUT) {
         env.set(IntParam.OutputFlag, 0);
       }
-      // TODO: More threads?
-      // env.set(IntParam.Threads, 4);
       model = new GRBModel(env);
       model.set(DoubleParam.TimeLimit, timelimit);
       model.set(IntParam.Seed, randomSeed);
@@ -101,59 +99,15 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
       for (int j = 0; j < constrs.length; j++) {
         final Constraint c = constrs[j];
         final GRBLinExpr expr = new GRBLinExpr();
-
-        // if (c.getWeights().size() != c.getVarnames().size()) {
-        // System.out.println("=> Var size differs!");
-        // }
-
         expr.addTerms(c.getWeights().stream().mapToDouble(i -> i).toArray(),
             c.getVarnames().stream().map(variables::get).toArray(GRBVar[]::new));
-
-        for (int i = 0; i < expr.size(); i++) {
-          if (expr.getVar(i) == null) {
-            // System.out.println("Var null at i = " + i);
-            System.out.println(c.getName());
-            break;
-          }
-        }
 
         grbLinExprs[j] = expr;
       }
       final char[] senses = new char[constrs.length];
       Arrays.fill(senses, chr);
-      // System.out.println("grbLinExprs : " + grbLinExprs);
-      // System.out.println("senses: " + senses);
-      // System.out.println("constrs: " + constrs);
       final double[] rhs = Arrays.stream(constrs).mapToDouble(Constraint::getRight).toArray();
       final String[] names = Arrays.stream(constrs).map(Constraint::getName).toArray(String[]::new);
-
-      // for (final String k : variables.keySet()) {
-      // if (variables.get(k) == null) {
-      // System.out.println("=> variables is null at k = " + k);
-      // }
-      // }
-      //
-      // int counter = 0;
-      // for (GRBLinExpr g : grbLinExprs) {
-      // if (g == null) {
-      // throw new UnsupportedOperationException("Sit.");
-      // }
-      //
-      // for (int i = 0; i < g.size(); i++) {
-      // if (g.getVar(i) == null) {
-      // // throw new UnsupportedOperationException("Sit3." + counter);
-      // // System.out.println("Sit3 : " + counter + "; ");
-      // }
-      // }
-      //
-      // counter++;
-      // }
-      //
-      // for (final String n : names) {
-      // if (n == null) {
-      // throw new UnsupportedOperationException("Sit2.");
-      // }
-      // }
 
       final GRBConstr[] addConstrs = model.addConstrs(grbLinExprs, senses, rhs, names);
       for (int i = 0; i < addConstrs.length; i++) {
@@ -189,39 +143,41 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
   }
 
   @Override
-  public void addEqualsConstraint(String name, double right) throws IlpSolverException {
+  public void addEqualsConstraint(final String name, final double right) throws IlpSolverException {
     addConstraint(name, right, new double[0], new String[0], GRB.EQUAL);
   }
 
   @Override
-  public void addEqualsConstraint(String name, double right, double[] weights, String[] vars)
-      throws IlpSolverException {
+  public void addEqualsConstraint(final String name, final double right, final double[] weights,
+      final String[] vars) throws IlpSolverException {
     addConstraint(name, right, weights, vars, GRB.EQUAL);
   }
 
   @Override
-  public void addEqualsConstraints(Constraint[] constraints) throws IlpSolverException {
+  public void addEqualsConstraints(final Constraint[] constraints) throws IlpSolverException {
     addConstraints(constraints, GRB.EQUAL);
   }
 
   @Override
-  public void addLessOrEqualsConstraint(String name, double right) throws IlpSolverException {
+  public void addLessOrEqualsConstraint(final String name, final double right)
+      throws IlpSolverException {
     addConstraint(name, right, new double[0], new String[0], GRB.LESS_EQUAL);
   }
 
   @Override
-  public void addLessOrEqualsConstraint(String name, double right, double[] weights, String[] vars)
-      throws IlpSolverException {
+  public void addLessOrEqualsConstraint(final String name, final double right,
+      final double[] weights, final String[] vars) throws IlpSolverException {
     addConstraint(name, right, weights, vars, GRB.LESS_EQUAL);
   }
 
   @Override
-  public void addLessOrEqualsConstraints(Constraint[] constraints) throws IlpSolverException {
+  public void addLessOrEqualsConstraints(final Constraint[] constraints) throws IlpSolverException {
     addConstraints(constraints, GRB.LESS_EQUAL);
   }
 
   @Override
-  public void addToVariableWeight(String name, double change) throws IlpSolverException {
+  public void addToVariableWeight(final String name, final double change)
+      throws IlpSolverException {
     try {
       getVariable(name).set(DoubleAttr.Obj, getVariable(name).get(DoubleAttr.Obj) + change);
     } catch (final GRBException e) {
@@ -230,7 +186,8 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
   }
 
   @Override
-  public void addVariable(String name, double solutionWeight) throws IlpSolverException {
+  public void addVariable(final String name, final double solutionWeight)
+      throws IlpSolverException {
     try {
       final GRBVar addVar = model.addVar(0.0, 1.0, 0.0, GRB.BINARY, name);
       addVar.set(DoubleAttr.Obj, solutionWeight);
@@ -241,7 +198,7 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
   }
 
   @Override
-  public void addVariables(Variable[] variables) throws IlpSolverException {
+  public void addVariables(final Variable[] variables) throws IlpSolverException {
     final double[] lbs = new double[variables.length];
     final double[] ubs = new double[variables.length];
     final char[] types = new char[variables.length];
@@ -261,7 +218,8 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
   }
 
   @Override
-  public void changeVariableBounds(String name, int lower, int upper) throws IlpSolverException {
+  public void changeVariableBounds(final String name, final int lower, final int upper)
+      throws IlpSolverException {
     try {
       getVariable(name).set(DoubleAttr.LB, lower);
       getVariable(name).set(DoubleAttr.UB, upper);
@@ -271,7 +229,8 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
   }
 
   @Override
-  public void changeVariableWeight(String name, double solutionWeight) throws IlpSolverException {
+  public void changeVariableWeight(final String name, final double solutionWeight)
+      throws IlpSolverException {
     try {
       getVariable(name).set(DoubleAttr.Obj, solutionWeight);
     } catch (final GRBException e) {
@@ -326,12 +285,12 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
   }
 
   @Override
-  public boolean hasVariable(String name) throws IlpSolverException {
+  public boolean hasVariable(final String name) throws IlpSolverException {
     return variables.containsKey(name);
   }
 
   @Override
-  public boolean isSelected(String name) throws IlpSolverException {
+  public boolean isSelected(final String name) throws IlpSolverException {
     try {
       final GRBVar grbVar = getVariable(name);
       return grbVar.get(DoubleAttr.X) > 0.5;
@@ -341,7 +300,7 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
   }
 
   @Override
-  public void loadModel(String path) throws IlpSolverException {
+  public void loadModel(final String path) throws IlpSolverException {
     try {
       model = new GRBModel(env, path);
       model.setCallback(new GRBCallback() {
@@ -366,7 +325,7 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
   }
 
   @Override
-  public void removeConstraint(String name) throws IlpSolverException {
+  public void removeConstraint(final String name) throws IlpSolverException {
     try {
       final GRBConstr removeConstr = constraints.remove(name);
       model.remove(removeConstr);
@@ -383,12 +342,12 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
   }
 
   @Override
-  public void removeConstraints(List<String> removeConstraints) {
+  public void removeConstraints(final List<String> removeConstraints) {
     removeConstraints.forEach(this::removeConstraint);
   }
 
   @Override
-  public void removeVariable(String name) throws IlpSolverException {
+  public void removeVariable(final String name) throws IlpSolverException {
     final GRBVar grbVar = variables.remove(name);
     if (grbVar == null) {
       throw new IllegalArgumentException("Gurobi Var to " + name + " does not exist.");
@@ -413,14 +372,14 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
   }
 
   @Override
-  public void removeVariables(List<String> removeVariables) throws IlpSolverException {
+  public void removeVariables(final List<String> removeVariables) throws IlpSolverException {
     for (final String removeVar : removeVariables) {
       removeVariable(removeVar);
     }
   }
 
   @Override
-  public void save(String file) throws IlpSolverException {
+  public void save(final String file) throws IlpSolverException {
     try {
       model.write(file);
     } catch (final GRBException e) {
@@ -429,7 +388,8 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
   }
 
   @Override
-  public void setConstraintRight(String name, double newRight) throws IlpSolverException {
+  public void setConstraintRight(final String name, final double newRight)
+      throws IlpSolverException {
     try {
       model.set(DoubleAttr.RHS, new GRBConstr[] {constraints.get(name)}, new double[] {newRight});
     } catch (final GRBException e) {
@@ -438,7 +398,7 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
   }
 
   @Override
-  public void setConstraintRights(Map<String, Double> changeConstraintRight) {
+  public void setConstraintRights(final Map<String, Double> changeConstraintRight) {
     final double[] weights = new double[changeConstraintRight.size()];
     final GRBConstr[] constrs = new GRBConstr[changeConstraintRight.size()];
     int i = 0;
@@ -455,7 +415,7 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
   }
 
   @Override
-  public void setSeed(int seed) {
+  public void setSeed(final int seed) {
     try {
       model.set(IntParam.Seed, seed);
     } catch (final GRBException e) {
@@ -464,7 +424,7 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
   }
 
   @Override
-  public void setTimeout(int parameterValue) {
+  public void setTimeout(final int parameterValue) {
     try {
       env.set(DoubleParam.TimeLimit, parameterValue);
       model.set(DoubleParam.TimeLimit, parameterValue);
@@ -474,15 +434,16 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
   }
 
   @Override
-  public void setVariableBounds(Map<String, int[]> changeVariableBounds) throws IlpSolverException {
+  public void setVariableBounds(final Map<String, int[]> changeVariableBounds)
+      throws IlpSolverException {
     for (final Entry<String, int[]> entry : changeVariableBounds.entrySet()) {
       changeVariableBounds(entry.getKey(), entry.getValue()[0], entry.getValue()[1]);
     }
   }
 
   @Override
-  public void setVariableWeightForConstraint(String name, double weight, String var)
-      throws IlpSolverException {
+  public void setVariableWeightForConstraint(final String name, final double weight,
+      final String var) throws IlpSolverException {
     try {
       model.chgCoeff(constraints.get(name), getVariable(var), weight);
     } catch (final GRBException e) {
@@ -491,7 +452,7 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
   }
 
   @Override
-  public void setVariableWeights(Map<String, Double> changeVariableWeights)
+  public void setVariableWeights(final Map<String, Double> changeVariableWeights)
       throws IlpSolverException {
     for (final Entry<String, Double> entry : changeVariableWeights.entrySet()) {
       changeVariableWeight(entry.getKey(), entry.getValue());
@@ -500,17 +461,12 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
 
   @Override
   public void setVariableWeightsForConstraints(
-      Map<String, Map<String, Double>> changeConstraitVariableWeights) {
+      final Map<String, Map<String, Double>> changeConstraitVariableWeights) {
     final List<GRBConstr> constrs = new LinkedList<>();
     final List<GRBVar> vars = new LinkedList<>();
     final List<Double> weights = new LinkedList<>();
     for (final Entry<String, Map<String, Double>> entry : changeConstraitVariableWeights
         .entrySet()) {
-
-      // for (String c : constraints.keySet()) {
-      // System.out.println("c = " + c + "; constraint = " + constraints.get(c));
-      // }
-
       for (final Entry<String, Double> entry2 : entry.getValue().entrySet()) {
         constrs.add(constraints.get(entry.getKey()));
         vars.add(variables.get(entry2.getKey()));

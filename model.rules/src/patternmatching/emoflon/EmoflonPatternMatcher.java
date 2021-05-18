@@ -16,37 +16,23 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
   private final RulesAPI api;
   private final EmoflonPatternMatcherApp emoflonPatternMatcherApp;
   private PatternMatchingDelta currentDelta = new PatternMatchingDelta();
-  // TODO: Collections for matches here
-
   // private SubstrateNetwork substrateNetwork;
 
   private final Map<Element, List<Element>> virtualMatches = new UnifiedMap<>();
   // private Map<String, Element> allElements;
   // private Map<String, VirtualNetwork> allVirtualNetworks;
 
-  // TODO: Currently all update and add element functionality is missing!
-
+  // TODO: Currently all update and removal functionality is missing!
   public EmoflonPatternMatcher(final Root root) {
     emoflonPatternMatcherApp = new EmoflonPatternMatcherApp(root);
     api = emoflonPatternMatcherApp.initAPI();
 
-    api.serverMatchPositive().subscribeAppearing(m -> {
-      addMatch(currentDelta::addServerMatchPositive, m.getVirtualNode(), m.getSubstrateNode());
-    });
-
-    api.serverMatchNegative().subscribeAppearing(m -> {
-      addMatch(currentDelta::addServerMatchNegative, m.getVirtualNode(), m.getSubstrateNode());
-    });
-
-    // Test:
-    api.serverMatchSwitchNegative().subscribeAppearing(m -> {
-      addMatch(currentDelta::addServerMatchSwitchNegative, m.getVirtualNode(),
-          m.getSubstrateNode());
-    });
+    /*
+     * New elements
+     */
 
     api.substrateServer()
         .subscribeAppearing(m -> currentDelta.addSubstrateServer(m.getSubstrateServer()));
-
     api.substrateLink()
         .subscribeAppearing(m -> currentDelta.addSubstrateLink(m.getSubstrateLink()));
 
@@ -56,10 +42,25 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
         .subscribeAppearing(m -> currentDelta.addVirtualSwitch(m.getVirtualSwitch()));
     api.virtualLink().subscribeAppearing(m -> currentDelta.addVirtualLink(m.getVirtualLink()));
 
+    /*
+     * Matches
+     */
+
     api.networkMatch().subscribeAppearing(
         m -> currentDelta.addNetworkMatch(m.getVirtualNetwork(), m.getSubstrateNetwork()));
 
-    // Test end
+    api.serverMatchPositive().subscribeAppearing(m -> {
+      addMatch(currentDelta::addServerMatchPositive, m.getVirtualNode(), m.getSubstrateNode());
+    });
+
+    api.serverMatchNegative().subscribeAppearing(m -> {
+      addMatch(currentDelta::addServerMatchNegative, m.getVirtualNode(), m.getSubstrateNode());
+    });
+
+    api.serverMatchSwitchNegative().subscribeAppearing(m -> {
+      addMatch(currentDelta::addServerMatchSwitchNegative, m.getVirtualNode(),
+          m.getSubstrateNode());
+    });
 
     api.switchNodeMatchPositive().subscribeAppearing(m -> {
       addMatch(currentDelta::addSwitchMatchPositive, m.getVirtualSwitch(), m.getSubstrateNode());
@@ -77,6 +78,7 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
       addMatch(currentDelta::addLinkServerMatchPositive, m.getVirtualLink(),
           m.getSubstrateServer());
     });
+
   }
 
   @Override
@@ -94,7 +96,6 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
 
   public void addMatch(final BiConsumer<Element, Element> deltaModification, final Element virtual,
       final Element substrate) {
-    // map.computeIfAbsent(key, k -> new HashSet<V>()).add(v);
     virtualMatches.computeIfAbsent(virtual, k -> new LinkedList<>()).add(substrate);
     deltaModification.accept(virtual, substrate);
   }

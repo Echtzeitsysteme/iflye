@@ -47,10 +47,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 
     public void addLinkServerMatch(final Match match) {
       final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
-
-
-      // System.out.println("LOOOOOL " + varName);
-
       final VirtualLink vLink = (VirtualLink) facade.getLinkById(match.getVirtual().getName());
       delta.addVariable(varName,
           getLinkToNodeEmbeddingCost(vLink, (SubstrateNode) match.getSubstrate()));
@@ -63,8 +59,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 
     public void addLinkPathMatch(final Match match) {
       final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
-
-      System.out.println("addLinkPathMatch: " + varName);
 
       final VirtualLink vLink = (VirtualLink) facade.getLinkById(match.getVirtual().getName());
       final SubstratePath sPath =
@@ -98,10 +92,8 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     }
 
     public void addServerSwitchMatch(final Match match) {
-      // final VirtualServer vServer =
-      // (VirtualServer) facade.getServerById(match.getVirtual().getName());
       final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
-      // TODO
+      // TODO: This should be changed:
       delta.addVariable(varName, Integer.MAX_VALUE);
       delta.setVariableWeightForConstraint("vs" + match.getVirtual().getName(), 1, varName);
       variablesToMatch.put(varName, match);
@@ -113,8 +105,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
           (SubstrateNode) match.getSubstrate()));
       delta.setVariableWeightForConstraint("vw" + match.getVirtual().getName(), 1, varName);
       variablesToMatch.put(varName, match);
-
-      System.out.println("Added switch match with substrate: " + match.getSubstrate().getName());
     }
 
     public void addNewSubstrateServer(final SubstrateServer server) {
@@ -158,8 +148,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     }
 
   }
-
-
 
   // private static VnePmMdvneAlgorithm instance;
 
@@ -239,7 +227,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     delta.getNewNetworkMatches().forEach(gen::addNewNetworkMatch);
     delta.getNewServerMatchPositives().forEach(gen::addServerMatch);
     delta.getNewServerMatchNegatives().forEach(gen::addServerMatch);
-    // TODO:
+    // TODO: This has to be changed:
     delta.getNewServerMatchSwitchNegatives().forEach(gen::addServerSwitchMatch);
     delta.getNewSwitchMatchPositives().forEach(gen::addSwitchMatch);
     delta.getNewLinkPathMatchPositives().forEach(gen::addLinkPathMatch);
