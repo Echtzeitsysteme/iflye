@@ -97,6 +97,8 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       // TODO: This should be changed:
       delta.addVariable(varName, Integer.MAX_VALUE);
       delta.setVariableWeightForConstraint("vs" + match.getVirtual().getName(), 1, varName);
+      // Add a constraint that strictly forbids this embedding
+      delta.addLessOrEqualsConstraint("req" + varName, 0, new int[] {1}, new String[] {varName});
       variablesToMatch.put(varName, match);
     }
 
