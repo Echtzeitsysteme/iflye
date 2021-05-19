@@ -1,12 +1,23 @@
 package test.algorithms.generic;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+import java.util.Iterator;
+import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import algorithms.AbstractAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
+import model.Link;
+import model.Node;
 import model.SubstrateNetwork;
+import model.SubstratePath;
+import model.SubstrateServer;
+import model.VirtualLink;
 import model.VirtualNetwork;
+import model.VirtualServer;
+import model.VirtualSwitch;
 
 /**
  * Abstract test class for the algorithm implementations.
@@ -64,6 +75,41 @@ public abstract class AAlgorithmTest {
   /**
    * Initializes the algorithm to test.
    */
-  public abstract void initAlgo(final SubstrateNetwork sNet, final VirtualNetwork vNet);
+  public abstract void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets);
+
+  /**
+   * Checks if all given virtual networks (and each of their elements) are embedded on the given
+   * substrate network.
+   * 
+   * @param sNet Substrate network to check.
+   * @param vNets Set of virtual networks to check.
+   */
+  protected void checkAllElementsEmbeddedOnSubstrateNetwork(final SubstrateNetwork sNet,
+      final Set<VirtualNetwork> vNets) {
+    final Iterator<VirtualNetwork> it = vNets.iterator();
+    while (it.hasNext()) {
+      final VirtualNetwork vNet = it.next();
+      assertEquals(sNet, vNet.getHost());
+
+      for (final Node n : facade.getAllServersOfNetwork(vNet.getName())) {
+        assertEquals(sNet, ((VirtualServer) n).getHost().getNetwork());
+      }
+
+      for (final Node n : facade.getAllSwitchesOfNetwork(vNet.getName())) {
+        assertEquals(sNet, ((VirtualSwitch) n).getHost().getNetwork());
+      }
+
+      for (final Link l : facade.getAllLinksOfNetwork(vNet.getName())) {
+        final VirtualLink vl = (VirtualLink) l;
+        if (vl.getHost() instanceof SubstratePath) {
+          assertEquals(sNet, ((SubstratePath) vl.getHost()).getNetwork());
+        } else if (vl.getHost() instanceof SubstrateServer) {
+          assertEquals(sNet, ((SubstrateServer) vl.getHost()).getNetwork());
+        } else {
+          fail();
+        }
+      }
+    }
+  }
 
 }

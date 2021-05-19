@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import model.Link;
 import model.Node;
@@ -36,7 +37,7 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
     final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
-    initAlgo(sNet, vNet);
+    initAlgo(sNet, Set.of(vNet));
     assertTrue(algo.execute());
 
     SubstrateServer host = null;
@@ -73,7 +74,7 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
     final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
-    initAlgo(sNet, vNet);
+    initAlgo(sNet, Set.of(vNet));
     assertTrue(algo.execute());
 
     // Test switch placement
@@ -170,7 +171,7 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
     final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
-    initAlgo(sNet, vNet);
+    initAlgo(sNet, Set.of(vNet));
     assertTrue(algo.execute());
 
     // Test switch placement
@@ -242,7 +243,7 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
     final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
-    initAlgo(sNet, vNet);
+    initAlgo(sNet, Set.of(vNet));
 
     // Embedding should not be possible, because a split of one VM to embed it on two substrate
     // servers is not possible although the total amount of resources could handle the virtual
