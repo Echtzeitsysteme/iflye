@@ -320,6 +320,20 @@ public class TafAlgorithmTest {
     assertFalse(taf.execute());
   }
 
+  @Test
+  public void testMultipleVnsAtOnce() {
+    oneTierSetupTwoServers("virt", 2);
+    twoTierSetupFourServers("sub", 1);
+
+    final SubstrateNetwork sNet =
+        (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
+    final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
+
+    assertThrows(IllegalArgumentException.class, () -> {
+      new TafAlgorithm(sNet, Set.of(vNet, vNet));
+    });
+  }
+
   /*
    * Utility methods.
    */
