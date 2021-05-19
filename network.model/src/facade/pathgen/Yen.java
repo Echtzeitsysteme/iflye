@@ -1,5 +1,7 @@
 package facade.pathgen;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -39,7 +41,7 @@ public class Yen implements IPathGen {
     final List<List<SubstrateNode>> A = new LinkedList<List<SubstrateNode>>();
 
     // Determine the shortest path from the source to the sink.
-    // No need to ignore any nodes or links here
+    // No need to ignore any nodes or links here.
     {
       final ExtendedDijkstra extendedDijkstra = new ExtendedDijkstra();
       extendedDijkstra.dijkstra(net, source, new HashSet<SubstrateNode>(),
@@ -47,7 +49,7 @@ public class Yen implements IPathGen {
       A.add(0, extendedDijkstra.shortestPathNodes(target));
     }
 
-    // Initialize the set to store the potential kth shortest path.
+    // Initialize the List to store the potential kth shortest paths.
     final List<List<SubstrateNode>> B = new LinkedList<List<SubstrateNode>>();
 
     for (int k = 1; k < K; k++) {
@@ -135,19 +137,40 @@ public class Yen implements IPathGen {
    * @param candidates List of substrate node lists.
    * @return Substrate node list with the smallest amount of nodes.
    */
-  private List<SubstrateNode> popBestCandidate(final List<List<SubstrateNode>> candidates) {
-    int minHops = Integer.MAX_VALUE;
-    List<SubstrateNode> candidate = null;
+  private List<SubstrateNode> popBestCandidate(List<List<SubstrateNode>> candidates) {
+    // Sort candidates by length and then by IDs to ensure same order for every permutation of
+    // the input list.
+    sortCandidates(candidates);
 
-    for (final List<SubstrateNode> actCand : candidates) {
-      if (actCand.size() < minHops) {
-        minHops = actCand.size();
-        candidate = actCand;
+    // After sorting as described above, the search can be replaced by popping the first one.
+    return candidates.remove(0);
+  }
+
+  /**
+   * Sorts a list of given candidates by their size and by their node names.
+   * 
+   * @param candidates List of lists of substrate nodes to sort.
+   */
+  private void sortCandidates(List<List<SubstrateNode>> candidates) {
+    Collections.sort(candidates, new Comparator<List<SubstrateNode>>() {
+      /**
+       * Sorts to given lists of substrate nodes according to: (1) Smaller list size first. (2)
+       * Alphabetical order of node names.
+       */
+      @Override
+      public int compare(final List<SubstrateNode> o1, final List<SubstrateNode> o2) {
+        if (o1.size() == o2.size()) {
+          for (int i = 1; i < o1.size(); i++) {
+            if (!o1.get(i).equals(o2.get(i))) {
+              return o1.get(i).getName().compareTo(o2.get(i).getName());
+            }
+          }
+          return 0;
+        } else {
+          return o2.size() - o1.size();
+        }
       }
-    }
-
-    candidates.remove(candidate);
-    return candidate;
+    });
   }
 
   /**

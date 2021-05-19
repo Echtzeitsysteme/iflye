@@ -488,7 +488,7 @@ public class ModelFacade {
       final SubstratePath forward = genMetaPath(source, target);
       forward.setHops(links.size());
       forward.setNetwork(links.get(0).getNetwork());
-      forward.setName("Path_" + getNextId());
+      forward.setName(concatNodeNames(nodes));
       forward.getNodes().addAll(nodes);
       forward.getLinks().addAll(links);
 
@@ -501,10 +501,11 @@ public class ModelFacade {
     // Create reverse path
     if (!doesPathWithSourceAndTargetExist(target, source)) {
       final SubstratePath reverse = genMetaPath(target, source);
+      final List<Node> reversedNodes = Lists.reverse(nodes);
       reverse.setHops(links.size());
       reverse.setNetwork(links.get(0).getNetwork());
-      reverse.setName("Path_" + getNextId());
-      reverse.getNodes().addAll(Lists.reverse(nodes));
+      reverse.setName(concatNodeNames(reversedNodes));
+      reverse.getNodes().addAll(reversedNodes);
 
       // Get all opposite links
       final List<SubstrateLink> oppositeLinks = getOppositeLinks(links);
@@ -513,6 +514,23 @@ public class ModelFacade {
       reverse.setBandwidth(revBw);
       reverse.setResidualBandwidth(revBw);
     }
+  }
+
+  /**
+   * Creates a string with all names of given node list.
+   * 
+   * @param nodes Input list of nodes.
+   * @return String with all names of given node list.
+   */
+  private String concatNodeNames(final List<Node> nodes) {
+    String name = "path";
+
+    for (final Node n : nodes) {
+      name += "-";
+      name += n.getName();
+    }
+
+    return name;
   }
 
   /**
