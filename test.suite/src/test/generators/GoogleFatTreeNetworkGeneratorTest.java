@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import facade.ModelFacade;
 import generators.GoogleFatTreeNetworkGenerator;
 import generators.config.GoogleFatTreeConfig;

@@ -1,6 +1,6 @@
 package test.metrics;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import facade.ModelFacade;
 import model.Path;
 
@@ -16,7 +16,7 @@ public abstract class AMetricTest {
    */
   protected final ModelFacade facade = ModelFacade.getInstance();
 
-  @Before
+  @BeforeEach
   public void resetModel() {
     facade.resetAll();
   }

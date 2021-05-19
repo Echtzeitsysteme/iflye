@@ -2,8 +2,8 @@ package test.metrics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import facade.config.ModelFacadeConfig;
 import metrics.TotalCommunicationCostMetric;
 import model.Path;
@@ -16,7 +16,7 @@ import model.SubstrateNetwork;
  */
 public class TotalCommunicationCostMetricTest extends AMetricTest {
 
-  @Before
+  @BeforeEach
   public void setup() {
     createVirtualNetwork();
   }

@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import java.util.List;
 import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import generators.TwoTierNetworkGenerator;
 import generators.config.OneTierConfig;
 import generators.config.TwoTierConfig;

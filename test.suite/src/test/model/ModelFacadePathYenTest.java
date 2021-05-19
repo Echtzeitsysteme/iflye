@@ -3,9 +3,9 @@ package test.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import java.util.List;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import model.Path;
@@ -45,7 +45,7 @@ public class ModelFacadePathYenTest {
    */
   private ModelFacadePathBasicTest basic;
 
-  @Before
+  @BeforeEach
   public void resetModel() {
     ModelFacade.getInstance().resetAll();
     basic = new ModelFacadePathBasicTest();
@@ -61,7 +61,7 @@ public class ModelFacadePathYenTest {
     ModelFacadeConfig.YEN_K = 2;
   }
 
-  @After
+  @AfterEach
   public void restoreConfig() {
     ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
     ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;

@@ -1,7 +1,7 @@
 package test.generators;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 
@@ -31,7 +31,7 @@ public abstract class IGeneratorTest {
    */
   private int oldUpperLimit;
 
-  @Before
+  @BeforeEach
   public void resetModel() {
     ModelFacade.getInstance().resetAll();
 
@@ -42,7 +42,7 @@ public abstract class IGeneratorTest {
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
   }
 
-  @After
+  @AfterEach
   public void restoreConfig() {
     ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
     ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;

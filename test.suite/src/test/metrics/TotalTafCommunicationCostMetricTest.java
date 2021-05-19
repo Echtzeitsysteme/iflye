@@ -1,8 +1,8 @@
 package test.metrics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import algorithms.heuristics.TafAlgorithm;
 import metrics.TotalTafCommunicationCostMetric;
 import model.Path;
@@ -15,7 +15,7 @@ import model.SubstrateNetwork;
  */
 public class TotalTafCommunicationCostMetricTest extends AMetricTest {
 
-  @Before
+  @BeforeEach
   public void setup() {
     createVirtualNetwork();
   }

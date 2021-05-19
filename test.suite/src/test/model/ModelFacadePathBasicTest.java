@@ -11,9 +11,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import model.Link;
@@ -43,7 +43,7 @@ public class ModelFacadePathBasicTest {
    */
   private int oldUpperLimit;
 
-  @Before
+  @BeforeEach
   public void resetModel() {
     ModelFacade.getInstance().resetAll();
 
@@ -52,7 +52,7 @@ public class ModelFacadePathBasicTest {
     oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
   }
 
-  @After
+  @AfterEach
   public void restoreConfig() {
     ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
     ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
