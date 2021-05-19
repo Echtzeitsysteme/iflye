@@ -1,5 +1,6 @@
 package examples.algorithms;
 
+import java.util.Set;
 import algorithms.heuristics.TafAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
@@ -41,7 +42,7 @@ public class TafAlgorithmIntraServerExample {
     final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
     // Create and execute algorithm
-    final TafAlgorithm taf = new TafAlgorithm(sNet, vNet);
+    final TafAlgorithm taf = new TafAlgorithm(sNet, Set.of(vNet));
     taf.execute();
 
     // Save model to file

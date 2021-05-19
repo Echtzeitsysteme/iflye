@@ -1,5 +1,7 @@
 package algorithms;
 
+import java.util.Iterator;
+import java.util.Set;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
@@ -16,9 +18,9 @@ public abstract class AbstractAlgorithm {
   protected final SubstrateNetwork sNet;
 
   /**
-   * The virtual network (model).
+   * The virtual networks (model).
    */
-  protected final VirtualNetwork vNet;
+  protected final Set<VirtualNetwork> vNets;
 
   /**
    * Execution method that starts the algorithm itself.
@@ -28,18 +30,28 @@ public abstract class AbstractAlgorithm {
   public abstract boolean execute();
 
   /**
-   * Initializes a new abstract algorithm with a given substrate and a given virtual network.
+   * Initializes a new abstract algorithm with a given substrate and given virtual networks.
    * 
    * @param sNet Substrate network to work with.
-   * @param vNet Virtual network to work with.
+   * @param vNet A set of virtual networks to work with.
    */
-  public AbstractAlgorithm(final SubstrateNetwork sNet, final VirtualNetwork vNet) {
-    if (sNet == null || vNet == null) {
+  public AbstractAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
+    if (sNet == null || vNets == null) {
       throw new IllegalArgumentException("One of the provided network objects was null!");
     }
 
     this.sNet = sNet;
-    this.vNet = vNet;
+    this.vNets = vNets;
+  }
+
+  /**
+   * Returns the first virtual network from this super type.
+   * 
+   * @return First virtual network from this super type.
+   */
+  protected VirtualNetwork getFirstVnet() {
+    final Iterator<VirtualNetwork> it = vNets.iterator();
+    return it.next();
   }
 
 }

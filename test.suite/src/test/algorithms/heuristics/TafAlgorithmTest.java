@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,7 +78,7 @@ public class TafAlgorithmTest {
         (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
     final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-    final TafAlgorithm taf = new TafAlgorithm(sNet, vNet);
+    final TafAlgorithm taf = new TafAlgorithm(sNet, Set.of(vNet));
     assertTrue(taf.execute());
 
     // Test all vServer hosts
@@ -108,7 +109,7 @@ public class TafAlgorithmTest {
         (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
     final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-    final TafAlgorithm taf = new TafAlgorithm(sNet, vNet);
+    final TafAlgorithm taf = new TafAlgorithm(sNet, Set.of(vNet));
     assertTrue(taf.execute());
 
     // Test switch placement
@@ -161,7 +162,7 @@ public class TafAlgorithmTest {
         (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
     final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-    final TafAlgorithm taf = new TafAlgorithm(sNet, vNet);
+    final TafAlgorithm taf = new TafAlgorithm(sNet, Set.of(vNet));
     assertTrue(taf.execute());
 
     // TODO:
@@ -233,7 +234,7 @@ public class TafAlgorithmTest {
     final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
     assertThrows(UnsupportedOperationException.class, () -> {
-      new TafAlgorithm(sNet, vNet);
+      new TafAlgorithm(sNet, Set.of(vNet));
     });
   }
 
@@ -250,7 +251,7 @@ public class TafAlgorithmTest {
     final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
     assertThrows(UnsupportedOperationException.class, () -> {
-      new TafAlgorithm(sNet, vNet);
+      new TafAlgorithm(sNet, Set.of(vNet));
     });
   }
 
@@ -268,7 +269,7 @@ public class TafAlgorithmTest {
     final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
     assertThrows(UnsupportedOperationException.class, () -> {
-      new TafAlgorithm(sNet, vNet);
+      new TafAlgorithm(sNet, Set.of(vNet));
     });
   }
 
@@ -281,7 +282,7 @@ public class TafAlgorithmTest {
     final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
     assertThrows(UnsupportedOperationException.class, () -> {
-      new TafAlgorithm(sNet, vNet);
+      new TafAlgorithm(sNet, Set.of(vNet));
     });
   }
 
@@ -296,7 +297,7 @@ public class TafAlgorithmTest {
     final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
     assertThrows(UnsupportedOperationException.class, () -> {
-      new TafAlgorithm(sNet, vNet);
+      new TafAlgorithm(sNet, Set.of(vNet));
     });
   }
 
@@ -311,12 +312,26 @@ public class TafAlgorithmTest {
         (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
     final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-    final TafAlgorithm taf = new TafAlgorithm(sNet, vNet);
+    final TafAlgorithm taf = new TafAlgorithm(sNet, Set.of(vNet));
 
     // Embedding should not be possible, because a split of one VM to embed it on two substrate
     // servers is not possible although the total amount of resources could handle the virtual
     // network.
     assertFalse(taf.execute());
+  }
+
+  @Test
+  public void testMultipleVnsAtOnce() {
+    oneTierSetupTwoServers("virt", 2);
+    twoTierSetupFourServers("sub", 1);
+
+    final SubstrateNetwork sNet =
+        (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
+    final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
+
+    assertThrows(IllegalArgumentException.class, () -> {
+      new TafAlgorithm(sNet, Set.of(vNet, vNet));
+    });
   }
 
   /*
