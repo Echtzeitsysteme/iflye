@@ -1,6 +1,7 @@
 package algorithms.simple;
 
 import java.util.List;
+import java.util.Set;
 import algorithms.AbstractAlgorithm;
 import model.Link;
 import model.Node;
@@ -23,10 +24,15 @@ public class SimpleVne extends AbstractAlgorithm {
    * Initializes a new object of this simple VNE algorithm.
    * 
    * @param sNet Substrate network to work with.
-   * @param vNet Virtual network to work with.
+   * @param vNet Set of virtual networks to work with.
    */
-  public SimpleVne(final SubstrateNetwork sNet, final VirtualNetwork vNet) {
-    super(sNet, vNet);
+  public SimpleVne(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
+    super(sNet, vNets);
+
+    if (vNets.size() != 1) {
+      throw new IllegalArgumentException(
+          "The simple VNE algorithm is only suited for one virtual network at a time.");
+    }
   }
 
   @Override
@@ -50,7 +56,7 @@ public class SimpleVne extends AbstractAlgorithm {
     int summedMem = 0;
     int summedStor = 0;
 
-    for (Node actNode : facade.getAllServersOfNetwork(vNet.getName())) {
+    for (Node actNode : facade.getAllServersOfNetwork(getFirstVnet().getName())) {
       final VirtualServer actServer = (VirtualServer) actNode;
       summedCpu += actServer.getCpu();
       summedMem += actServer.getMemory();
@@ -74,20 +80,20 @@ public class SimpleVne extends AbstractAlgorithm {
     boolean success = true;
 
     // Network
-    success &= facade.embedNetworkToNetwork(sNet.getName(), vNet.getName());
+    success &= facade.embedNetworkToNetwork(sNet.getName(), getFirstVnet().getName());
 
     // Servers
-    for (Node act : facade.getAllServersOfNetwork(vNet.getName())) {
+    for (Node act : facade.getAllServersOfNetwork(getFirstVnet().getName())) {
       success &= facade.embedServerToServer(largestServerId, act.getName());
     }
 
     // Switches
-    for (Node act : facade.getAllSwitchesOfNetwork(vNet.getName())) {
+    for (Node act : facade.getAllSwitchesOfNetwork(getFirstVnet().getName())) {
       success &= facade.embedSwitchToNode(largestServerId, act.getName());
     }
 
     // Links
-    for (Link act : facade.getAllLinksOfNetwork(vNet.getName())) {
+    for (Link act : facade.getAllLinksOfNetwork(getFirstVnet().getName())) {
       success &= facade.embedLinkToServer(largestServerId, act.getName());
     }
 

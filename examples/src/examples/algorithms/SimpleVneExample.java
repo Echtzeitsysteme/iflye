@@ -1,5 +1,6 @@
 package examples.algorithms;
 
+import java.util.Set;
 import algorithms.simple.SimpleVne;
 import facade.ModelFacade;
 import generators.OneTierNetworkGenerator;
@@ -35,7 +36,7 @@ public class SimpleVneExample {
     final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
     // Create and execute algorithm
-    final SimpleVne svne = new SimpleVne(sNet, vNet);
+    final SimpleVne svne = new SimpleVne(sNet, Set.of(vNet));
     svne.execute();
 
     // Save model to file

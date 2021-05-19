@@ -1,5 +1,6 @@
 package scenarios;
 
+import java.util.Set;
 import algorithms.AbstractAlgorithm;
 import algorithms.heuristics.TafAlgorithm;
 import facade.ModelFacade;
@@ -52,7 +53,7 @@ public class MdvneAdaptedScenario extends AMdvneAdaptedScenario implements IScen
       scen.virtualSetup(virtualNetworkId);
       final VirtualNetwork virt = (VirtualNetwork) facade.getNetworkById(virtualNetworkId);
       // TODO: Change the algorithm instance later on.
-      final AbstractAlgorithm algo = new TafAlgorithm(sub, virt);
+      final AbstractAlgorithm algo = new TafAlgorithm(sub, Set.of(virt));
       final boolean success = algo.execute();
 
       if (success) {

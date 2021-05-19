@@ -198,17 +198,24 @@ public class TafAlgorithm extends AbstractAlgorithm {
    * @param sNet Substrate network to embed virtual network in.
    * @param vNet Virtual network to generate embedding for.
    */
-  public TafAlgorithm(final SubstrateNetwork sNet, final VirtualNetwork vNet) {
-    super(sNet, vNet);
+  public TafAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
+    super(sNet, vNets);
+
+    if (vNets.size() != 1) {
+      throw new IllegalArgumentException(
+          "The TAF algorithm is only suited for one virtual network at a time.");
+    }
 
     // Add virtual links from model
-    final List<Link> vLinks = facade.getAllLinksOfNetwork(vNet.getName());
+    final List<Link> vLinks =
+        ModelFacade.getInstance().getAllLinksOfNetwork(getFirstVnet().getName());
     for (final Link l : vLinks) {
       virtualLinks.add((VirtualLink) l);
     }
 
     // Add virtual servers from model
-    final List<Node> vServers = facade.getAllServersOfNetwork(vNet.getName());
+    final List<Node> vServers =
+        ModelFacade.getInstance().getAllServersOfNetwork(getFirstVnet().getName());
     for (final Node n : vServers) {
       virtualServers.add((VirtualServer) n);
     }
@@ -279,7 +286,7 @@ public class TafAlgorithm extends AbstractAlgorithm {
    */
   private void embed() {
     // Network
-    facade.embedNetworkToNetwork(sNet.getName(), vNet.getName());
+    ModelFacade.getInstance().embedNetworkToNetwork(sNet.getName(), getFirstVnet().getName());
 
     // Embed all servers
     for (final Entry<VirtualServer, SubstrateServer> m : placedVms.entrySet()) {
@@ -287,7 +294,8 @@ public class TafAlgorithm extends AbstractAlgorithm {
     }
 
     // Embed all links and the switch
-    final String vSwitchId = facade.getAllSwitchesOfNetwork(vNet.getName()).get(0).getName();
+    final String vSwitchId = ModelFacade.getInstance()
+        .getAllSwitchesOfNetwork(getFirstVnet().getName()).get(0).getName();
 
     if (allVirtualServersToOneSubstrateServer()) {
       // If the virtual network can be placed onto one substrate server
