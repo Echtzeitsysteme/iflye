@@ -5,8 +5,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="src/main/java"/>
-	<classpathentry kind="src" path="src/main/test"/>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/network.generators"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/network.metrics"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/network.model"/>
