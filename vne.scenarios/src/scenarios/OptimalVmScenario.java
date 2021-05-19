@@ -1,6 +1,7 @@
 package scenarios;
 
 import java.util.Random;
+import java.util.Set;
 import algorithms.AbstractAlgorithm;
 import algorithms.heuristics.TafAlgorithm;
 import facade.ModelFacade;
@@ -109,7 +110,7 @@ public class OptimalVmScenario implements IScenario {
       virtualSetup(virtualNetworkId);
       final VirtualNetwork virt = (VirtualNetwork) facade.getNetworkById(virtualNetworkId);
       // TODO: Change the algorithm instance later on.
-      final AbstractAlgorithm algo = new TafAlgorithm(sub, virt);
+      final AbstractAlgorithm algo = new TafAlgorithm(sub, Set.of(virt));
       final boolean success = algo.execute();
 
       if (success) {
