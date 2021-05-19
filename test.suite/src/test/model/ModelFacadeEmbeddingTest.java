@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
@@ -173,7 +173,7 @@ public class ModelFacadeEmbeddingTest {
         .getGuests().get(1).getName());
   }
 
-  @Ignore
+  @Disabled
   @Test
   public void testEmbedLinkToPath() {
     // TODO: Implement after creation of all paths is implemented.

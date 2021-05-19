@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import java.util.List;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import generators.TwoTierNetworkGenerator;
 import generators.config.OneTierConfig;
@@ -269,7 +269,7 @@ public class TwoTierNetworkGeneratorTest extends IGeneratorTest {
     }
   }
 
-  @Ignore
+  @Disabled
   @Test
   public void testSwitchesConnected() {
     // TODO: Implement after implementing the feature.
