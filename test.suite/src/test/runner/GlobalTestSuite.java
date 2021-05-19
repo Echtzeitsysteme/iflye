@@ -2,24 +2,24 @@ package test.runner;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import algorithms.heuristics.TafAlgorithmGoogleFatTreeTest;
-import algorithms.heuristics.TafAlgorithmTest;
-import facade.test.ModelFacadeCreationTest;
-import facade.test.ModelFacadeEmbeddingTest;
-import facade.test.ModelFacadePathBasicTest;
-import facade.test.ModelFacadePathTwoTierDetailTest;
-import facade.test.ModelFacadePathYenTest;
-import generators.GoogleFatTreeNetworkGeneratorTest;
-import generators.OneTierNetworkGeneratorTest;
-import generators.TwoTierNetworkGeneratorTest;
-import metrics.AcceptedVnrMetricTest;
-import metrics.ActiveSubstrateServerMetricTest;
-import metrics.ActiveSubstrateSwitchMetricTest;
-import metrics.AveragePathLengthMetricTest;
-import metrics.RuntimeMetricTest;
-import metrics.TotalCommunicationCostMetricTest;
-import metrics.TotalPathCostMetricTest;
-import metrics.TotalTafCommunicationCostMetricTest;
+import test.algorithms.heuristics.TafAlgorithmGoogleFatTreeTest;
+import test.algorithms.heuristics.TafAlgorithmTest;
+import test.generators.GoogleFatTreeNetworkGeneratorTest;
+import test.generators.OneTierNetworkGeneratorTest;
+import test.generators.TwoTierNetworkGeneratorTest;
+import test.metrics.AcceptedVnrMetricTest;
+import test.metrics.ActiveSubstrateServerMetricTest;
+import test.metrics.ActiveSubstrateSwitchMetricTest;
+import test.metrics.AveragePathLengthMetricTest;
+import test.metrics.RuntimeMetricTest;
+import test.metrics.TotalCommunicationCostMetricTest;
+import test.metrics.TotalPathCostMetricTest;
+import test.metrics.TotalTafCommunicationCostMetricTest;
+import test.model.ModelFacadeCreationTest;
+import test.model.ModelFacadeEmbeddingTest;
+import test.model.ModelFacadePathBasicTest;
+import test.model.ModelFacadePathTwoTierDetailTest;
+import test.model.ModelFacadePathYenTest;
 
 /**
  * Global test suite class that enables running all registered junit tests at once in Eclipse.
