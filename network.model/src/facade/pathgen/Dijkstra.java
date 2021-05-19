@@ -1,12 +1,9 @@
 package facade.pathgen;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import model.Link;
 import model.Node;
 import model.SubstrateLink;
@@ -35,7 +32,7 @@ public class Dijkstra implements IPathGen {
   /**
    * List of all nodes.
    */
-  protected final Set<SubstrateNode> nodes = new HashSet<SubstrateNode>();
+  protected final List<SubstrateNode> nodes = new LinkedList<SubstrateNode>();
 
   /**
    * Starts the whole algorithm for a given substrate network and one given substrate node as start.
@@ -138,13 +135,13 @@ public class Dijkstra implements IPathGen {
   }
 
   /**
-   * Searches for a link in a given collection that has the given substrate node as source node.
+   * Searches for a link in a given list that has the given substrate node as source node.
    * 
    * @param source Source node to search for.
-   * @param links Collection of links to search the one with corresponding source node in.
-   * @return SubstrateLink found in the collection with given source node.
+   * @param links List of links to search the one with corresponding source node in.
+   * @return SubstrateLink found in the list with given source node.
    */
-  private SubstrateLink getLinkFrom(final SubstrateNode source, final Collection<Link> links) {
+  private SubstrateLink getLinkFrom(final SubstrateNode source, final List<Link> links) {
     for (final Link l : links) {
       if (l.getSource().equals(source)) {
         return (SubstrateLink) l;
@@ -181,8 +178,8 @@ public class Dijkstra implements IPathGen {
   }
 
   @Override
-  public Map<SubstrateNode, List<List<SubstrateLink>>> getAllKFastestPaths(SubstrateNetwork net,
-      SubstrateNode start, int K) {
+  public Map<SubstrateNode, List<List<SubstrateLink>>> getAllKFastestPaths(
+      final SubstrateNetwork net, final SubstrateNode start, final int K) {
     if (K != 1) {
       throw new UnsupportedOperationException(
           "Due to its nature, the Dijkstra algorithm is only able to calculate the K=1 fastest "

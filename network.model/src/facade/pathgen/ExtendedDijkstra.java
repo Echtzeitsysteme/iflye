@@ -60,7 +60,7 @@ public class ExtendedDijkstra extends Dijkstra {
           continue;
         }
 
-        SubstrateNode next = (SubstrateNode) out.getTarget();
+        final SubstrateNode next = (SubstrateNode) out.getTarget();
         if (nodes.contains(next) && !ignoredNodes.contains(next)) {
           distanceUpdate(u, next);
         }
