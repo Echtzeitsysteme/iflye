@@ -27,20 +27,60 @@ import ilp.wrapper.SolverStatus;
 import ilp.wrapper.Statistics;
 import ilp.wrapper.config.IlpSolverConfig;
 
+/**
+ * Implementation of the {@link IncrementalIlpSolver} interface for the Gurobi solver.
+ * 
+ * Parts of this implementation are heavily inspired, taken or adapted from the idyve project [1].
+ * 
+ * [1] Tomaszek, S., Modellbasierte Einbettung von virtuellen Netzwerken in Rechenzentren,
+ * http://dx.doi.org/10.12921/TUPRINTS-00017362. – DOI 10.12921/TUPRINTS– 00017362, 2020.
+ * 
+ * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ */
 public class IncrementalGurobiSolver implements IncrementalIlpSolver {
 
+  /**
+   * Gurobi environment (for configuration etc.).
+   */
   private final GRBEnv env;
+
+  /**
+   * Gurobi model.
+   */
   private GRBModel model;
 
   // TODO: Change HashMap to UnifiedMap (Eclipse collections).
+
+  /**
+   * All variables.
+   */
   private final Map<String, GRBVar> variables = new HashMap<>();
+
+  /**
+   * All constraints.
+   */
   private final Map<String, GRBConstr> constraints = new HashMap<>();
+
+  /**
+   * Mapping from variable to constraints.
+   */
   private final Map<GRBVar, Set<GRBConstr>> varConstraints = new HashMap<>();
+
+  /**
+   * Mapping from constraint to variables.
+   */
   private final Map<GRBConstr, Set<GRBVar>> constraintVars = new HashMap<>();
 
   // TODO: Find a better name for this variable
   private final long[] vals = {-1, -1, -1};
 
+  /**
+   * Constructor that initializes a new Gurobi solver object for a given time limit and random seed.
+   * 
+   * @param timelimit Time limit to set for the solver.
+   * @param randomSeed Random seed to set for the solver.
+   */
   public IncrementalGurobiSolver(final int timelimit, final int randomSeed) {
     try {
       env = new GRBEnv("Gurobi_ILP.log");
@@ -74,8 +114,18 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
     }
   }
 
+  /**
+   * Adds a constraint to the solver.
+   * 
+   * @param name Name of the constraint.
+   * @param right Value of the right side.
+   * @param weights Variable weights.
+   * @param vars Variables.
+   * @param chr Senses.
+   * @throws IlpSolverException If the solver encounters a problem.
+   */
   private void addConstraint(final String name, final double right, final double[] weights,
-      final String[] vars, final char chr) {
+      final String[] vars, final char chr) throws IlpSolverException {
     try {
       final GRBLinExpr grbLinExpr = new GRBLinExpr();
       final GRBVar[] grbVars = Arrays.stream(vars).map(variables::get).toArray(s -> new GRBVar[s]);
@@ -92,6 +142,13 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
     }
   }
 
+  /**
+   * Adds predefined constraints to the solver.
+   * 
+   * @param constrs Array of predefined constraints.
+   * @param chr Senses.
+   * @throws IlpSolverException If the solver encounters a problem.
+   */
   private void addConstraints(final Constraint[] constrs, final char chr)
       throws IlpSolverException {
     final GRBLinExpr[] grbLinExprs = new GRBLinExpr[constrs.length];
@@ -134,6 +191,12 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
     }
   }
 
+  /**
+   * Returns the Gurobi variable for a given name.
+   * 
+   * @param name Name to get the variable for.
+   * @return Gurobi variable for name.
+   */
   private GRBVar getVariable(final String name) {
     if (variables.containsKey(name)) {
       return variables.get(name);

@@ -11,12 +11,22 @@ import java.util.stream.Collectors;
 /**
  * Interface that designs a super type for an incremental ILP solver implementation.
  * 
+ * Parts of this implementation are heavily inspired, taken or adapted from the idyve project [1].
+ * 
+ * [1] Tomaszek, S., Modellbasierte Einbettung von virtuellen Netzwerken in Rechenzentren,
+ * http://dx.doi.org/10.12921/TUPRINTS-00017362. – DOI 10.12921/TUPRINTS– 00017362, 2020.
+ * 
  * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public interface IncrementalIlpSolver {
   /**
    * ILP constraint implementation.
+   * 
+   * Parts of this implementation are heavily inspired, taken or adapted from the idyve project [1].
+   * 
+   * [1] Tomaszek, S., Modellbasierte Einbettung von virtuellen Netzwerken in Rechenzentren,
+   * http://dx.doi.org/10.12921/TUPRINTS-00017362. – DOI 10.12921/TUPRINTS– 00017362, 2020.
    * 
    * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
    * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}

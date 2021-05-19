@@ -38,4 +38,17 @@ public class Statistics {
     return rowsRemovedByPresolve;
   }
 
+  /**
+   * Returns true if the statistics object was feasible.
+   * 
+   * @return True if statistics object was feasible.
+   */
+  public boolean isFeasible() {
+    if (status == ilp.wrapper.SolverStatus.INF_OR_UNBD
+        || status == ilp.wrapper.SolverStatus.INFEASIBLE) {
+      return false;
+    }
+    return true;
+  }
+
 }

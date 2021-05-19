@@ -11,18 +11,44 @@ import patternmatching.IncrementalPatternMatcher;
 import patternmatching.PatternMatchingDelta;
 import rules.api.RulesAPI;
 
+/**
+ * Implementation of the {@link IncrementalPatternMatcher} for eMoflon.
+ * 
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ */
 public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
 
+  /**
+   * Rules API object generated from graph transformation patterns.
+   */
   private final RulesAPI api;
+
+  /**
+   * Wrapper that initializes the API object.
+   */
   private final EmoflonPatternMatcherApp emoflonPatternMatcherApp;
+
+  /**
+   * Current state of the delta. Must be updated in every iteration.
+   */
   private PatternMatchingDelta currentDelta = new PatternMatchingDelta();
   // private SubstrateNetwork substrateNetwork;
 
+  /**
+   * Map for matches: (Virtual) element to (substrate) element.
+   */
   private final Map<Element, List<Element>> virtualMatches = new UnifiedMap<>();
+
   // private Map<String, Element> allElements;
   // private Map<String, VirtualNetwork> allVirtualNetworks;
 
   // TODO: Currently all update and removal functionality is missing!
+
+  /**
+   * Constructor that initializes the object for a given root node.
+   * 
+   * @param root Root node to work with.
+   */
   public EmoflonPatternMatcher(final Root root) {
     emoflonPatternMatcherApp = new EmoflonPatternMatcherApp(root);
     api = emoflonPatternMatcherApp.initAPI();
@@ -94,6 +120,13 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
     return old;
   }
 
+  /**
+   * Adds a match to the collection virtualMatches.
+   * 
+   * @param deltaModification Modification (input).
+   * @param virtual Virtual element for the mapping.
+   * @param substrate Substrate element for the mapping.
+   */
   public void addMatch(final BiConsumer<Element, Element> deltaModification, final Element virtual,
       final Element substrate) {
     virtualMatches.computeIfAbsent(virtual, k -> new LinkedList<>()).add(substrate);

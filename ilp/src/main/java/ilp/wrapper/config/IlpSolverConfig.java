@@ -16,6 +16,16 @@ public interface IlpSolverConfig {
   public static final Solver solver = Solver.GUROBI;
 
   /**
+   * Timeout for the ILP solver.
+   */
+  public static final int TIME_OUT = Integer.MAX_VALUE;
+
+  /**
+   * Random seed for the ILP solver.
+   */
+  public static final int RANDOM_SEED = 0;
+
+  /**
    * Returns a new instance of the configured solver.
    * 
    * @return New instance of the configured solver.

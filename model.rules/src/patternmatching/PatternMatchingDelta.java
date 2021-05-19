@@ -4,8 +4,25 @@ import java.util.HashSet;
 import java.util.Set;
 import model.Element;
 
+/**
+ * Data object that holds new matches from a pattern matcher.
+ * 
+ * Parts of this implementation are heavily inspired, taken or adapted from the idyve project [1].
+ * 
+ * [1] Tomaszek, S., Modellbasierte Einbettung von virtuellen Netzwerken in Rechenzentren,
+ * http://dx.doi.org/10.12921/TUPRINTS-00017362. – DOI 10.12921/TUPRINTS– 00017362, 2020.
+ * 
+ * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
+ * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ */
 public class PatternMatchingDelta {
 
+  /**
+   * Data object that holds one particular match from a virtual to a substrate element.
+   * 
+   * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
+   * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+   */
   public static class Match {
     private final Element substrateElement;
     private final Element virtualElement;
@@ -93,6 +110,9 @@ public class PatternMatchingDelta {
   // private final Set<VirtualSwitch> newVirtualSwitches = new HashSet<>();
   // private final Set<VirtualLink> newVirtualLinks = new HashSet<>();
 
+  /*
+   * New matches for this delta object.
+   */
   // private final Set<Match> newNetworkMatches = new HashSet<>();
   private final Set<Match> newServerMatchPositives = new HashSet<>();
   private final Set<Match> newServerMatchNegatives = new HashSet<>();
@@ -102,6 +122,13 @@ public class PatternMatchingDelta {
   private final Set<Match> newLinkPathMatchNegatives = new HashSet<>();
   private final Set<Match> newLinkServerMatchPositives = new HashSet<>();
 
+  /**
+   * Adds a given value of type T to a given set of matches.
+   * 
+   * @param <T> Type parameter.
+   * @param value Value of type T.
+   * @param newMatches Set of type T for adding value to.
+   */
   private <T> void addValue(final T value, final Set<T> newMatches) {
     newMatches.add(value);
   }

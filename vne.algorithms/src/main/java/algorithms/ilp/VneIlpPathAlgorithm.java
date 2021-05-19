@@ -45,10 +45,15 @@ import model.VirtualServer;
  * Implementation of the ILP formulation of paper [1]. Keep in mind that this particular
  * implementation only embeds one virtual network at a time.
  * 
+ * Parts of this implementation are heavily inspired, taken or adapted from the idyve project [2].
+ * 
  * [1] Tomaszek S., Leblebici E., Wang L., Schürr A. (2018) Virtual Network Embedding: Reducing the
  * Search Space by Model Transformation Techniques. In: Rensink A., Sánchez Cuadrado J. (eds) Theory
  * and Practice of Model Transformation. ICMT 2018. Lecture Notes in Computer Science, vol 10888.
  * Springer, Cham
+ * 
+ * [2] Tomaszek, S., Modellbasierte Einbettung von virtuellen Netzwerken in Rechenzentren,
+ * http://dx.doi.org/10.12921/TUPRINTS-00017362. – DOI 10.12921/TUPRINTS– 00017362, 2020.
  *
  * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
