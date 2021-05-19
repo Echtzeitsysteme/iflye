@@ -1,5 +1,6 @@
 package examples.algorithms;
 
+import java.util.Set;
 import algorithms.pm.VnePmMdvneAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
@@ -47,7 +48,7 @@ public class VnePmMdvneAlgorithmExampleSmall {
     final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
     // Create and execute algorithm
-    final VnePmMdvneAlgorithm algo = new VnePmMdvneAlgorithm(sNet, vNet);
+    final VnePmMdvneAlgorithm algo = new VnePmMdvneAlgorithm(sNet, Set.of(vNet));
     algo.execute();
 
     // Save model to file

@@ -1,5 +1,6 @@
 package test.algorithms.ilp;
 
+import java.util.Set;
 import algorithms.ilp.VneIlpPathAlgorithm;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
@@ -14,7 +15,7 @@ public class VneIlpPathAlgorithmTest extends AAlgorithmTwoTierTest {
 
   @Override
   public void initAlgo(final SubstrateNetwork sNet, final VirtualNetwork vNet) {
-    algo = new VneIlpPathAlgorithm(sNet, vNet);
+    algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
   }
 
 }

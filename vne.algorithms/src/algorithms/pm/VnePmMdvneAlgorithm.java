@@ -2,6 +2,7 @@ package algorithms.pm;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -37,8 +38,7 @@ import patternmatching.emoflon.EmoflonPatternMatcherFactory;
 
 /**
  * Implementation of the model-driven virtual network algorithm that uses pattern matching as a way
- * to reduce the search space of the ILP solver. Keep in mind that this particular implementation
- * only embeds one virtual network at a time.
+ * to reduce the search space of the ILP solver.
  * 
  * Parts of this implementation are heavily inspired, taken or adapted from the idyve project [1].
  * 
@@ -260,10 +260,10 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
    * Constructor that gets the substrate as well as the virtual network.
    * 
    * @param sNet Substrate network to work with.
-   * @param vNet Virtual network to work with.
+   * @param vNets Set of virtual networks to work with.
    */
-  public VnePmMdvneAlgorithm(final SubstrateNetwork sNet, final VirtualNetwork vNet) {
-    super(sNet, vNet);
+  public VnePmMdvneAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
+    super(sNet, vNets);
   }
 
   /**
@@ -349,23 +349,29 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       }
     }
 
-    // Virtual network
-    for (final Node n : vNet.getNodes()) {
-      if (n instanceof VirtualServer) {
-        gen.addNewVirtualServer((VirtualServer) n);
-      } else if (n instanceof VirtualSwitch) {
-        gen.addNewVirtualSwitch((VirtualSwitch) n);
-      }
-    }
+    // Virtual networks
 
-    for (final Link l : vNet.getLinks()) {
-      if (l instanceof VirtualLink) {
-        gen.addNewVirtualLink((VirtualLink) l);
-      }
-    }
+    final Iterator<VirtualNetwork> it = vNets.iterator();
+    while (it.hasNext()) {
+      final VirtualNetwork vNet = it.next();
 
-    // Network match
-    gen.addNewNetworkMatch(new Match(vNet, sNet));
+      for (final Node n : vNet.getNodes()) {
+        if (n instanceof VirtualServer) {
+          gen.addNewVirtualServer((VirtualServer) n);
+        } else if (n instanceof VirtualSwitch) {
+          gen.addNewVirtualSwitch((VirtualSwitch) n);
+        }
+      }
+
+      for (final Link l : vNet.getLinks()) {
+        if (l instanceof VirtualLink) {
+          gen.addNewVirtualLink((VirtualLink) l);
+        }
+      }
+
+      // Network match
+      gen.addNewNetworkMatch(new Match(vNet, sNet));
+    }
   }
 
   /**
@@ -391,7 +397,12 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     }
 
     // Embed elements
-    facade.embedNetworkToNetwork(sNet.getName(), vNet.getName());
+    final Iterator<VirtualNetwork> it = vNets.iterator();
+    while (it.hasNext()) {
+      final VirtualNetwork vNet = it.next();
+      facade.embedNetworkToNetwork(sNet.getName(), vNet.getName());
+    }
+
     for (final String s : newMappings) {
       final Match m = variablesToMatch.get(s);
 

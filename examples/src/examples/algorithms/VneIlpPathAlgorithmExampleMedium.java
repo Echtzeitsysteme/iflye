@@ -1,5 +1,6 @@
 package examples.algorithms;
 
+import java.util.Set;
 import algorithms.ilp.VneIlpPathAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
@@ -51,7 +52,7 @@ public class VneIlpPathAlgorithmExampleMedium {
           (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt_" + i);
 
       // Create and execute algorithm
-      final VneIlpPathAlgorithm algo = new VneIlpPathAlgorithm(sNet, vNet);
+      final VneIlpPathAlgorithm algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
       algo.execute();
     }
 

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -42,8 +43,7 @@ import model.VirtualNode;
 import model.VirtualServer;
 
 /**
- * Implementation of the ILP formulation of paper [1]. Keep in mind that this particular
- * implementation only embeds one virtual network at a time.
+ * Implementation of the ILP formulation of paper [1].
  * 
  * Parts of this implementation are heavily inspired, taken or adapted from the idyve project [2].
  * 
@@ -208,10 +208,10 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
    * Creates a new instance of this VNE ILP path algorithm.
    * 
    * @param sNet Substrate network to work with.
-   * @param vNet Virtual network to work with.
+   * @param vNets Set of virtual networks to work with.
    */
-  public VneIlpPathAlgorithm(final SubstrateNetwork sNet, final VirtualNetwork vNet) {
-    super(sNet, vNet);
+  public VneIlpPathAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
+    super(sNet, vNets);
   }
 
   @Override
@@ -270,8 +270,12 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
    * Creates the actual embeddings in the model based on the solved problem.
    */
   private void createEmbeddings() {
-    // Network
-    facade.embedNetworkToNetwork(sNet.getName(), vNet.getName());
+    // Networks
+    final Iterator<VirtualNetwork> it = vNets.iterator();
+    while (it.hasNext()) {
+      final VirtualNetwork vNet = it.next();
+      facade.embedNetworkToNetwork(sNet.getName(), vNet.getName());
+    }
 
     // Nodes
     for (final VirtualNode vn : resultVirtualToSubstrateNodes.keySet()) {
@@ -386,17 +390,22 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
    * and virtual network as well as the substrate paths to generate.
    */
   private void createNetworkInformation() {
-    // Virtual network
-    for (final Node n : facade.getAllServersOfNetwork(vNet.getName())) {
-      virtualNodes.add((VirtualNode) n);
-    }
+    // Virtual networks
 
-    for (final Node n : facade.getAllSwitchesOfNetwork(vNet.getName())) {
-      virtualNodes.add((VirtualNode) n);
-    }
+    final Iterator<VirtualNetwork> it = vNets.iterator();
+    while (it.hasNext()) {
+      final VirtualNetwork vNet = it.next();
+      for (final Node n : facade.getAllServersOfNetwork(vNet.getName())) {
+        virtualNodes.add((VirtualNode) n);
+      }
 
-    for (final Link l : facade.getAllLinksOfNetwork(vNet.getName())) {
-      virtualLinks.add((VirtualLink) l);
+      for (final Node n : facade.getAllSwitchesOfNetwork(vNet.getName())) {
+        virtualNodes.add((VirtualNode) n);
+      }
+
+      for (final Link l : facade.getAllLinksOfNetwork(vNet.getName())) {
+        virtualLinks.add((VirtualLink) l);
+      }
     }
 
     // Substrate network
