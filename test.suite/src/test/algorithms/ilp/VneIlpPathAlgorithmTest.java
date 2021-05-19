@@ -1,8 +1,9 @@
-package algorithms.ilp;
+package test.algorithms.ilp;
 
-import algorithms.generic.AAlgorithmTwoTierTest;
+import algorithms.ilp.VneIlpPathAlgorithm;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
+import test.algorithms.generic.AAlgorithmTwoTierTest;
 
 /**
  * Test class for the VNE ILP algorithm implementation.
