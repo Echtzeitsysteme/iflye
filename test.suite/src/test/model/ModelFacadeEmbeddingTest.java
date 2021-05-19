@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
@@ -144,9 +144,11 @@ public class ModelFacadeEmbeddingTest {
     ModelFacade.getInstance().addLinkToNetwork("l8", "virt", 12, "srv6", "srv5");
     ModelFacade.getInstance().createAllPathsForNetwork("sub");
 
-    ModelFacade.getInstance().embedLinkToPath("0", "l7");
+    final String pathName = "path-srv1-srv2";
 
-    final SubstratePath subPath = (SubstratePath) ModelFacade.getInstance().getPathById("0");
+    ModelFacade.getInstance().embedLinkToPath(pathName, "l7");
+
+    final SubstratePath subPath = (SubstratePath) ModelFacade.getInstance().getPathById(pathName);
     assertEquals(1, subPath.getGuestLinks().size());
     assertEquals("l7", subPath.getGuestLinks().get(0).getName());
 
@@ -171,7 +173,7 @@ public class ModelFacadeEmbeddingTest {
         .getGuests().get(1).getName());
   }
 
-  @Ignore
+  @Disabled
   @Test
   public void testEmbedLinkToPath() {
     // TODO: Implement after creation of all paths is implemented.

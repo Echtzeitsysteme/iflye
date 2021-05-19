@@ -1,12 +1,11 @@
 package facade.pathgen;
 
-import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import model.Link;
 import model.Node;
 import model.SubstrateLink;
@@ -35,7 +34,7 @@ public class Dijkstra implements IPathGen {
   /**
    * List of all nodes.
    */
-  protected final Set<SubstrateNode> nodes = new HashSet<SubstrateNode>();
+  protected final List<SubstrateNode> nodes = new LinkedList<SubstrateNode>();
 
   /**
    * Starts the whole algorithm for a given substrate network and one given substrate node as start.
@@ -50,8 +49,7 @@ public class Dijkstra implements IPathGen {
     init(net, start);
 
     while (!nodes.isEmpty()) {
-      final SubstrateNode u = getSmallestDistNode();
-      nodes.remove(u);
+      final SubstrateNode u = popSmallestDistNode();
 
       for (final Link out : u.getOutgoingLinks()) {
         SubstrateNode next = (SubstrateNode) out.getTarget();
@@ -82,23 +80,36 @@ public class Dijkstra implements IPathGen {
   }
 
   /**
-   * Returns the substrate node with the smallest distance from static collection nodes.
+   * Pops the substrate node with the smallest distance from list of nodes. If there is no such
+   * node, the method returns null instead. (This is necessary for graphs that are not fully
+   * connected which is the case for the extended Dijkstra implementation.)
    * 
    * @return SubstrateNode with smallest distance.
    */
-  protected SubstrateNode getSmallestDistNode() {
-    int dist = Integer.MAX_VALUE;
-    SubstrateNode nearest = null;
+  protected SubstrateNode popSmallestDistNode() {
+    sortNodes();
+    final Node candidate = nodes.get(0);
+    return dists.get(candidate) != Integer.MAX_VALUE ? nodes.remove(0) : null;
+  }
 
-    for (final SubstrateNode n : nodes) {
-      final int nDist = dists.get(n);
-      if (nDist < dist) {
-        nearest = n;
-        dist = nDist;
+  /**
+   * Sorts the collection of nodes according to: (1) The distance (2) The name.
+   */
+  protected void sortNodes() {
+    Collections.sort(nodes, new Comparator<SubstrateNode>() {
+
+      @Override
+      public int compare(final SubstrateNode o1, final SubstrateNode o2) {
+        final int distFirst = dists.get(o1);
+        final int distSecond = dists.get(o2);
+
+        if (distFirst == distSecond) {
+          return o1.getName().compareTo(o2.getName());
+        } else {
+          return distFirst - distSecond;
+        }
       }
-    }
-
-    return nearest;
+    });
   }
 
   /**
@@ -138,13 +149,13 @@ public class Dijkstra implements IPathGen {
   }
 
   /**
-   * Searches for a link in a given collection that has the given substrate node as source node.
+   * Searches for a link in a given list that has the given substrate node as source node.
    * 
    * @param source Source node to search for.
-   * @param links Collection of links to search the one with corresponding source node in.
-   * @return SubstrateLink found in the collection with given source node.
+   * @param links List of links to search the one with corresponding source node in.
+   * @return SubstrateLink found in the list with given source node.
    */
-  private SubstrateLink getLinkFrom(final SubstrateNode source, final Collection<Link> links) {
+  private SubstrateLink getLinkFrom(final SubstrateNode source, final List<Link> links) {
     for (final Link l : links) {
       if (l.getSource().equals(source)) {
         return (SubstrateLink) l;
@@ -181,8 +192,8 @@ public class Dijkstra implements IPathGen {
   }
 
   @Override
-  public Map<SubstrateNode, List<List<SubstrateLink>>> getAllKFastestPaths(SubstrateNetwork net,
-      SubstrateNode start, int K) {
+  public Map<SubstrateNode, List<List<SubstrateLink>>> getAllKFastestPaths(
+      final SubstrateNetwork net, final SubstrateNode start, final int K) {
     if (K != 1) {
       throw new UnsupportedOperationException(
           "Due to its nature, the Dijkstra algorithm is only able to calculate the K=1 fastest "
