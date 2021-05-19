@@ -44,15 +44,13 @@ public class ExtendedDijkstra extends Dijkstra {
     init(net, start);
 
     while (!nodes.isEmpty()) {
-      final SubstrateNode u = getSmallestDistNode();
+      final SubstrateNode u = popSmallestDistNode();
 
       // If no node with the smallest distance can be found, the graph is not fully connected ->
       // Break the loop and return.
       if (u == null) {
         break;
       }
-
-      nodes.remove(u);
 
       for (final Link out : u.getOutgoingLinks()) {
         // Check that link gets ignored if its contained in the ignored links set
@@ -91,32 +89,6 @@ public class ExtendedDijkstra extends Dijkstra {
     }
 
     dists.replace(start, 0);
-  }
-
-  /**
-   * Returns the substrate node with the smallest distance from static collection nodes.
-   * 
-   * @return SubstrateNode with smallest distance.
-   */
-  @Override
-  protected SubstrateNode getSmallestDistNode() {
-    int dist = Integer.MAX_VALUE;
-    SubstrateNode nearest = null;
-
-    for (final SubstrateNode n : nodes) {
-      // Check if n must be ignored
-      if (ignoredNodes.contains(n)) {
-        continue;
-      }
-
-      final int nDist = dists.get(n);
-      if (nDist < dist) {
-        nearest = n;
-        dist = nDist;
-      }
-    }
-
-    return nearest;
   }
 
   /**

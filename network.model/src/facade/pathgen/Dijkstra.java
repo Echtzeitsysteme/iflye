@@ -1,5 +1,7 @@
 package facade.pathgen;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,8 +49,7 @@ public class Dijkstra implements IPathGen {
     init(net, start);
 
     while (!nodes.isEmpty()) {
-      final SubstrateNode u = getSmallestDistNode();
-      nodes.remove(u);
+      final SubstrateNode u = popSmallestDistNode();
 
       for (final Link out : u.getOutgoingLinks()) {
         SubstrateNode next = (SubstrateNode) out.getTarget();
@@ -79,23 +80,36 @@ public class Dijkstra implements IPathGen {
   }
 
   /**
-   * Returns the substrate node with the smallest distance from static collection nodes.
+   * Pops the substrate node with the smallest distance from list of nodes. If there is no such
+   * node, the method returns null instead. (This is necessary for graphs that are not fully
+   * connected which is the case for the extended Dijkstra implementation.)
    * 
    * @return SubstrateNode with smallest distance.
    */
-  protected SubstrateNode getSmallestDistNode() {
-    int dist = Integer.MAX_VALUE;
-    SubstrateNode nearest = null;
+  protected SubstrateNode popSmallestDistNode() {
+    sortNodes();
+    final Node candidate = nodes.get(0);
+    return dists.get(candidate) != Integer.MAX_VALUE ? nodes.remove(0) : null;
+  }
 
-    for (final SubstrateNode n : nodes) {
-      final int nDist = dists.get(n);
-      if (nDist < dist) {
-        nearest = n;
-        dist = nDist;
+  /**
+   * Sorts the collection of nodes according to: (1) The distance (2) The name.
+   */
+  protected void sortNodes() {
+    Collections.sort(nodes, new Comparator<SubstrateNode>() {
+
+      @Override
+      public int compare(final SubstrateNode o1, final SubstrateNode o2) {
+        final int distFirst = dists.get(o1);
+        final int distSecond = dists.get(o2);
+
+        if (distFirst == distSecond) {
+          return o1.getName().compareTo(o2.getName());
+        } else {
+          return distFirst - distSecond;
+        }
       }
-    }
-
-    return nearest;
+    });
   }
 
   /**
