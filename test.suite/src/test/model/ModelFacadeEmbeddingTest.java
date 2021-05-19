@@ -144,9 +144,11 @@ public class ModelFacadeEmbeddingTest {
     ModelFacade.getInstance().addLinkToNetwork("l8", "virt", 12, "srv6", "srv5");
     ModelFacade.getInstance().createAllPathsForNetwork("sub");
 
-    ModelFacade.getInstance().embedLinkToPath("0", "l7");
+    final String pathName = "path-srv1-srv2";
 
-    final SubstratePath subPath = (SubstratePath) ModelFacade.getInstance().getPathById("0");
+    ModelFacade.getInstance().embedLinkToPath(pathName, "l7");
+
+    final SubstratePath subPath = (SubstratePath) ModelFacade.getInstance().getPathById(pathName);
     assertEquals(1, subPath.getGuestLinks().size());
     assertEquals("l7", subPath.getGuestLinks().get(0).getName());
 
