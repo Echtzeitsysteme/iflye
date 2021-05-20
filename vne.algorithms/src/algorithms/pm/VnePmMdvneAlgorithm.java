@@ -344,15 +344,16 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     gen.apply();
 
     final Statistics solve = ilpSolver.solve();
+    Set<VirtualNetwork> rejectedNetworks = null;
     if (solve.isFeasible()) {
-      updateMappingsAndEmbed(ilpSolver.getMappings());
+      rejectedNetworks = updateMappingsAndEmbed(ilpSolver.getMappings());
       // Lock all variables (no migration implemented, yet)
       ilpSolver.lockVariables(e -> true);
     } else {
       throw new IlpSolverException();
     }
 
-    return true;
+    return rejectedNetworks.isEmpty();
   }
 
   /*
@@ -411,8 +412,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
    * 
    * @param mappings Map of strings and booleans. The keys are mapping names and the values define
    *        if the mapping was chosen.
+   * @return Returns a set of all virtual networks that could not be embedded.
    */
-  private void updateMappingsAndEmbed(final Map<String, Boolean> mappings) {
+  private Set<VirtualNetwork> updateMappingsAndEmbed(final Map<String, Boolean> mappings) {
     // Update mappings
     previousMappings = currentMappings;
     currentMappings = new HashSet<>();
@@ -435,16 +437,19 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       facade.embedNetworkToNetwork(sNet.getName(), vNet.getName());
     }
 
+    final Set<VirtualNetwork> rejectedNetworks = new HashSet<VirtualNetwork>();
+
     for (final String s : newMappings) {
       final Match m = variablesToMatch.get(s);
 
       final VirtualElement virtualElement = (VirtualElement) m.getVirtual();
       final SubstrateElement substrateElement = (SubstrateElement) m.getSubstrate();
 
-      // // Network -> Network
-      // if (virtualElement instanceof VirtualNetwork) {
-      // facade.embedNetworkToNetwork(substrateElement.getName(), virtualElement.getName());
-      // }
+      // Network -> Network (rejected)
+      if (virtualElement instanceof VirtualNetwork) {
+        // facade.embedNetworkToNetwork(substrateElement.getName(), virtualElement.getName());
+        rejectedNetworks.add((VirtualNetwork) virtualElement);
+      }
 
       // Server -> Server
       if (virtualElement instanceof VirtualServer) {
@@ -465,6 +470,8 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
         }
       }
     }
+
+    return rejectedNetworks;
   }
 
   /**
