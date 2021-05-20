@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="lib/gurobi-8.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/gurobi-javadoc-8.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/ilp-0.2.6.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
