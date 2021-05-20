@@ -1,7 +1,8 @@
 package generators;
 
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import generators.config.GlobalGeneratorConfig;
 import generators.config.IGeneratorConfig;
 import generators.config.TwoTierConfig;
@@ -29,19 +30,19 @@ public class TwoTierNetworkGenerator implements INetworkGenerator {
   private final TwoTierConfig config;
 
   /**
-   * Set for the core switch ID generation.
+   * List for the core switch ID generation.
    */
-  private final HashSet<String> coreSwitchIds = new HashSet<String>();
+  private final List<String> coreSwitchIds = new LinkedList<String>();
 
   /**
-   * Set for the rack switch ID generation.
+   * List for the rack switch ID generation.
    */
-  private final HashSet<String> rackSwitchIds = new HashSet<String>();
+  private final List<String> rackSwitchIds = new LinkedList<String>();
 
   /**
-   * Set for the server ID generation.
+   * List for the server ID generation.
    */
-  private final HashSet<String> serverIds = new HashSet<String>();
+  private final List<String> serverIds = new LinkedList<String>();
 
   /**
    * Counter for the link ID generation.

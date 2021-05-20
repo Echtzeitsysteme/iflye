@@ -1,6 +1,7 @@
 package generators;
 
-import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import facade.ModelFacade;
 import generators.config.GlobalGeneratorConfig;
 import generators.config.IGeneratorConfig;
@@ -19,14 +20,14 @@ public class OneTierNetworkGenerator implements INetworkGenerator {
   private final OneTierConfig config;
 
   /**
-   * Set for the switch ID generation.
+   * List for the switch ID generation.
    */
-  private final HashSet<String> switchIds = new HashSet<String>();
+  private final List<String> switchIds = new LinkedList<String>();
 
   /**
-   * Set for the server ID generation.
+   * List for the server ID generation.
    */
-  private final HashSet<String> serverIds = new HashSet<String>();
+  private final List<String> serverIds = new LinkedList<String>();
 
   /**
    * Counter for the link ID generation.
