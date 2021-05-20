@@ -97,11 +97,25 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
      * @param match Match to get information from.
      */
     public void addLinkPathMatch(final Match match) {
-      final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
-
       final VirtualLink vLink = (VirtualLink) facade.getLinkById(match.getVirtual().getName());
       final SubstratePath sPath =
           (SubstratePath) facade.getPathById(match.getSubstrate().getName());
+
+      // If the source or target of the virtual link is a virtual server, the corresponding
+      // substrate node must not be a substrate switch. A mapping of a virtual server to a substrate
+      // switch is not possible and therefore the ILP solver does not need to know this specific
+      // path.
+      if (sPath.getSource() instanceof SubstrateSwitch
+          && vLink.getSource() instanceof VirtualServer) {
+        return;
+      }
+
+      if (sPath.getTarget() instanceof SubstrateSwitch
+          && vLink.getTarget() instanceof VirtualServer) {
+        return;
+      }
+
+      final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
 
       delta.addVariable(varName, getLinkToPathEmbeddingCost(vLink, sPath));
       delta.setVariableWeightForConstraint("vl" + match.getVirtual().getName(), 1, varName);
@@ -135,22 +149,22 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       variablesToMatch.put(varName, match);
     }
 
-    /**
-     * Adds a (negative) match from a virtual server to a substrate switch. This method adds a
-     * constraint that is only fulfillable if the server will not be placed onto a switch. This
-     * placement is per definition of the model invalid.
-     * 
-     * @param match Match to get information from.
-     */
-    public void addServerSwitchMatch(final Match match) {
-      final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
-      // TODO: This should be changed:
-      delta.addVariable(varName, Integer.MAX_VALUE);
-      delta.setVariableWeightForConstraint("vs" + match.getVirtual().getName(), 1, varName);
-      // Add a constraint that strictly forbids this embedding
-      delta.addLessOrEqualsConstraint("req" + varName, 0, new int[] {1}, new String[] {varName});
-      variablesToMatch.put(varName, match);
-    }
+    // /**
+    // * Adds a (negative) match from a virtual server to a substrate switch. This method adds a
+    // * constraint that is only fulfillable if the server will not be placed onto a switch. This
+    // * placement is per definition of the model invalid.
+    // *
+    // * @param match Match to get information from.
+    // */
+    // public void addServerSwitchMatch(final Match match) {
+    // final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
+    // // TODO: This should be changed:
+    // delta.addVariable(varName, Integer.MAX_VALUE);
+    // delta.setVariableWeightForConstraint("vs" + match.getVirtual().getName(), 1, varName);
+    // // Add a constraint that strictly forbids this embedding
+    // delta.addLessOrEqualsConstraint("req" + varName, 0, new int[] {1}, new String[] {varName});
+    // variablesToMatch.put(varName, match);
+    // }
 
     /**
      * Adds a match from a virtual switch to a substrate switch.
@@ -302,7 +316,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     delta.getNewServerMatchPositives().forEach(gen::addServerMatch);
     // delta.getNewServerMatchNegatives().forEach(gen::addServerMatch);
     // TODO: This has to be changed:
-    delta.getNewServerMatchSwitchNegatives().forEach(gen::addServerSwitchMatch);
+    // delta.getNewServerMatchSwitchNegatives().forEach(gen::addServerSwitchMatch);
     delta.getNewSwitchMatchPositives().forEach(gen::addSwitchMatch);
     delta.getNewLinkPathMatchPositives().forEach(gen::addLinkPathMatch);
     // delta.getNewLinkPathMatchNegatives().forEach(gen::addLinkPathMatch);
