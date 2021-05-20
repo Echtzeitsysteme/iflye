@@ -15,12 +15,12 @@ public abstract class AbstractAlgorithm {
   /**
    * The substrate network (model).
    */
-  protected final SubstrateNetwork sNet;
+  protected SubstrateNetwork sNet;
 
   /**
    * The virtual networks (model).
    */
-  protected final Set<VirtualNetwork> vNets;
+  protected Set<VirtualNetwork> vNets;
 
   /**
    * Execution method that starts the algorithm itself.
@@ -31,13 +31,17 @@ public abstract class AbstractAlgorithm {
 
   /**
    * Initializes a new abstract algorithm with a given substrate and given virtual networks.
-   * 
+   *
    * @param sNet Substrate network to work with.
    * @param vNet A set of virtual networks to work with.
    */
   public AbstractAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
     if (sNet == null || vNets == null) {
       throw new IllegalArgumentException("One of the provided network objects was null!");
+    }
+
+    if (vNets.size() == 0) {
+      throw new IllegalArgumentException("Provided set of virtual networks was empty.");
     }
 
     this.sNet = sNet;
