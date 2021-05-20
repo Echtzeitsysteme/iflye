@@ -48,7 +48,7 @@ public class VnePmMdvneAlgorithmExampleSmall {
     final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
     // Create and execute algorithm
-    final VnePmMdvneAlgorithm algo = new VnePmMdvneAlgorithm(sNet, Set.of(vNet));
+    final VnePmMdvneAlgorithm algo = VnePmMdvneAlgorithm.prepare(sNet, Set.of(vNet));
     algo.execute();
 
     // Save model to file

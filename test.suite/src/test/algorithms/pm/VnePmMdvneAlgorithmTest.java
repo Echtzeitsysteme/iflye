@@ -15,7 +15,7 @@ public class VnePmMdvneAlgorithmTest extends AAlgorithmMultipleVnsTest {
 
   @Override
   public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-    algo = new VnePmMdvneAlgorithm(sNet, vNets);
+    algo = VnePmMdvneAlgorithm.prepare(sNet, vNets);
   }
 
 }

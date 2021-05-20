@@ -1,8 +1,8 @@
 package algorithms;
 
-import facade.ModelFacade;
 import java.util.Iterator;
 import java.util.Set;
+import facade.ModelFacade;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 

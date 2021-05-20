@@ -256,7 +256,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 
   }
 
-  // private static VnePmMdvneAlgorithm instance;
+  private static VnePmMdvneAlgorithm instance;
 
   /**
    * Incremental pattern matcher to use.
@@ -289,24 +289,52 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
    * @param sNet Substrate network to work with.
    * @param vNets Set of virtual networks to work with.
    */
-  public VnePmMdvneAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
+  private VnePmMdvneAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
     super(sNet, vNets);
+  }
+
+  /**
+   * Initializes a new instance of the VNE pattern matching algorithm.
+   * 
+   * @param sNet Substrate network to work with.
+   * @param vNets Set of virtual networks to work with.
+   * @return Instance of this algorithm implementation.
+   */
+  public static VnePmMdvneAlgorithm prepare(final SubstrateNetwork sNet,
+      final Set<VirtualNetwork> vNets) {
+    if (sNet == null || vNets == null) {
+      throw new IllegalArgumentException("One of the provided network objects was null.");
+    }
+
+    if (vNets.size() == 0) {
+      throw new IllegalArgumentException("Provided set of virtual networks was empty.");
+    }
+
+    if (instance != null) {
+      instance.dispose();
+    }
+
+    instance = new VnePmMdvneAlgorithm(sNet, vNets);
+    instance.sNet = sNet;
+    instance.vNets = vNets;
+
+    return instance;
   }
 
   /**
    * Resets the ILP solver and the pattern matcher.
    */
   public void dispose() {
-    // if (instance == null) {
-    // return;
-    // }
+    if (instance == null) {
+      return;
+    }
     if (this.ilpSolver != null) {
       this.ilpSolver.dispose();
     }
     if (this.patternMatcher != null) {
       this.patternMatcher.dispose();
     }
-    // instance = null;
+    instance = null;
   }
 
   @Override
