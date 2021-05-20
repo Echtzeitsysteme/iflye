@@ -82,12 +82,26 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     public void addLinkServerMatch(final Match match) {
       final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
       final VirtualLink vLink = (VirtualLink) facade.getLinkById(match.getVirtual().getName());
+
+      // If the source node (target node) of the virtual link may not be embedded to the substrate
+      // node, it's mapping variable is missing in the solver's model. Due to the fact that there is
+      // no way to properly map the source node (target node) onto this substrate server, the ILP
+      // solver does not have to deal with the embedding of the link for this particular substrate
+      // node, to.
+      final String sourceVarName =
+          vLink.getSource().getName() + "_" + match.getSubstrate().getName();
+      final String targetVarName =
+          vLink.getTarget().getName() + "_" + match.getSubstrate().getName();
+
+      if (!delta.hasAddVariable(sourceVarName) || !delta.hasAddVariable(targetVarName)) {
+        return;
+      }
+
       delta.addVariable(varName,
           getLinkToNodeEmbeddingCost(vLink, (SubstrateNode) match.getSubstrate()));
       delta.setVariableWeightForConstraint("vl" + match.getVirtual().getName(), 1, varName);
       delta.addLessOrEqualsConstraint("req" + varName, 0, new int[] {2, -1, -1},
-          new String[] {varName, vLink.getSource().getName() + "_" + match.getSubstrate().getName(),
-              vLink.getTarget().getName() + "_" + match.getSubstrate().getName()});
+          new String[] {varName, sourceVarName, targetVarName});
       variablesToMatch.put(varName, match);
     }
 
@@ -101,17 +115,17 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       final SubstratePath sPath =
           (SubstratePath) facade.getPathById(match.getSubstrate().getName());
 
-      // If the source or target of the virtual link is a virtual server, the corresponding
-      // substrate node must not be a substrate switch. A mapping of a virtual server to a substrate
-      // switch is not possible and therefore the ILP solver does not need to know this specific
-      // path.
-      if (sPath.getSource() instanceof SubstrateSwitch
-          && vLink.getSource() instanceof VirtualServer) {
-        return;
-      }
+      // If the source node (target node) of the virtual link may not be embedded to the substrate
+      // paths source node (target node), it's mapping variable is missing in the solver's model.
+      // Due to the fact that there is no way to properly map the source node (target node) onto the
+      // substrate source node (target node), the ILP solver does not have to deal with the
+      // embedding of the link for this particular substrate node, to.
+      // This may e.g. be the case if the virtual node is a server but the substrate node is a
+      // switch.
+      final String sourceVarName = vLink.getSource().getName() + "_" + sPath.getSource().getName();
+      final String targetVarName = vLink.getTarget().getName() + "_" + sPath.getTarget().getName();
 
-      if (sPath.getTarget() instanceof SubstrateSwitch
-          && vLink.getTarget() instanceof VirtualServer) {
+      if (!delta.hasAddVariable(sourceVarName) || !delta.hasAddVariable(targetVarName)) {
         return;
       }
 
@@ -120,8 +134,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       delta.addVariable(varName, getLinkToPathEmbeddingCost(vLink, sPath));
       delta.setVariableWeightForConstraint("vl" + match.getVirtual().getName(), 1, varName);
       delta.addLessOrEqualsConstraint("req" + varName, 0, new int[] {2, -1, -1},
-          new String[] {varName, vLink.getSource().getName() + "_" + sPath.getSource().getName(),
-              vLink.getTarget().getName() + "_" + sPath.getTarget().getName()});
+          new String[] {varName, sourceVarName, targetVarName});
       forEachLink(sPath, l -> delta.setVariableWeightForConstraint("sl" + l.getName(),
           vLink.getBandwidth(), varName));
       variablesToMatch.put(varName, match);
@@ -314,10 +327,15 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     // add new matches
     // delta.getNewNetworkMatches().forEach(gen::addNewNetworkMatch);
     delta.getNewServerMatchPositives().forEach(gen::addServerMatch);
+
     // delta.getNewServerMatchNegatives().forEach(gen::addServerMatch);
     // TODO: This has to be changed:
     // delta.getNewServerMatchSwitchNegatives().forEach(gen::addServerSwitchMatch);
     delta.getNewSwitchMatchPositives().forEach(gen::addSwitchMatch);
+
+    // Important: Due to the fact that both link constraint generating methods check the existance
+    // of the node mapping variables, the link constraints have to be added *after* all node
+    // constraints.
     delta.getNewLinkPathMatchPositives().forEach(gen::addLinkPathMatch);
     // delta.getNewLinkPathMatchNegatives().forEach(gen::addLinkPathMatch);
     delta.getNewLinkServerMatchPositives().forEach(gen::addLinkServerMatch);

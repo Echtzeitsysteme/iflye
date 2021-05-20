@@ -132,6 +132,16 @@ public class IlpDelta {
   }
 
   /**
+   * Returns true if there is a variable with matching name.
+   * 
+   * @param name Variable name to match.
+   * @return True if there is a variable with matching name.
+   */
+  public boolean hasAddVariable(final String name) {
+    return addVariables.containsKey(name);
+  }
+
+  /**
    * Applies the collections of constraints and variables to the given incremental ILP solver.
    * 
    * @param solver Incremental ILP solver to add constraints and variables to.
