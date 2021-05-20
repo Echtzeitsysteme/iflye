@@ -300,12 +300,12 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     // add new matches
     // delta.getNewNetworkMatches().forEach(gen::addNewNetworkMatch);
     delta.getNewServerMatchPositives().forEach(gen::addServerMatch);
-    delta.getNewServerMatchNegatives().forEach(gen::addServerMatch);
+    // delta.getNewServerMatchNegatives().forEach(gen::addServerMatch);
     // TODO: This has to be changed:
     delta.getNewServerMatchSwitchNegatives().forEach(gen::addServerSwitchMatch);
     delta.getNewSwitchMatchPositives().forEach(gen::addSwitchMatch);
     delta.getNewLinkPathMatchPositives().forEach(gen::addLinkPathMatch);
-    delta.getNewLinkPathMatchNegatives().forEach(gen::addLinkPathMatch);
+    // delta.getNewLinkPathMatchNegatives().forEach(gen::addLinkPathMatch);
     delta.getNewLinkServerMatchPositives().forEach(gen::addLinkServerMatch);
 
     // apply delta in ILP generator

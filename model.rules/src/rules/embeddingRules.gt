@@ -36,6 +36,8 @@ import "platform:/resource/network.model/model/Model.ecore"
 //	virtualNetwork: VirtualNetwork
 //}
 
+// TODO: Remove all negative patterns
+
 //
 // Servers
 //
@@ -63,28 +65,28 @@ pattern serverMatchPositive() {
 	# virtualNode.storage <= substrateNode.residualStorage
 }
 
-// All server mappings but without the positive ones
-// (These are forbidden via the condition below.)
-pattern serverMatchNegative() {
-	root: Root {
-		-networks -> substrateNetwork
-		-networks -> virtualNetwork
-	}
-	
-	substrateNode: SubstrateServer
-	virtualNode: VirtualServer
-	
-	substrateNetwork: SubstrateNetwork {
-		-nodes -> substrateNode
-	}
-	
-	virtualNetwork: VirtualNetwork {
-		-nodes -> virtualNode
-	}
-}
-when serverMatchNotValid
-
-condition serverMatchNotValid = forbid serverMatchPositive
+//// All server mappings but without the positive ones
+//// (These are forbidden via the condition below.)
+//pattern serverMatchNegative() {
+//	root: Root {
+//		-networks -> substrateNetwork
+//		-networks -> virtualNetwork
+//	}
+//	
+//	substrateNode: SubstrateServer
+//	virtualNode: VirtualServer
+//	
+//	substrateNetwork: SubstrateNetwork {
+//		-nodes -> substrateNode
+//	}
+//	
+//	virtualNetwork: VirtualNetwork {
+//		-nodes -> virtualNode
+//	}
+//}
+//when serverMatchNotValid
+//
+//condition serverMatchNotValid = forbid serverMatchPositive
 
 pattern serverMatchSwitchNegative() {
 	root: Root {
@@ -153,26 +155,26 @@ pattern linkPathMatchPositive() {
 	# virtualLink.bandwidth <= substratePath.residualBandwidth
 }
 
-// Match from a virtual link to a substrate path (but negative)
-pattern linkPathMatchNegative() {
-	root: Root {
-		-networks -> substrateNetwork
-		-networks -> virtualNetwork
-	}
-	
-	substratePath: SubstratePath
-	virtualLink: VirtualLink
-	
-	substrateNetwork: SubstrateNetwork {
-		-paths -> substratePath
-	}
-	
-	virtualNetwork: VirtualNetwork {
-		-links -> virtualLink
-	}
-	
-	# virtualLink.bandwidth > substratePath.residualBandwidth
-}
+//// Match from a virtual link to a substrate path (but negative)
+//pattern linkPathMatchNegative() {
+//	root: Root {
+//		-networks -> substrateNetwork
+//		-networks -> virtualNetwork
+//	}
+//	
+//	substratePath: SubstratePath
+//	virtualLink: VirtualLink
+//	
+//	substrateNetwork: SubstrateNetwork {
+//		-paths -> substratePath
+//	}
+//	
+//	virtualNetwork: VirtualNetwork {
+//		-links -> virtualLink
+//	}
+//	
+//	# virtualLink.bandwidth > substratePath.residualBandwidth
+//}
 
 // Match from virtual link to substrate server
 // This one does not have any constraints.

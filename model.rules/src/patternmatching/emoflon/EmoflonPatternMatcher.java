@@ -79,9 +79,9 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
       addMatch(currentDelta::addServerMatchPositive, m.getVirtualNode(), m.getSubstrateNode());
     });
 
-    api.serverMatchNegative().subscribeAppearing(m -> {
-      addMatch(currentDelta::addServerMatchNegative, m.getVirtualNode(), m.getSubstrateNode());
-    });
+    // api.serverMatchNegative().subscribeAppearing(m -> {
+    // addMatch(currentDelta::addServerMatchNegative, m.getVirtualNode(), m.getSubstrateNode());
+    // });
 
     api.serverMatchSwitchNegative().subscribeAppearing(m -> {
       addMatch(currentDelta::addServerMatchSwitchNegative, m.getVirtualNode(),
@@ -96,9 +96,9 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
       addMatch(currentDelta::addLinkPathMatchPositive, m.getVirtualLink(), m.getSubstratePath());
     });
 
-    api.linkPathMatchNegative().subscribeAppearing(m -> {
-      addMatch(currentDelta::addLinkPathMatchNegatives, m.getVirtualLink(), m.getSubstratePath());
-    });
+    // api.linkPathMatchNegative().subscribeAppearing(m -> {
+    // addMatch(currentDelta::addLinkPathMatchNegatives, m.getVirtualLink(), m.getSubstratePath());
+    // });
 
     api.linkServerMatchPositive().subscribeAppearing(m -> {
       addMatch(currentDelta::addLinkServerMatchPositive, m.getVirtualLink(),
