@@ -353,12 +353,27 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       throw new IlpSolverException();
     }
 
+    embedNetworks(rejectedNetworks);
     return rejectedNetworks.isEmpty();
   }
 
   /*
    * Helper methods.
    */
+
+  /**
+   * Embeds all virtual networks that are not part of the given rejected networks set to the
+   * substrate network.
+   * 
+   * @param rejectedNetworks Set of virtual networks that could not be embedded.
+   */
+  private void embedNetworks(final Set<VirtualNetwork> rejectedNetworks) {
+    for (final VirtualNetwork vNet : vNets) {
+      if (!rejectedNetworks.contains(vNet)) {
+        facade.embedNetworkToNetwork(sNet.getName(), vNet.getName());
+      }
+    }
+  }
 
   /**
    * Adds the elements of the substrate and the virtual network to the given delta generator
@@ -383,7 +398,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     }
 
     // Virtual networks
-
     final Iterator<VirtualNetwork> it = vNets.iterator();
     while (it.hasNext()) {
       final VirtualNetwork vNet = it.next();
@@ -431,12 +445,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     }
 
     // Embed elements
-    final Iterator<VirtualNetwork> it = vNets.iterator();
-    while (it.hasNext()) {
-      final VirtualNetwork vNet = it.next();
-      facade.embedNetworkToNetwork(sNet.getName(), vNet.getName());
-    }
-
     final Set<VirtualNetwork> rejectedNetworks = new HashSet<VirtualNetwork>();
 
     for (final String s : newMappings) {
