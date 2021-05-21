@@ -2,6 +2,7 @@ package facade;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -83,6 +84,9 @@ public class ModelFacade {
    * Root (entry point of the model).
    */
   private Root root = ModelFactory.eINSTANCE.createRoot();
+
+  private Map<String, Path> paths = new HashMap<String, Path>();
+  private Map<String, Link> links = new HashMap<String, Link>();
 
   // TODO: Remove me later on.
   public void dummy() {
@@ -232,12 +236,13 @@ public class ModelFacade {
   public Link getLinkById(final String id) {
     checkStringValid(id);
 
-    List<Network> nets = root.getNetworks();
-    List<Link> links = new ArrayList<Link>();
-    nets.stream().forEach(net -> {
-      net.getLinks().stream().filter(l -> l.getName().equals(id)).forEach(l -> links.add(l));
-    });
-    return links.get(0);
+    // List<Network> nets = root.getNetworks();
+    // List<Link> links = new ArrayList<Link>();
+    // nets.stream().forEach(net -> {
+    // net.getLinks().stream().filter(l -> l.getName().equals(id)).forEach(l -> links.add(l));
+    // });
+    // return links.get(0);
+    return links.get(id);
   }
 
   /**
@@ -249,12 +254,14 @@ public class ModelFacade {
   public Path getPathById(final String id) {
     checkStringValid(id);
 
-    List<Network> nets = root.getNetworks();
-    List<Path> paths = new ArrayList<Path>();
-    nets.stream().forEach(net -> {
-      net.getPaths().stream().filter(p -> p.getName().equals(id)).forEach(p -> paths.add(p));
-    });
-    return paths.get(0);
+    // List<Network> nets = root.getNetworks();
+    // List<Path> paths = new ArrayList<Path>();
+    // nets.stream().forEach(net -> {
+    // net.getPaths().stream().filter(p -> p.getName().equals(id)).forEach(p -> paths.add(p));
+    // });
+    //
+    // return paths.get(0);
+    return paths.get(id);
   }
 
   /**
@@ -403,6 +410,8 @@ public class ModelFacade {
       subLink.setResidualBandwidth(bandwidth);
     }
 
+    // TODO: Check successful adding to model before adding it to look up data structure
+    links.put(id, link);
     return net.getLinks().add(link);
   }
 
@@ -488,7 +497,8 @@ public class ModelFacade {
       final SubstratePath forward = genMetaPath(source, target);
       forward.setHops(links.size());
       forward.setNetwork(links.get(0).getNetwork());
-      forward.setName(concatNodeNames(nodes));
+      final String name = concatNodeNames(nodes);
+      forward.setName(name);
       forward.getNodes().addAll(nodes);
       forward.getLinks().addAll(links);
 
@@ -496,6 +506,8 @@ public class ModelFacade {
       final int bw = getMinimumBandwidthFromSubstrateLinks(links);
       forward.setBandwidth(bw);
       forward.setResidualBandwidth(bw);
+
+      paths.put(name, forward);
     }
 
     // Create reverse path
@@ -504,7 +516,8 @@ public class ModelFacade {
       final List<Node> reversedNodes = Lists.reverse(nodes);
       reverse.setHops(links.size());
       reverse.setNetwork(links.get(0).getNetwork());
-      reverse.setName(concatNodeNames(reversedNodes));
+      final String name = concatNodeNames(reversedNodes);
+      reverse.setName(name);
       reverse.getNodes().addAll(reversedNodes);
 
       // Get all opposite links
@@ -513,6 +526,8 @@ public class ModelFacade {
       final int revBw = getMinimumBandwidthFromSubstrateLinks(oppositeLinks);
       reverse.setBandwidth(revBw);
       reverse.setResidualBandwidth(revBw);
+
+      paths.put(name, reverse);
     }
   }
 

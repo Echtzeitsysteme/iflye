@@ -199,7 +199,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
      * @param server SubstrateServer to get information from.
      */
     public void addNewSubstrateServer(final SubstrateServer server) {
-      // TODO: Residual resources here?
       delta.addLessOrEqualsConstraint("cpu" + server.getName(), server.getResidualCpu());
       delta.addLessOrEqualsConstraint("mem" + server.getName(), server.getResidualMemory());
       delta.addLessOrEqualsConstraint("sto" + server.getName(), server.getResidualStorage());
@@ -211,7 +210,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
      * @param link SubstrateLink to get information from.
      */
     public void addNewSubstrateLink(final SubstrateLink link) {
-      // TODO: Residual resources here?
       delta.addLessOrEqualsConstraint("sl" + link.getName(), link.getResidualBandwidth());
     }
 
@@ -385,7 +383,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       // Lock all variables (no migration implemented, yet)
       ilpSolver.lockVariables(e -> true);
     } else {
-      throw new IlpSolverException();
+      throw new IlpSolverException("Problem was infeasible.");
     }
 
     embedNetworks(rejectedNetworks);
