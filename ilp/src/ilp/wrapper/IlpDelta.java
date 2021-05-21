@@ -35,7 +35,7 @@ public class IlpDelta {
    */
   final Map<String, Double> changeVariableWeights = new HashMap<>();
   final Map<String, int[]> changeVariableBounds = new HashMap<>();
-  final Map<String, Map<String, Double>> changeConstraitVariableWeights = new HashMap<>();
+  final Map<String, Map<String, Double>> changeConstraintVariableWeights = new HashMap<>();
   final Map<String, Double> changeConstraintRight = new HashMap<>();
 
   /*
@@ -166,8 +166,8 @@ public class IlpDelta {
     if (!changeVariableBounds.isEmpty()) {
       solver.setVariableBounds(changeVariableBounds);
     }
-    if (!changeConstraitVariableWeights.isEmpty()) {
-      solver.setVariableWeightsForConstraints(changeConstraitVariableWeights);
+    if (!changeConstraintVariableWeights.isEmpty()) {
+      solver.setVariableWeightsForConstraints(changeConstraintVariableWeights);
     }
     if (!changeConstraintRight.isEmpty()) {
       solver.setConstraintRights(changeConstraintRight);
@@ -254,7 +254,7 @@ public class IlpDelta {
     } else if (addLeConstraints.containsKey(name)) {
       addLeConstraints.get(name).addVar(var, weight);
     } else {
-      changeConstraitVariableWeights.computeIfAbsent(name, k -> new HashMap<>()).put(var, weight);
+      changeConstraintVariableWeights.computeIfAbsent(name, k -> new HashMap<>()).put(var, weight);
     }
   }
 

@@ -199,9 +199,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
      */
     public void addNewSubstrateServer(final SubstrateServer server) {
       // TODO: Residual resources here?
-      delta.addLessOrEqualsConstraint("cpu" + server.getName(), server.getCpu());
-      delta.addLessOrEqualsConstraint("mem" + server.getName(), server.getMemory());
-      delta.addLessOrEqualsConstraint("sto" + server.getName(), server.getStorage());
+      delta.addLessOrEqualsConstraint("cpu" + server.getName(), server.getResidualCpu());
+      delta.addLessOrEqualsConstraint("mem" + server.getName(), server.getResidualMemory());
+      delta.addLessOrEqualsConstraint("sto" + server.getName(), server.getResidualStorage());
     }
 
     /**
@@ -211,7 +211,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
      */
     public void addNewSubstrateLink(final SubstrateLink link) {
       // TODO: Residual resources here?
-      delta.addLessOrEqualsConstraint("sl" + link.getName(), link.getBandwidth());
+      delta.addLessOrEqualsConstraint("sl" + link.getName(), link.getResidualBandwidth());
     }
 
     /**
@@ -256,6 +256,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 
   }
 
+  /**
+   * Algorithm instance (singleton).
+   */
   private static VnePmMdvneAlgorithm instance;
 
   /**
@@ -310,11 +313,13 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       throw new IllegalArgumentException("Provided set of virtual networks was empty.");
     }
 
-    if (instance != null) {
-      instance.dispose();
-    }
+    // if (instance != null) {
+    // instance.dispose();
+    // }
 
-    instance = new VnePmMdvneAlgorithm(sNet, vNets);
+    if (instance == null) {
+      instance = new VnePmMdvneAlgorithm(sNet, vNets);
+    }
     instance.sNet = sNet;
     instance.vNets = vNets;
 

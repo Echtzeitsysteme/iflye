@@ -52,6 +52,7 @@ public class VnePmMdvneAlgorithmExampleMedium {
           (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt_" + i);
 
       // Create and execute algorithm
+      System.out.println("=> Embedding virtual network #" + i);
       final VnePmMdvneAlgorithm algo = VnePmMdvneAlgorithm.prepare(sNet, Set.of(vNet));
       algo.execute();
     }
