@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 import algorithms.AbstractAlgorithm;
+import facade.config.ModelFacadeConfig;
 import ilp.wrapper.IlpDelta;
 import ilp.wrapper.IlpSolverException;
 import ilp.wrapper.IncrementalIlpSolver;
@@ -323,6 +324,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     instance.sNet = sNet;
     instance.vNets = vNets;
 
+    instance.checkPreConditions();
     return instance;
   }
 
@@ -393,6 +395,24 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
   /*
    * Helper methods.
    */
+
+  /**
+   * Checks every condition necessary to run this algorithm. If a condition is not met, it throws an
+   * UnsupportedOperationException.
+   */
+  private void checkPreConditions() {
+    // Path creation has to be enabled for paths with length = 1
+    if (ModelFacadeConfig.MIN_PATH_LENGTH != 1) {
+      throw new UnsupportedOperationException("Minimum path length must be 1.");
+    }
+
+    // There must be generated substrate paths
+    if (sNet.getPaths().isEmpty()) {
+      throw new UnsupportedOperationException("Generated paths are missing in substrate network.");
+    }
+
+    // TODO: Maybe check for total amount of paths here!
+  }
 
   /**
    * Embeds all virtual networks that are not part of the given rejected networks set to the

@@ -1,10 +1,12 @@
 package test.algorithms.pm;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import algorithms.pm.VnePmMdvneAlgorithm;
+import facade.config.ModelFacadeConfig;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 import test.algorithms.generic.AAlgorithmMultipleVnsTest;
@@ -31,6 +33,7 @@ public class VnePmMdvneAlgorithmTest extends AAlgorithmMultipleVnsTest {
   @Test
   public void testMultipleNetworksAfterEachOther() {
     twoTierSetupFourServers("sub", 3);
+    facade.createAllPathsForNetwork("sub");
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
 
     for (int i = 0; i < 2; i++) {
@@ -48,15 +51,47 @@ public class VnePmMdvneAlgorithmTest extends AAlgorithmMultipleVnsTest {
 
   @Test
   public void testMaxSizeVnet() {
-    oneTierSetupTwoServers("sub", 2);
+    oneTierSetupTwoServers("sub", 100);
+    facade.createAllPathsForNetwork("sub");
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-    oneTierSetupTwoServers("virt", 2);
+    oneTierSetupTwoServers("virt", 100);
     final VirtualNetwork currVnet = (VirtualNetwork) facade.getNetworkById("virt");
 
     initAlgo(sNet, Set.of(currVnet));
     assertTrue(algo.execute());
 
     checkAllElementsEmbeddedOnSubstrateNetwork(sNet, Set.of(currVnet));
+  }
+
+  /*
+   * Negative tests
+   */
+
+  @Test
+  public void testNoPathsInNetwork() {
+    oneTierSetupTwoServers("sub", 1);
+    // Removed path generation on purpose
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+    oneTierSetupTwoServers("virt", 1);
+    final VirtualNetwork currVnet = (VirtualNetwork) facade.getNetworkById("virt");
+
+    assertThrows(UnsupportedOperationException.class, () -> {
+      initAlgo(sNet, Set.of(currVnet));
+    });
+  }
+
+  @Test
+  public void testMinimumPathLength() {
+    oneTierSetupTwoServers("sub", 1);
+    ModelFacadeConfig.MIN_PATH_LENGTH = 2;
+    facade.createAllPathsForNetwork("sub");
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+    oneTierSetupTwoServers("virt", 1);
+    final VirtualNetwork currVnet = (VirtualNetwork) facade.getNetworkById("virt");
+
+    assertThrows(UnsupportedOperationException.class, () -> {
+      initAlgo(sNet, Set.of(currVnet));
+    });
   }
 
 }
