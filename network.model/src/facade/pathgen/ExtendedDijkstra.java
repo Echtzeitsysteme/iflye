@@ -34,13 +34,10 @@ public class ExtendedDijkstra extends Dijkstra {
    * @param start SubstrateNode to start with.
    * @param ignoredNodes Set of substrate nodes to ignore.
    * @param ignoredLinks Set of substrate links to ignore.
-   * @return List of nodes with all previous visited nodes.
    */
-  protected List<Node> dijkstra(final SubstrateNetwork net, final SubstrateNode start,
+  protected void dijkstra(final SubstrateNetwork net, final SubstrateNode start,
       final Set<SubstrateNode> ignoredNodes, final Set<SubstrateLink> ignoredLinks) {
     this.ignoredNodes = ignoredNodes;
-    final List<Node> prev = new LinkedList<Node>();
-
     init(net, start);
 
     while (!nodes.isEmpty()) {
@@ -64,8 +61,6 @@ public class ExtendedDijkstra extends Dijkstra {
         }
       }
     }
-
-    return prev;
   }
 
   /**
