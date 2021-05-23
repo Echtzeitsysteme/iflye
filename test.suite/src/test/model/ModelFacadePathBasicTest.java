@@ -305,10 +305,10 @@ public class ModelFacadePathBasicTest {
       }
     }
 
-    assertEquals(8, counterOneHop);
-    assertEquals(12, counterTwoHops);
-    assertEquals(8, counterThreeHops);
-    assertEquals(8, counterFourHops);
+    assertEquals(16, counterOneHop);
+    assertEquals(20, counterTwoHops);
+    assertEquals(0, counterThreeHops);
+    assertEquals(0, counterFourHops);
   }
 
   @Test
@@ -462,13 +462,7 @@ public class ModelFacadePathBasicTest {
     ModelFacade.getInstance().createAllPathsForNetwork("net");
 
     final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
-    assertFalse(generatedPaths.isEmpty());
-
-    for (final Path p : generatedPaths) {
-      assertEquals(3, p.getHops());
-      assertEquals(3, p.getLinks().size());
-      assertEquals(4, p.getNodes().size());
-    }
+    assertTrue(generatedPaths.isEmpty());
   }
 
   @Test
@@ -621,17 +615,28 @@ public class ModelFacadePathBasicTest {
 
     ModelFacade.getInstance().addLinkToNetwork("ln1", "net", 0, "srv1", "rsw1");
     ModelFacade.getInstance().addLinkToNetwork("ln2", "net", 0, "srv2", "rsw1");
-    ModelFacade.getInstance().addLinkToNetwork("ln3", "net", 0, "rsw1", "srv1");
-    ModelFacade.getInstance().addLinkToNetwork("ln4", "net", 0, "rsw1", "srv2");
-    ModelFacade.getInstance().addLinkToNetwork("ln5", "net", 0, "srv3", "rsw2");
-    ModelFacade.getInstance().addLinkToNetwork("ln6", "net", 0, "srv4", "rsw2");
-    ModelFacade.getInstance().addLinkToNetwork("ln7", "net", 0, "rsw2", "srv3");
-    ModelFacade.getInstance().addLinkToNetwork("ln8", "net", 0, "rsw2", "srv4");
+    ModelFacade.getInstance().addLinkToNetwork("ln3", "net", 0, "srv3", "rsw1");
+    ModelFacade.getInstance().addLinkToNetwork("ln4", "net", 0, "srv4", "rsw1");
 
-    ModelFacade.getInstance().addLinkToNetwork("ln9", "net", 0, "rsw1", "csw1");
-    ModelFacade.getInstance().addLinkToNetwork("ln10", "net", 0, "rsw2", "csw1");
-    ModelFacade.getInstance().addLinkToNetwork("ln11", "net", 0, "csw1", "rsw1");
-    ModelFacade.getInstance().addLinkToNetwork("ln12", "net", 0, "csw1", "rsw2");
+    ModelFacade.getInstance().addLinkToNetwork("ln5", "net", 0, "srv1", "rsw2");
+    ModelFacade.getInstance().addLinkToNetwork("ln6", "net", 0, "srv2", "rsw2");
+    ModelFacade.getInstance().addLinkToNetwork("ln7", "net", 0, "srv3", "rsw2");
+    ModelFacade.getInstance().addLinkToNetwork("ln8", "net", 0, "srv4", "rsw2");
+
+    ModelFacade.getInstance().addLinkToNetwork("ln9", "net", 0, "rsw1", "srv1");
+    ModelFacade.getInstance().addLinkToNetwork("ln10", "net", 0, "rsw1", "srv2");
+    ModelFacade.getInstance().addLinkToNetwork("ln11", "net", 0, "rsw1", "srv3");
+    ModelFacade.getInstance().addLinkToNetwork("ln12", "net", 0, "rsw1", "srv4");
+
+    ModelFacade.getInstance().addLinkToNetwork("ln13", "net", 0, "rsw2", "srv1");
+    ModelFacade.getInstance().addLinkToNetwork("ln14", "net", 0, "rsw2", "srv2");
+    ModelFacade.getInstance().addLinkToNetwork("ln15", "net", 0, "rsw2", "srv3");
+    ModelFacade.getInstance().addLinkToNetwork("ln16", "net", 0, "rsw2", "srv4");
+
+    ModelFacade.getInstance().addLinkToNetwork("ln17", "net", 0, "rsw1", "csw1");
+    ModelFacade.getInstance().addLinkToNetwork("ln18", "net", 0, "rsw2", "csw1");
+    ModelFacade.getInstance().addLinkToNetwork("ln19", "net", 0, "csw1", "rsw1");
+    ModelFacade.getInstance().addLinkToNetwork("ln20", "net", 0, "csw1", "rsw2");
   }
 
   /**
@@ -642,10 +647,10 @@ public class ModelFacadePathBasicTest {
 
     ModelFacade.getInstance().addSwitchToNetwork("csw2", "net", 0);
 
-    ModelFacade.getInstance().addLinkToNetwork("ln13", "net", 0, "rsw1", "csw2");
-    ModelFacade.getInstance().addLinkToNetwork("ln14", "net", 0, "rsw2", "csw2");
-    ModelFacade.getInstance().addLinkToNetwork("ln15", "net", 0, "csw2", "rsw1");
-    ModelFacade.getInstance().addLinkToNetwork("ln16", "net", 0, "csw2", "rsw2");
+    ModelFacade.getInstance().addLinkToNetwork("ln21", "net", 0, "rsw1", "csw2");
+    ModelFacade.getInstance().addLinkToNetwork("ln22", "net", 0, "rsw2", "csw2");
+    ModelFacade.getInstance().addLinkToNetwork("ln23", "net", 0, "csw2", "rsw1");
+    ModelFacade.getInstance().addLinkToNetwork("ln24", "net", 0, "csw2", "rsw2");
   }
 
 }

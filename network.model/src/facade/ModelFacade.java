@@ -462,6 +462,19 @@ public class ModelFacade {
       return;
     }
 
+    // Check if a server is used as forwarding node (which is forbidden)
+    for (int i = 0; i < links.size(); i++) {
+      if (i != 0 && i != links.size() - 1) {
+        if (links.get(i).getSource() instanceof Server) {
+          return;
+        }
+
+        if (links.get(i).getTarget() instanceof Server) {
+          return;
+        }
+      }
+    }
+
     // Get all nodes from links
     final List<Node> nodes = new LinkedList<Node>();
 
