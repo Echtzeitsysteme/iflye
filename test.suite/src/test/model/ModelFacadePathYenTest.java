@@ -170,7 +170,7 @@ public class ModelFacadePathYenTest {
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
-    assertEquals(56, allPaths.size());
+    assertEquals(60, allPaths.size());
   }
 
   /**

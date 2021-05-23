@@ -66,7 +66,7 @@ public class Yen implements IPathGen {
         final List<SubstrateNode> rootPath = A.get(k - 1).subList(0, i + 1);
 
         for (final List<SubstrateNode> p : A) {
-          if (rootPath.equals(p.subList(0, i + 1))) {
+          if (p.size() > i && rootPath.equals(p.subList(0, i + 1))) {
             // Remove the links that are part of the previous shortest paths which share the same
             // root path.
             final Link toIgnore =

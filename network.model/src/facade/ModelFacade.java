@@ -490,17 +490,20 @@ public class ModelFacade {
     }
 
     // Create reverse path
-    if (!doesPathWithSourceAndTargetExist(target, source)) {
+    final List<Node> reversedNodes = Lists.reverse(nodes);
+    // Get all opposite links
+    final List<SubstrateLink> oppositeLinks = getOppositeLinks(links);
+
+    if (!doesSpecificPathWithSourceAndTargetExist(target, source, reversedNodes,
+        Lists.reverse(oppositeLinks))) {
       final SubstratePath reverse = genMetaPath(target, source);
-      final List<Node> reversedNodes = Lists.reverse(nodes);
+      reverse.getLinks().addAll(Lists.reverse(oppositeLinks));
+
       reverse.setHops(links.size());
       reverse.setNetwork(links.get(0).getNetwork());
       reverse.setName(concatNodeNames(reversedNodes));
       reverse.getNodes().addAll(reversedNodes);
 
-      // Get all opposite links
-      final List<SubstrateLink> oppositeLinks = getOppositeLinks(links);
-      reverse.getLinks().addAll(Lists.reverse(oppositeLinks));
       final int revBw = getMinimumBandwidthFromSubstrateLinks(oppositeLinks);
       reverse.setBandwidth(revBw);
       reverse.setResidualBandwidth(revBw);
