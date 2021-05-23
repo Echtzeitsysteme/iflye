@@ -41,11 +41,8 @@ public class Dijkstra implements IPathGen {
    * 
    * @param net SubstrateNetwork to generate all paths for.
    * @param start SubstrateNode to start with.
-   * @return List of nodes with all previous visited nodes.
    */
-  private List<Node> dijkstra(final SubstrateNetwork net, final SubstrateNode start) {
-    final List<Node> prev = new LinkedList<Node>();
-
+  private void dijkstra(final SubstrateNetwork net, final SubstrateNode start) {
     init(net, start);
 
     while (!nodes.isEmpty()) {
@@ -58,8 +55,6 @@ public class Dijkstra implements IPathGen {
         }
       }
     }
-
-    return prev;
   }
 
   /**
