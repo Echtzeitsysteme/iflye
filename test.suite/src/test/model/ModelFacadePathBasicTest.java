@@ -537,7 +537,7 @@ public class ModelFacadePathBasicTest {
    * @param mapping SourceID to targetID mapping.
    * @param pathsToCheck List of paths to check.
    */
-  private void checkPathSourcesAndTargets(final Map<String, String> mapping,
+  void checkPathSourcesAndTargets(final Map<String, String> mapping,
       final List<Path> pathsToCheck) {
     for (final String sourceId : mapping.keySet()) {
       final String targetId = mapping.get(sourceId);

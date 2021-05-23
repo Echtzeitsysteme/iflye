@@ -55,7 +55,7 @@ public class Yen implements IPathGen {
     for (int k = 1; k < K; k++) {
       // The spur node ranges from the first node to the next to last node in the previous
       // k-shortest path.
-      for (int i = 0; i < A.get(k - 1).size() - 2; i++) {
+      for (int i = 0; i < A.get(k - 1).size() - 1; i++) {
         // Setup for the nodes and links to ignore
         final Set<SubstrateNode> ignoredNodes = new HashSet<SubstrateNode>();
         final Set<SubstrateLink> ignoredLinks = new HashSet<SubstrateLink>();
@@ -66,7 +66,8 @@ public class Yen implements IPathGen {
         final List<SubstrateNode> rootPath = A.get(k - 1).subList(0, i + 1);
 
         for (final List<SubstrateNode> p : A) {
-          if (p.size() > i && rootPath.equals(p.subList(0, i + 1))) {
+          if (p.size() - 1 > i && rootPath.equals(p.subList(0, i + 1))) {
+            // if (rootPath.equals(p.subList(0, i + 1))) {
             // Remove the links that are part of the previous shortest paths which share the same
             // root path.
             final Link toIgnore =
@@ -195,8 +196,17 @@ public class Yen implements IPathGen {
     for (final Node n : net.getNodes()) {
       SubstrateNode sn = (SubstrateNode) n;
       if (!sn.equals(start)) {
-        final List<List<SubstrateNode>> candidates = yen(net, start, sn, K);
-        paths.put(sn, translateAll(candidates));
+        // System.out.println("start = " + start.getName() + ", sn = " + sn.getName());
+        try {
+          // if (sn.getName().equals("sub_srv_2")) {
+          // System.out.println();
+          // }
+
+          final List<List<SubstrateNode>> candidates = yen(net, start, sn, K);
+          paths.put(sn, translateAll(candidates));
+        } catch (final IndexOutOfBoundsException ex) {
+          System.out.println("ex caught!");
+        }
       }
     }
 

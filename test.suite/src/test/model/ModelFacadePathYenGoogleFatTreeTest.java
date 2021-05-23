@@ -2,6 +2,8 @@ package test.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +12,7 @@ import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.GoogleFatTreeNetworkGenerator;
 import generators.config.GoogleFatTreeConfig;
+import model.Node;
 import model.Path;
 
 /**
@@ -96,7 +99,28 @@ public class ModelFacadePathYenGoogleFatTreeTest {
     setExactPathLength(3);
     final List<Path> allPaths = createNetworkAndGetPaths(4);
 
-    ModelFacade.getInstance().persistModel();
+    final List<String> paths = new ArrayList<String>();
+
+    for (int i = 0; i < allPaths.size(); i++) {
+      // System.out.println(String.format("%03d", i + 1) + " " +
+      // allPaths.get(i).getSource().getName()
+      // + " -> " + allPaths.get(i).getTarget().getName());
+
+      String nodes = "";
+      for (final Node n : allPaths.get(i).getNodes()) {
+        nodes += n.getName() + "-";
+      }
+
+      paths.add(allPaths.get(i).getSource().getName() + " -> "
+          + allPaths.get(i).getTarget().getName() + ": " + nodes);
+    }
+
+    Collections.sort(paths);
+    for (int i = 0; i < paths.size(); i++) {
+
+      System.out.println(String.format("%03d", i + 1) + " " + paths.get(i));
+    }
+
 
     assertFalse(allPaths.isEmpty());
 
@@ -110,7 +134,28 @@ public class ModelFacadePathYenGoogleFatTreeTest {
     setExactPathLength(4);
     final List<Path> allPaths = createNetworkAndGetPaths(4);
 
-    ModelFacade.getInstance().persistModel();
+    final List<String> paths = new ArrayList<String>();
+
+    for (int i = 0; i < allPaths.size(); i++) {
+      // System.out.println(String.format("%03d", i + 1) + " " +
+      // allPaths.get(i).getSource().getName()
+      // + " -> " + allPaths.get(i).getTarget().getName());
+
+      String nodes = "";
+      for (final Node n : allPaths.get(i).getNodes()) {
+        nodes += n.getName() + "-";
+      }
+
+      paths.add(allPaths.get(i).getSource().getName() + " -> "
+          + allPaths.get(i).getTarget().getName() + ": " + nodes);
+    }
+
+    Collections.sort(paths);
+    for (int i = 0; i < paths.size(); i++) {
+
+      System.out.println(String.format("%03d", i + 1) + " " + paths.get(i));
+    }
+
 
     assertFalse(allPaths.isEmpty());
 
@@ -153,8 +198,7 @@ public class ModelFacadePathYenGoogleFatTreeTest {
         counter = numberOfServers * 2 + numberOfServers / 2;
         break;
       case 3:
-        counter =
-            numberOfServers * numberOfAggrSwitchesPerPod + numberOfServers * numberOfCoreSwitches;
+        counter = numberOfServers * 6;
         break;
       case 4:
         counter = numberOfServers * 16;
