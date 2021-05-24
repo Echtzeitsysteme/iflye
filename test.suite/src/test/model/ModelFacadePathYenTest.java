@@ -241,13 +241,17 @@ public class ModelFacadePathYenTest {
     ModelFacadePathBasicTest.twoTierSetupFourServersTwoCoreSwitches();
     ModelFacadeConfig.MIN_PATH_LENGTH = 2;
     ModelFacadeConfig.MAX_PATH_LENGTH = 2;
+    ModelFacadeConfig.YEN_K = 20;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
     final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
-    assertEquals(44, allPaths.size());
+    int ref = 0;
+    ref += 2 * 4 * 2; // Csw_n to servers * 2 (possibilities)
+    ref += 4 * 5 * 2; // Srv_n to servers and core switches * 2 (possibilities)
+    assertEquals(ref, allPaths.size());
   }
 
   @Test
@@ -255,6 +259,7 @@ public class ModelFacadePathYenTest {
     ModelFacadePathBasicTest.twoTierSetupFourServersTwoCoreSwitches();
     ModelFacadeConfig.MIN_PATH_LENGTH = 3;
     ModelFacadeConfig.MAX_PATH_LENGTH = 3;
+    ModelFacadeConfig.YEN_K = 10;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
     final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
@@ -269,13 +274,18 @@ public class ModelFacadePathYenTest {
     ModelFacadePathBasicTest.twoTierSetupFourServersTwoCoreSwitches();
     ModelFacadeConfig.MIN_PATH_LENGTH = 4;
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+    ModelFacadeConfig.YEN_K = 10;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
     final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
-    assertEquals(48, allPaths.size());
+    int ref = 0;
+    ref += 2 * 4 * 2; // Csw_n * Srv_n * 2 (possibilities)
+    ref += 4 * (2 * 2 + 4 * (4 - 1)); // Srv_n * (Csw_n * 2 (possibilities) + 4 (possibilities) *
+                                      // (Srv_n - 1))
+    assertEquals(ref, allPaths.size());
   }
 
   /**
