@@ -2,18 +2,15 @@ package test.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.GoogleFatTreeNetworkGenerator;
 import generators.config.GoogleFatTreeConfig;
-import model.Node;
 import model.Path;
 
 /**
@@ -92,7 +89,7 @@ public class ModelFacadePathYenGoogleFatTreeTest {
   @Test
   public void testGoogleFatTreeAggrPlanePathLength3() {
     setExactPathLength(3);
-    ModelFacadeConfig.YEN_K = 5;
+    ModelFacadeConfig.YEN_K = 3;
     final List<Path> allPaths = createPlaneNetworkAndGetPaths();
 
     assertFalse(allPaths.isEmpty());
@@ -102,10 +99,12 @@ public class ModelFacadePathYenGoogleFatTreeTest {
   @Test
   public void testGoogleFatTreeAggrPlanePathLength4() {
     setExactPathLength(4);
-    ModelFacadeConfig.YEN_K = 5;
+    ModelFacadeConfig.YEN_K = 3;
     final List<Path> allPaths = createPlaneNetworkAndGetPaths();
 
     assertFalse(allPaths.isEmpty());
+
+    // Check total number of paths
     assertEquals(4 * 6 + 2 * 4, allPaths.size());
   }
 
@@ -139,46 +138,10 @@ public class ModelFacadePathYenGoogleFatTreeTest {
     setExactPathLength(3);
     final List<Path> allPaths = createNetworkAndGetPaths(4);
 
-    // final List<String> paths = new ArrayList<String>();
-    //
-    // for (int i = 0; i < allPaths.size(); i++) {
-    // // System.out.println(String.format("%03d", i + 1) + " " +
-    // // allPaths.get(i).getSource().getName()
-    // // + " -> " + allPaths.get(i).getTarget().getName());
-    //
-    // String nodes = "";
-    // for (final Node n : allPaths.get(i).getNodes()) {
-    // nodes += n.getName() + "-";
-    // }
-    //
-    // paths.add(allPaths.get(i).getSource().getName() + " -> "
-    // + allPaths.get(i).getTarget().getName() + ": " + nodes);
-    // }
-    //
-    // Collections.sort(paths);
-    // for (int i = 0; i < paths.size(); i++) {
-    //
-    // System.out.println(String.format("%03d", i + 1) + " " + paths.get(i));
-    // }
-    final List<String> pNames = new LinkedList<String>();
-
-    for (final Path p : allPaths) {
-      pNames.add(p.getName());
-    }
-
-    Collections.sort(pNames);
-    pNames.forEach(System.out::println);
-
-
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
-    // assertEquals(calcNumberOfPathsRef(4, 3), allPaths.size());
-    int ref = 0;
-    ref += 4 * 16; // Csw_n * Srv_n
-    ref += 8 * 2 * 2; // Esw_n * Srv_n_near * 2 (possibilities)
-    ref += (16 * 4 + 16 * 2); // Srv_n * Csw_n + Srv_n * Esw_n_near
-    assertEquals(ref, allPaths.size());
+    assertEquals(calcNumberOfPathsRef(4, 3), allPaths.size());
   }
 
   @Test
@@ -187,33 +150,60 @@ public class ModelFacadePathYenGoogleFatTreeTest {
     setExactPathLength(4);
     final List<Path> allPaths = createNetworkAndGetPaths(4);
 
-    final List<String> paths = new ArrayList<String>();
-
-    for (int i = 0; i < allPaths.size(); i++) {
-      // System.out.println(String.format("%03d", i + 1) + " " +
-      // allPaths.get(i).getSource().getName()
-      // + " -> " + allPaths.get(i).getTarget().getName());
-
-      String nodes = "";
-      for (final Node n : allPaths.get(i).getNodes()) {
-        nodes += n.getName() + "-";
-      }
-
-      paths.add(allPaths.get(i).getSource().getName() + " -> "
-          + allPaths.get(i).getTarget().getName() + ": " + nodes);
-    }
-
-    Collections.sort(paths);
-    for (int i = 0; i < paths.size(); i++) {
-
-      System.out.println(String.format("%03d", i + 1) + " " + paths.get(i));
-    }
-
-
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
     assertEquals(calcNumberOfPathsRef(4, 4), allPaths.size());
+  }
+
+  @Test
+  public void testK6GoogleFatTreePathLength1() {
+    ModelFacadeConfig.YEN_K = 1;
+    setExactPathLength(1);
+    final List<Path> allPaths = createNetworkAndGetPaths(6);
+
+    assertFalse(allPaths.isEmpty());
+
+    // Check total number of paths
+    assertEquals(calcNumberOfPathsRef(6, 1), allPaths.size());
+  }
+
+  @Test
+  public void testK6GoogleFatTreePathLength2() {
+    ModelFacadeConfig.YEN_K = 1;
+    setExactPathLength(2);
+    final List<Path> allPaths = createNetworkAndGetPaths(6);
+
+    assertFalse(allPaths.isEmpty());
+
+    // Check total number of paths
+    assertEquals(calcNumberOfPathsRef(6, 2), allPaths.size());
+  }
+
+  @Disabled("Long runtime")
+  @Test
+  public void testK6GoogleFatTreePathLength3() {
+    ModelFacadeConfig.YEN_K = 4;
+    setExactPathLength(3);
+    final List<Path> allPaths = createNetworkAndGetPaths(6);
+
+    assertFalse(allPaths.isEmpty());
+
+    // Check total number of paths
+    assertEquals(calcNumberOfPathsRef(6, 3), allPaths.size());
+  }
+
+  @Disabled("Long runtime")
+  @Test
+  public void testK6GoogleFatTreePathLength4() {
+    ModelFacadeConfig.YEN_K = 3;
+    setExactPathLength(4);
+    final List<Path> allPaths = createNetworkAndGetPaths(6);
+
+    assertFalse(allPaths.isEmpty());
+
+    // Check total number of paths
+    assertEquals(calcNumberOfPathsRef(6, 4), allPaths.size());
   }
 
   /*
@@ -244,21 +234,13 @@ public class ModelFacadePathYenGoogleFatTreeTest {
 
     ModelFacade.getInstance().addLinkToNetwork("ln1", "net", 0, "srv1", "rsw1");
     ModelFacade.getInstance().addLinkToNetwork("ln2", "net", 0, "srv2", "rsw1");
-    // ModelFacade.getInstance().addLinkToNetwork("ln3", "net", 0, "srv3", "rsw1");
-    // ModelFacade.getInstance().addLinkToNetwork("ln4", "net", 0, "srv4", "rsw1");
 
-    // ModelFacade.getInstance().addLinkToNetwork("ln5", "net", 0, "srv1", "rsw2");
-    // ModelFacade.getInstance().addLinkToNetwork("ln6", "net", 0, "srv2", "rsw2");
     ModelFacade.getInstance().addLinkToNetwork("ln7", "net", 0, "srv3", "rsw2");
     ModelFacade.getInstance().addLinkToNetwork("ln8", "net", 0, "srv4", "rsw2");
 
     ModelFacade.getInstance().addLinkToNetwork("ln9", "net", 0, "rsw1", "srv1");
     ModelFacade.getInstance().addLinkToNetwork("ln10", "net", 0, "rsw1", "srv2");
-    // ModelFacade.getInstance().addLinkToNetwork("ln11", "net", 0, "rsw1", "srv3");
-    // ModelFacade.getInstance().addLinkToNetwork("ln12", "net", 0, "rsw1", "srv4");
 
-    // ModelFacade.getInstance().addLinkToNetwork("ln13", "net", 0, "rsw2", "srv1");
-    // ModelFacade.getInstance().addLinkToNetwork("ln14", "net", 0, "rsw2", "srv2");
     ModelFacade.getInstance().addLinkToNetwork("ln15", "net", 0, "rsw2", "srv3");
     ModelFacade.getInstance().addLinkToNetwork("ln16", "net", 0, "rsw2", "srv4");
 
@@ -285,30 +267,36 @@ public class ModelFacadePathYenGoogleFatTreeTest {
   private int calcNumberOfPathsRef(final int k, final int hops) {
     int counter = 0;
 
-    final int numberOfServers = (int) Math.pow(k / 2, 2) * k;
     final int numberOfEdgeSwitchesPerPod = k / 2;
     final int numberOfAggrSwitchesPerPod = k / 2;
     final int numberOfCoreSwitches = (int) Math.pow(k / 2, 2);
+    final int numberOfServersPerPod = (int) Math.pow(k / 2, 2);
+    final int numberOfServersPerEdgeSwitch = numberOfServersPerPod / numberOfEdgeSwitchesPerPod;
 
     switch (hops) {
       case 1:
-        counter = numberOfServers;
+        counter = (numberOfServersPerPod * k) * 2;
         break;
       case 2:
-        counter = numberOfServers * 2 + numberOfServers / 2;
+        counter = numberOfServersPerPod * k * (numberOfServersPerEdgeSwitch - 1)
+            + numberOfServersPerPod * k * numberOfAggrSwitchesPerPod * 2;
         break;
       case 3:
-        counter = numberOfServers * 6;
+        counter = numberOfServersPerPod * k * numberOfAggrSwitchesPerPod * 2
+            + numberOfServersPerPod * k * numberOfCoreSwitches * 2;
         break;
       case 4:
-        counter = numberOfServers * 16;
+        // counter =
+        // numberOfServersPerPod * k * numberOfServersPerEdgeSwitch * numberOfAggrSwitchesPerPod
+        // + numberOfServersPerPod * k * numberOfAggrSwitchesPerPod
+        // + numberOfServersPerPod * k * (k - 1);
+        counter = numberOfServersPerPod * k * (int) Math.pow(k, 2) * 2;
         break;
       default:
         throw new IllegalArgumentException();
     }
 
-    // Two model paths for one actual path
-    return counter * 2;
+    return counter;
   }
 
 }

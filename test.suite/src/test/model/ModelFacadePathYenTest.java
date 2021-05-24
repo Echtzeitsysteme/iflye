@@ -228,10 +228,6 @@ public class ModelFacadePathYenTest {
     final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
-    for (final Path p : allPaths) {
-      System.out.println(p.getSource().getName() + " -> " + p.getTarget().getName());
-    }
-
     // Check total number of paths
     assertEquals(16, allPaths.size());
   }
