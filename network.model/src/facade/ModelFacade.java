@@ -480,8 +480,9 @@ public class ModelFacade {
 
     for (final SubstrateLink l : links) {
       nodes.add(l.getSource());
-      nodes.add(l.getTarget());
+      // nodes.add(l.getTarget());
     }
+    nodes.add(links.get(links.size() - 1).getTarget());
 
     final int lastIndex = links.size() - 1;
     final Node source = links.get(0).getSource();

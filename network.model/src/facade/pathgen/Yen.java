@@ -168,7 +168,7 @@ public class Yen implements IPathGen {
           }
           return 0;
         } else {
-          return o2.size() - o1.size();
+          return o1.size() - o2.size();
         }
       }
     });
