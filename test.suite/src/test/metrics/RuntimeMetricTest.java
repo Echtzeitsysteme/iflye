@@ -46,7 +46,7 @@ public class RuntimeMetricTest extends AMetricTest {
     }
     metric.stop();
     assertTrue(metric.getMilliSeconds() > 1);
-    assertTrue(metric.getMilliSeconds() < 2);
+    assertTrue(metric.getMilliSeconds() < 5);
   }
 
 

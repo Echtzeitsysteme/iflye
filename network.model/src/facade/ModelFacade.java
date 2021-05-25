@@ -2,6 +2,7 @@ package facade;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -734,13 +735,13 @@ public class ModelFacade {
    */
   public Set<Path> getPathsFromSourceToTarget(final Node source, final Node target) {
     final List<Path> allPaths = getAllPathsOfNetwork(source.getNetwork().getName());
-    final Set<Path> foundPaths = new HashSet<Path>();
+    final Set<Path> foundPaths = Collections.synchronizedSet(new HashSet<Path>());
 
-    for (final Path p : allPaths) {
+    allPaths.parallelStream().forEach(p -> {
       if (p.getSource().equals(source) && p.getTarget().equals(target)) {
         foundPaths.add(p);
       }
-    }
+    });
 
     return foundPaths;
   }

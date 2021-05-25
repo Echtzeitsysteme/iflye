@@ -1,5 +1,6 @@
 package facade.pathgen;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -186,15 +187,15 @@ public class Dijkstra implements IPathGen {
   public Map<SubstrateNode, List<SubstrateLink>> getAllFastestPaths(final SubstrateNetwork net,
       final SubstrateNode start) {
     final Map<SubstrateNode, List<SubstrateLink>> paths =
-        new HashMap<SubstrateNode, List<SubstrateLink>>();
+        Collections.synchronizedMap(new HashMap<SubstrateNode, List<SubstrateLink>>());
     dijkstra(net, start);
 
-    for (final Node n : net.getNodes()) {
-      SubstrateNode sn = (SubstrateNode) n;
+    net.getNodes().parallelStream().forEach((n) -> {
+      final SubstrateNode sn = (SubstrateNode) n;
       if (!sn.equals(start)) {
         paths.put(sn, shortestPath(sn));
       }
-    }
+    });
 
     return paths;
   }
@@ -209,17 +210,18 @@ public class Dijkstra implements IPathGen {
     }
 
     final Map<SubstrateNode, List<List<SubstrateLink>>> paths =
-        new HashMap<SubstrateNode, List<List<SubstrateLink>>>();
+        Collections.synchronizedMap(new HashMap<SubstrateNode, List<List<SubstrateLink>>>());
+
     dijkstra(net, start);
 
-    for (final Node n : net.getNodes()) {
-      SubstrateNode sn = (SubstrateNode) n;
+    net.getNodes().parallelStream().forEach((n) -> {
+      final SubstrateNode sn = (SubstrateNode) n;
       if (!sn.equals(start)) {
         final List<List<SubstrateLink>> act = new LinkedList<List<SubstrateLink>>();
         act.add(shortestPath(sn));
         paths.put(sn, act);
       }
-    }
+    });
 
     return paths;
   }
