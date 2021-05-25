@@ -462,13 +462,27 @@ public class ModelFacade {
       return;
     }
 
+    // Check if a server is used as forwarding node (which is forbidden)
+    for (int i = 0; i < links.size(); i++) {
+      if (i != 0 && i != links.size() - 1) {
+        if (links.get(i).getSource() instanceof Server) {
+          return;
+        }
+
+        if (links.get(i).getTarget() instanceof Server) {
+          return;
+        }
+      }
+    }
+
     // Get all nodes from links
     final List<Node> nodes = new LinkedList<Node>();
 
     for (final SubstrateLink l : links) {
       nodes.add(l.getSource());
-      nodes.add(l.getTarget());
+      // nodes.add(l.getTarget());
     }
+    nodes.add(links.get(links.size() - 1).getTarget());
 
     final int lastIndex = links.size() - 1;
     final Node source = links.get(0).getSource();
@@ -490,17 +504,20 @@ public class ModelFacade {
     }
 
     // Create reverse path
-    if (!doesPathWithSourceAndTargetExist(target, source)) {
+    final List<Node> reversedNodes = Lists.reverse(nodes);
+    // Get all opposite links
+    final List<SubstrateLink> oppositeLinks = getOppositeLinks(links);
+
+    if (!doesSpecificPathWithSourceAndTargetExist(target, source, reversedNodes,
+        Lists.reverse(oppositeLinks))) {
       final SubstratePath reverse = genMetaPath(target, source);
-      final List<Node> reversedNodes = Lists.reverse(nodes);
+      reverse.getLinks().addAll(Lists.reverse(oppositeLinks));
+
       reverse.setHops(links.size());
       reverse.setNetwork(links.get(0).getNetwork());
       reverse.setName(concatNodeNames(reversedNodes));
       reverse.getNodes().addAll(reversedNodes);
 
-      // Get all opposite links
-      final List<SubstrateLink> oppositeLinks = getOppositeLinks(links);
-      reverse.getLinks().addAll(Lists.reverse(oppositeLinks));
       final int revBw = getMinimumBandwidthFromSubstrateLinks(oppositeLinks);
       reverse.setBandwidth(revBw);
       reverse.setResidualBandwidth(revBw);
@@ -605,6 +622,7 @@ public class ModelFacade {
    * @param target Target to search path for.
    * @return True if a path with given parameters already exists.
    */
+  @Deprecated
   public boolean doesPathWithSourceAndTargetExist(final Node source, final Node target) {
     return getPathFromSourceToTarget(source, target) != null;
   }

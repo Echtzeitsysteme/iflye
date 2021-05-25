@@ -55,7 +55,7 @@ public class Yen implements IPathGen {
     for (int k = 1; k < K; k++) {
       // The spur node ranges from the first node to the next to last node in the previous
       // k-shortest path.
-      for (int i = 0; i < A.get(k - 1).size() - 2; i++) {
+      for (int i = 0; i < A.get(k - 1).size() - 1; i++) {
         // Setup for the nodes and links to ignore
         final Set<SubstrateNode> ignoredNodes = new HashSet<SubstrateNode>();
         final Set<SubstrateLink> ignoredLinks = new HashSet<SubstrateLink>();
@@ -66,7 +66,8 @@ public class Yen implements IPathGen {
         final List<SubstrateNode> rootPath = A.get(k - 1).subList(0, i + 1);
 
         for (final List<SubstrateNode> p : A) {
-          if (rootPath.equals(p.subList(0, i + 1))) {
+          if (p.size() - 1 > i && rootPath.equals(p.subList(0, i + 1))) {
+            // if (rootPath.equals(p.subList(0, i + 1))) {
             // Remove the links that are part of the previous shortest paths which share the same
             // root path.
             final Link toIgnore =
@@ -167,7 +168,7 @@ public class Yen implements IPathGen {
           }
           return 0;
         } else {
-          return o2.size() - o1.size();
+          return o1.size() - o2.size();
         }
       }
     });
