@@ -2,9 +2,9 @@ package test.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -97,55 +97,50 @@ public class ModelFacadePathYenTest {
     final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
+    // allPaths.stream().map(e -> e.getName()).sorted().forEach(e -> System.out.println(e));
+
     // Check total number of paths
     assertEquals(96, allPaths.size());
 
     // Check individual source and targets
-    final Map<String, String> mapping = new HashMap<String, String>();
-    mapping.put("srv1", "rsw1");
-    mapping.put("srv1", "csw1");
-    mapping.put("srv1", "rsw2");
-    mapping.put("srv1", "srv2");
-    mapping.put("srv1", "srv3");
-    mapping.put("srv1", "srv4");
+    final Set<Tuple<String, String>> mapping = new HashSet<Tuple<String, String>>();
 
-    mapping.put("srv2", "srv1");
-    mapping.put("srv2", "srv3");
-    mapping.put("srv2", "srv4");
-    mapping.put("srv2", "rsw1");
-    mapping.put("srv2", "rsw2");
-    mapping.put("srv2", "csw1");
+    for (int i = 1; i <= 4; i++) {
+      mapping.add(new Tuple<String, String>("srv" + i, "rsw1"));
+      mapping.add(new Tuple<String, String>("srv" + i, "rsw1"));
+      mapping.add(new Tuple<String, String>("srv" + i, "rsw2"));
+      mapping.add(new Tuple<String, String>("srv" + i, "rsw2"));
+      mapping.add(new Tuple<String, String>("srv" + i, "csw1"));
+      mapping.add(new Tuple<String, String>("srv" + i, "csw1"));
+    }
 
-    mapping.put("srv3", "srv1");
-    mapping.put("srv3", "srv2");
-    mapping.put("srv3", "srv4");
-    mapping.put("srv3", "rsw1");
-    mapping.put("srv3", "rsw2");
-    mapping.put("srv3", "csw1");
+    for (int i = 1; i <= 4; i++) {
+      mapping.add(new Tuple<String, String>("srv1", "srv2"));
+      mapping.add(new Tuple<String, String>("srv1", "srv3"));
+      mapping.add(new Tuple<String, String>("srv1", "srv4"));
 
-    mapping.put("srv4", "srv1");
-    mapping.put("srv4", "srv2");
-    mapping.put("srv4", "srv3");
-    mapping.put("srv4", "rsw1");
-    mapping.put("srv4", "rsw2");
-    mapping.put("srv4", "csw1");
+      mapping.add(new Tuple<String, String>("srv2", "srv1"));
+      mapping.add(new Tuple<String, String>("srv2", "srv3"));
+      mapping.add(new Tuple<String, String>("srv2", "srv4"));
 
-    mapping.put("rsw1", "srv1");
-    mapping.put("rsw1", "srv2");
-    mapping.put("rsw1", "srv3");
-    mapping.put("rsw1", "srv4");
+      mapping.add(new Tuple<String, String>("srv3", "srv2"));
+      mapping.add(new Tuple<String, String>("srv3", "srv1"));
+      mapping.add(new Tuple<String, String>("srv3", "srv4"));
 
-    mapping.put("rsw2", "srv1");
-    mapping.put("rsw2", "srv2");
-    mapping.put("rsw2", "srv3");
-    mapping.put("rsw2", "srv4");
+      mapping.add(new Tuple<String, String>("srv4", "srv2"));
+      mapping.add(new Tuple<String, String>("srv4", "srv3"));
+      mapping.add(new Tuple<String, String>("srv4", "srv1"));
+    }
 
-    mapping.put("csw1", "srv1");
-    mapping.put("csw1", "srv2");
-    mapping.put("csw1", "srv3");
-    mapping.put("csw1", "srv4");
+    for (int i = 1; i <= 4; i++) {
+      for (int j = 0; j <= 1; j++) {
+        mapping.add(new Tuple<String, String>("rsw1", "srv" + i));
+        mapping.add(new Tuple<String, String>("rsw2", "srv" + i));
+        mapping.add(new Tuple<String, String>("csw1", "srv" + i));
+      }
+    }
 
-    basic.checkPathSourcesAndTargets(mapping, allPaths);
+    ModelFacadePathBasicTest.checkPathSourcesAndTargets(mapping, allPaths);
   }
 
   @Test

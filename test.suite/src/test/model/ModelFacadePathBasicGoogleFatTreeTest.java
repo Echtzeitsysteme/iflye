@@ -3,11 +3,8 @@ package test.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +13,6 @@ import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.GoogleFatTreeNetworkGenerator;
 import generators.config.GoogleFatTreeConfig;
-import model.Link;
-import model.Node;
 import model.Path;
 
 /**
@@ -72,8 +67,20 @@ public class ModelFacadePathBasicGoogleFatTreeTest {
 
     assertFalse(allPaths.isEmpty());
 
+    final Set<Tuple<String, String>> mapping = new HashSet<Tuple<String, String>>();
+
+    int j = 0;
+    for (int i = 0; i < 16; i++) {
+      if (i % 2 == 0 && i != 0) {
+        j++;
+      }
+      mapping.add(new Tuple<String, String>("sub_srv_" + i, "sub_esw_" + j));
+      mapping.add(new Tuple<String, String>("sub_esw_" + j, "sub_srv_" + i));
+    }
+
     // Check total number of paths
     assertEquals(32, allPaths.size());
+    ModelFacadePathBasicTest.checkPathSourcesAndTargets(mapping, allPaths);
   }
 
   @Test
@@ -126,85 +133,6 @@ public class ModelFacadePathBasicGoogleFatTreeTest {
   private void setExactPathLength(final int length) {
     ModelFacadeConfig.MIN_PATH_LENGTH = length;
     ModelFacadeConfig.MAX_PATH_LENGTH = length;
-  }
-
-  /**
-   * Tests a list of a sets of strings against a list of paths. The check ensures, that all name
-   * sets are contained within the list of paths (with links).
-   * 
-   * @param linkNames List of sets of strings with link names for each path.
-   * @param pathsToCheck List of paths to check.
-   */
-  private void checkPathLinkNames(final List<Set<String>> linkNames,
-      final List<Path> pathsToCheck) {
-    List<Set<String>> pathLinks = new LinkedList<Set<String>>();
-    for (final Path p : pathsToCheck) {
-      final Set<String> fromPath = new HashSet<String>();
-      for (Link l : p.getLinks()) {
-        fromPath.add(l.getName());
-      }
-      pathLinks.add(fromPath);
-    }
-
-    assertTrue(linkNames.containsAll(pathLinks));
-    assertTrue(pathLinks.containsAll(linkNames));
-  }
-
-  /**
-   * Tests a list of sets of strings against a list of paths. The check ensures, that all name sets
-   * are contained within the list of paths (with nodes).
-   * 
-   * @param nodeNames List of sets of strings with node names for each path.
-   * @param pathsToCheck List of paths to check.
-   */
-  private void checkPathNodeNames(final List<Set<String>> nodeNames,
-      final List<Path> pathsToCheck) {
-    List<Set<String>> pathNodes = new LinkedList<Set<String>>();
-    for (final Path p : pathsToCheck) {
-      final Set<String> fromPath = new HashSet<String>();
-      for (Node n : p.getNodes()) {
-        fromPath.add(n.getName());
-      }
-      pathNodes.add(fromPath);
-    }
-
-    // Ignore order
-    assertTrue(nodeNames.containsAll(pathNodes));
-    assertTrue(pathNodes.containsAll(nodeNames));
-  }
-
-  /**
-   * Checks a given list of paths against a given map of strings to strings. The map represents the
-   * mapping of sourceID to targetID for all paths.
-   * 
-   * @param mapping SourceID to targetID mapping.
-   * @param pathsToCheck List of paths to check.
-   */
-  private void checkPathSourcesAndTargets(final Map<String, String> mapping,
-      final List<Path> pathsToCheck) {
-    for (final String sourceId : mapping.keySet()) {
-      final String targetId = mapping.get(sourceId);
-      checkPathSourceAndTarget(sourceId, targetId, pathsToCheck);
-    }
-  }
-
-  /**
-   * Checks a given list of paths for one specific sourceID and targetID. If no path with the given
-   * sourceID and targetID can be found, the check fails.
-   * 
-   * @param sourceId SourceID to search for.
-   * @param targetId TargetID to search for.
-   * @param pathsToCheck List of paths to search in.
-   */
-  private void checkPathSourceAndTarget(final String sourceId, final String targetId,
-      final List<Path> pathsToCheck) {
-    for (final Path p : pathsToCheck) {
-      if (p.getSource().getName().equals(sourceId) && p.getTarget().getName().equals(targetId)) {
-        return;
-      }
-    }
-
-    fail("No matching path was found for tuple: " + sourceId + " - " + targetId);
   }
 
 }

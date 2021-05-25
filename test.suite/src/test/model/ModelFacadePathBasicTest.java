@@ -5,11 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -78,13 +77,13 @@ public class ModelFacadePathBasicTest {
     assertEquals(6, allPaths.size());
 
     // Check individual source and targets
-    final Map<String, String> mapping = new HashMap<String, String>();
-    mapping.put("srv1", "sw");
-    mapping.put("sw", "srv1");
-    mapping.put("srv2", "sw");
-    mapping.put("sw", "srv2");
-    mapping.put("srv1", "srv2");
-    mapping.put("srv2", "srv1");
+    final Set<Tuple<String, String>> mapping = new HashSet<Tuple<String, String>>();
+    mapping.add(new Tuple<String, String>("srv1", "sw"));
+    mapping.add(new Tuple<String, String>("sw", "srv1"));
+    mapping.add(new Tuple<String, String>("srv2", "sw"));
+    mapping.add(new Tuple<String, String>("sw", "srv2"));
+    mapping.add(new Tuple<String, String>("srv1", "srv2"));
+    mapping.add(new Tuple<String, String>("srv2", "srv1"));
 
     checkPathSourcesAndTargets(mapping, allPaths);
   }
@@ -103,27 +102,27 @@ public class ModelFacadePathBasicTest {
     assertEquals(20, allPaths.size());
 
     // Check individual source and targets
-    final Map<String, String> mapping = new HashMap<String, String>();
-    mapping.put("srv1", "sw");
-    mapping.put("sw", "srv1");
-    mapping.put("srv2", "sw");
-    mapping.put("sw", "srv2");
-    mapping.put("srv3", "sw");
-    mapping.put("sw", "srv3");
-    mapping.put("srv4", "sw");
-    mapping.put("sw", "srv4");
-    mapping.put("srv1", "srv2");
-    mapping.put("srv2", "srv1");
-    mapping.put("srv1", "srv3");
-    mapping.put("srv3", "srv1");
-    mapping.put("srv1", "srv4");
-    mapping.put("srv4", "srv1");
-    mapping.put("srv2", "srv3");
-    mapping.put("srv3", "srv2");
-    mapping.put("srv2", "srv4");
-    mapping.put("srv4", "srv2");
-    mapping.put("srv3", "srv4");
-    mapping.put("srv4", "srv3");
+    final Set<Tuple<String, String>> mapping = new HashSet<Tuple<String, String>>();
+    mapping.add(new Tuple<String, String>("srv1", "sw"));
+    mapping.add(new Tuple<String, String>("sw", "srv1"));
+    mapping.add(new Tuple<String, String>("srv2", "sw"));
+    mapping.add(new Tuple<String, String>("sw", "srv2"));
+    mapping.add(new Tuple<String, String>("srv3", "sw"));
+    mapping.add(new Tuple<String, String>("sw", "srv3"));
+    mapping.add(new Tuple<String, String>("srv4", "sw"));
+    mapping.add(new Tuple<String, String>("sw", "srv4"));
+    mapping.add(new Tuple<String, String>("srv1", "srv2"));
+    mapping.add(new Tuple<String, String>("srv2", "srv1"));
+    mapping.add(new Tuple<String, String>("srv1", "srv3"));
+    mapping.add(new Tuple<String, String>("srv3", "srv1"));
+    mapping.add(new Tuple<String, String>("srv1", "srv4"));
+    mapping.add(new Tuple<String, String>("srv4", "srv1"));
+    mapping.add(new Tuple<String, String>("srv2", "srv3"));
+    mapping.add(new Tuple<String, String>("srv3", "srv2"));
+    mapping.add(new Tuple<String, String>("srv2", "srv4"));
+    mapping.add(new Tuple<String, String>("srv4", "srv2"));
+    mapping.add(new Tuple<String, String>("srv3", "srv4"));
+    mapping.add(new Tuple<String, String>("srv4", "srv3"));
 
     checkPathSourcesAndTargets(mapping, allPaths);
   }
@@ -142,49 +141,49 @@ public class ModelFacadePathBasicTest {
     assertEquals(36, allPaths.size());
 
     // Check individual source and targets
-    final Map<String, String> mapping = new HashMap<String, String>();
-    mapping.put("srv1", "rsw1");
-    mapping.put("srv1", "csw1");
-    mapping.put("srv1", "rsw2");
-    mapping.put("srv1", "srv2");
-    mapping.put("srv1", "srv3");
-    mapping.put("srv1", "srv4");
+    final Set<Tuple<String, String>> mapping = new HashSet<Tuple<String, String>>();
+    mapping.add(new Tuple<String, String>("srv1", "rsw1"));
+    mapping.add(new Tuple<String, String>("srv1", "csw1"));
+    mapping.add(new Tuple<String, String>("srv1", "rsw2"));
+    mapping.add(new Tuple<String, String>("srv1", "srv2"));
+    mapping.add(new Tuple<String, String>("srv1", "srv3"));
+    mapping.add(new Tuple<String, String>("srv1", "srv4"));
 
-    mapping.put("srv2", "srv1");
-    mapping.put("srv2", "srv3");
-    mapping.put("srv2", "srv4");
-    mapping.put("srv2", "rsw1");
-    mapping.put("srv2", "rsw2");
-    mapping.put("srv2", "csw1");
+    mapping.add(new Tuple<String, String>("srv2", "srv1"));
+    mapping.add(new Tuple<String, String>("srv2", "srv3"));
+    mapping.add(new Tuple<String, String>("srv2", "srv4"));
+    mapping.add(new Tuple<String, String>("srv2", "rsw1"));
+    mapping.add(new Tuple<String, String>("srv2", "rsw2"));
+    mapping.add(new Tuple<String, String>("srv2", "csw1"));
 
-    mapping.put("srv3", "srv1");
-    mapping.put("srv3", "srv2");
-    mapping.put("srv3", "srv4");
-    mapping.put("srv3", "rsw1");
-    mapping.put("srv3", "rsw2");
-    mapping.put("srv3", "csw1");
+    mapping.add(new Tuple<String, String>("srv3", "srv1"));
+    mapping.add(new Tuple<String, String>("srv3", "srv2"));
+    mapping.add(new Tuple<String, String>("srv3", "srv4"));
+    mapping.add(new Tuple<String, String>("srv3", "rsw1"));
+    mapping.add(new Tuple<String, String>("srv3", "rsw2"));
+    mapping.add(new Tuple<String, String>("srv3", "csw1"));
 
-    mapping.put("srv4", "srv1");
-    mapping.put("srv4", "srv2");
-    mapping.put("srv4", "srv3");
-    mapping.put("srv4", "rsw1");
-    mapping.put("srv4", "rsw2");
-    mapping.put("srv4", "csw1");
+    mapping.add(new Tuple<String, String>("srv4", "srv1"));
+    mapping.add(new Tuple<String, String>("srv4", "srv2"));
+    mapping.add(new Tuple<String, String>("srv4", "srv3"));
+    mapping.add(new Tuple<String, String>("srv4", "rsw1"));
+    mapping.add(new Tuple<String, String>("srv4", "rsw2"));
+    mapping.add(new Tuple<String, String>("srv4", "csw1"));
 
-    mapping.put("rsw1", "srv1");
-    mapping.put("rsw1", "srv2");
-    mapping.put("rsw1", "srv3");
-    mapping.put("rsw1", "srv4");
+    mapping.add(new Tuple<String, String>("rsw1", "srv1"));
+    mapping.add(new Tuple<String, String>("rsw1", "srv2"));
+    mapping.add(new Tuple<String, String>("rsw1", "srv3"));
+    mapping.add(new Tuple<String, String>("rsw1", "srv4"));
 
-    mapping.put("rsw2", "srv1");
-    mapping.put("rsw2", "srv2");
-    mapping.put("rsw2", "srv3");
-    mapping.put("rsw2", "srv4");
+    mapping.add(new Tuple<String, String>("rsw2", "srv1"));
+    mapping.add(new Tuple<String, String>("rsw2", "srv2"));
+    mapping.add(new Tuple<String, String>("rsw2", "srv3"));
+    mapping.add(new Tuple<String, String>("rsw2", "srv4"));
 
-    mapping.put("csw1", "srv1");
-    mapping.put("csw1", "srv2");
-    mapping.put("csw1", "srv3");
-    mapping.put("csw1", "srv4");
+    mapping.add(new Tuple<String, String>("csw1", "srv1"));
+    mapping.add(new Tuple<String, String>("csw1", "srv2"));
+    mapping.add(new Tuple<String, String>("csw1", "srv3"));
+    mapping.add(new Tuple<String, String>("csw1", "srv4"));
 
     checkPathSourcesAndTargets(mapping, allPaths);
   }
@@ -203,58 +202,59 @@ public class ModelFacadePathBasicTest {
     assertEquals(44, allPaths.size());
 
     // Check individual source and targets
-    final Map<String, String> mapping = new HashMap<String, String>();
-    mapping.put("srv1", "rsw1");
-    mapping.put("srv1", "csw1");
-    mapping.put("srv1", "csw2");
-    mapping.put("srv1", "rsw2");
-    mapping.put("srv1", "srv2");
-    mapping.put("srv1", "srv3");
-    mapping.put("srv1", "srv4");
+    final Set<Tuple<String, String>> mapping = new HashSet<Tuple<String, String>>();
 
-    mapping.put("srv2", "srv1");
-    mapping.put("srv2", "srv3");
-    mapping.put("srv2", "srv4");
-    mapping.put("srv2", "rsw1");
-    mapping.put("srv2", "rsw2");
-    mapping.put("srv2", "csw1");
-    mapping.put("srv2", "csw2");
+    mapping.add(new Tuple<String, String>("srv1", "rsw1"));
+    mapping.add(new Tuple<String, String>("srv1", "csw1"));
+    mapping.add(new Tuple<String, String>("srv1", "csw2"));
+    mapping.add(new Tuple<String, String>("srv1", "rsw2"));
+    mapping.add(new Tuple<String, String>("srv1", "srv2"));
+    mapping.add(new Tuple<String, String>("srv1", "srv3"));
+    mapping.add(new Tuple<String, String>("srv1", "srv4"));
 
-    mapping.put("srv3", "srv1");
-    mapping.put("srv3", "srv2");
-    mapping.put("srv3", "srv4");
-    mapping.put("srv3", "rsw1");
-    mapping.put("srv3", "rsw2");
-    mapping.put("srv3", "csw1");
-    mapping.put("srv3", "csw2");
+    mapping.add(new Tuple<String, String>("srv2", "srv1"));
+    mapping.add(new Tuple<String, String>("srv2", "srv3"));
+    mapping.add(new Tuple<String, String>("srv2", "srv4"));
+    mapping.add(new Tuple<String, String>("srv2", "rsw1"));
+    mapping.add(new Tuple<String, String>("srv2", "rsw2"));
+    mapping.add(new Tuple<String, String>("srv2", "csw1"));
+    mapping.add(new Tuple<String, String>("srv2", "csw2"));
 
-    mapping.put("srv4", "srv1");
-    mapping.put("srv4", "srv2");
-    mapping.put("srv4", "srv3");
-    mapping.put("srv4", "rsw1");
-    mapping.put("srv4", "rsw2");
-    mapping.put("srv4", "csw1");
-    mapping.put("srv4", "csw2");
+    mapping.add(new Tuple<String, String>("srv3", "srv1"));
+    mapping.add(new Tuple<String, String>("srv3", "srv2"));
+    mapping.add(new Tuple<String, String>("srv3", "srv4"));
+    mapping.add(new Tuple<String, String>("srv3", "rsw1"));
+    mapping.add(new Tuple<String, String>("srv3", "rsw2"));
+    mapping.add(new Tuple<String, String>("srv3", "csw1"));
+    mapping.add(new Tuple<String, String>("srv3", "csw2"));
 
-    mapping.put("rsw1", "srv1");
-    mapping.put("rsw1", "srv2");
-    mapping.put("rsw1", "srv3");
-    mapping.put("rsw1", "srv4");
+    mapping.add(new Tuple<String, String>("srv4", "srv1"));
+    mapping.add(new Tuple<String, String>("srv4", "srv2"));
+    mapping.add(new Tuple<String, String>("srv4", "srv3"));
+    mapping.add(new Tuple<String, String>("srv4", "rsw1"));
+    mapping.add(new Tuple<String, String>("srv4", "rsw2"));
+    mapping.add(new Tuple<String, String>("srv4", "csw1"));
+    mapping.add(new Tuple<String, String>("srv4", "csw2"));
 
-    mapping.put("rsw2", "srv1");
-    mapping.put("rsw2", "srv2");
-    mapping.put("rsw2", "srv3");
-    mapping.put("rsw2", "srv4");
+    mapping.add(new Tuple<String, String>("rsw1", "srv1"));
+    mapping.add(new Tuple<String, String>("rsw1", "srv2"));
+    mapping.add(new Tuple<String, String>("rsw1", "srv3"));
+    mapping.add(new Tuple<String, String>("rsw1", "srv4"));
 
-    mapping.put("csw1", "srv1");
-    mapping.put("csw1", "srv2");
-    mapping.put("csw1", "srv3");
-    mapping.put("csw1", "srv4");
+    mapping.add(new Tuple<String, String>("rsw2", "srv1"));
+    mapping.add(new Tuple<String, String>("rsw2", "srv2"));
+    mapping.add(new Tuple<String, String>("rsw2", "srv3"));
+    mapping.add(new Tuple<String, String>("rsw2", "srv4"));
 
-    mapping.put("csw2", "srv1");
-    mapping.put("csw2", "srv2");
-    mapping.put("csw2", "srv3");
-    mapping.put("csw2", "srv4");
+    mapping.add(new Tuple<String, String>("csw1", "srv1"));
+    mapping.add(new Tuple<String, String>("csw1", "srv2"));
+    mapping.add(new Tuple<String, String>("csw1", "srv3"));
+    mapping.add(new Tuple<String, String>("csw1", "srv4"));
+
+    mapping.add(new Tuple<String, String>("csw2", "srv1"));
+    mapping.add(new Tuple<String, String>("csw2", "srv2"));
+    mapping.add(new Tuple<String, String>("csw2", "srv3"));
+    mapping.add(new Tuple<String, String>("csw2", "srv4"));
 
     checkPathSourcesAndTargets(mapping, allPaths);
   }
@@ -531,17 +531,19 @@ public class ModelFacadePathBasicTest {
   }
 
   /**
-   * Checks a given list of paths against a given map of strings to strings. The map represents the
-   * mapping of sourceID to targetID for all paths.
+   * Checks a given list of paths against a given set of string mappings to string. The set
+   * represents the mapping of sourceID to targetID for all paths.
    * 
    * @param mapping SourceID to targetID mapping.
    * @param pathsToCheck List of paths to check.
    */
-  void checkPathSourcesAndTargets(final Map<String, String> mapping,
+  static void checkPathSourcesAndTargets(final Set<Tuple<String, String>> mapping,
       final List<Path> pathsToCheck) {
-    for (final String sourceId : mapping.keySet()) {
-      final String targetId = mapping.get(sourceId);
-      checkPathSourceAndTarget(sourceId, targetId, pathsToCheck);
+    assertEquals(mapping.size(), pathsToCheck.size());
+    final Iterator<Tuple<String, String>> it = mapping.iterator();
+    while (it.hasNext()) {
+      final Tuple<String, String> next = it.next();
+      checkPathSourceAndTarget(next.x, next.y, pathsToCheck);
     }
   }
 
@@ -553,7 +555,7 @@ public class ModelFacadePathBasicTest {
    * @param targetId TargetID to search for.
    * @param pathsToCheck List of paths to search in.
    */
-  private void checkPathSourceAndTarget(final String sourceId, final String targetId,
+  static private void checkPathSourceAndTarget(final String sourceId, final String targetId,
       final List<Path> pathsToCheck) {
     for (final Path p : pathsToCheck) {
       if (p.getSource().getName().equals(sourceId) && p.getTarget().getName().equals(targetId)) {

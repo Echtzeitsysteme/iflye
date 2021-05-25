@@ -210,6 +210,12 @@ public class ModelFacadePathYenGoogleFatTreeTest {
    * Utility methods
    */
 
+  /**
+   * Creates a Google Fat Tree network for given parameter k.
+   * 
+   * @param k Parameter.
+   * @return All paths of the created network.
+   */
   private List<Path> createNetworkAndGetPaths(final int k) {
     final GoogleFatTreeConfig subConfig = new GoogleFatTreeConfig(k);
     final GoogleFatTreeNetworkGenerator gen = new GoogleFatTreeNetworkGenerator(subConfig);
@@ -220,6 +226,11 @@ public class ModelFacadePathYenGoogleFatTreeTest {
     return ModelFacade.getInstance().getAllPathsOfNetwork("sub");
   }
 
+  /**
+   * Creates one plane of a Google Fat Tree network.
+   * 
+   * @return All paths of the plane.
+   */
   private List<Path> createPlaneNetworkAndGetPaths() {
     ModelFacade.getInstance().addNetworkToRoot("net", false);
     ModelFacade.getInstance().addSwitchToNetwork("csw1", "net", 0);
@@ -259,11 +270,24 @@ public class ModelFacadePathYenGoogleFatTreeTest {
     return ModelFacade.getInstance().getAllPathsOfNetwork("net");
   }
 
+  /**
+   * Sets the exact path length to the given parameter.
+   * 
+   * @param length Path length to set.
+   */
   private void setExactPathLength(final int length) {
     ModelFacadeConfig.MIN_PATH_LENGTH = length;
     ModelFacadeConfig.MAX_PATH_LENGTH = length;
   }
 
+  /**
+   * Calculates the number of paths for a given parameter k and the given parameter of number of
+   * hops.
+   * 
+   * @param k Google Fat Tree parameter.
+   * @param hops Number of hops.
+   * @return Number of possible paths.
+   */
   private int calcNumberOfPathsRef(final int k, final int hops) {
     int counter = 0;
 
