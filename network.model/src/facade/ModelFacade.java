@@ -419,8 +419,7 @@ public class ModelFacade {
 
     final SubstrateNetwork snet = (SubstrateNetwork) net;
 
-    // Iterate over all servers
-    for (final Node s : getAllServersOfNetwork(networkdId)) {
+    getAllServersOfNetwork(networkdId).parallelStream().forEach((s) -> {
       final SubstrateServer srv = (SubstrateServer) s;
       final IPathGen gen;
 
@@ -448,7 +447,7 @@ public class ModelFacade {
           createBidirectionalPathFromLinks(actMap.get(n));
         }
       }
-    }
+    });
   }
 
   /**
@@ -459,7 +458,7 @@ public class ModelFacade {
    * 
    * @param links Input list of links to generate paths from.
    */
-  private void createBidirectionalPathFromLinks(final List<SubstrateLink> links) {
+  private synchronized void createBidirectionalPathFromLinks(final List<SubstrateLink> links) {
     // Check path limits
     if (links.size() < ModelFacadeConfig.MIN_PATH_LENGTH
         || links.size() > ModelFacadeConfig.MAX_PATH_LENGTH) {
