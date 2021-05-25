@@ -81,9 +81,14 @@ public class ExtendedDijkstra extends Dijkstra {
       dists.put(sn, Integer.MAX_VALUE);
       prevs.put(sn, null);
       nodes.add(sn);
+      prioNodes.add(sn);
     }
 
     dists.replace(start, 0);
+    // After updating a distance the corresponding node has to be re-added to the priority queue to
+    // update its priority
+    prioNodes.remove(start);
+    prioNodes.add(start);
   }
 
   /**
