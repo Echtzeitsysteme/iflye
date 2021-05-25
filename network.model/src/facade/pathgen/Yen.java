@@ -196,17 +196,8 @@ public class Yen implements IPathGen {
     for (final Node n : net.getNodes()) {
       SubstrateNode sn = (SubstrateNode) n;
       if (!sn.equals(start)) {
-        // System.out.println("start = " + start.getName() + ", sn = " + sn.getName());
-        try {
-          // if (sn.getName().equals("sub_srv_2")) {
-          // System.out.println();
-          // }
-
-          final List<List<SubstrateNode>> candidates = yen(net, start, sn, K);
-          paths.put(sn, translateAll(candidates));
-        } catch (final IndexOutOfBoundsException ex) {
-          System.out.println("ex caught!");
-        }
+        final List<List<SubstrateNode>> candidates = yen(net, start, sn, K);
+        paths.put(sn, translateAll(candidates));
       }
     }
 

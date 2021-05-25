@@ -622,9 +622,10 @@ public class ModelFacade {
    * @param target Target to search path for.
    * @return True if a path with given parameters already exists.
    */
-  // public boolean doesPathWithSourceAndTargetExist(final Node source, final Node target) {
-  // return getPathFromSourceToTarget(source, target) != null;
-  // }
+  @Deprecated
+  public boolean doesPathWithSourceAndTargetExist(final Node source, final Node target) {
+    return getPathFromSourceToTarget(source, target) != null;
+  }
 
   /**
    * This method checks the availability of a specific path with given source and target node.
