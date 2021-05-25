@@ -1,11 +1,13 @@
 package facade.pathgen;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Set;
 import model.Link;
 import model.Node;
 import model.SubstrateLink;
@@ -32,9 +34,27 @@ public class Dijkstra implements IPathGen {
       new HashMap<SubstrateNode, SubstrateNode>();
 
   /**
-   * List of all nodes.
+   * Set of all nodes.
    */
-  protected final List<SubstrateNode> nodes = new LinkedList<SubstrateNode>();
+  protected final Set<SubstrateNode> nodes = new HashSet<SubstrateNode>();
+
+  /**
+   * Priority queue of all nodes.
+   */
+  protected final PriorityQueue<SubstrateNode> prioNodes =
+      new PriorityQueue<SubstrateNode>(new Comparator<SubstrateNode>() {
+        @Override
+        public int compare(final SubstrateNode o1, final SubstrateNode o2) {
+          final int distFirst = dists.get(o1);
+          final int distSecond = dists.get(o2);
+
+          if (distFirst == distSecond) {
+            return o1.getName().compareTo(o2.getName());
+          } else {
+            return distFirst - distSecond;
+          }
+        }
+      });
 
   /**
    * Starts the whole algorithm for a given substrate network and one given substrate node as start.
@@ -69,42 +89,31 @@ public class Dijkstra implements IPathGen {
       dists.put(sn, Integer.MAX_VALUE);
       prevs.put(sn, null);
       nodes.add(sn);
+      prioNodes.add(sn);
     }
 
     dists.replace(start, 0);
+    // After updating a distance the corresponding node has to be re-added to the priority queue to
+    // update its priority
+    prioNodes.remove(start);
+    prioNodes.add(start);
   }
 
   /**
-   * Pops the substrate node with the smallest distance from list of nodes. If there is no such
-   * node, the method returns null instead. (This is necessary for graphs that are not fully
+   * Pops the substrate node with the smallest distance from priority queue of nodes. If there is no
+   * such node, the method returns null instead. (This is necessary for graphs that are not fully
    * connected which is the case for the extended Dijkstra implementation.)
    * 
    * @return SubstrateNode with smallest distance.
    */
   protected SubstrateNode popSmallestDistNode() {
-    sortNodes();
-    final Node candidate = nodes.get(0);
-    return dists.get(candidate) != Integer.MAX_VALUE ? nodes.remove(0) : null;
-  }
-
-  /**
-   * Sorts the collection of nodes according to: (1) The distance (2) The name.
-   */
-  protected void sortNodes() {
-    Collections.sort(nodes, new Comparator<SubstrateNode>() {
-
-      @Override
-      public int compare(final SubstrateNode o1, final SubstrateNode o2) {
-        final int distFirst = dists.get(o1);
-        final int distSecond = dists.get(o2);
-
-        if (distFirst == distSecond) {
-          return o1.getName().compareTo(o2.getName());
-        } else {
-          return distFirst - distSecond;
-        }
-      }
-    });
+    final SubstrateNode candidate = prioNodes.peek();
+    if (dists.get(candidate) != Integer.MAX_VALUE) {
+      prioNodes.poll();
+      nodes.remove(candidate);
+      return candidate;
+    }
+    return null;
   }
 
   /**
@@ -120,6 +129,10 @@ public class Dijkstra implements IPathGen {
     if (alt < dists.get(v)) {
       dists.replace(v, alt);
       prevs.replace(v, u);
+      // After updating a distance the corresponding node has to be re-added to the priority queue
+      // to update its priority
+      prioNodes.remove(v);
+      prioNodes.add(v);
     }
   }
 
