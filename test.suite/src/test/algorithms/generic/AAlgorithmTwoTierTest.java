@@ -84,8 +84,15 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
     // Test server placements
     final VirtualServer vSrv1 = (VirtualServer) facade.getServerById("virt_srv1");
     final VirtualServer vSrv2 = (VirtualServer) facade.getServerById("virt_srv2");
-    assertEquals("sub_srv1", vSrv1.getHost().getName());
-    assertEquals("sub_srv2", vSrv2.getHost().getName());
+
+    // Both virtual servers have to be embedded on other substrate servers
+    if (vSrv1.getHost().equals(vSrv2.getHost())) {
+      fail();
+    }
+
+    // Get reference hosts for later checks of links
+    final String refHost1 = vSrv1.getHost().getName();
+    final String refHost2 = vSrv2.getHost().getName();
 
     // Test link placements
     final VirtualLink vLn1 = (VirtualLink) facade.getLinkById("virt_ln1");
@@ -101,15 +108,11 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
       final Path pLn1 = (Path) vLn1.getHost();
       sourceName = pLn1.getSource().getName();
       targetName = pLn1.getTarget().getName();
-    } else if (vLn1.getHost() instanceof Link) {
-      final Link lLn1 = (Link) vLn1.getHost();
-      sourceName = lLn1.getSource().getName();
-      targetName = lLn1.getTarget().getName();
     } else {
       fail();
     }
 
-    assertEquals("sub_srv1", sourceName);
+    assertEquals(refHost1, sourceName);
     assertEquals("sub_sw", targetName);
 
     // Link 2
@@ -117,15 +120,11 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
       final Path pLn2 = (Path) vLn2.getHost();
       sourceName = pLn2.getSource().getName();
       targetName = pLn2.getTarget().getName();
-    } else if (vLn2.getHost() instanceof Link) {
-      final Link lLn2 = (Link) vLn2.getHost();
-      sourceName = lLn2.getSource().getName();
-      targetName = lLn2.getTarget().getName();
     } else {
       fail();
     }
 
-    assertEquals("sub_srv2", sourceName);
+    assertEquals(refHost2, sourceName);
     assertEquals("sub_sw", targetName);
 
     // Link 3
@@ -133,32 +132,24 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
       final Path pLn3 = (Path) vLn3.getHost();
       sourceName = pLn3.getSource().getName();
       targetName = pLn3.getTarget().getName();
-    } else if (vLn3.getHost() instanceof Link) {
-      final Link lLn3 = (Link) vLn3.getHost();
-      sourceName = lLn3.getSource().getName();
-      targetName = lLn3.getTarget().getName();
     } else {
       fail();
     }
 
     assertEquals("sub_sw", sourceName);
-    assertEquals("sub_srv1", targetName);
+    assertEquals(refHost1, targetName);
 
     // Link 4
     if (vLn4.getHost() instanceof Path) {
       final Path pLn4 = (Path) vLn4.getHost();
       sourceName = pLn4.getSource().getName();
       targetName = pLn4.getTarget().getName();
-    } else if (vLn4.getHost() instanceof Link) {
-      final Link lLn4 = (Link) vLn4.getHost();
-      sourceName = lLn4.getSource().getName();
-      targetName = lLn4.getTarget().getName();
     } else {
       fail();
     }
 
     assertEquals("sub_sw", sourceName);
-    assertEquals("sub_srv2", targetName);
+    assertEquals(refHost2, targetName);
   }
 
   @Test
