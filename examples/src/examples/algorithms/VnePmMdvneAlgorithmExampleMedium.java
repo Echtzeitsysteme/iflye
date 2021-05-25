@@ -8,6 +8,9 @@ import generators.OneTierNetworkGenerator;
 import generators.TwoTierNetworkGenerator;
 import generators.config.OneTierConfig;
 import generators.config.TwoTierConfig;
+import metrics.AcceptedVnrMetric;
+import metrics.AveragePathLengthMetric;
+import metrics.TotalPathCostMetric;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
@@ -63,6 +66,15 @@ public class VnePmMdvneAlgorithmExampleMedium {
     ModelFacade.getInstance().persistModel();
     System.out.println("=> Execution finished.");
     System.out.println("=> Elapsed time: " + (end - start) / 1_000_000_000 + " seconds");
+
+    final SubstrateNetwork sNet =
+        (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
+    final AcceptedVnrMetric acceptedVnrs = new AcceptedVnrMetric(sNet);
+    System.out.println("=> Accepted VNRs: " + (int) acceptedVnrs.getValue());
+    final TotalPathCostMetric totalPathCost = new TotalPathCostMetric(sNet);
+    System.out.println("=> Total path cost: " + totalPathCost.getValue());
+    final AveragePathLengthMetric averagePathLength = new AveragePathLengthMetric(sNet);
+    System.out.println("=> Average path length: " + averagePathLength.getValue());
   }
 
 }
