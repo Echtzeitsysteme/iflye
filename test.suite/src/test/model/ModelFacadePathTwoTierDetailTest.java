@@ -82,10 +82,21 @@ public class ModelFacadePathTwoTierDetailTest {
     final Set<List<String>> references = new HashSet<List<String>>();
     references.add(Arrays.asList(new String[] {"srv1", "rsw1"}));
     references.add(Arrays.asList(new String[] {"rsw1", "srv1"}));
+    references.add(Arrays.asList(new String[] {"srv1", "rsw2"}));
+    references.add(Arrays.asList(new String[] {"rsw2", "srv1"}));
+
     references.add(Arrays.asList(new String[] {"srv2", "rsw1"}));
     references.add(Arrays.asList(new String[] {"rsw1", "srv2"}));
+    references.add(Arrays.asList(new String[] {"srv2", "rsw2"}));
+    references.add(Arrays.asList(new String[] {"rsw2", "srv2"}));
+
+    references.add(Arrays.asList(new String[] {"srv3", "rsw1"}));
+    references.add(Arrays.asList(new String[] {"rsw1", "srv3"}));
     references.add(Arrays.asList(new String[] {"srv3", "rsw2"}));
     references.add(Arrays.asList(new String[] {"rsw2", "srv3"}));
+
+    references.add(Arrays.asList(new String[] {"srv4", "rsw1"}));
+    references.add(Arrays.asList(new String[] {"rsw1", "srv4"}));
     references.add(Arrays.asList(new String[] {"srv4", "rsw2"}));
     references.add(Arrays.asList(new String[] {"rsw2", "srv4"}));
 
@@ -106,42 +117,31 @@ public class ModelFacadePathTwoTierDetailTest {
     final Set<List<String>> references = new HashSet<List<String>>();
     references.add(Arrays.asList(new String[] {"srv1", "rsw1", "csw1"}));
     references.add(Arrays.asList(new String[] {"csw1", "rsw1", "srv1"}));
-    references.add(Arrays.asList(new String[] {"srv1", "rsw1", "srv2"}));
+
     references.add(Arrays.asList(new String[] {"srv2", "rsw1", "csw1"}));
     references.add(Arrays.asList(new String[] {"csw1", "rsw1", "srv2"}));
+
+    references.add(Arrays.asList(new String[] {"srv3", "rsw1", "csw1"}));
+    references.add(Arrays.asList(new String[] {"csw1", "rsw1", "srv3"}));
+
+    references.add(Arrays.asList(new String[] {"srv4", "rsw1", "csw1"}));
+    references.add(Arrays.asList(new String[] {"csw1", "rsw1", "srv4"}));
+
+    references.add(Arrays.asList(new String[] {"srv1", "rsw1", "srv2"}));
     references.add(Arrays.asList(new String[] {"srv2", "rsw1", "srv1"}));
 
-    references.add(Arrays.asList(new String[] {"srv3", "rsw2", "csw1"}));
-    references.add(Arrays.asList(new String[] {"csw1", "rsw2", "srv3"}));
-    references.add(Arrays.asList(new String[] {"srv3", "rsw2", "srv4"}));
-    references.add(Arrays.asList(new String[] {"srv4", "rsw2", "csw1"}));
-    references.add(Arrays.asList(new String[] {"csw1", "rsw2", "srv4"}));
-    references.add(Arrays.asList(new String[] {"srv4", "rsw2", "srv3"}));
+    references.add(Arrays.asList(new String[] {"srv1", "rsw1", "srv3"}));
+    references.add(Arrays.asList(new String[] {"srv3", "rsw1", "srv1"}));
+    references.add(Arrays.asList(new String[] {"srv1", "rsw1", "srv4"}));
+    references.add(Arrays.asList(new String[] {"srv4", "rsw1", "srv1"}));
 
-    checkPathNodesAgainstRef(allPaths, references);
-  }
+    references.add(Arrays.asList(new String[] {"srv2", "rsw1", "srv3"}));
+    references.add(Arrays.asList(new String[] {"srv3", "rsw1", "srv2"}));
+    references.add(Arrays.asList(new String[] {"srv2", "rsw1", "srv4"}));
+    references.add(Arrays.asList(new String[] {"srv4", "rsw1", "srv2"}));
 
-  @Test
-  public void testTwoTierLinksDetailLengthFour() {
-    ModelFacadeConfig.MIN_PATH_LENGTH = 4;
-    ModelFacadeConfig.MAX_PATH_LENGTH = 4;
-    ModelFacadePathBasicTest.twoTierSetupFourServers();
-    ModelFacade.getInstance().createAllPathsForNetwork("net");
-
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
-    assertFalse(allPaths.isEmpty());
-
-    // Test if every path is present
-    final Set<List<String>> references = new HashSet<List<String>>();
-    references.add(Arrays.asList(new String[] {"srv1", "rsw1", "csw1", "rsw2", "srv3"}));
-    references.add(Arrays.asList(new String[] {"srv1", "rsw1", "csw1", "rsw2", "srv4"}));
-    references.add(Arrays.asList(new String[] {"srv2", "rsw1", "csw1", "rsw2", "srv3"}));
-    references.add(Arrays.asList(new String[] {"srv2", "rsw1", "csw1", "rsw2", "srv4"}));
-
-    references.add(Arrays.asList(new String[] {"srv3", "rsw2", "csw1", "rsw1", "srv1"}));
-    references.add(Arrays.asList(new String[] {"srv3", "rsw2", "csw1", "rsw1", "srv2"}));
-    references.add(Arrays.asList(new String[] {"srv4", "rsw2", "csw1", "rsw1", "srv1"}));
-    references.add(Arrays.asList(new String[] {"srv4", "rsw2", "csw1", "rsw1", "srv2"}));
+    references.add(Arrays.asList(new String[] {"srv3", "rsw1", "srv4"}));
+    references.add(Arrays.asList(new String[] {"srv4", "rsw1", "srv3"}));
 
     checkPathNodesAgainstRef(allPaths, references);
   }
@@ -154,7 +154,7 @@ public class ModelFacadePathTwoTierDetailTest {
    */
   private void checkPathNodesAgainstRef(final List<Path> paths,
       final Set<List<String>> references) {
-    assertEquals(paths.size(), references.size());
+    assertEquals(references.size(), paths.size());
 
     final Set<List<String>> referencesCopy = new HashSet<List<String>>(references);
 

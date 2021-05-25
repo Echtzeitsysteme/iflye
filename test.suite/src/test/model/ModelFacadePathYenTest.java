@@ -2,7 +2,9 @@ package test.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -86,7 +88,59 @@ public class ModelFacadePathYenTest {
 
   @Test
   public void testTwoTierPathCreationFourServers() {
-    basic.testTwoTierPathCreationFourServers();
+    ModelFacadePathBasicTest.twoTierSetupFourServers();
+    ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+    ModelFacadeConfig.YEN_K = 10;
+
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    assertFalse(allPaths.isEmpty());
+
+    // allPaths.stream().map(e -> e.getName()).sorted().forEach(e -> System.out.println(e));
+
+    // Check total number of paths
+    assertEquals(96, allPaths.size());
+
+    // Check individual source and targets
+    final Set<Tuple<String, String>> mapping = new HashSet<Tuple<String, String>>();
+
+    for (int i = 1; i <= 4; i++) {
+      mapping.add(new Tuple<String, String>("srv" + i, "rsw1"));
+      mapping.add(new Tuple<String, String>("srv" + i, "rsw1"));
+      mapping.add(new Tuple<String, String>("srv" + i, "rsw2"));
+      mapping.add(new Tuple<String, String>("srv" + i, "rsw2"));
+      mapping.add(new Tuple<String, String>("srv" + i, "csw1"));
+      mapping.add(new Tuple<String, String>("srv" + i, "csw1"));
+    }
+
+    for (int i = 1; i <= 4; i++) {
+      mapping.add(new Tuple<String, String>("srv1", "srv2"));
+      mapping.add(new Tuple<String, String>("srv1", "srv3"));
+      mapping.add(new Tuple<String, String>("srv1", "srv4"));
+
+      mapping.add(new Tuple<String, String>("srv2", "srv1"));
+      mapping.add(new Tuple<String, String>("srv2", "srv3"));
+      mapping.add(new Tuple<String, String>("srv2", "srv4"));
+
+      mapping.add(new Tuple<String, String>("srv3", "srv2"));
+      mapping.add(new Tuple<String, String>("srv3", "srv1"));
+      mapping.add(new Tuple<String, String>("srv3", "srv4"));
+
+      mapping.add(new Tuple<String, String>("srv4", "srv2"));
+      mapping.add(new Tuple<String, String>("srv4", "srv3"));
+      mapping.add(new Tuple<String, String>("srv4", "srv1"));
+    }
+
+    for (int i = 1; i <= 4; i++) {
+      for (int j = 0; j <= 1; j++) {
+        mapping.add(new Tuple<String, String>("rsw1", "srv" + i));
+        mapping.add(new Tuple<String, String>("rsw2", "srv" + i));
+        mapping.add(new Tuple<String, String>("csw1", "srv" + i));
+      }
+    }
+
+    ModelFacadePathBasicTest.checkPathSourcesAndTargets(mapping, allPaths);
   }
 
   @Test
@@ -160,25 +214,77 @@ public class ModelFacadePathYenTest {
   }
 
   @Test
-  public void testTwoTierPathCreationFourServersTwoCoreSwitches() {
+  public void testTwoTierPathCreationFourServersTwoCoreSwitchesLength1() {
     ModelFacadePathBasicTest.twoTierSetupFourServersTwoCoreSwitches();
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
-    ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 1;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
     final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
-    assertEquals(56, allPaths.size());
+    assertEquals(16, allPaths.size());
+  }
+
+  @Test
+  public void testTwoTierPathCreationFourServersTwoCoreSwitchesLength2() {
+    ModelFacadePathBasicTest.twoTierSetupFourServersTwoCoreSwitches();
+    ModelFacadeConfig.MIN_PATH_LENGTH = 2;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 2;
+    ModelFacadeConfig.YEN_K = 20;
+
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    assertFalse(allPaths.isEmpty());
+
+    // Check total number of paths
+    int ref = 0;
+    ref += 2 * 4 * 2; // Csw_n to servers * 2 (possibilities)
+    ref += 4 * 5 * 2; // Srv_n to servers and core switches * 2 (possibilities)
+    assertEquals(ref, allPaths.size());
+  }
+
+  @Test
+  public void testTwoTierPathCreationFourServersTwoCoreSwitchesLength3() {
+    ModelFacadePathBasicTest.twoTierSetupFourServersTwoCoreSwitches();
+    ModelFacadeConfig.MIN_PATH_LENGTH = 3;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 3;
+    ModelFacadeConfig.YEN_K = 10;
+
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    assertFalse(allPaths.isEmpty());
+
+    // Check total number of paths
+    assertEquals(32, allPaths.size());
+  }
+
+  @Test
+  public void testTwoTierPathCreationFourServersTwoCoreSwitchesLength4() {
+    ModelFacadePathBasicTest.twoTierSetupFourServersTwoCoreSwitches();
+    ModelFacadeConfig.MIN_PATH_LENGTH = 4;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+    ModelFacadeConfig.YEN_K = 10;
+
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    assertFalse(allPaths.isEmpty());
+
+    // Check total number of paths
+    int ref = 0;
+    ref += 2 * 4 * 2; // Csw_n * Srv_n * 2 (possibilities)
+    ref += 4 * (2 * 2 + 4 * (4 - 1)); // Srv_n * (Csw_n * 2 (possibilities) + 4 (possibilities) *
+                                      // (Srv_n - 1))
+    assertEquals(ref, allPaths.size());
   }
 
   /**
-   * Setup: Two servers and three switches srv1 - sw1; srv2 - sw2; sw1 - sw3; sw2 - sw3; sw1 - sw4;
+   * Setup: Two servers and four switches srv1 - sw1; srv2 - sw2; sw1 - sw3; sw2 - sw3; sw1 - sw4;
    * sw2 - sw4;
    */
   @Test
-  public void testOneTierPathCreationTwoServersTwoCoreSwitchesFourHops() {
+  public void testOneTierPathCreationTwoServersForCoreSwitchesFourHops() {
     // Setup
     ModelFacade.getInstance().addNetworkToRoot("net", false);
     ModelFacade.getInstance().addSwitchToNetwork("sw1", "net", 0);
@@ -213,7 +319,7 @@ public class ModelFacadePathYenTest {
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
-    assertEquals(4, allPaths.size());
+    assertEquals(12, allPaths.size());
   }
 
   @Test
@@ -223,7 +329,39 @@ public class ModelFacadePathYenTest {
 
   @Test
   public void testTwoTierNumberOfHopsPerPath() {
-    basic.testTwoTierNumberOfHopsPerPath();
+    ModelFacadePathBasicTest.twoTierSetupFourServers();
+    ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+    ModelFacadeConfig.YEN_K = 10;
+
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+
+    int counterOneHop = 0;
+    int counterTwoHops = 0;
+    int counterThreeHops = 0;
+    int counterFourHops = 0;
+
+    for (final Path p : allPaths) {
+      // Number of links must be number of hops
+      assertEquals(p.getLinks().size(), p.getHops());
+
+      // if source or target is a core switch
+      if (p.getHops() == 1) {
+        counterOneHop += 1;
+      } else if (p.getHops() == 2) {
+        counterTwoHops += 1;
+      } else if (p.getHops() == 3) {
+        counterThreeHops += 1;
+      } else if (p.getHops() == 4) {
+        counterFourHops += 1;
+      }
+    }
+
+    assertEquals(16, counterOneHop);
+    assertEquals(40, counterTwoHops);
+    assertEquals(16, counterThreeHops);
+    assertEquals(24, counterFourHops);
   }
 
   @Test
@@ -273,7 +411,16 @@ public class ModelFacadePathYenTest {
 
   @Test
   public void testOnlyPathsWithThreeHops() {
-    basic.testOnlyPathsWithThreeHops();
+    // Setup for this test
+    ModelFacadeConfig.MIN_PATH_LENGTH = 3;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 3;
+    ModelFacadePathBasicTest.twoTierSetupFourServers();
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+
+    final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    assertFalse(generatedPaths.isEmpty());
+
+    assertEquals(16, generatedPaths.size());
   }
 
   @Test

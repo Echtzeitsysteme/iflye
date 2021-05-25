@@ -2,6 +2,7 @@ package facade;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -62,6 +63,8 @@ public class ModelFacade {
   private final Set<Node> visitedNodes = new HashSet<Node>();
   private final List<SubstratePath> generatedMetaPaths = new LinkedList<SubstratePath>();
   private final Set<Link> linksUntilNode = new HashSet<Link>();
+  private final Map<SubstrateNode, Set<SubstratePath>> pathSourceMap =
+      new HashMap<SubstrateNode, Set<SubstratePath>>();
 
   /**
    * Private constructor to disable direct object instantiation.
@@ -433,8 +436,7 @@ public class ModelFacade {
 
     final SubstrateNetwork snet = (SubstrateNetwork) net;
 
-    // Iterate over all servers
-    for (final Node s : getAllServersOfNetwork(networkdId)) {
+    getAllServersOfNetwork(networkdId).parallelStream().forEach((s) -> {
       final SubstrateServer srv = (SubstrateServer) s;
       final IPathGen gen;
 
@@ -462,7 +464,7 @@ public class ModelFacade {
           createBidirectionalPathFromLinks(actMap.get(n));
         }
       }
-    }
+    });
   }
 
   /**
@@ -473,11 +475,24 @@ public class ModelFacade {
    * 
    * @param links Input list of links to generate paths from.
    */
-  private void createBidirectionalPathFromLinks(final List<SubstrateLink> links) {
+  private synchronized void createBidirectionalPathFromLinks(final List<SubstrateLink> links) {
     // Check path limits
     if (links.size() < ModelFacadeConfig.MIN_PATH_LENGTH
         || links.size() > ModelFacadeConfig.MAX_PATH_LENGTH) {
       return;
+    }
+
+    // Check if a server is used as forwarding node (which is forbidden)
+    for (int i = 0; i < links.size(); i++) {
+      if (i != 0 && i != links.size() - 1) {
+        if (links.get(i).getSource() instanceof Server) {
+          return;
+        }
+
+        if (links.get(i).getTarget() instanceof Server) {
+          return;
+        }
+      }
     }
 
     // Get all nodes from links
@@ -485,8 +500,9 @@ public class ModelFacade {
 
     for (final SubstrateLink l : links) {
       nodes.add(l.getSource());
-      nodes.add(l.getTarget());
+      // nodes.add(l.getTarget());
     }
+    nodes.add(links.get(links.size() - 1).getTarget());
 
     final int lastIndex = links.size() - 1;
     final Node source = links.get(0).getSource();
@@ -508,26 +524,41 @@ public class ModelFacade {
       forward.setResidualBandwidth(bw);
 
       paths.put(name, forward);
+
+      // Add path to lookup map
+      if (!pathSourceMap.containsKey(source)) {
+        pathSourceMap.put((SubstrateNode) source, new HashSet<SubstratePath>());
+      }
+      pathSourceMap.get(source).add(forward);
     }
 
     // Create reverse path
-    if (!doesPathWithSourceAndTargetExist(target, source)) {
+    final List<Node> reversedNodes = Lists.reverse(nodes);
+    // Get all opposite links
+    final List<SubstrateLink> oppositeLinks = getOppositeLinks(links);
+
+    if (!doesSpecificPathWithSourceAndTargetExist(target, source, reversedNodes,
+        Lists.reverse(oppositeLinks))) {
       final SubstratePath reverse = genMetaPath(target, source);
-      final List<Node> reversedNodes = Lists.reverse(nodes);
+      reverse.getLinks().addAll(Lists.reverse(oppositeLinks));
+
       reverse.setHops(links.size());
       reverse.setNetwork(links.get(0).getNetwork());
       final String name = concatNodeNames(reversedNodes);
       reverse.setName(name);
       reverse.getNodes().addAll(reversedNodes);
 
-      // Get all opposite links
-      final List<SubstrateLink> oppositeLinks = getOppositeLinks(links);
-      reverse.getLinks().addAll(Lists.reverse(oppositeLinks));
       final int revBw = getMinimumBandwidthFromSubstrateLinks(oppositeLinks);
       reverse.setBandwidth(revBw);
       reverse.setResidualBandwidth(revBw);
 
       paths.put(name, reverse);
+
+      // Add path to lookup map
+      if (!pathSourceMap.containsKey(target)) {
+        pathSourceMap.put((SubstrateNode) target, new HashSet<SubstratePath>());
+      }
+      pathSourceMap.get(target).add(reverse);
     }
   }
 
@@ -629,6 +660,7 @@ public class ModelFacade {
    * @param target Target to search path for.
    * @return True if a path with given parameters already exists.
    */
+  @Deprecated
   public boolean doesPathWithSourceAndTargetExist(final Node source, final Node target) {
     return getPathFromSourceToTarget(source, target) != null;
   }
@@ -706,7 +738,12 @@ public class ModelFacade {
    * @return Path if a path between source and target does exist.
    */
   public Path getPathFromSourceToTarget(final Node source, final Node target) {
-    final List<Path> allPaths = getAllPathsOfNetwork(source.getNetwork().getName());
+    final Set<SubstratePath> allPaths = pathSourceMap.get(source);
+
+    // Check if there are any paths from source node to any other node
+    if (allPaths == null) {
+      return null;
+    }
 
     for (final Path p : allPaths) {
       if (p.getSource().equals(source) && p.getTarget().equals(target)) {
@@ -739,14 +776,20 @@ public class ModelFacade {
    * @return Set of paths if any exists or else an empty set.
    */
   public Set<Path> getPathsFromSourceToTarget(final Node source, final Node target) {
-    final List<Path> allPaths = getAllPathsOfNetwork(source.getNetwork().getName());
-    final Set<Path> foundPaths = new HashSet<Path>();
+    final Set<SubstratePath> allPaths = pathSourceMap.get(source);
 
-    for (final Path p : allPaths) {
+    // Check if there are any paths from source node to any other node
+    if (allPaths == null) {
+      return new HashSet<Path>();
+    }
+
+    final Set<Path> foundPaths = Collections.synchronizedSet(new HashSet<Path>());
+
+    allPaths.stream().forEach(p -> {
       if (p.getSource().equals(source) && p.getTarget().equals(target)) {
         foundPaths.add(p);
       }
-    }
+    });
 
     return foundPaths;
   }
