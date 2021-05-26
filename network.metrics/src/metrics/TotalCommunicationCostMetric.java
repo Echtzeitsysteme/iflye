@@ -28,6 +28,8 @@ public class TotalCommunicationCostMetric implements IMetric {
    */
   private double cost;
 
+  // FIXME Adapt this metric to the implementation in CostUtility.java
+
   /**
    * Creates a new instance of this metric for the provided substrate network.
    * 

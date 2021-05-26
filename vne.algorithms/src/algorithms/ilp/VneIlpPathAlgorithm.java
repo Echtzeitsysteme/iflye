@@ -328,7 +328,8 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
 
     for (int v = 0; v < pathVariables.length; v++) {
       for (int s = 0; s < pathVariables[v].length; s++) {
-        expr.add(mult(param(getLinkCost(allSubstratePaths.get(s).getLinksOrServer())),
+        expr.add(mult(
+            param(getLinkCost(virtualLinks.get(v), allSubstratePaths.get(s).getLinksOrServer())),
             pathVariables[v][s]));
       }
     }
@@ -347,12 +348,12 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
     }
   }
 
-  private double getLinkCost(final List<SubstrateElement> hosts) {
+  private double getLinkCost(final VirtualLink virt, final List<SubstrateElement> hosts) {
     switch (AlgorithmConfig.obj) {
       case TOTAL_PATH_COST:
         return CostUtility.getTotalPathCostLink(hosts);
       case TOTAL_COMMUNICATION_COST:
-        return CostUtility.getTotalCommunicationCostLink();
+        return CostUtility.getTotalCommunicationCostLink(virt, hosts);
       default:
         throw new UnsupportedOperationException();
     }
