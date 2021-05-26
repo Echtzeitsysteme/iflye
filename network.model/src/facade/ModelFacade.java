@@ -419,6 +419,11 @@ public class ModelFacade {
 
     final SubstrateNetwork snet = (SubstrateNetwork) net;
 
+    // Check if maximum path length automatic is set
+    if (ModelFacadeConfig.MAX_PATH_LENGTH_AUTO) {
+      ModelFacadeConfig.MAX_PATH_LENGTH = determineMaxPathLengthForTree(networkdId);
+    }
+
     getAllServersOfNetwork(networkdId).parallelStream().forEach((s) -> {
       final SubstrateServer srv = (SubstrateServer) s;
       final IPathGen gen;
@@ -448,6 +453,33 @@ public class ModelFacade {
         }
       }
     });
+  }
+
+  /**
+   * Determines the maximum path length needed to connect one server within the network with a core
+   * switch. Throws an {@link UnsupportedOperationException} if servers have different depths.
+   * 
+   * @param networkId Network ID to calculate maximum needed path length for.
+   * @return Maximum path length.
+   */
+  private int determineMaxPathLengthForTree(final String networkId) {
+    int maxPathLength = Integer.MAX_VALUE;
+
+    final List<Node> servers = getAllServersOfNetwork(networkId);
+    for (final Node n : servers) {
+      final SubstrateServer srv = (SubstrateServer) n;
+
+      if (srv.getDepth() < maxPathLength) {
+        if (srv.getDepth() != maxPathLength && maxPathLength != Integer.MAX_VALUE) {
+          throw new UnsupportedOperationException("In network " + networkId
+              + " are servers with different depths, which is not supported.");
+        }
+
+        maxPathLength = srv.getDepth();
+      }
+    }
+
+    return maxPathLength;
   }
 
   /**
