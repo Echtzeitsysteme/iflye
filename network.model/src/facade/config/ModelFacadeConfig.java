@@ -25,6 +25,12 @@ public class ModelFacadeConfig {
   public static int MAX_PATH_LENGTH = 4;
 
   /**
+   * If true, the ModelFacade determines the depth of all servers and sets the maximum path length
+   * accordingly. If true, this settings overwrites {@link #MAX_PATH_LENGTH}.
+   */
+  public static boolean MAX_PATH_LENGTH_AUTO = false;
+
+  /**
    * If true, the model embedding will ignore bandwidth constraints of links.
    */
   public static boolean IGNORE_BW = false;
