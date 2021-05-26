@@ -2,11 +2,8 @@ package test.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -15,18 +12,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
-import model.Link;
-import model.Node;
+import generators.GoogleFatTreeNetworkGenerator;
+import generators.config.GoogleFatTreeConfig;
 import model.Path;
-import model.SubstratePath;
 import model.Switch;
 
 /**
- * Test class for the ModelFacade that tests all basic path related creations.
+ * Test class for the ModelFacade that tests all basic path related creations which rely on
+ * automatic determination of the maximum path length.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class ModelFacadePathBasicTest {
+public class ModelFacadePathAutoBasicTest {
 
   /*
    * Variables to save the ModelFacade's configuration of path limits to.
@@ -42,6 +39,11 @@ public class ModelFacadePathBasicTest {
    */
   private int oldUpperLimit;
 
+  /**
+   * Old auto value.
+   */
+  private boolean oldAutoOption;
+
   @BeforeEach
   public void resetModel() {
     ModelFacade.getInstance().resetAll();
@@ -49,32 +51,38 @@ public class ModelFacadePathBasicTest {
     // Save old values
     oldLowerLimit = ModelFacadeConfig.MIN_PATH_LENGTH;
     oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
+    oldAutoOption = ModelFacadeConfig.MAX_PATH_LENGTH_AUTO;
+    ModelFacadeConfig.MAX_PATH_LENGTH_AUTO = true;
   }
 
   @AfterEach
   public void restoreConfig() {
     ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
     ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
+    ModelFacadeConfig.MAX_PATH_LENGTH_AUTO = oldAutoOption;
   }
 
   @Test
   public void testNoPathsAfterNetworkCreation() {
-    oneTierSetupTwoServers();
+    ModelFacadePathBasicTest.oneTierSetupTwoServers();
     assertTrue(ModelFacade.getInstance().getAllPathsOfNetwork("net").isEmpty());
   }
 
   @Test
   public void testOneTierPathCreationTwoServers() {
-    oneTierSetupTwoServers();
+    ModelFacadePathBasicTest.oneTierSetupTwoServers();
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
-    ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 2;
+    // ^maximum path length should be overwritten to 1
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
+    assertEquals(1, ModelFacadeConfig.MAX_PATH_LENGTH);
+
     final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
-    assertEquals(6, allPaths.size());
+    assertEquals(4, allPaths.size());
 
     // Check individual source and targets
     final Set<Tuple<String, String>> mapping = new HashSet<Tuple<String, String>>();
@@ -82,24 +90,25 @@ public class ModelFacadePathBasicTest {
     mapping.add(new Tuple<String, String>("sw", "srv1"));
     mapping.add(new Tuple<String, String>("srv2", "sw"));
     mapping.add(new Tuple<String, String>("sw", "srv2"));
-    mapping.add(new Tuple<String, String>("srv1", "srv2"));
-    mapping.add(new Tuple<String, String>("srv2", "srv1"));
 
-    checkPathSourcesAndTargets(mapping, allPaths);
+    ModelFacadePathBasicTest.checkPathSourcesAndTargets(mapping, allPaths);
   }
 
   @Test
   public void testOneTierPathCreationFourServers() {
-    oneTierSetupFourServers();
+    ModelFacadePathBasicTest.oneTierSetupFourServers();
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+    // ^maximum path length should be overwritten to 1
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
+    assertEquals(1, ModelFacadeConfig.MAX_PATH_LENGTH);
+
     final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
-    assertEquals(20, allPaths.size());
+    assertEquals(8, allPaths.size());
 
     // Check individual source and targets
     final Set<Tuple<String, String>> mapping = new HashSet<Tuple<String, String>>();
@@ -111,29 +120,20 @@ public class ModelFacadePathBasicTest {
     mapping.add(new Tuple<String, String>("sw", "srv3"));
     mapping.add(new Tuple<String, String>("srv4", "sw"));
     mapping.add(new Tuple<String, String>("sw", "srv4"));
-    mapping.add(new Tuple<String, String>("srv1", "srv2"));
-    mapping.add(new Tuple<String, String>("srv2", "srv1"));
-    mapping.add(new Tuple<String, String>("srv1", "srv3"));
-    mapping.add(new Tuple<String, String>("srv3", "srv1"));
-    mapping.add(new Tuple<String, String>("srv1", "srv4"));
-    mapping.add(new Tuple<String, String>("srv4", "srv1"));
-    mapping.add(new Tuple<String, String>("srv2", "srv3"));
-    mapping.add(new Tuple<String, String>("srv3", "srv2"));
-    mapping.add(new Tuple<String, String>("srv2", "srv4"));
-    mapping.add(new Tuple<String, String>("srv4", "srv2"));
-    mapping.add(new Tuple<String, String>("srv3", "srv4"));
-    mapping.add(new Tuple<String, String>("srv4", "srv3"));
 
-    checkPathSourcesAndTargets(mapping, allPaths);
+    ModelFacadePathBasicTest.checkPathSourcesAndTargets(mapping, allPaths);
   }
 
   @Test
   public void testTwoTierPathCreationFourServers() {
-    twoTierSetupFourServers();
+    ModelFacadePathBasicTest.twoTierSetupFourServers();
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+    // ^maximum path length should be overwritten to 2
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
+    assertEquals(2, ModelFacadeConfig.MAX_PATH_LENGTH);
+
     final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
@@ -185,16 +185,19 @@ public class ModelFacadePathBasicTest {
     mapping.add(new Tuple<String, String>("csw1", "srv3"));
     mapping.add(new Tuple<String, String>("csw1", "srv4"));
 
-    checkPathSourcesAndTargets(mapping, allPaths);
+    ModelFacadePathBasicTest.checkPathSourcesAndTargets(mapping, allPaths);
   }
 
   @Test
   public void testTwoTierPathCreationFourServersTwoCoreSwitches() {
-    twoTierSetupFourServersTwoCoreSwitches();
+    ModelFacadePathBasicTest.twoTierSetupFourServersTwoCoreSwitches();
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+    // ^maximum path length should be overwritten to 2
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
+    assertEquals(2, ModelFacadeConfig.MAX_PATH_LENGTH);
+
     final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
@@ -256,12 +259,12 @@ public class ModelFacadePathBasicTest {
     mapping.add(new Tuple<String, String>("csw2", "srv3"));
     mapping.add(new Tuple<String, String>("csw2", "srv4"));
 
-    checkPathSourcesAndTargets(mapping, allPaths);
+    ModelFacadePathBasicTest.checkPathSourcesAndTargets(mapping, allPaths);
   }
 
   @Test
   public void testOneTierNumberOfHopsPerPath() {
-    oneTierSetupTwoServers();
+    ModelFacadePathBasicTest.oneTierSetupTwoServers();
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
     final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
@@ -277,11 +280,14 @@ public class ModelFacadePathBasicTest {
 
   @Test
   public void testTwoTierNumberOfHopsPerPath() {
-    twoTierSetupFourServers();
+    ModelFacadePathBasicTest.twoTierSetupFourServers();
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+    // ^maximum path length should be overwritten to 2
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
+    assertEquals(2, ModelFacadeConfig.MAX_PATH_LENGTH);
+
     final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
 
     int counterOneHop = 0;
@@ -312,45 +318,14 @@ public class ModelFacadePathBasicTest {
   }
 
   @Test
-  public void testOneTierBandwidthAmoutPerPath() {
-    oneTierSetupTwoServers();
-
-    ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
-
-    for (final Path p : allPaths) {
-      if ((p.getSource().getName().equals("srv2") && p.getTarget().getName().equals("sw"))
-          || (p.getSource().getName().equals("sw") && p.getTarget().getName().equals("srv2"))) {
-        assertEquals(2, p.getBandwidth());
-      } else {
-        assertEquals(1, p.getBandwidth());
-      }
-    }
-  }
-
-  @Test
-  public void testOneTierContainedLinksAmount() {
-    oneTierSetupTwoServers();
-
-    ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
-
-    for (final Path p : allPaths) {
-      if (p.getSource() instanceof Switch || p.getTarget() instanceof Switch) {
-        assertEquals(1, p.getLinks().size());
-      } else {
-        assertEquals(2, p.getLinks().size());
-      }
-    }
-  }
-
-  @Test
   public void testOneTierContainedLinksNames() {
-    oneTierSetupTwoServers();
+    ModelFacadePathBasicTest.oneTierSetupTwoServers();
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+    // ^maximum path length should be overwritten to 1
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
+    assertEquals(1, ModelFacadeConfig.MAX_PATH_LENGTH);
     final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
 
     List<Set<String>> linkNames = new LinkedList<Set<String>>();
@@ -358,35 +333,19 @@ public class ModelFacadePathBasicTest {
     linkNames.add(Set.of("ln2"));
     linkNames.add(Set.of("ln3"));
     linkNames.add(Set.of("ln4"));
-    linkNames.add(Set.of("ln1", "ln4"));
-    linkNames.add(Set.of("ln2", "ln3"));
 
-    checkPathLinkNames(linkNames, allPaths);
-  }
-
-  @Test
-  public void testOneTierContainedNodesAmount() {
-    oneTierSetupTwoServers();
-
-    ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
-
-    for (final Path p : allPaths) {
-      if (p.getSource() instanceof Switch || p.getTarget() instanceof Switch) {
-        assertEquals(2, p.getNodes().size());
-      } else {
-        assertEquals(3, p.getNodes().size());
-      }
-    }
+    ModelFacadePathBasicTest.checkPathLinkNames(linkNames, allPaths);
   }
 
   @Test
   public void testOneTierContainedNodesNames() {
-    oneTierSetupTwoServers();
+    ModelFacadePathBasicTest.oneTierSetupTwoServers();
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+    // ^maximum path length should be overwritten to 1
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
+    assertEquals(1, ModelFacadeConfig.MAX_PATH_LENGTH);
     final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
 
     // The reference nodes only have to be added one time
@@ -395,29 +354,16 @@ public class ModelFacadePathBasicTest {
     for (int i = 0; i <= 1; i++) {
       nodeNames.add(Set.of("srv1", "sw"));
       nodeNames.add(Set.of("srv2", "sw"));
-      nodeNames.add(Set.of("srv1", "srv2", "sw"));
     }
 
-    checkPathNodeNames(nodeNames, allPaths);
-  }
-
-  @Test
-  public void testTwoTierNoNameIsNull() {
-    twoTierSetupFourServers();
-
-    ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
-
-    for (final Path p : allPaths) {
-      assertNotNull(p.getName());
-    }
+    ModelFacadePathBasicTest.checkPathNodeNames(nodeNames, allPaths);
   }
 
   @Test
   public void testNoPathsLowerLimit() {
     // Setup for this test
     ModelFacadeConfig.MIN_PATH_LENGTH = 10;
-    oneTierSetupFourServers();
+    ModelFacadePathBasicTest.oneTierSetupFourServers();
     ModelFacade.getInstance().createAllPathsForNetwork("net");
 
     final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
@@ -425,14 +371,17 @@ public class ModelFacadePathBasicTest {
   }
 
   @Test
-  public void testNoPathsUpperLimit() {
+  public void testPathsUpperLimit() {
     // Setup for this test
     ModelFacadeConfig.MAX_PATH_LENGTH = 0;
-    oneTierSetupFourServers();
+    // ^maximum path length should be overwritten to 1
+
+    ModelFacadePathBasicTest.oneTierSetupFourServers();
     ModelFacade.getInstance().createAllPathsForNetwork("net");
+    assertEquals(1, ModelFacadeConfig.MAX_PATH_LENGTH);
 
     final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
-    assertTrue(generatedPaths.isEmpty());
+    assertFalse(generatedPaths.isEmpty());
   }
 
   @Test
@@ -440,8 +389,11 @@ public class ModelFacadePathBasicTest {
     // Setup for this test
     ModelFacadeConfig.MIN_PATH_LENGTH = 2;
     ModelFacadeConfig.MAX_PATH_LENGTH = 2;
-    twoTierSetupFourServers();
+    // ^maximum path length should be kept at 2
+
+    ModelFacadePathBasicTest.twoTierSetupFourServers();
     ModelFacade.getInstance().createAllPathsForNetwork("net");
+    assertEquals(2, ModelFacadeConfig.MAX_PATH_LENGTH);
 
     final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(generatedPaths.isEmpty());
@@ -458,199 +410,36 @@ public class ModelFacadePathBasicTest {
     // Setup for this test
     ModelFacadeConfig.MIN_PATH_LENGTH = 3;
     ModelFacadeConfig.MAX_PATH_LENGTH = 3;
-    twoTierSetupFourServers();
+    // ^maximum path length should be overwritten to 2
+
+    ModelFacadePathBasicTest.twoTierSetupFourServers();
     ModelFacade.getInstance().createAllPathsForNetwork("net");
+    assertEquals(2, ModelFacadeConfig.MAX_PATH_LENGTH);
 
     final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertTrue(generatedPaths.isEmpty());
   }
 
   @Test
-  public void testResidualBandwidth() {
-    oneTierSetupTwoServers();
+  public void testGoogleFatTree() {
+    // Setup for this test
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
-    ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 1;
+    // ^maximum path length should be overwritten to 3
 
-    ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
-    assertFalse(allPaths.isEmpty());
+    final GoogleFatTreeConfig subConf = new GoogleFatTreeConfig(4);
+    final GoogleFatTreeNetworkGenerator gen = new GoogleFatTreeNetworkGenerator(subConf);
+    gen.createNetwork("net", false);
 
-    for (final Path p : allPaths) {
-      final SubstratePath sp = (SubstratePath) p;
-      assertEquals(sp.getBandwidth(), sp.getResidualBandwidth());
+    assertEquals(3, ModelFacadeConfig.MAX_PATH_LENGTH);
+
+    final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    assertFalse(generatedPaths.isEmpty());
+
+    // Check that every path has <= 3 hops
+    for (final Path p : generatedPaths) {
+      assertTrue(p.getHops() <= 3);
     }
-  }
-
-  /*
-   * Utility methods.
-   */
-
-  /**
-   * Tests a list of a sets of strings against a list of paths. The check ensures, that all name
-   * sets are contained within the list of paths (with links).
-   * 
-   * @param linkNames List of sets of strings with link names for each path.
-   * @param pathsToCheck List of paths to check.
-   */
-  static void checkPathLinkNames(final List<Set<String>> linkNames, final List<Path> pathsToCheck) {
-    List<Set<String>> pathLinks = new LinkedList<Set<String>>();
-    for (final Path p : pathsToCheck) {
-      final Set<String> fromPath = new HashSet<String>();
-      for (Link l : p.getLinks()) {
-        fromPath.add(l.getName());
-      }
-      pathLinks.add(fromPath);
-    }
-
-    assertTrue(linkNames.containsAll(pathLinks));
-    assertTrue(pathLinks.containsAll(linkNames));
-  }
-
-  /**
-   * Tests a list of sets of strings against a list of paths. The check ensures, that all name sets
-   * are contained within the list of paths (with nodes).
-   * 
-   * @param nodeNames List of sets of strings with node names for each path.
-   * @param pathsToCheck List of paths to check.
-   */
-  static void checkPathNodeNames(final List<Set<String>> nodeNames, final List<Path> pathsToCheck) {
-    List<Set<String>> pathNodes = new LinkedList<Set<String>>();
-    for (final Path p : pathsToCheck) {
-      final Set<String> fromPath = new HashSet<String>();
-      for (Node n : p.getNodes()) {
-        fromPath.add(n.getName());
-      }
-      pathNodes.add(fromPath);
-    }
-
-    // Ignore order
-    assertTrue(nodeNames.containsAll(pathNodes));
-    assertTrue(pathNodes.containsAll(nodeNames));
-  }
-
-  /**
-   * Checks a given list of paths against a given set of string mappings to string. The set
-   * represents the mapping of sourceID to targetID for all paths.
-   * 
-   * @param mapping SourceID to targetID mapping.
-   * @param pathsToCheck List of paths to check.
-   */
-  static void checkPathSourcesAndTargets(final Set<Tuple<String, String>> mapping,
-      final List<Path> pathsToCheck) {
-    assertEquals(mapping.size(), pathsToCheck.size());
-    final Iterator<Tuple<String, String>> it = mapping.iterator();
-    while (it.hasNext()) {
-      final Tuple<String, String> next = it.next();
-      checkPathSourceAndTarget(next.x, next.y, pathsToCheck);
-    }
-  }
-
-  /**
-   * Checks a given list of paths for one specific sourceID and targetID. If no path with the given
-   * sourceID and targetID can be found, the check fails.
-   * 
-   * @param sourceId SourceID to search for.
-   * @param targetId TargetID to search for.
-   * @param pathsToCheck List of paths to search in.
-   */
-  static private void checkPathSourceAndTarget(final String sourceId, final String targetId,
-      final List<Path> pathsToCheck) {
-    for (final Path p : pathsToCheck) {
-      if (p.getSource().getName().equals(sourceId) && p.getTarget().getName().equals(targetId)) {
-        return;
-      }
-    }
-
-    fail("No matching path was found for tuple: " + sourceId + " - " + targetId);
-  }
-
-  /**
-   * Creates a one tier network with two servers and one switch. The bandwidth of the servers is
-   * different (1 vs 2).
-   */
-  protected static void oneTierSetupTwoServers() {
-    ModelFacade.getInstance().addNetworkToRoot("net", false);
-    ModelFacade.getInstance().addSwitchToNetwork("sw", "net", 0);
-    ModelFacade.getInstance().addServerToNetwork("srv1", "net", 0, 0, 0, 1);
-    ModelFacade.getInstance().addServerToNetwork("srv2", "net", 0, 0, 0, 1);
-    ModelFacade.getInstance().addLinkToNetwork("ln1", "net", 1, "srv1", "sw");
-    ModelFacade.getInstance().addLinkToNetwork("ln2", "net", 2, "srv2", "sw");
-    ModelFacade.getInstance().addLinkToNetwork("ln3", "net", 1, "sw", "srv1");
-    ModelFacade.getInstance().addLinkToNetwork("ln4", "net", 2, "sw", "srv2");
-  }
-
-  /**
-   * Creates a one tier network with four servers and one switch.
-   */
-  static void oneTierSetupFourServers() {
-    ModelFacade.getInstance().addNetworkToRoot("net", false);
-    ModelFacade.getInstance().addSwitchToNetwork("sw", "net", 0);
-    ModelFacade.getInstance().addServerToNetwork("srv1", "net", 0, 0, 0, 1);
-    ModelFacade.getInstance().addServerToNetwork("srv2", "net", 0, 0, 0, 1);
-    ModelFacade.getInstance().addServerToNetwork("srv3", "net", 0, 0, 0, 1);
-    ModelFacade.getInstance().addServerToNetwork("srv4", "net", 0, 0, 0, 1);
-    ModelFacade.getInstance().addLinkToNetwork("ln1", "net", 0, "srv1", "sw");
-    ModelFacade.getInstance().addLinkToNetwork("ln2", "net", 0, "srv2", "sw");
-    ModelFacade.getInstance().addLinkToNetwork("ln3", "net", 0, "srv3", "sw");
-    ModelFacade.getInstance().addLinkToNetwork("ln4", "net", 0, "srv4", "sw");
-    ModelFacade.getInstance().addLinkToNetwork("ln5", "net", 0, "sw", "srv1");
-    ModelFacade.getInstance().addLinkToNetwork("ln6", "net", 0, "sw", "srv2");
-    ModelFacade.getInstance().addLinkToNetwork("ln7", "net", 0, "sw", "srv3");
-    ModelFacade.getInstance().addLinkToNetwork("ln8", "net", 0, "sw", "srv4");
-  }
-
-  /**
-   * Creates a two tier network with four servers total, two rack switches, and one core switch.
-   */
-  protected static void twoTierSetupFourServers() {
-    ModelFacade.getInstance().addNetworkToRoot("net", false);
-    ModelFacade.getInstance().addSwitchToNetwork("csw1", "net", 0);
-    ModelFacade.getInstance().addSwitchToNetwork("rsw1", "net", 1);
-    ModelFacade.getInstance().addSwitchToNetwork("rsw2", "net", 1);
-
-    ModelFacade.getInstance().addServerToNetwork("srv1", "net", 0, 0, 0, 2);
-    ModelFacade.getInstance().addServerToNetwork("srv2", "net", 0, 0, 0, 2);
-    ModelFacade.getInstance().addServerToNetwork("srv3", "net", 0, 0, 0, 2);
-    ModelFacade.getInstance().addServerToNetwork("srv4", "net", 0, 0, 0, 2);
-
-    ModelFacade.getInstance().addLinkToNetwork("ln1", "net", 0, "srv1", "rsw1");
-    ModelFacade.getInstance().addLinkToNetwork("ln2", "net", 0, "srv2", "rsw1");
-    ModelFacade.getInstance().addLinkToNetwork("ln3", "net", 0, "srv3", "rsw1");
-    ModelFacade.getInstance().addLinkToNetwork("ln4", "net", 0, "srv4", "rsw1");
-
-    ModelFacade.getInstance().addLinkToNetwork("ln5", "net", 0, "srv1", "rsw2");
-    ModelFacade.getInstance().addLinkToNetwork("ln6", "net", 0, "srv2", "rsw2");
-    ModelFacade.getInstance().addLinkToNetwork("ln7", "net", 0, "srv3", "rsw2");
-    ModelFacade.getInstance().addLinkToNetwork("ln8", "net", 0, "srv4", "rsw2");
-
-    ModelFacade.getInstance().addLinkToNetwork("ln9", "net", 0, "rsw1", "srv1");
-    ModelFacade.getInstance().addLinkToNetwork("ln10", "net", 0, "rsw1", "srv2");
-    ModelFacade.getInstance().addLinkToNetwork("ln11", "net", 0, "rsw1", "srv3");
-    ModelFacade.getInstance().addLinkToNetwork("ln12", "net", 0, "rsw1", "srv4");
-
-    ModelFacade.getInstance().addLinkToNetwork("ln13", "net", 0, "rsw2", "srv1");
-    ModelFacade.getInstance().addLinkToNetwork("ln14", "net", 0, "rsw2", "srv2");
-    ModelFacade.getInstance().addLinkToNetwork("ln15", "net", 0, "rsw2", "srv3");
-    ModelFacade.getInstance().addLinkToNetwork("ln16", "net", 0, "rsw2", "srv4");
-
-    ModelFacade.getInstance().addLinkToNetwork("ln17", "net", 0, "rsw1", "csw1");
-    ModelFacade.getInstance().addLinkToNetwork("ln18", "net", 0, "rsw2", "csw1");
-    ModelFacade.getInstance().addLinkToNetwork("ln19", "net", 0, "csw1", "rsw1");
-    ModelFacade.getInstance().addLinkToNetwork("ln20", "net", 0, "csw1", "rsw2");
-  }
-
-  /**
-   * Creates a two tier network with four servers total, two rack switches, and two core switches.
-   */
-  protected static void twoTierSetupFourServersTwoCoreSwitches() {
-    twoTierSetupFourServers();
-
-    ModelFacade.getInstance().addSwitchToNetwork("csw2", "net", 0);
-
-    ModelFacade.getInstance().addLinkToNetwork("ln21", "net", 0, "rsw1", "csw2");
-    ModelFacade.getInstance().addLinkToNetwork("ln22", "net", 0, "rsw2", "csw2");
-    ModelFacade.getInstance().addLinkToNetwork("ln23", "net", 0, "csw2", "rsw1");
-    ModelFacade.getInstance().addLinkToNetwork("ln24", "net", 0, "csw2", "rsw2");
   }
 
 }
