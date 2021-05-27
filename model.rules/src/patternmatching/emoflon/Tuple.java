@@ -27,7 +27,7 @@ public class Tuple {
   public boolean equals(final Object obj) {
     if (obj instanceof Tuple) {
       final Tuple o = (Tuple) obj;
-      return this.x.getName().equals(o.x.getName()) && this.y.getName().equals(o.y.getName());
+      return this.x.equals(o.x) && this.y.equals(o.y);
     }
 
     return false;

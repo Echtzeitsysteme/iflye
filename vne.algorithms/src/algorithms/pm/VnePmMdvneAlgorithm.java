@@ -506,20 +506,25 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       // Network -> Network (rejected)
       if (m.getVirtual() instanceof VirtualNetwork) {
         rejectedNetworks.add((VirtualNetwork) m.getVirtual());
-      } else {
-        engine.apply((VirtualElement) m.getVirtual(), (SubstrateElement) m.getSubstrate());
+        continue;
+      }
 
-        // FIXME:
-        // If substrate element is a path, we have to update the residual bandwidths of all links
-        if (m.getSubstrate() instanceof SubstratePath) {
-          final SubstratePath subPath = (SubstratePath) m.getSubstrate();
-          final VirtualLink virtLink = (VirtualLink) m.getVirtual();
+      // Create embedding via matches and graph transformation
+      engine.apply((VirtualElement) m.getVirtual(), (SubstrateElement) m.getSubstrate());
 
-          subPath.getLinks().stream().forEach(l -> {
-            final SubstrateLink sl = (SubstrateLink) l;
-            sl.setResidualBandwidth(sl.getResidualBandwidth() - virtLink.getBandwidth());
-          });
-        }
+      // FIXME:
+      // If substrate element is a path, we have to update the residual bandwidths of all links,
+      // because eMoflon does not support 'for-each' like operations. (Please also see
+      // 'embeddingRules.gt'). If eMoflon supports this feature and the rule in 'embeddingRules.gt'
+      // got updated, this code snipped must be removed.
+      if (m.getSubstrate() instanceof SubstratePath) {
+        final SubstratePath subPath = (SubstratePath) m.getSubstrate();
+        final VirtualLink virtLink = (VirtualLink) m.getVirtual();
+
+        subPath.getLinks().stream().forEach(l -> {
+          final SubstrateLink sl = (SubstrateLink) l;
+          sl.setResidualBandwidth(sl.getResidualBandwidth() - virtLink.getBandwidth());
+        });
       }
     }
 

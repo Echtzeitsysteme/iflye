@@ -123,6 +123,12 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
 
   }
 
+  /**
+   * Applies a match for a given virtual and substrate element (creates the embedding).
+   * 
+   * @param virt Virtual element to embed.
+   * @param sub Substrate element to embed on.
+   */
   public void apply(final VirtualElement virt, final SubstrateElement sub) {
     final GraphTransformationMatch<?, ?> match = tupleToGtMatch.get(new Tuple(virt, sub));
     if (match instanceof ServerMatchPositiveMatch) {
