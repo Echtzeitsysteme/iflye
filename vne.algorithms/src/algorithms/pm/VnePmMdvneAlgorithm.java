@@ -35,6 +35,7 @@ import model.VirtualSwitch;
 import patternmatching.IncrementalPatternMatcher;
 import patternmatching.PatternMatchingDelta;
 import patternmatching.PatternMatchingDelta.Match;
+import patternmatching.emoflon.EmoflonPatternMatcher;
 import patternmatching.emoflon.EmoflonPatternMatcherFactory;
 
 /**
@@ -497,35 +498,27 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 
     // Embed elements
     final Set<VirtualNetwork> rejectedNetworks = new HashSet<VirtualNetwork>();
+    final EmoflonPatternMatcher engine = (EmoflonPatternMatcher) patternMatcher;
 
     for (final String s : newMappings) {
       final Match m = variablesToMatch.get(s);
 
-      final VirtualElement virtualElement = (VirtualElement) m.getVirtual();
-      final SubstrateElement substrateElement = (SubstrateElement) m.getSubstrate();
-
       // Network -> Network (rejected)
-      if (virtualElement instanceof VirtualNetwork) {
-        // facade.embedNetworkToNetwork(substrateElement.getName(), virtualElement.getName());
-        rejectedNetworks.add((VirtualNetwork) virtualElement);
-      }
+      if (m.getVirtual() instanceof VirtualNetwork) {
+        rejectedNetworks.add((VirtualNetwork) m.getVirtual());
+      } else {
+        engine.apply((VirtualElement) m.getVirtual(), (SubstrateElement) m.getSubstrate());
 
-      // Server -> Server
-      if (virtualElement instanceof VirtualServer) {
-        facade.embedServerToServer(substrateElement.getName(), virtualElement.getName());
-      }
+        // FIXME:
+        // If substrate element is a path, we have to update the residual bandwidths of all links
+        if (m.getSubstrate() instanceof SubstratePath) {
+          final SubstratePath subPath = (SubstratePath) m.getSubstrate();
+          final VirtualLink virtLink = (VirtualLink) m.getVirtual();
 
-      // Switch -> Node
-      if (virtualElement instanceof VirtualSwitch) {
-        facade.embedSwitchToNode(substrateElement.getName(), virtualElement.getName());
-      }
-
-      // Link -> Path || Link -> Server
-      if (virtualElement instanceof VirtualLink) {
-        if (substrateElement instanceof SubstratePath) {
-          facade.embedLinkToPath(substrateElement.getName(), virtualElement.getName());
-        } else if (substrateElement instanceof SubstrateServer) {
-          facade.embedLinkToServer(substrateElement.getName(), virtualElement.getName());
+          subPath.getLinks().stream().forEach(l -> {
+            final SubstrateLink sl = (SubstrateLink) l;
+            sl.setResidualBandwidth(sl.getResidualBandwidth() - virtLink.getBandwidth());
+          });
         }
       }
     }
