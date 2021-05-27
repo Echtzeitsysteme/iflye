@@ -17,7 +17,7 @@ public class AlgorithmConfig {
    * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
    */
   public enum Objective {
-    TOTAL_PATH_COST, TOTAL_COMMUNICATION_COST;
+    TOTAL_PATH_COST, TOTAL_COMMUNICATION_COST_A, TOTAL_COMMUNICATION_COST_B;
   }
 
   /**

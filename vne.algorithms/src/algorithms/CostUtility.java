@@ -117,6 +117,62 @@ public class CostUtility {
   }
 
   /**
+   * Returns the total communication cost for a link to element embedding as defined in [1].
+   * 
+   * [1] Tomaszek, S., Modellbasierte Einbettung von virtuellen Netzwerken in Rechenzentren,
+   * http://dx.doi.org/10.12921/TUPRINTS-00017362. – DOI 10.12921/TUPRINTS– 00017362, 2020.
+   * 
+   * @param virt Virtual link to embed.
+   * @param host Substrate element hosting the virtual link.
+   * @return Total communication cost for a link to element embedding.
+   */
+  public static double getTotalCommunicationCostLinkA(final VirtualLink virt,
+      final SubstrateElement host) {
+    if (host instanceof Server) {
+      // Server -> 0 hops
+      return 0;
+    } else if (host instanceof SubstratePath) {
+      final SubstratePath subPath = (SubstratePath) host;
+      if (subPath.getHops() == 1) {
+        // Path, 1 hop -> 1 hop * virtual bandwidth
+        return virt.getBandwidth();
+      } else if (subPath.getHops() > 1) {
+        // Path, >1 hop -> 5 * virtual bandwidth
+        return 5 * virt.getBandwidth();
+      }
+    } else if (host instanceof SubstrateLink) {
+      // Link -> 1 hop * virtual bandwidth
+      return virt.getBandwidth();
+    }
+
+    throw new IllegalArgumentException("Element not matched.");
+  }
+
+  /**
+   * Returns the total communication cost for a link to list of elements embedding as defined in
+   * [1].
+   * 
+   * [1] Tomaszek, S., Modellbasierte Einbettung von virtuellen Netzwerken in Rechenzentren,
+   * http://dx.doi.org/10.12921/TUPRINTS-00017362. – DOI 10.12921/TUPRINTS– 00017362, 2020.
+   * 
+   * @param virt Virtual link to embed.
+   * @param hosts List of substrate elements hosting the virtual link.
+   * @return Total communication cost for a link to element embedding.
+   */
+  public static double getTotalCommunicationCostLinkA(final VirtualLink virt,
+      final List<SubstrateElement> hosts) {
+    if (hosts.size() == 1) {
+      // One host object -> call other cost method for calculation
+      return getTotalCommunicationCostLinkA(virt, hosts.get(0));
+    } else if (hosts.size() > 1) {
+      // More than one host object -> 5 * virtual bandwidth
+      return 5 * virt.getBandwidth();
+    }
+
+    throw new IllegalArgumentException("Element not matched.");
+  }
+
+  /**
    * Returns the total communication cost for a link to element embedding. In comparison to the
    * paper [1], we define the cost of one hop as 1.
    * 
@@ -131,7 +187,7 @@ public class CostUtility {
    * @param host Substrate element hosting the virtual link.
    * @return Total communication cost for a link to element embedding.
    */
-  public static double getTotalCommunicationCostLink(final VirtualLink virt,
+  public static double getTotalCommunicationCostLinkB(final VirtualLink virt,
       final SubstrateElement host) {
     if (host instanceof Server) {
       // Server -> 0 hops
@@ -163,11 +219,11 @@ public class CostUtility {
    * @param hosts List of substrate elements hosting the virtual link.
    * @return Total communication cost for a link to element embedding.
    */
-  public static double getTotalCommunicationCostLink(final VirtualLink virt,
+  public static double getTotalCommunicationCostLinkB(final VirtualLink virt,
       final List<SubstrateElement> hosts) {
     if (hosts.size() == 1) {
       // One host object -> call other cost method for calculation
-      return getTotalCommunicationCostLink(virt, hosts.get(0));
+      return getTotalCommunicationCostLinkB(virt, hosts.get(0));
     } else if (hosts.size() > 1) {
       // More than one host object -> n hops * virtual bandwidth
       return virt.getBandwidth() * hosts.size();

@@ -341,7 +341,9 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
     switch (AlgorithmConfig.obj) {
       case TOTAL_PATH_COST:
         return CostUtility.getTotalPathCostNode(virt, sub);
-      case TOTAL_COMMUNICATION_COST:
+      case TOTAL_COMMUNICATION_COST_A:
+        return CostUtility.getTotalCommunicationCostNode();
+      case TOTAL_COMMUNICATION_COST_B:
         return CostUtility.getTotalCommunicationCostNode();
       default:
         throw new UnsupportedOperationException();
@@ -352,8 +354,10 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
     switch (AlgorithmConfig.obj) {
       case TOTAL_PATH_COST:
         return CostUtility.getTotalPathCostLink(hosts);
-      case TOTAL_COMMUNICATION_COST:
-        return CostUtility.getTotalCommunicationCostLink(virt, hosts);
+      case TOTAL_COMMUNICATION_COST_A:
+        return CostUtility.getTotalCommunicationCostLinkA(virt, hosts);
+      case TOTAL_COMMUNICATION_COST_B:
+        return CostUtility.getTotalCommunicationCostLinkB(virt, hosts);
       default:
         throw new UnsupportedOperationException();
     }

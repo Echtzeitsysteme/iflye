@@ -17,7 +17,7 @@ public class VneIlpPathAlgorithmTotalCommunicationCostTest extends AAlgorithmMul
 
   @Override
   public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-    AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST;
+    AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_B;
     algo = new VneIlpPathAlgorithm(sNet, vNets);
   }
 
