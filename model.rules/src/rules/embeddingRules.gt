@@ -43,14 +43,21 @@ import "platform:/resource/network.model/model/Model.ecore"
 //
 
 // Substrate server must have at least the required resources available
-pattern serverMatchPositive() {
+rule serverMatchPositive() {
 	root: Root {
 		-networks -> substrateNetwork
 		-networks -> virtualNetwork
 	}
 	
-	substrateNode: SubstrateServer
-	virtualNode: VirtualServer
+	substrateNode: SubstrateServer {
+		.residualCpu := substrateNode.residualCpu - virtualNode.cpu
+		.residualMemory := substrateNode.residualMemory - virtualNode.memory
+		.residualStorage := substrateNode.residualStorage - virtualNode.storage
+		++ -guestServers -> virtualNode
+	}
+	virtualNode: VirtualServer {
+		++ -host -> substrateNode
+	}
 	
 	substrateNetwork: SubstrateNetwork {
 		-nodes -> substrateNode
@@ -112,14 +119,18 @@ pattern serverMatchPositive() {
 
 // Match from virtual switch to substrate node
 // (Substrate node could either be a server or a switch.)
-pattern switchNodeMatchPositive() {
+rule switchNodeMatchPositive() {
 	root: Root {
 		-networks -> substrateNetwork
 		-networks -> virtualNetwork
 	}
 	
-	substrateNode: SubstrateNode
-	virtualSwitch : VirtualSwitch
+	substrateNode: SubstrateNode {
+		++ -guestSwitches -> virtualSwitch
+	}
+	virtualSwitch : VirtualSwitch {
+		++ -host -> substrateNode
+	}
 	
 	substrateNetwork: SubstrateNetwork {
 		-nodes -> substrateNode
@@ -135,14 +146,22 @@ pattern switchNodeMatchPositive() {
 //
 
 // Match from a virtual link to a substrate path (positive)
-pattern linkPathMatchPositive() {
+rule linkPathMatchPositive() {
 	root: Root {
 		-networks -> substrateNetwork
 		-networks -> virtualNetwork
 	}
 	
-	substratePath: SubstratePath
-	virtualLink: VirtualLink
+	substratePath: SubstratePath {
+		++ -guestLinks -> virtualLink
+		.residualBandwidth := substratePath.residualBandwidth - virtualLink.bandwidth
+		// TODO: There is no 'for-each' like functionality. Therefore, we have to update 
+		// the bandwidth of all substrate links contained in the substrate path "by hand".
+		
+	}
+	virtualLink: VirtualLink {
+		++ -host -> substratePath
+	}
 	
 	substrateNetwork: SubstrateNetwork {
 		-paths -> substratePath
@@ -178,14 +197,18 @@ pattern linkPathMatchPositive() {
 
 // Match from virtual link to substrate server
 // This one does not have any constraints.
-pattern linkServerMatchPositive() {
+rule linkServerMatchPositive() {
 	root: Root {
 		-networks -> substrateNetwork
 		-networks -> virtualNetwork
 	}
 	
-	substrateServer: SubstrateServer
-	virtualLink: VirtualLink
+	substrateServer: SubstrateServer {
+		++ -guestLinks -> virtualLink
+	}
+	virtualLink: VirtualLink {
+		++ -host -> substrateServer
+	}
 	
 	substrateNetwork: SubstrateNetwork {
 		-nodes -> substrateServer
