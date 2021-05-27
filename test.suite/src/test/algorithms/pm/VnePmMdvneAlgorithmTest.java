@@ -7,7 +7,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import algorithms.pm.VnePmMdvneAlgorithm;
 import facade.config.ModelFacadeConfig;
+import model.SubstrateLink;
 import model.SubstrateNetwork;
+import model.SubstratePath;
 import model.VirtualNetwork;
 import test.algorithms.generic.AAlgorithmMultipleVnsTest;
 
@@ -61,6 +63,32 @@ public class VnePmMdvneAlgorithmTest extends AAlgorithmMultipleVnsTest {
     assertTrue(algo.execute());
 
     checkAllElementsEmbeddedOnSubstrateNetwork(sNet, Set.of(currVnet));
+  }
+
+  @Test
+  public void testPathLinkBandwidthDecrement() {
+    oneTierSetupTwoServers("sub", 100);
+    facade.createAllPathsForNetwork("sub");
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+    oneTierSetupTwoServers("virt", 100);
+    final VirtualNetwork currVnet = (VirtualNetwork) facade.getNetworkById("virt");
+
+    initAlgo(sNet, Set.of(currVnet));
+    assertTrue(algo.execute());
+
+    sNet.getPaths().forEach(p -> {
+      if (p.getHops() == 1) {
+        // Path itself
+        final SubstratePath sp = (SubstratePath) p;
+        assertTrue(sp.getBandwidth() != sp.getResidualBandwidth());
+
+        // Links
+        sp.getLinks().forEach(l -> {
+          final SubstrateLink sl = (SubstrateLink) l;
+          assertTrue(sl.getBandwidth() != sl.getResidualBandwidth());
+        });
+      }
+    });
   }
 
   /*
