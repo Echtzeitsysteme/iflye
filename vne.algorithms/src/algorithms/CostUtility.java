@@ -1,18 +1,14 @@
 package algorithms;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import algorithms.ilp.VneIlpPathAlgorithm;
 import algorithms.pm.VnePmMdvneAlgorithm;
 import model.Link;
-import model.Node;
 import model.Path;
 import model.Server;
 import model.SubstrateElement;
 import model.SubstrateLink;
 import model.SubstratePath;
-import model.SubstrateSwitch;
 import model.Switch;
 import model.VirtualElement;
 import model.VirtualLink;
@@ -121,7 +117,8 @@ public class CostUtility {
   }
 
   /**
-   * Returns the total communication cost for a link to element embedding.
+   * Returns the total communication cost for a link to element embedding. In comparison to the
+   * paper [1], we define the cost of one hop as 1.
    * 
    * Implementation of the cost function of paper [1]. [1] Meng, Xiaoqiao, Vasileios Pappas, and Li
    * Zhang. "Improving the scalability of data center networks with traffic-aware virtual machine
@@ -137,27 +134,23 @@ public class CostUtility {
   public static double getTotalCommunicationCostLink(final VirtualLink virt,
       final SubstrateElement host) {
     if (host instanceof Server) {
+      // Server -> 0 hops
       return 0;
     } else if (host instanceof SubstratePath) {
+      // Path -> n hops * virtual bandwidth
       final SubstratePath subPath = (SubstratePath) host;
-
-      int switches = 0;
-
-      // Get number of switches in the path
-      for (final Node n : subPath.getNodes()) {
-        if (n instanceof Switch) {
-          switches++;
-        }
-      }
-
-      return virt.getBandwidth() * switches;
+      return virt.getBandwidth() * subPath.getHops();
+    } else if (host instanceof SubstrateLink) {
+      // Link -> 1 hop * virtual bandwidth
+      return virt.getBandwidth();
     }
 
     throw new IllegalArgumentException("Element not matched.");
   }
 
   /**
-   * Returns the total communication cost for a link to list of elements embedding.
+   * Returns the total communication cost for a link to list of elements embedding. In comparison to
+   * the paper [1], we define the cost of one hop as 1.
    * 
    * Implementation of the cost function of paper [1]. [1] Meng, Xiaoqiao, Vasileios Pappas, and Li
    * Zhang. "Improving the scalability of data center networks with traffic-aware virtual machine
@@ -173,22 +166,11 @@ public class CostUtility {
   public static double getTotalCommunicationCostLink(final VirtualLink virt,
       final List<SubstrateElement> hosts) {
     if (hosts.size() == 1) {
+      // One host object -> call other cost method for calculation
       return getTotalCommunicationCostLink(virt, hosts.get(0));
     } else if (hosts.size() > 1) {
-      // Using a set to filter out duplicate switches
-      final Set<SubstrateSwitch> switches = new HashSet<SubstrateSwitch>();
-      hosts.stream().forEach(h -> {
-        final SubstrateLink l = (SubstrateLink) h;
-        if (l.getSource() instanceof SubstrateSwitch) {
-          switches.add((SubstrateSwitch) l.getSource());
-        }
-
-        if (l.getTarget() instanceof SubstrateSwitch) {
-          switches.add((SubstrateSwitch) l.getTarget());
-        }
-      });
-
-      return virt.getBandwidth() * switches.size();
+      // More than one host object -> n hops * virtual bandwidth
+      return virt.getBandwidth() * hosts.size();
     }
 
     throw new IllegalArgumentException("Element not matched.");
