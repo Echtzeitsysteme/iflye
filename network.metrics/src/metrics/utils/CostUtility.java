@@ -1,8 +1,6 @@
-package algorithms;
+package metrics.utils;
 
 import java.util.List;
-import algorithms.ilp.VneIlpPathAlgorithm;
-import algorithms.pm.VnePmMdvneAlgorithm;
 import model.Link;
 import model.Path;
 import model.Server;
@@ -260,5 +258,24 @@ public class CostUtility {
   public static double getNetworkRejectionCost() {
     return 1_000_000;
   }
+
+  /*
+   * Traffic-amount first algorithm specific constants.
+   */
+
+  /**
+   * Cost for a VNE inside one substrate server.
+   */
+  public static final int TAF_C_ALPHA = 1;
+
+  /**
+   * Cost for a VNE inside one substrate rack.
+   */
+  public static final int TAF_C_BETA = 3;
+
+  /**
+   * Cost for a VNE on multiple substrate racks.
+   */
+  public static final int TAF_C_GAMMA = 5;
 
 }

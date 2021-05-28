@@ -1,11 +1,9 @@
 package test.metrics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import facade.config.ModelFacadeConfig;
-import metrics.TotalCommunicationCostMetric;
+import metrics.TotalCommunicationCostMetricB;
 import model.Path;
 import model.SubstrateNetwork;
 
@@ -14,7 +12,7 @@ import model.SubstrateNetwork;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class TotalCommunicationCostMetricTest extends AMetricTest {
+public class TotalCommunicationCostMetricBTest extends AMetricTest {
 
   @BeforeEach
   public void setup() {
@@ -29,7 +27,7 @@ public class TotalCommunicationCostMetricTest extends AMetricTest {
   public void testNoEmbeddings() {
     createSubstrateNetwork();
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-    final TotalCommunicationCostMetric metric = new TotalCommunicationCostMetric(sNet);
+    final TotalCommunicationCostMetricB metric = new TotalCommunicationCostMetricB(sNet);
     assertEquals(0, metric.getValue());
   }
 
@@ -38,7 +36,7 @@ public class TotalCommunicationCostMetricTest extends AMetricTest {
     createSubstrateNetwork();
     setupEmbeddingSameHost();
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-    final TotalCommunicationCostMetric metric = new TotalCommunicationCostMetric(sNet);
+    final TotalCommunicationCostMetricB metric = new TotalCommunicationCostMetricB(sNet);
 
     assertEquals(0, metric.getValue());
   }
@@ -48,35 +46,18 @@ public class TotalCommunicationCostMetricTest extends AMetricTest {
     createSubstrateNetwork();
     setupEmbeddingTwoHosts();
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-    final TotalCommunicationCostMetric metric = new TotalCommunicationCostMetric(sNet);
+    final TotalCommunicationCostMetricB metric = new TotalCommunicationCostMetricB(sNet);
 
-    assertEquals(2 * 3, metric.getValue());
+    assertEquals(2 * 2 * 3, metric.getValue());
   }
 
   @Test
   public void testEmbeddingTwoHops() {
     createTwoTierSubstrateNetwork();
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-    final TotalCommunicationCostMetric metric = new TotalCommunicationCostMetric(sNet);
+    final TotalCommunicationCostMetricB metric = new TotalCommunicationCostMetricB(sNet);
 
-    assertEquals((4 - 1) * 2 * 3, metric.getValue());
-  }
-
-  /*
-   * Negative tests
-   */
-
-  @Test
-  public void testPathConfigIsWrong() {
-    int oldMaxPathLength = ModelFacadeConfig.MAX_PATH_LENGTH;
-    ModelFacadeConfig.MAX_PATH_LENGTH = 1;
-    createTwoTierSubstrateNetwork();
-    ModelFacadeConfig.MAX_PATH_LENGTH = oldMaxPathLength;
-    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-
-    assertThrows(UnsupportedOperationException.class, () -> {
-      new TotalCommunicationCostMetric(sNet);
-    });
+    assertEquals(2 * 2 * 2 * 3, metric.getValue());
   }
 
   /*

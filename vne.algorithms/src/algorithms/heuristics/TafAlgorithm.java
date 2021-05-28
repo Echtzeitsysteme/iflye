@@ -15,6 +15,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import algorithms.AbstractAlgorithm;
 import facade.config.ModelFacadeConfig;
+import metrics.utils.CostUtility;
 import model.Link;
 import model.Node;
 import model.Path;
@@ -50,25 +51,6 @@ import model.VirtualServer;
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class TafAlgorithm extends AbstractAlgorithm {
-
-  /*
-   * Algorithm specific constants.
-   */
-
-  /**
-   * Cost for a VNE inside one substrate server.
-   */
-  public static final int C_ALPHA = 1;
-
-  /**
-   * Cost for a VNE inside one substrate rack.
-   */
-  public static final int C_BETA = 3;
-
-  /**
-   * Cost for a VNE on multiple substrate racks.
-   */
-  public static final int C_GAMMA = 5;
 
   /*
    * Data from model (will be imported in initialization method).
@@ -618,13 +600,13 @@ public class TafAlgorithm extends AbstractAlgorithm {
 
     if (allVirtualServersToOneSubstrateServer()) {
       // All servers are placed to one rack (intra-server)
-      cost = C_ALPHA;
+      cost = CostUtility.TAF_C_ALPHA;
     } else if (rackSwitches.size() == 1) {
       // All virtual servers are placed in one rack (inter-server and intra-rack)
-      cost = C_BETA;
+      cost = CostUtility.TAF_C_BETA;
     } else {
       // All virtual servers are placed in multiple racks (intra-rack)
-      cost = C_GAMMA;
+      cost = CostUtility.TAF_C_GAMMA;
     }
 
     return cost;

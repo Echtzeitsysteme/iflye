@@ -8,6 +8,5 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/network.model"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/vne.algorithms"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
