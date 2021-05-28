@@ -66,7 +66,8 @@ public class Ui {
    */
   private static String subNetworkId;
 
-  private static Map<Node, List<String>> serverMappings = new HashMap<Node, List<String>>();
+  private static Map<Node, List<String>> serverToServerMappings = new HashMap<Node, List<String>>();
+  private static Map<Node, List<String>> switchToServerMappings = new HashMap<Node, List<String>>();
   private static Map<Node, List<String>> switchMappings = new HashMap<Node, List<String>>();
   private static Set<String> virtualNetworks = new HashSet<String>();
 
@@ -101,13 +102,20 @@ public class Ui {
       // Guest servers
       final SubstrateServer ssrv = (SubstrateServer) srv;
       for (final VirtualServer gs : ssrv.getGuestServers()) {
-        if (!serverMappings.containsKey(srvNode)) {
-          serverMappings.put(srvNode, new LinkedList<String>());
+        if (!serverToServerMappings.containsKey(srvNode)) {
+          serverToServerMappings.put(srvNode, new LinkedList<String>());
         }
-        serverMappings.get(srvNode).add(gs.getName());
+        serverToServerMappings.get(srvNode).add(gs.getName());
         virtualNetworks.add(gs.getNetwork().getName());
       }
-      // TODO: Guest switches
+      // Guest switches
+      for (final VirtualSwitch gs : ssrv.getGuestSwitches()) {
+        if (!switchToServerMappings.containsKey(srvNode)) {
+          switchToServerMappings.put(srvNode, new LinkedList<String>());
+        }
+        switchToServerMappings.get(srvNode).add(gs.getName());
+        virtualNetworks.add(gs.getNetwork().getName());
+      }
 
       srvCurrX += SCALE_X;
     }
@@ -171,22 +179,41 @@ public class Ui {
     /*
      * Guest visualization
      */
-    // Server mappings
-    for (final Node key : serverMappings.keySet()) {
+    // Server to server mappings
+    for (final Node key : serverToServerMappings.keySet()) {
       final double[] coordinates = nodeToCoordinates(key);
-      for (final String act : serverMappings.get(key)) {
+      int counter = 0;
+      for (final String act : serverToServerMappings.get(key)) {
         final Node srvNode = graph.addNode(act);
         srvNode.setAttribute("ui.label", act.substring(act.indexOf("_") + 1));
         srvNode.setAttribute("ui.style",
             "fill-color: rgb(155,000,000);" + "stroke-color: rgb(0,0,0);" + "stroke-width: 1px;"
                 + "stroke-mode: plain;" + "text-size: 8;" + "size: 25px;" + "text-style: bold;");
-        srvNode.setAttribute("xyz", coordinates[0] - 0.75, coordinates[1], 0);
+        srvNode.setAttribute("xyz", coordinates[0] - 0.75, coordinates[1] - 0.5 * counter, 0);
+        counter++;
       }
     }
 
-    // Switch mappings
+    // Switch to server mappings
+    for (final Node key : switchToServerMappings.keySet()) {
+      final double[] coordinates = nodeToCoordinates(key);
+      int counter = 0;
+      for (final String act : switchToServerMappings.get(key)) {
+        final Node srvNode = graph.addNode(act);
+        srvNode.setAttribute("ui.label", act.substring(act.indexOf("_") + 1));
+        srvNode.setAttribute("ui.style",
+            "fill-color: rgb(255,255,255); " + "shape: rounded-box; "
+                + "stroke-color: rgb(155,000,000); " + "stroke-width: 4px; "
+                + "stroke-mode: plain; " + "text-size: 8; " + "size: 25px; " + "text-style: bold;");
+        srvNode.setAttribute("xyz", coordinates[0] - 0.75, coordinates[1] - 0.5 * counter, 0);
+        counter++;
+      }
+    }
+
+    // Switch to switch mappings
     for (final Node key : switchMappings.keySet()) {
       final double[] coordinates = nodeToCoordinates(key);
+      int counter = 0;
       for (final String act : switchMappings.get(key)) {
         final Node swNode = graph.addNode(act);
         swNode.setAttribute("ui.label", act.substring(act.indexOf("_") + 1));
@@ -195,7 +222,8 @@ public class Ui {
                 + "stroke-color: rgb(155,000,000); " + "stroke-width: 4px; "
                 + "stroke-mode: plain; " + "text-size: 8; " + "size: 25px; " + "text-style: bold;");
 
-        swNode.setAttribute("xyz", coordinates[0] - 0.75, coordinates[1], 0);
+        swNode.setAttribute("xyz", coordinates[0] - 0.75, coordinates[1] - 0.5 * counter, 0);
+        counter++;
       }
     }
 
