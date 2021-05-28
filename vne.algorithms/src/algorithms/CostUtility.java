@@ -174,14 +174,24 @@ public class CostUtility {
 
   /**
    * Returns the total communication cost for a link to element embedding. In comparison to the
-   * paper [1], we define the cost of one hop as 1.
+   * paper [1], we define the cost of one hop as 1 as stated in [2].
    * 
-   * Implementation of the cost function of paper [1]. [1] Meng, Xiaoqiao, Vasileios Pappas, and Li
-   * Zhang. "Improving the scalability of data center networks with traffic-aware virtual machine
-   * placement." 2010 Proceedings IEEE INFOCOM. IEEE, 2010.
+   * Implementation of the cost function of paper [1] and [2].
    * 
-   * From the paper: "For the sake of illustration, we define C_ij as the number of switches on the
-   * routing path from VM i to j.
+   * [1] Meng, Xiaoqiao, Vasileios Pappas, and Li Zhang. "Improving the scalability of data center
+   * networks with traffic-aware virtual machine placement." 2010 Proceedings IEEE INFOCOM. IEEE,
+   * 2010.
+   * 
+   * [2] M. G. Rabbani, R. P. Esteves, M. Podlesny, G. Simon, L. Z. Granville and R. Boutaba, "On
+   * tackling virtual data center embedding problem," 2013 IFIP/IEEE International Symposium on
+   * Integrated Network Management (IM 2013), 2013, pp. 177-184.
+   * 
+   * From the paper [1]: "For the sake of illustration, we define C_ij as the number of switches on
+   * the routing path from VM i to j."
+   * 
+   * From the paper [2]: "We consider the hop-count between the virtual nodes (i.e., VM or virtual
+   * switch) multiplied by the corresponding requested bandwidth of the virtual link connecting the
+   * two virtual nodes"
    * 
    * @param virt Virtual link to embed.
    * @param host Substrate element hosting the virtual link.
@@ -206,14 +216,24 @@ public class CostUtility {
 
   /**
    * Returns the total communication cost for a link to list of elements embedding. In comparison to
-   * the paper [1], we define the cost of one hop as 1.
+   * the paper [1], we define the cost of one hop as 1 as stated in [2].
    * 
-   * Implementation of the cost function of paper [1]. [1] Meng, Xiaoqiao, Vasileios Pappas, and Li
-   * Zhang. "Improving the scalability of data center networks with traffic-aware virtual machine
-   * placement." 2010 Proceedings IEEE INFOCOM. IEEE, 2010.
+   * Implementation of the cost function of paper [1] and [2].
    * 
-   * From the paper: "For the sake of illustration, we define C_ij as the number of switches on the
-   * routing path from VM i to j.
+   * [1] Meng, Xiaoqiao, Vasileios Pappas, and Li Zhang. "Improving the scalability of data center
+   * networks with traffic-aware virtual machine placement." 2010 Proceedings IEEE INFOCOM. IEEE,
+   * 2010.
+   * 
+   * [2] M. G. Rabbani, R. P. Esteves, M. Podlesny, G. Simon, L. Z. Granville and R. Boutaba, "On
+   * tackling virtual data center embedding problem," 2013 IFIP/IEEE International Symposium on
+   * Integrated Network Management (IM 2013), 2013, pp. 177-184.
+   * 
+   * From the paper [1]: "For the sake of illustration, we define C_ij as the number of switches on
+   * the routing path from VM i to j."
+   * 
+   * From the paper [2]: "We consider the hop-count between the virtual nodes (i.e., VM or virtual
+   * switch) multiplied by the corresponding requested bandwidth of the virtual link connecting the
+   * two virtual nodes"
    * 
    * @param virt Virtual link to embed.
    * @param hosts List of substrate elements hosting the virtual link.
