@@ -152,6 +152,63 @@ public class TafAlgorithmTest {
   }
 
   @Test
+  public void testAllOnOneRackTwoTier() {
+    oneTierSetupTwoServers("virt", 1);
+    twoTierSetupFourServers("sub", 1);
+
+    ModelFacade.getInstance().createAllPathsForNetwork("sub");
+
+    final SubstrateNetwork sNet =
+        (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
+    final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
+
+    final TafAlgorithm taf = new TafAlgorithm(sNet, Set.of(vNet));
+    assertTrue(taf.execute());
+
+    // Test switch placement
+    final VirtualSwitch virtSw = (VirtualSwitch) ModelFacade.getInstance().getSwitchById("virt_sw");
+
+    // Virtual switch must not be embedded on core switch. Thus, the depth must be 1.
+    assertEquals(1, virtSw.getHost().getDepth());
+
+    final String virtSwHostRef = virtSw.getHost().getName();
+
+    // Test server placements
+    final VirtualServer vSrv1 =
+        (VirtualServer) ModelFacade.getInstance().getServerById("virt_srv1");
+    final VirtualServer vSrv2 =
+        (VirtualServer) ModelFacade.getInstance().getServerById("virt_srv2");
+    assertEquals("sub_srv1", vSrv1.getHost().getName());
+    assertEquals("sub_srv2", vSrv2.getHost().getName());
+
+    // Test link placements
+    final VirtualLink vLn1 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln1");
+    final VirtualLink vLn2 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln2");
+    final VirtualLink vLn3 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln3");
+    final VirtualLink vLn4 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln4");
+
+    // Link 1
+    final Path pLn1 = (Path) vLn1.getHost();
+    assertEquals("sub_srv1", pLn1.getSource().getName());
+    assertEquals(virtSwHostRef, pLn1.getTarget().getName());
+
+    // Link 2
+    final Path pLn2 = (Path) vLn2.getHost();
+    assertEquals("sub_srv2", pLn2.getSource().getName());
+    assertEquals(virtSwHostRef, pLn2.getTarget().getName());
+
+    // Link 3
+    final Path pLn3 = (Path) vLn3.getHost();
+    assertEquals(virtSwHostRef, pLn3.getSource().getName());
+    assertEquals("sub_srv1", pLn3.getTarget().getName());
+
+    // Link 4
+    final Path pLn4 = (Path) vLn4.getHost();
+    assertEquals(virtSwHostRef, pLn4.getSource().getName());
+    assertEquals("sub_srv2", pLn4.getTarget().getName());
+  }
+
+  @Test
   public void testAllOnMultipleRacks() {
     oneTierSetupThreeServers("virt", 1);
     twoTierSetupFourServers("sub", 1);
