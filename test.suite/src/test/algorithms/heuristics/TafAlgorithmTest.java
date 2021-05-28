@@ -181,6 +181,11 @@ public class TafAlgorithmTest {
     assertEquals("sub_srv1", vSrv1.getHost().getName());
     assertEquals("sub_srv2", vSrv2.getHost().getName());
 
+    // The chosen switch must be directly connected to the two substrate servers hosting the
+    // virtual ones
+    assertEquals(virtSw.getHost(), vSrv1.getHost().getOutgoingLinks().get(0).getTarget());
+    assertEquals(virtSw.getHost(), vSrv2.getHost().getOutgoingLinks().get(0).getTarget());
+
     // Test link placements
     final VirtualLink vLn1 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln1");
     final VirtualLink vLn2 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln2");

@@ -354,9 +354,10 @@ public class TafAlgorithm extends AbstractAlgorithm {
 
     // Search for all switches that are part of the new embedding
     for (final SubstrateServer s : servers) {
-      for (final Path p : s.getOutgoingPaths()) {
-        switches.addAll(p.getNodes().stream().filter(Switch.class::isInstance)
-            .map(Switch.class::cast).collect(Collectors.toSet()));
+      for (final Link l : s.getOutgoingLinks()) {
+        if (l.getTarget() instanceof Switch) {
+          switches.add((Switch) l.getTarget());
+        }
       }
     }
 
