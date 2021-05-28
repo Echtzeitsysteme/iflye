@@ -2,20 +2,20 @@ package test.metrics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
-import metrics.TotalCommunicationCostMetricB;
+import metrics.TotalCommunicationCostMetricA;
 import model.SubstrateNetwork;
 
 /**
  * Test class for the metric of total communication cost as implemented in
- * {@link TotalCommunicationCostMetricB}.
+ * {@link TotalCommunicationCostMetricA}.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class TotalCommunicationCostMetricBTest extends ATotalCommunicationCostMetricTest {
+public class TotalCommunicationCostMetricATest extends ATotalCommunicationCostMetricTest {
 
   @Override
   protected void setMetric(final SubstrateNetwork sNet) {
-    metric = new TotalCommunicationCostMetricB(sNet);
+    metric = new TotalCommunicationCostMetricA(sNet);
   }
 
   /*
@@ -26,9 +26,9 @@ public class TotalCommunicationCostMetricBTest extends ATotalCommunicationCostMe
   public void testEmbeddingTwoHops() {
     createTwoTierSubstrateNetwork();
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-    final TotalCommunicationCostMetricB metric = new TotalCommunicationCostMetricB(sNet);
+    final TotalCommunicationCostMetricA metric = new TotalCommunicationCostMetricA(sNet);
 
-    assertEquals(2 * 2 * 2 * 3, metric.getValue());
+    assertEquals(5 * 2 * 2 * 3, metric.getValue());
   }
 
 }
