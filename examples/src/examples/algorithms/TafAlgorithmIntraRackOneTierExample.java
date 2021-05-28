@@ -15,7 +15,7 @@ import model.VirtualNetwork;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class TafAlgorithmIntraRackExample {
+public class TafAlgorithmIntraRackOneTierExample {
 
   /**
    * Main method to start the example. String array of arguments will be ignored.
