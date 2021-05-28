@@ -301,7 +301,7 @@ public class TafAlgorithm extends AbstractAlgorithm {
         commonSwitch = getHighestCommonSwitch(placedVms.values());
       }
 
-      ModelFacade.getInstance().embedSwitchToNode(commonSwitch.getName(), vSwitchId);
+      facade.embedSwitchToNode(commonSwitch.getName(), vSwitchId);
 
       // Get links from servers to that switch -> Embed virtual links onto them
       for (final VirtualLink l : virtualLinks) {
