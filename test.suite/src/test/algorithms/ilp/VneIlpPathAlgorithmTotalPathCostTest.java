@@ -9,8 +9,7 @@ import model.VirtualNetwork;
 import test.algorithms.generic.AAlgorithmMultipleVnsTest;
 
 /**
- * Test class for the VNE ILP algorithm implementation for minimizing the total communication cost
- * metric.
+ * Test class for the VNE ILP algorithm implementation for minimizing the total path cost metric.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
