@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 import algorithms.AbstractAlgorithm;
+import algorithms.AlgorithmConfig;
 import facade.config.ModelFacadeConfig;
 import ilp.wrapper.IlpDelta;
 import ilp.wrapper.IlpSolverException;
@@ -17,6 +18,7 @@ import ilp.wrapper.IncrementalIlpSolver;
 import ilp.wrapper.Statistics;
 import ilp.wrapper.config.IlpSolverConfig;
 import ilp.wrapper.impl.IncrementalGurobiSolver;
+import metrics.utils.CostUtility;
 import model.Link;
 import model.Node;
 import model.SubstrateElement;
@@ -72,7 +74,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
      */
     public void addNewNetworkMatch(final Match match) {
       delta.addVariable("rej" + match.getVirtual().getName(),
-          getNetworkRejectionCost(match.getVirtual().getName()));
+          CostUtility.getNetworkRejectionCost());
       variablesToMatch.put("rej" + match.getVirtual().getName(), match);
     }
 
@@ -99,8 +101,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
         return;
       }
 
-      delta.addVariable(varName,
-          getLinkToNodeEmbeddingCost(vLink, (SubstrateNode) match.getSubstrate()));
+      delta.addVariable(varName, getLinkCost(vLink, (SubstrateNode) match.getSubstrate()));
       delta.setVariableWeightForConstraint("vl" + match.getVirtual().getName(), 1, varName);
       delta.addLessOrEqualsConstraint("req" + varName, 0, new int[] {2, -1, -1},
           new String[] {varName, sourceVarName, targetVarName});
@@ -133,7 +134,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 
       final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
 
-      delta.addVariable(varName, getLinkToPathEmbeddingCost(vLink, sPath));
+      delta.addVariable(varName, getLinkCost(vLink, sPath));
       delta.setVariableWeightForConstraint("vl" + match.getVirtual().getName(), 1, varName);
       delta.addLessOrEqualsConstraint("req" + varName, 0, new int[] {2, -1, -1},
           new String[] {varName, sourceVarName, targetVarName});
@@ -151,8 +152,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       final VirtualServer vServer =
           (VirtualServer) facade.getServerById(match.getVirtual().getName());
       final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
-      delta.addVariable(varName,
-          getServerEmbeddingCost(vServer, (SubstrateServer) match.getSubstrate()));
+      delta.addVariable(varName, getNodeCost(vServer, (SubstrateServer) match.getSubstrate()));
       delta.setVariableWeightForConstraint("vs" + match.getVirtual().getName(), 1, varName);
 
       delta.setVariableWeightForConstraint("cpu" + match.getSubstrate().getName(), vServer.getCpu(),
@@ -188,8 +188,8 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
      */
     public void addSwitchMatch(final Match match) {
       final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
-      delta.addVariable(varName, getSwitchEmbeddingCost((VirtualNode) match.getVirtual(),
-          (SubstrateNode) match.getSubstrate()));
+      delta.addVariable(varName,
+          getNodeCost((VirtualNode) match.getVirtual(), (SubstrateNode) match.getSubstrate()));
       delta.setVariableWeightForConstraint("vw" + match.getVirtual().getName(), 1, varName);
       variablesToMatch.put(varName, match);
     }
@@ -546,41 +546,48 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     }
   }
 
-  /*
-   * Cost functions.
-   */
-
-  public double getSwitchEmbeddingCost(final VirtualNode virtual, final SubstrateNode substrate) {
-    if (substrate instanceof SubstrateSwitch) {
-      return 1;
-    } else if (substrate instanceof SubstrateServer) {
-      return 2;
-    }
-    throw new IllegalArgumentException();
-  }
-
-  public double getServerEmbeddingCost(final VirtualServer vServer, final SubstrateServer sServer) {
-    return 1;
-  }
-
   public void forEachLink(final SubstratePath sPath, final Consumer<? super Link> operation) {
     sPath.getLinks().stream().forEach(operation);
   }
 
-  public double getLinkToPathEmbeddingCost(final VirtualLink vLink, final SubstratePath sPath) {
-    if (sPath.getHops() == 1) {
-      return 2;
-    } else {
-      return Math.pow(4, sPath.getHops());
+  /*
+   * Cost functions.
+   */
+
+  public double getCost(final VirtualElement virt, final SubstrateElement host) {
+    if (virt instanceof Link) {
+      return getLinkCost((VirtualLink) virt, host);
+    } else if (virt instanceof Node && host instanceof Node) {
+      return getNodeCost((VirtualNode) virt, (SubstrateNode) host);
+    }
+
+    throw new IllegalArgumentException();
+  }
+
+  public double getNodeCost(final VirtualNode virt, final SubstrateNode sub) {
+    switch (AlgorithmConfig.obj) {
+      case TOTAL_PATH_COST:
+        return CostUtility.getTotalPathCostNode(virt, sub);
+      case TOTAL_COMMUNICATION_COST_A:
+        return CostUtility.getTotalCommunicationCostNode();
+      case TOTAL_COMMUNICATION_COST_B:
+        return CostUtility.getTotalCommunicationCostNode();
+      default:
+        throw new UnsupportedOperationException();
     }
   }
 
-  public double getLinkToNodeEmbeddingCost(final VirtualLink vLink, final SubstrateNode substrate) {
-    return 1;
-  }
-
-  private double getNetworkRejectionCost(final String network) {
-    return 1_000_000;
+  public double getLinkCost(final VirtualLink virt, final SubstrateElement sub) {
+    switch (AlgorithmConfig.obj) {
+      case TOTAL_PATH_COST:
+        return CostUtility.getTotalPathCostLink(sub);
+      case TOTAL_COMMUNICATION_COST_A:
+        return CostUtility.getTotalCommunicationCostLinkA(virt, sub);
+      case TOTAL_COMMUNICATION_COST_B:
+        return CostUtility.getTotalCommunicationCostLinkB(virt, sub);
+      default:
+        throw new UnsupportedOperationException();
+    }
   }
 
 }

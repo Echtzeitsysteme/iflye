@@ -3,7 +3,7 @@ package metrics;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import algorithms.heuristics.TafAlgorithm;
+import metrics.utils.CostUtility;
 import model.Network;
 import model.Node;
 import model.Server;
@@ -56,13 +56,13 @@ public class TotalTafCommunicationCostMetric implements IMetric {
             if (vSource.getHost().equals(vTarget.getHost())) {
               // source and target are embedded on the same substrate server
               // C_ALPHA = same substrate server
-              cost += minBw * TafAlgorithm.C_ALPHA;
+              cost += minBw * CostUtility.TAF_C_ALPHA;
             } else if (isEmbeddedOnOneRack(guest)) {
               // C_BETA = same substrate rack
-              cost += minBw * TafAlgorithm.C_BETA;
+              cost += minBw * CostUtility.TAF_C_BETA;
             } else {
               // C_GAMMA = else
-              cost += minBw * TafAlgorithm.C_GAMMA;
+              cost += minBw * CostUtility.TAF_C_GAMMA;
             }
           }
         }

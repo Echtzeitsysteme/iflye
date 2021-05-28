@@ -24,18 +24,18 @@ import org.cardygan.ilp.api.model.BinaryVar;
 import org.cardygan.ilp.api.model.Model;
 import org.cardygan.ilp.api.model.Param;
 import algorithms.AbstractAlgorithm;
+import algorithms.AlgorithmConfig;
 import ilp.wrapper.config.IlpSolverConfig;
+import metrics.utils.CostUtility;
 import model.Link;
 import model.Node;
 import model.Path;
-import model.Server;
 import model.SubstrateElement;
 import model.SubstrateLink;
 import model.SubstrateNetwork;
 import model.SubstrateNode;
 import model.SubstratePath;
 import model.SubstrateServer;
-import model.Switch;
 import model.VirtualElement;
 import model.VirtualLink;
 import model.VirtualNetwork;
@@ -321,14 +321,15 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
     final List<ArithExpr> expr = new LinkedList<>();
     for (int v = 0; v < nodeVariables.length; v++) {
       for (int s = 0; s < nodeVariables[v].length; s++) {
-        expr.add(mult(param(getTotalPathCost(virtualNodes.get(v), substrateNodes.get(s))),
+        expr.add(mult(param(getNodeCost(virtualNodes.get(v), substrateNodes.get(s))),
             nodeVariables[v][s]));
       }
     }
 
     for (int v = 0; v < pathVariables.length; v++) {
       for (int s = 0; s < pathVariables[v].length; s++) {
-        expr.add(mult(param(getTotalPathCost(virtualLinks.get(v), allSubstratePaths.get(s))),
+        expr.add(mult(
+            param(getLinkCost(virtualLinks.get(v), allSubstratePaths.get(s).getLinksOrServer())),
             pathVariables[v][s]));
       }
     }
@@ -336,53 +337,30 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
     model.newObjective(false, sum(expr));
   }
 
-  /**
-   * Returns the cost for a node to node embedding.
-   * 
-   * @param virtualElement Virtual node to embed.
-   * @param substrateElement Substrate node to embed.
-   * @return Cost for this particular mapping.
-   */
-  private double getTotalPathCost(final VirtualElement virtualElement,
-      final SubstrateElement substrateElement) {
-    if (virtualElement instanceof Server) {
-      if (substrateElement instanceof Server) {
-        return 1;
-      }
-    } else if (virtualElement instanceof Switch) {
-      if (substrateElement instanceof Switch) {
-        return 1;
-      } else if (substrateElement instanceof Server) {
-        return 2;
-      }
+  private double getNodeCost(final VirtualElement virt, final SubstrateElement sub) {
+    switch (AlgorithmConfig.obj) {
+      case TOTAL_PATH_COST:
+        return CostUtility.getTotalPathCostNode(virt, sub);
+      case TOTAL_COMMUNICATION_COST_A:
+        return CostUtility.getTotalCommunicationCostNode();
+      case TOTAL_COMMUNICATION_COST_B:
+        return CostUtility.getTotalCommunicationCostNode();
+      default:
+        throw new UnsupportedOperationException();
     }
-
-    // return Integer.MAX_VALUE;
-    return 0;
   }
 
-  /**
-   * Returns the cost for a link to path embedding.
-   * 
-   * @param virtualLink Virtual link to embed.
-   * @param substratePath Substrate path to embed.
-   * @return Cost for this particular mapping.
-   */
-  private double getTotalPathCost(final VirtualLink virtualLink,
-      final VneIlpPath substrateElement) {
-    if (substrateElement.getLinksOrServer().size() == 1) {
-      if (substrateElement.getLinksOrServer().get(0) instanceof Server) {
-        return 1;
-      } else if (substrateElement.getLinksOrServer().get(0) instanceof Link) {
-        return 2;
-      }
-      return 1;
-    } else if (substrateElement.getLinksOrServer().size() > 1) {
-      final List<SubstrateElement> hosts = substrateElement.getLinksOrServer();
-      return Math.pow(4, hosts.size());
+  private double getLinkCost(final VirtualLink virt, final List<SubstrateElement> hosts) {
+    switch (AlgorithmConfig.obj) {
+      case TOTAL_PATH_COST:
+        return CostUtility.getTotalPathCostLink(hosts);
+      case TOTAL_COMMUNICATION_COST_A:
+        return CostUtility.getTotalCommunicationCostLinkA(virt, hosts);
+      case TOTAL_COMMUNICATION_COST_B:
+        return CostUtility.getTotalCommunicationCostLinkB(virt, hosts);
+      default:
+        throw new UnsupportedOperationException();
     }
-
-    throw new IllegalArgumentException("Element(s) not matched.");
   }
 
   /**
