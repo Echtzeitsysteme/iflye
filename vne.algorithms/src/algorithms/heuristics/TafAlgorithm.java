@@ -290,12 +290,18 @@ public class TafAlgorithm extends AbstractAlgorithm {
       }
     } else {
       // If the virtual network can *not* be placed onto one substrate server
-      // throw new UnsupportedOperationException("Not implemented, yet!");
-      // TODO
+      SubstrateSwitch commonSwitch = null;
 
-      // Get lowest common substrate switch -> Place virtual switch there
-      final SubstrateSwitch lowestCommonSwitch = getLowestCommonSwitch(placedVms.values());
-      facade.embedSwitchToNode(lowestCommonSwitch.getName(), vSwitchId);
+      if (allVirtualServersToOneRack()) {
+        // Case embedding on one rack
+        // Get lowest common substrate switch -> Place virtual switch there
+        commonSwitch = getLowestCommonSwitch(placedVms.values());
+      } else {
+        // Case embedding on multiple racks
+        commonSwitch = getHighestCommonSwitch(placedVms.values());
+      }
+
+      ModelFacade.getInstance().embedSwitchToNode(commonSwitch.getName(), vSwitchId);
 
       // Get links from servers to that switch -> Embed virtual links onto them
       for (final VirtualLink l : virtualLinks) {
@@ -305,10 +311,10 @@ public class TafAlgorithm extends AbstractAlgorithm {
         // links source = server -> links target = switch
         if (l.getSource() instanceof Server) {
           source = placedVms.get(l.getSource());
-          target = lowestCommonSwitch;
+          target = commonSwitch;
         } else {
           // links source = switch -> links target = server
-          source = lowestCommonSwitch;
+          source = commonSwitch;
           target = placedVms.get(l.getTarget());
 
         }
@@ -328,6 +334,38 @@ public class TafAlgorithm extends AbstractAlgorithm {
    * @return Lowest common switch for a given collection of substrate servers.
    */
   private SubstrateSwitch getLowestCommonSwitch(final Collection<SubstrateServer> serverCol) {
+    final List<SubstrateServer> servers = new LinkedList<SubstrateServer>(serverCol);
+    final Set<Switch> switches = new HashSet<Switch>();
+
+    // Search for all switches that are part of the new embedding
+    for (final SubstrateServer s : servers) {
+      for (final Link l : s.getOutgoingLinks()) {
+        if (l.getTarget() instanceof Switch) {
+          switches.add((Switch) l.getTarget());
+        }
+      }
+    }
+
+    // Find lowest placed switch (highest depth value)
+    int lowestDepth = Integer.MIN_VALUE;
+    Switch lowestSwitch = null;
+    for (final Switch s : switches) {
+      if (s.getDepth() > lowestDepth) {
+        lowestDepth = s.getDepth();
+        lowestSwitch = s;
+      }
+    }
+
+    return (SubstrateSwitch) lowestSwitch;
+  }
+
+  /**
+   * Returns the highest common switch for a given collection of substrate servers.
+   * 
+   * @param serverCol Collection of substrate servers.
+   * @return Highest common switch for a given collection of substrate servers.
+   */
+  private SubstrateSwitch getHighestCommonSwitch(final Collection<SubstrateServer> serverCol) {
     final List<SubstrateServer> servers = new LinkedList<SubstrateServer>(serverCol);
     final Set<Switch> switches = new HashSet<Switch>();
 
@@ -620,6 +658,24 @@ public class TafAlgorithm extends AbstractAlgorithm {
   private boolean allVirtualServersToOneSubstrateServer() {
     return Collections.frequency(placedVms.values(),
         placedVms.get(virtualServers.get(0))) == placedVms.size();
+  }
+
+  /**
+   * Returns true if all virtual servers are placed on one single substrate rack.
+   * 
+   * @return true if all virtual servers are placed on one single substrate rack.
+   */
+  private boolean allVirtualServersToOneRack() {
+    Node tmpSw = null;
+
+    for (final SubstrateServer ssrv : placedVms.values()) {
+      if (!ssrv.getOutgoingLinks().get(0).getTarget().equals(tmpSw) && tmpSw != null) {
+        return false;
+      } else {
+        tmpSw = ssrv.getOutgoingLinks().get(0).getTarget();
+      }
+    }
+    return true;
   }
 
   /**

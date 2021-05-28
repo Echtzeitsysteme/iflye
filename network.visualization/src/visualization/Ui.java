@@ -14,6 +14,11 @@ import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.view.Viewer;
 import facade.ModelFacade;
 import generators.config.GlobalGeneratorConfig;
+import model.Link;
+import model.SubstrateServer;
+import model.SubstrateSwitch;
+import model.VirtualServer;
+import model.VirtualSwitch;
 
 /**
  * Visualization UI based on GraphStream, that can show network topologies based on models read from
@@ -61,6 +66,11 @@ public class Ui {
    */
   private static String subNetworkId;
 
+  private static Map<Node, List<String>> serverToServerMappings = new HashMap<Node, List<String>>();
+  private static Map<Node, List<String>> switchToServerMappings = new HashMap<Node, List<String>>();
+  private static Map<Node, List<String>> switchMappings = new HashMap<Node, List<String>>();
+  private static Set<String> virtualNetworks = new HashSet<String>();
+
   /**
    * Main method that starts the visualization process.
    * 
@@ -88,6 +98,25 @@ public class Ui {
 
       // Placement of the server
       srvNode.setAttribute("xyz", srvCurrX, -srv.getDepth() * SCALE_Y, 0);
+
+      // Guest servers
+      final SubstrateServer ssrv = (SubstrateServer) srv;
+      for (final VirtualServer gs : ssrv.getGuestServers()) {
+        if (!serverToServerMappings.containsKey(srvNode)) {
+          serverToServerMappings.put(srvNode, new LinkedList<String>());
+        }
+        serverToServerMappings.get(srvNode).add(gs.getName());
+        virtualNetworks.add(gs.getNetwork().getName());
+      }
+      // Guest switches
+      for (final VirtualSwitch gs : ssrv.getGuestSwitches()) {
+        if (!switchToServerMappings.containsKey(srvNode)) {
+          switchToServerMappings.put(srvNode, new LinkedList<String>());
+        }
+        switchToServerMappings.get(srvNode).add(gs.getName());
+        virtualNetworks.add(gs.getNetwork().getName());
+      }
+
       srvCurrX += SCALE_X;
     }
 
@@ -119,6 +148,15 @@ public class Ui {
       final double currX = xMap.get(sw.getDepth());
       swNode.setAttribute("xyz", currX, -sw.getDepth() * SCALE_Y, 0);
       xMap.replace(sw.getDepth(), currX + SCALE_X);
+
+      // Guest switches
+      final SubstrateSwitch ssw = (SubstrateSwitch) sw;
+      for (final VirtualSwitch gs : ssw.getGuestSwitches()) {
+        if (!switchMappings.containsKey(swNode)) {
+          switchMappings.put(swNode, new LinkedList<String>());
+        }
+        switchMappings.get(swNode).add(gs.getName());
+      }
     }
 
     // Add all link edges
@@ -138,11 +176,96 @@ public class Ui {
       }
     }
 
+    /*
+     * Guest visualization
+     */
+    // Server to server mappings
+    for (final Node key : serverToServerMappings.keySet()) {
+      final double[] coordinates = nodeToCoordinates(key);
+      int counter = 0;
+      for (final String act : serverToServerMappings.get(key)) {
+        final Node srvNode = graph.addNode(act);
+        srvNode.setAttribute("ui.label", act.substring(act.indexOf("_") + 1));
+        srvNode.setAttribute("ui.style",
+            "fill-color: rgb(155,000,000);" + "stroke-color: rgb(0,0,0);" + "stroke-width: 1px;"
+                + "stroke-mode: plain;" + "text-size: 8;" + "size: 25px;" + "text-style: bold;");
+        srvNode.setAttribute("xyz", coordinates[0] - 0.75, coordinates[1] - 0.5 * counter, 0);
+        counter++;
+      }
+    }
+
+    // Switch to server mappings
+    for (final Node key : switchToServerMappings.keySet()) {
+      final double[] coordinates = nodeToCoordinates(key);
+      int counter = 0;
+      for (final String act : switchToServerMappings.get(key)) {
+        final Node srvNode = graph.addNode(act);
+        srvNode.setAttribute("ui.label", act.substring(act.indexOf("_") + 1));
+        srvNode.setAttribute("ui.style",
+            "fill-color: rgb(255,255,255); " + "shape: rounded-box; "
+                + "stroke-color: rgb(155,000,000); " + "stroke-width: 4px; "
+                + "stroke-mode: plain; " + "text-size: 8; " + "size: 25px; " + "text-style: bold;");
+        srvNode.setAttribute("xyz", coordinates[0] - 0.75, coordinates[1] - 0.5 * counter, 0);
+        counter++;
+      }
+    }
+
+    // Switch to switch mappings
+    for (final Node key : switchMappings.keySet()) {
+      final double[] coordinates = nodeToCoordinates(key);
+      int counter = 0;
+      for (final String act : switchMappings.get(key)) {
+        final Node swNode = graph.addNode(act);
+        swNode.setAttribute("ui.label", act.substring(act.indexOf("_") + 1));
+        swNode.setAttribute("ui.style",
+            "fill-color: rgb(255,255,255); " + "shape: rounded-box; "
+                + "stroke-color: rgb(155,000,000); " + "stroke-width: 4px; "
+                + "stroke-mode: plain; " + "text-size: 8; " + "size: 25px; " + "text-style: bold;");
+
+        swNode.setAttribute("xyz", coordinates[0] - 0.75, coordinates[1] - 0.5 * counter, 0);
+        counter++;
+      }
+    }
+
+    // Links
+    for (final String actNetId : virtualNetworks) {
+      for (final Link l : ModelFacade.getInstance().getAllLinksOfNetwork(actNetId)) {
+        if (LINK_BIDIRECTIONAL) {
+          try {
+            final Edge lnEdge =
+                graph.addEdge(l.getName(), l.getSource().getName(), l.getTarget().getName(), false);
+            lnEdge.setAttribute("ui.style", "fill-color: rgb(155,000,000); shape: cubic-curve;");
+          } catch (final EdgeRejectedException ex) {
+            // Graphstream rejects 'addEdge' if there already is an undirected edge from a to b.
+            // Using the catch clause, the program does not have to track which edges were already
+            // created.
+          }
+        } else {
+          final Edge lnEdge =
+              graph.addEdge(l.getName(), l.getSource().getName(), l.getTarget().getName(), true);
+          lnEdge.setAttribute("ui.style", "fill-color: rgb(155,000,000); shape: cubic-curve;");
+        }
+      }
+    }
+
     final Viewer viewer = graph.display();
 
     if ("0".equals(args[2])) {
       viewer.disableAutoLayout();
     }
+  }
+
+  private static double[] nodeToCoordinates(final Node node) {
+    final Object[] coordinatesObj = (Object[]) node.getAttribute("xyz");
+    final double[] coordinates = new double[3];
+    for (int i = 0; i < coordinatesObj.length; i++) {
+      if (coordinatesObj[i] instanceof Integer) {
+        coordinates[i] = ((Integer) coordinatesObj[i]).doubleValue();
+      } else {
+        coordinates[i] = (double) coordinatesObj[i];
+      }
+    }
+    return coordinates;
   }
 
   /**
