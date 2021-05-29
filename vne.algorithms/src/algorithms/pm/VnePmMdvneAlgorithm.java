@@ -109,6 +109,17 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     }
 
     /**
+     * Removes a match from a virtual link to a substrate server.
+     * 
+     * @param match Match to get information from.
+     */
+    public void removeLinkServerMatch(final Match match) {
+      final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
+      delta.removeVariable(varName);
+      variablesToMatch.remove(varName);
+    }
+
+    /**
      * Adds a match from a virtual link to a substrate path.
      * 
      * @param match Match to get information from.
@@ -144,6 +155,17 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     }
 
     /**
+     * Removes a match from a virtual link to a substrate path.
+     * 
+     * @param match Match to get information from.
+     */
+    public void removeLinkPathMatch(final Match match) {
+      final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
+      delta.removeVariable(varName);
+      variablesToMatch.remove(varName);
+    }
+
+    /**
      * Adds a (positive) match from a virtual server to a substrate server.
      * 
      * @param match Match to get information from.
@@ -164,22 +186,16 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       variablesToMatch.put(varName, match);
     }
 
-    // /**
-    // * Adds a (negative) match from a virtual server to a substrate switch. This method adds a
-    // * constraint that is only fulfillable if the server will not be placed onto a switch. This
-    // * placement is per definition of the model invalid.
-    // *
-    // * @param match Match to get information from.
-    // */
-    // public void addServerSwitchMatch(final Match match) {
-    // final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
-    // // TODO: This should be changed:
-    // delta.addVariable(varName, Integer.MAX_VALUE);
-    // delta.setVariableWeightForConstraint("vs" + match.getVirtual().getName(), 1, varName);
-    // // Add a constraint that strictly forbids this embedding
-    // delta.addLessOrEqualsConstraint("req" + varName, 0, new int[] {1}, new String[] {varName});
-    // variablesToMatch.put(varName, match);
-    // }
+    /**
+     * Removes a (positive) match from a virtual server to a substrate server.
+     * 
+     * @param match Match to get information from.
+     */
+    public void removeServerMatch(final Match match) {
+      final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
+      delta.removeVariable(varName);
+      variablesToMatch.remove(varName);
+    }
 
     /**
      * Adds a match from a virtual switch to a substrate switch.
@@ -192,6 +208,17 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
           getNodeCost((VirtualNode) match.getVirtual(), (SubstrateNode) match.getSubstrate()));
       delta.setVariableWeightForConstraint("vw" + match.getVirtual().getName(), 1, varName);
       variablesToMatch.put(varName, match);
+    }
+
+    /**
+     * Removes a match from a virtual switch to a substrate switch.
+     * 
+     * @param match Match to get information from.
+     */
+    public void removeSwitchMatch(final Match match) {
+      final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
+      delta.removeVariable(varName);
+      variablesToMatch.remove(varName);
     }
 
     /**
@@ -361,18 +388,22 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     // add new matches
     // delta.getNewNetworkMatches().forEach(gen::addNewNetworkMatch);
     delta.getNewServerMatchPositives().forEach(gen::addServerMatch);
+    delta.getRemovedServerMatchPositives().forEach(gen::removeServerMatch);
 
     // delta.getNewServerMatchNegatives().forEach(gen::addServerMatch);
     // TODO: This has to be changed:
     // delta.getNewServerMatchSwitchNegatives().forEach(gen::addServerSwitchMatch);
     delta.getNewSwitchMatchPositives().forEach(gen::addSwitchMatch);
+    delta.getRemovedSwitchMatchPositives().forEach(gen::removeSwitchMatch);
 
     // Important: Due to the fact that both link constraint generating methods check the existance
     // of the node mapping variables, the link constraints have to be added *after* all node
     // constraints.
     delta.getNewLinkPathMatchPositives().forEach(gen::addLinkPathMatch);
+    delta.getRemovedLinkPathMatchPositives().forEach(gen::removeLinkPathMatch);
     // delta.getNewLinkPathMatchNegatives().forEach(gen::addLinkPathMatch);
     delta.getNewLinkServerMatchPositives().forEach(gen::addLinkServerMatch);
+    delta.getRemovedLinkServerMatchPositives().forEach(gen::removeLinkServerMatch);
 
     // apply delta in ILP generator
     gen.apply();

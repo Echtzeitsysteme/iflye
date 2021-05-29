@@ -51,11 +51,6 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
    */
   private final Map<Tuple, GraphTransformationMatch<?, ?>> tupleToGtMatch = new UnifiedMap<>();
 
-  // private Map<String, Element> allElements;
-  // private Map<String, VirtualNetwork> allVirtualNetworks;
-
-  // TODO: Currently all update and removal functionality is missing!
-
   /**
    * Constructor that initializes the object for a given root node.
    * 
@@ -64,21 +59,6 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
   public EmoflonPatternMatcher(final Root root) {
     emoflonPatternMatcherApp = new EmoflonPatternMatcherApp(root);
     api = emoflonPatternMatcherApp.initAPI();
-
-    /*
-     * New elements
-     */
-
-    // api.substrateServer()
-    // .subscribeAppearing(m -> currentDelta.addSubstrateServer(m.getSubstrateServer()));
-    // api.substrateLink()
-    // .subscribeAppearing(m -> currentDelta.addSubstrateLink(m.getSubstrateLink()));
-    //
-    // api.virtualServer()
-    // .subscribeAppearing(m -> currentDelta.addVirtualServer(m.getVirtualServer()));
-    // api.virtualSwitch()
-    // .subscribeAppearing(m -> currentDelta.addVirtualSwitch(m.getVirtualSwitch()));
-    // api.virtualLink().subscribeAppearing(m -> currentDelta.addVirtualLink(m.getVirtualLink()));
 
     /*
      * Matches
@@ -92,18 +72,22 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
       tupleToGtMatch.put(new Tuple(m.getVirtualNode(), m.getSubstrateNode()), m);
     });
 
-    // api.serverMatchNegative().subscribeAppearing(m -> {
-    // addMatch(currentDelta::addServerMatchNegative, m.getVirtualNode(), m.getSubstrateNode());
-    // });
+    api.serverMatchPositive().subscribeDisappearing(m -> {
+      removeMatch(currentDelta::removeServerMatchPositive, m.getVirtualNode(),
+          m.getSubstrateNode());
+      // TODO: Remove tuple from gt match collection?
+    });
 
-    // api.serverMatchSwitchNegative().subscribeAppearing(m -> {
-    // addMatch(currentDelta::addServerMatchSwitchNegative, m.getVirtualNode(),
-    // m.getSubstrateNode());
-    // });
 
     api.switchNodeMatchPositive().subscribeAppearing(m -> {
-      addMatch(currentDelta::addSwitchMatchPositive, m.getVirtualSwitch(), m.getSubstrateNode());
+
       tupleToGtMatch.put(new Tuple(m.getVirtualSwitch(), m.getSubstrateNode()), m);
+    });
+
+
+    api.switchNodeMatchPositive().subscribeDisappearing(m -> {
+      removeMatch(currentDelta::addSwitchMatchPositive, m.getVirtualSwitch(), m.getSubstrateNode());
+      // TODO: Remove tuple from gt match collection?
     });
 
     api.linkPathMatchPositive().subscribeAppearing(m -> {
@@ -111,14 +95,22 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
       tupleToGtMatch.put(new Tuple(m.getVirtualLink(), m.getSubstratePath()), m);
     });
 
-    // api.linkPathMatchNegative().subscribeAppearing(m -> {
-    // addMatch(currentDelta::addLinkPathMatchNegatives, m.getVirtualLink(), m.getSubstratePath());
-    // });
+    api.linkPathMatchPositive().subscribeDisappearing(m -> {
+      removeMatch(currentDelta::addLinkPathMatchPositive, m.getVirtualLink(), m.getSubstratePath());
+      // TODO: Remove tuple from gt match collection?
+    });
+
 
     api.linkServerMatchPositive().subscribeAppearing(m -> {
       addMatch(currentDelta::addLinkServerMatchPositive, m.getVirtualLink(),
           m.getSubstrateServer());
       tupleToGtMatch.put(new Tuple(m.getVirtualLink(), m.getSubstrateServer()), m);
+    });
+
+    api.linkServerMatchPositive().subscribeDisappearing(m -> {
+      removeMatch(currentDelta::addLinkServerMatchPositive, m.getVirtualLink(),
+          m.getSubstrateServer());
+      // TODO: Remove tuple from gt match collection?
     });
 
   }
@@ -165,6 +157,19 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
   public void addMatch(final BiConsumer<Element, Element> deltaModification, final Element virtual,
       final Element substrate) {
     virtualMatches.computeIfAbsent(virtual, k -> new LinkedList<>()).add(substrate);
+    deltaModification.accept(virtual, substrate);
+  }
+
+  /**
+   * Removes a match from the collection virtualMatches.
+   * 
+   * @param deltaModification Modification (input).
+   * @param virtual Virtual element for the mapping.
+   * @param substrate Substrate element for the mapping.
+   */
+  public void removeMatch(final BiConsumer<Element, Element> deltaModification,
+      final Element virtual, final Element substrate) {
+    virtualMatches.computeIfAbsent(virtual, k -> new LinkedList<>()).remove(substrate);
     deltaModification.accept(virtual, substrate);
   }
 
