@@ -80,13 +80,14 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
 
 
     api.switchNodeMatchPositive().subscribeAppearing(m -> {
-
+      addMatch(currentDelta::addSwitchMatchPositive, m.getVirtualSwitch(), m.getSubstrateNode());
       tupleToGtMatch.put(new Tuple(m.getVirtualSwitch(), m.getSubstrateNode()), m);
     });
 
 
     api.switchNodeMatchPositive().subscribeDisappearing(m -> {
-      removeMatch(currentDelta::addSwitchMatchPositive, m.getVirtualSwitch(), m.getSubstrateNode());
+      removeMatch(currentDelta::removeSwitchMatchPositive, m.getVirtualSwitch(),
+          m.getSubstrateNode());
       // TODO: Remove tuple from gt match collection?
     });
 
@@ -96,7 +97,8 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
     });
 
     api.linkPathMatchPositive().subscribeDisappearing(m -> {
-      removeMatch(currentDelta::addLinkPathMatchPositive, m.getVirtualLink(), m.getSubstratePath());
+      removeMatch(currentDelta::removeLinkPathMatchPositive, m.getVirtualLink(),
+          m.getSubstratePath());
       // TODO: Remove tuple from gt match collection?
     });
 
@@ -108,7 +110,7 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
     });
 
     api.linkServerMatchPositive().subscribeDisappearing(m -> {
-      removeMatch(currentDelta::addLinkServerMatchPositive, m.getVirtualLink(),
+      removeMatch(currentDelta::removeLinkServerMatchPositive, m.getVirtualLink(),
           m.getSubstrateServer());
       // TODO: Remove tuple from gt match collection?
     });
