@@ -242,6 +242,48 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
     assertFalse(algo.execute());
   }
 
+  @Test
+  public void testNoEmbeddingIfVnetTooLargeSingle() {
+    oneTierSetupTwoServers("virt", 3);
+    twoTierSetupFourServers("sub", 1);
+
+    facade.createAllPathsForNetwork("sub");
+
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+    final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
+
+    initAlgo(sNet, Set.of(vNet));
+
+    // Embedding should not be possible, because the total size of the virtual network can not fit
+    // on the substrate one.
+    assertFalse(algo.execute());
+  }
+
+  @Test
+  public void testNoEmbeddingIfVnetTooLargeMulti() {
+    oneTierSetupTwoServers("virt", 2);
+    twoTierSetupFourServers("sub", 2);
+
+    facade.createAllPathsForNetwork("sub");
+
+    SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+    final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
+
+    initAlgo(sNet, Set.of(vNet));
+    assertTrue(algo.execute());
+
+    facade.addNetworkToRoot("virt2", true);
+    oneTierSetupTwoServers("virt2", 3);
+
+    sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+    final VirtualNetwork vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
+    initAlgo(sNet, Set.of(vNet2));
+
+    // Embedding should not be possible, because the total size of the virtual network can not fit
+    // on the substrate one.
+    assertFalse(algo.execute());
+  }
+
   /*
    * Utility methods.
    */
