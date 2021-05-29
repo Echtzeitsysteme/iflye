@@ -3,8 +3,8 @@ package test.metrics;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import algorithms.heuristics.TafAlgorithm;
 import metrics.TotalTafCommunicationCostMetric;
+import metrics.utils.CostUtility;
 import model.Path;
 import model.SubstrateNetwork;
 
@@ -37,7 +37,7 @@ public class TotalTafCommunicationCostMetricTest extends AMetricTest {
 
     // cost = 2 * C_ALPHA * vLink.bandwidth
     // cost = 2 * 1 * 3
-    assertEquals(2 * TafAlgorithm.C_ALPHA * 3, metric.getValue());
+    assertEquals(2 * CostUtility.TAF_C_ALPHA * 3, metric.getValue());
   }
 
   @Test
@@ -49,7 +49,7 @@ public class TotalTafCommunicationCostMetricTest extends AMetricTest {
 
     // cost = 2 * C_BETA * vLink.bandwidth
     // cost = 2 * C_BETA * 3
-    assertEquals(2 * TafAlgorithm.C_BETA * 3, metric.getValue());
+    assertEquals(2 * CostUtility.TAF_C_BETA * 3, metric.getValue());
   }
 
   @Test
@@ -61,7 +61,7 @@ public class TotalTafCommunicationCostMetricTest extends AMetricTest {
 
     // cost = 2 * C_GAMMA * vLink.bandwidth
     // cost = 2 * C_GAMMA * 3
-    assertEquals(2 * TafAlgorithm.C_GAMMA * 3, metric.getValue());
+    assertEquals(2 * CostUtility.TAF_C_GAMMA * 3, metric.getValue());
   }
 
   /*

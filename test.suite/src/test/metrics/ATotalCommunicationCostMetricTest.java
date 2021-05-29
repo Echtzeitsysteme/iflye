@@ -1,20 +1,30 @@
 package test.metrics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import facade.config.ModelFacadeConfig;
-import metrics.TotalCommunicationCostMetric;
+import metrics.IMetric;
 import model.Path;
 import model.SubstrateNetwork;
 
 /**
- * Test class for the metric of total communication cost.
+ * Abstract test class for the metric(s) of total communication cost.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class TotalCommunicationCostMetricTest extends AMetricTest {
+public abstract class ATotalCommunicationCostMetricTest extends AMetricTest {
+
+  /**
+   * Metric object to test.
+   */
+  protected IMetric metric;
+
+  /**
+   * Method that sets up the metric object to test.
+   * 
+   * @param sNet Substrate network to init metric with.
+   */
+  protected abstract void setMetric(final SubstrateNetwork sNet);
 
   @BeforeEach
   public void setup() {
@@ -29,7 +39,8 @@ public class TotalCommunicationCostMetricTest extends AMetricTest {
   public void testNoEmbeddings() {
     createSubstrateNetwork();
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-    final TotalCommunicationCostMetric metric = new TotalCommunicationCostMetric(sNet);
+    setMetric(sNet);
+
     assertEquals(0, metric.getValue());
   }
 
@@ -38,7 +49,7 @@ public class TotalCommunicationCostMetricTest extends AMetricTest {
     createSubstrateNetwork();
     setupEmbeddingSameHost();
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-    final TotalCommunicationCostMetric metric = new TotalCommunicationCostMetric(sNet);
+    setMetric(sNet);
 
     assertEquals(0, metric.getValue());
   }
@@ -48,35 +59,9 @@ public class TotalCommunicationCostMetricTest extends AMetricTest {
     createSubstrateNetwork();
     setupEmbeddingTwoHosts();
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-    final TotalCommunicationCostMetric metric = new TotalCommunicationCostMetric(sNet);
+    setMetric(sNet);
 
-    assertEquals(2 * 3, metric.getValue());
-  }
-
-  @Test
-  public void testEmbeddingTwoHops() {
-    createTwoTierSubstrateNetwork();
-    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-    final TotalCommunicationCostMetric metric = new TotalCommunicationCostMetric(sNet);
-
-    assertEquals((4 - 1) * 2 * 3, metric.getValue());
-  }
-
-  /*
-   * Negative tests
-   */
-
-  @Test
-  public void testPathConfigIsWrong() {
-    int oldMaxPathLength = ModelFacadeConfig.MAX_PATH_LENGTH;
-    ModelFacadeConfig.MAX_PATH_LENGTH = 1;
-    createTwoTierSubstrateNetwork();
-    ModelFacadeConfig.MAX_PATH_LENGTH = oldMaxPathLength;
-    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-
-    assertThrows(UnsupportedOperationException.class, () -> {
-      new TotalCommunicationCostMetric(sNet);
-    });
+    assertEquals(2 * 2 * 3, metric.getValue());
   }
 
   /*
@@ -86,7 +71,7 @@ public class TotalCommunicationCostMetricTest extends AMetricTest {
   /**
    * Create a basic two tier substrate network for testing purposes.
    */
-  private void createTwoTierSubstrateNetwork() {
+  protected void createTwoTierSubstrateNetwork() {
     facade.addNetworkToRoot("sub", false);
     facade.addServerToNetwork("ssrv1", "sub", 0, 0, 0, 0);
     facade.addServerToNetwork("ssrv2", "sub", 0, 0, 0, 0);

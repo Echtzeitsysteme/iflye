@@ -88,9 +88,21 @@ public class ModelFacade {
    */
   private Root root = ModelFactory.eINSTANCE.createRoot();
 
+  private Map<String, Path> paths = new HashMap<String, Path>();
+  private Map<String, Link> links = new HashMap<String, Link>();
+
   // TODO: Remove me later on.
   public void dummy() {
     System.out.println("=> Dummy method called.");
+  }
+
+  /**
+   * Returns the root node.
+   * 
+   * @return Root node.
+   */
+  public Root getRoot() {
+    return root;
   }
 
   /**
@@ -227,12 +239,13 @@ public class ModelFacade {
   public Link getLinkById(final String id) {
     checkStringValid(id);
 
-    List<Network> nets = root.getNetworks();
-    List<Link> links = new ArrayList<Link>();
-    nets.stream().forEach(net -> {
-      net.getLinks().stream().filter(l -> l.getName().equals(id)).forEach(l -> links.add(l));
-    });
-    return links.get(0);
+    // List<Network> nets = root.getNetworks();
+    // List<Link> links = new ArrayList<Link>();
+    // nets.stream().forEach(net -> {
+    // net.getLinks().stream().filter(l -> l.getName().equals(id)).forEach(l -> links.add(l));
+    // });
+    // return links.get(0);
+    return links.get(id);
   }
 
   /**
@@ -244,12 +257,14 @@ public class ModelFacade {
   public Path getPathById(final String id) {
     checkStringValid(id);
 
-    List<Network> nets = root.getNetworks();
-    List<Path> paths = new ArrayList<Path>();
-    nets.stream().forEach(net -> {
-      net.getPaths().stream().filter(p -> p.getName().equals(id)).forEach(p -> paths.add(p));
-    });
-    return paths.get(0);
+    // List<Network> nets = root.getNetworks();
+    // List<Path> paths = new ArrayList<Path>();
+    // nets.stream().forEach(net -> {
+    // net.getPaths().stream().filter(p -> p.getName().equals(id)).forEach(p -> paths.add(p));
+    // });
+    //
+    // return paths.get(0);
+    return paths.get(id);
   }
 
   /**
@@ -398,6 +413,8 @@ public class ModelFacade {
       subLink.setResidualBandwidth(bandwidth);
     }
 
+    // TODO: Check successful adding to model before adding it to look up data structure
+    links.put(id, link);
     return net.getLinks().add(link);
   }
 
@@ -528,7 +545,8 @@ public class ModelFacade {
       final SubstratePath forward = genMetaPath(source, target);
       forward.setHops(links.size());
       forward.setNetwork(links.get(0).getNetwork());
-      forward.setName(concatNodeNames(nodes));
+      final String name = concatNodeNames(nodes);
+      forward.setName(name);
       forward.getNodes().addAll(nodes);
       forward.getLinks().addAll(links);
 
@@ -536,6 +554,8 @@ public class ModelFacade {
       final int bw = getMinimumBandwidthFromSubstrateLinks(links);
       forward.setBandwidth(bw);
       forward.setResidualBandwidth(bw);
+
+      paths.put(name, forward);
 
       // Add path to lookup map
       if (!pathSourceMap.containsKey(source)) {
@@ -556,12 +576,15 @@ public class ModelFacade {
 
       reverse.setHops(links.size());
       reverse.setNetwork(links.get(0).getNetwork());
-      reverse.setName(concatNodeNames(reversedNodes));
+      final String name = concatNodeNames(reversedNodes);
+      reverse.setName(name);
       reverse.getNodes().addAll(reversedNodes);
 
       final int revBw = getMinimumBandwidthFromSubstrateLinks(oppositeLinks);
       reverse.setBandwidth(revBw);
       reverse.setResidualBandwidth(revBw);
+
+      paths.put(name, reverse);
 
       // Add path to lookup map
       if (!pathSourceMap.containsKey(target)) {
@@ -984,6 +1007,41 @@ public class ModelFacade {
   public boolean embedLinkToServer(final String substrateId, final String virtualId) {
     final SubstrateServer subServ = (SubstrateServer) getServerById(substrateId);
     final VirtualLink virtLink = (VirtualLink) getLinkById(virtualId);
+
+    // // Check conditions
+    // // Source
+    // if (virtLink.getSource() instanceof VirtualServer) {
+    // if (((VirtualServer) virtLink.getSource()).getHost() == null) {
+    // throw new UnsupportedOperationException("Virtual link source host is null.");
+    // }
+    // if (!((VirtualServer) virtLink.getSource()).getHost().equals(subServ)) {
+    // throw new UnsupportedOperationException();
+    // }
+    // } else if (virtLink.getSource() instanceof VirtualSwitch) {
+    // if (((VirtualSwitch) virtLink.getSource()).getHost() == null) {
+    // throw new UnsupportedOperationException("Virtual link source host is null.");
+    // }
+    // if (!((VirtualSwitch) virtLink.getSource()).getHost().equals(subServ)) {
+    // throw new UnsupportedOperationException();
+    // }
+    // }
+    //
+    // // Target
+    // if (virtLink.getTarget() instanceof VirtualServer) {
+    // if (((VirtualServer) virtLink.getTarget()).getHost() == null) {
+    // throw new UnsupportedOperationException("Virtual link target host is null.");
+    // }
+    // if (!((VirtualServer) virtLink.getTarget()).getHost().equals(subServ)) {
+    // throw new UnsupportedOperationException();
+    // }
+    // } else if (virtLink.getTarget() instanceof VirtualSwitch) {
+    // if (((VirtualSwitch) virtLink.getTarget()).getHost() == null) {
+    // throw new UnsupportedOperationException("Virtual link target host is null.");
+    // }
+    // if (!((VirtualSwitch) virtLink.getTarget()).getHost().equals(subServ)) {
+    // throw new UnsupportedOperationException();
+    // }
+    // }
 
     // No constraints to check!
     virtLink.setHost(subServ);
