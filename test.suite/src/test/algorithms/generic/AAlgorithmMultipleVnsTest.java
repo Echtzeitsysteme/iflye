@@ -18,9 +18,9 @@ public abstract class AAlgorithmMultipleVnsTest extends AAlgorithmTwoTierTest {
   @Test
   public void testTwoVnsAtOnceOneTier() {
     facade.addNetworkToRoot("virt2", true);
-    oneTierSetupTwoServers("virt", 1);
-    oneTierSetupTwoServers("virt2", 1);
-    oneTierSetupTwoServers("sub", 2);
+    AlgorithmTestHelper.oneTierSetupTwoServers("virt", 1);
+    AlgorithmTestHelper.oneTierSetupTwoServers("virt2", 1);
+    AlgorithmTestHelper.oneTierSetupTwoServers("sub", 2);
     facade.createAllPathsForNetwork("sub");
 
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
@@ -41,11 +41,11 @@ public abstract class AAlgorithmMultipleVnsTest extends AAlgorithmTwoTierTest {
     facade.addNetworkToRoot("virt2", true);
     facade.addNetworkToRoot("virt3", true);
     facade.addNetworkToRoot("virt4", true);
-    oneTierSetupTwoServers("virt", 1);
-    oneTierSetupTwoServers("virt2", 1);
-    oneTierSetupTwoServers("virt3", 1);
-    oneTierSetupTwoServers("virt4", 1);
-    oneTierSetupTwoServers("sub", 4);
+    AlgorithmTestHelper.oneTierSetupTwoServers("virt", 1);
+    AlgorithmTestHelper.oneTierSetupTwoServers("virt2", 1);
+    AlgorithmTestHelper.oneTierSetupTwoServers("virt3", 1);
+    AlgorithmTestHelper.oneTierSetupTwoServers("virt4", 1);
+    AlgorithmTestHelper.oneTierSetupTwoServers("sub", 4);
     facade.createAllPathsForNetwork("sub");
 
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
@@ -68,11 +68,11 @@ public abstract class AAlgorithmMultipleVnsTest extends AAlgorithmTwoTierTest {
     facade.addNetworkToRoot("virt2", true);
     facade.addNetworkToRoot("virt3", true);
     facade.addNetworkToRoot("virt4", true);
-    oneTierSetupTwoServers("virt", 2);
-    oneTierSetupTwoServers("virt2", 2);
-    oneTierSetupTwoServers("virt3", 2);
-    oneTierSetupTwoServers("virt4", 2);
-    twoTierSetupFourServers("sub", 8);
+    AlgorithmTestHelper.oneTierSetupTwoServers("virt", 2);
+    AlgorithmTestHelper.oneTierSetupTwoServers("virt2", 2);
+    AlgorithmTestHelper.oneTierSetupTwoServers("virt3", 2);
+    AlgorithmTestHelper.oneTierSetupTwoServers("virt4", 2);
+    AlgorithmTestHelper.twoTierSetupFourServers("sub", 8);
     facade.createAllPathsForNetwork("sub");
 
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");

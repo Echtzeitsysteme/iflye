@@ -16,6 +16,7 @@ import model.VirtualNetwork;
 import model.VirtualServer;
 import model.VirtualSwitch;
 import test.algorithms.generic.AAlgorithmMultipleVnsTest;
+import test.algorithms.generic.AlgorithmTestHelper;
 
 /**
  * Test class for the VNE PM MdVNE algorithm implementation for minimizing the total communication
@@ -43,8 +44,8 @@ public class VnePmMdvneAlgorithmTotalCommunicationCostATest extends AAlgorithmMu
   @Override
   @Test
   public void testAllOnMultipleRacks() {
-    oneTierSetupThreeServers("virt", 1);
-    twoTierSetupFourServers("sub", 1);
+    AlgorithmTestHelper.oneTierSetupThreeServers("virt", 1);
+    AlgorithmTestHelper.twoTierSetupFourServers("sub", 1);
 
     facade.createAllPathsForNetwork("sub");
 

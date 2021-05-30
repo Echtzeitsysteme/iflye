@@ -14,6 +14,7 @@ import model.SubstrateNetwork;
 import model.SubstratePath;
 import model.VirtualNetwork;
 import test.algorithms.generic.AAlgorithmMultipleVnsTest;
+import test.algorithms.generic.AlgorithmTestHelper;
 
 /**
  * Test class for the VNE pattern matching algorithm implementation for minimizing the total path
@@ -38,14 +39,14 @@ public class VnePmMdvneAlgorithmTotalPathCostTest extends AAlgorithmMultipleVnsT
 
   @Test
   public void testMultipleNetworksAfterEachOther() {
-    twoTierSetupFourServers("sub", 3);
+    AlgorithmTestHelper.twoTierSetupFourServers("sub", 3);
     facade.createAllPathsForNetwork("sub");
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
 
     for (int i = 0; i < 2; i++) {
       final String currVnetId = "virt" + i;
       facade.addNetworkToRoot(currVnetId, true);
-      oneTierSetupTwoServers(currVnetId, 1);
+      AlgorithmTestHelper.oneTierSetupTwoServers(currVnetId, 1);
 
       final VirtualNetwork currVnet = (VirtualNetwork) facade.getNetworkById(currVnetId);
       initAlgo(sNet, Set.of(currVnet));
@@ -57,10 +58,10 @@ public class VnePmMdvneAlgorithmTotalPathCostTest extends AAlgorithmMultipleVnsT
 
   @Test
   public void testMaxSizeVnet() {
-    oneTierSetupTwoServers("sub", 100);
+    AlgorithmTestHelper.oneTierSetupTwoServers("sub", 100);
     facade.createAllPathsForNetwork("sub");
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-    oneTierSetupTwoServers("virt", 100);
+    AlgorithmTestHelper.oneTierSetupTwoServers("virt", 100);
     final VirtualNetwork currVnet = (VirtualNetwork) facade.getNetworkById("virt");
 
     initAlgo(sNet, Set.of(currVnet));
@@ -71,10 +72,10 @@ public class VnePmMdvneAlgorithmTotalPathCostTest extends AAlgorithmMultipleVnsT
 
   @Test
   public void testPathLinkBandwidthDecrement() {
-    oneTierSetupTwoServers("sub", 100);
+    AlgorithmTestHelper.oneTierSetupTwoServers("sub", 100);
     facade.createAllPathsForNetwork("sub");
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-    oneTierSetupTwoServers("virt", 100);
+    AlgorithmTestHelper.oneTierSetupTwoServers("virt", 100);
     final VirtualNetwork currVnet = (VirtualNetwork) facade.getNetworkById("virt");
 
     initAlgo(sNet, Set.of(currVnet));
@@ -101,10 +102,10 @@ public class VnePmMdvneAlgorithmTotalPathCostTest extends AAlgorithmMultipleVnsT
 
   @Test
   public void testNoPathsInNetwork() {
-    oneTierSetupTwoServers("sub", 1);
+    AlgorithmTestHelper.oneTierSetupTwoServers("sub", 1);
     // Removed path generation on purpose
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-    oneTierSetupTwoServers("virt", 1);
+    AlgorithmTestHelper.oneTierSetupTwoServers("virt", 1);
     final VirtualNetwork currVnet = (VirtualNetwork) facade.getNetworkById("virt");
 
     assertThrows(UnsupportedOperationException.class, () -> {
@@ -114,11 +115,11 @@ public class VnePmMdvneAlgorithmTotalPathCostTest extends AAlgorithmMultipleVnsT
 
   @Test
   public void testMinimumPathLength() {
-    oneTierSetupTwoServers("sub", 1);
+    AlgorithmTestHelper.oneTierSetupTwoServers("sub", 1);
     ModelFacadeConfig.MIN_PATH_LENGTH = 2;
     facade.createAllPathsForNetwork("sub");
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-    oneTierSetupTwoServers("virt", 1);
+    AlgorithmTestHelper.oneTierSetupTwoServers("virt", 1);
     final VirtualNetwork currVnet = (VirtualNetwork) facade.getNetworkById("virt");
 
     assertThrows(UnsupportedOperationException.class, () -> {

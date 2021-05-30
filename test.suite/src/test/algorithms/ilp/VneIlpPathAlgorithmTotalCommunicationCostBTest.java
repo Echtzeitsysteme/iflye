@@ -17,6 +17,7 @@ import model.VirtualNetwork;
 import model.VirtualServer;
 import model.VirtualSwitch;
 import test.algorithms.generic.AAlgorithmMultipleVnsTest;
+import test.algorithms.generic.AlgorithmTestHelper;
 
 /**
  * Test class for the VNE ILP algorithm implementation for minimizing the total communication cost
@@ -39,8 +40,8 @@ public class VneIlpPathAlgorithmTotalCommunicationCostBTest extends AAlgorithmMu
   @Override
   @Test
   public void testAllOnOneRack() {
-    oneTierSetupTwoServers("virt", 2);
-    oneTierSetupTwoServers("sub", 2);
+    AlgorithmTestHelper.oneTierSetupTwoServers("virt", 2);
+    AlgorithmTestHelper.oneTierSetupTwoServers("sub", 2);
     facade.createAllPathsForNetwork("sub");
 
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
@@ -122,8 +123,8 @@ public class VneIlpPathAlgorithmTotalCommunicationCostBTest extends AAlgorithmMu
   @Override
   @Test
   public void testAllOnMultipleRacks() {
-    oneTierSetupThreeServers("virt", 1);
-    twoTierSetupFourServers("sub", 1);
+    AlgorithmTestHelper.oneTierSetupThreeServers("virt", 1);
+    AlgorithmTestHelper.twoTierSetupFourServers("sub", 1);
 
     facade.createAllPathsForNetwork("sub");
 

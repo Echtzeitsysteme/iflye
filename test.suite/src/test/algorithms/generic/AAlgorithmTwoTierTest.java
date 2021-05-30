@@ -30,8 +30,8 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 
   @Test
   public void testAllOnOneServer() {
-    oneTierSetupTwoServers("virt", 1);
-    oneTierSetupTwoServers("sub", 2);
+    AlgorithmTestHelper.oneTierSetupTwoServers("virt", 1);
+    AlgorithmTestHelper.oneTierSetupTwoServers("sub", 2);
     facade.createAllPathsForNetwork("sub");
 
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
@@ -67,8 +67,8 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 
   @Test
   public void testAllOnOneRack() {
-    oneTierSetupTwoServers("virt", 2);
-    oneTierSetupTwoServers("sub", 2);
+    AlgorithmTestHelper.oneTierSetupTwoServers("virt", 2);
+    AlgorithmTestHelper.oneTierSetupTwoServers("sub", 2);
     facade.createAllPathsForNetwork("sub");
 
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
@@ -154,8 +154,8 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 
   @Test
   public void testAllOnMultipleRacks() {
-    oneTierSetupThreeServers("virt", 1);
-    twoTierSetupFourServers("sub", 1);
+    AlgorithmTestHelper.oneTierSetupThreeServers("virt", 1);
+    AlgorithmTestHelper.twoTierSetupFourServers("sub", 1);
 
     facade.createAllPathsForNetwork("sub");
 
@@ -226,8 +226,8 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 
   @Test
   public void testNoEmbeddingWithSplittedVm() {
-    oneTierSetupTwoServers("virt", 2);
-    twoTierSetupFourServers("sub", 1);
+    AlgorithmTestHelper.oneTierSetupTwoServers("virt", 2);
+    AlgorithmTestHelper.twoTierSetupFourServers("sub", 1);
 
     facade.createAllPathsForNetwork("sub");
 
@@ -244,8 +244,8 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 
   @Test
   public void testNoEmbeddingIfVnetTooLargeSingle() {
-    oneTierSetupTwoServers("virt", 3);
-    twoTierSetupFourServers("sub", 1);
+    AlgorithmTestHelper.oneTierSetupTwoServers("virt", 3);
+    AlgorithmTestHelper.twoTierSetupFourServers("sub", 1);
 
     facade.createAllPathsForNetwork("sub");
 
@@ -261,8 +261,8 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 
   @Test
   public void testNoEmbeddingIfVnetTooLargeMulti() {
-    oneTierSetupTwoServers("virt", 2);
-    twoTierSetupFourServers("sub", 2);
+    AlgorithmTestHelper.oneTierSetupTwoServers("virt", 2);
+    AlgorithmTestHelper.twoTierSetupFourServers("sub", 2);
 
     facade.createAllPathsForNetwork("sub");
 
@@ -273,7 +273,7 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
     assertTrue(algo.execute());
 
     facade.addNetworkToRoot("virt2", true);
-    oneTierSetupTwoServers("virt2", 3);
+    AlgorithmTestHelper.oneTierSetupTwoServers("virt2", 3);
 
     sNet = (SubstrateNetwork) facade.getNetworkById("sub");
     final VirtualNetwork vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
@@ -283,107 +283,5 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
     // on the substrate one.
     assertFalse(algo.execute());
   }
-
-  /*
-   * Utility methods.
-   */
-
-  /**
-   * Creates a one tier network with two servers and one switch.
-   * 
-   * @param networkId Network id.
-   * @param slotsPerServer Number of CPU, memory and storage resources.
-   */
-  protected void oneTierSetupTwoServers(final String networkId, final int slotsPerServer) {
-    facade.addSwitchToNetwork(networkId + "_sw", networkId, 0);
-    facade.addServerToNetwork(networkId + "_srv1", networkId, slotsPerServer, slotsPerServer,
-        slotsPerServer, 1);
-    facade.addServerToNetwork(networkId + "_srv2", networkId, slotsPerServer, slotsPerServer,
-        slotsPerServer, 1);
-    facade.addLinkToNetwork(networkId + "_ln1", networkId, 1, networkId + "_srv1",
-        networkId + "_sw");
-    facade.addLinkToNetwork(networkId + "_ln2", networkId, 1, networkId + "_srv2",
-        networkId + "_sw");
-    facade.addLinkToNetwork(networkId + "_ln3", networkId, 1, networkId + "_sw",
-        networkId + "_srv1");
-    facade.addLinkToNetwork(networkId + "_ln4", networkId, 1, networkId + "_sw",
-        networkId + "_srv2");
-  }
-
-  /**
-   * Creates a one tier network with three servers and one switch.
-   * 
-   * @param networkId Network id.
-   * @param slotsPerServer Number of CPU, memory and storage resources.
-   */
-  protected void oneTierSetupThreeServers(final String networkId, final int slotsPerServer) {
-    facade.addSwitchToNetwork(networkId + "_sw", networkId, 0);
-    facade.addServerToNetwork(networkId + "_srv1", networkId, slotsPerServer, slotsPerServer,
-        slotsPerServer, 1);
-    facade.addServerToNetwork(networkId + "_srv2", networkId, slotsPerServer, slotsPerServer,
-        slotsPerServer, 1);
-    facade.addServerToNetwork(networkId + "_srv3", networkId, slotsPerServer, slotsPerServer,
-        slotsPerServer, 1);
-    facade.addLinkToNetwork(networkId + "_ln1", networkId, 1, networkId + "_srv1",
-        networkId + "_sw");
-    facade.addLinkToNetwork(networkId + "_ln2", networkId, 1, networkId + "_srv2",
-        networkId + "_sw");
-    facade.addLinkToNetwork(networkId + "_ln3", networkId, 1, networkId + "_srv3",
-        networkId + "_sw");
-    facade.addLinkToNetwork(networkId + "_ln4", networkId, 1, networkId + "_sw",
-        networkId + "_srv1");
-    facade.addLinkToNetwork(networkId + "_ln5", networkId, 1, networkId + "_sw",
-        networkId + "_srv2");
-    facade.addLinkToNetwork(networkId + "_ln6", networkId, 1, networkId + "_sw",
-        networkId + "_srv3");
-  }
-
-  /**
-   * Creates a two tier network with four servers total, two rack switches, and one core switch.
-   * 
-   * @param networkId Network id.
-   * @param slotsPerServer Number of CPU, memory and storage resources.
-   */
-  protected void twoTierSetupFourServers(final String networkId, final int slotsPerServer) {
-    facade.addSwitchToNetwork(networkId + "_csw1", networkId, 0);
-    facade.addSwitchToNetwork(networkId + "_rsw1", networkId, 1);
-    facade.addSwitchToNetwork(networkId + "_rsw2", networkId, 1);
-
-    facade.addServerToNetwork(networkId + "_srv1", networkId, slotsPerServer, slotsPerServer,
-        slotsPerServer, 2);
-    facade.addServerToNetwork(networkId + "_srv2", networkId, slotsPerServer, slotsPerServer,
-        slotsPerServer, 2);
-    facade.addServerToNetwork(networkId + "_srv3", networkId, slotsPerServer, slotsPerServer,
-        slotsPerServer, 2);
-    facade.addServerToNetwork(networkId + "_srv4", networkId, slotsPerServer, slotsPerServer,
-        slotsPerServer, 2);
-
-    facade.addLinkToNetwork(networkId + "_ln1", networkId, 1, networkId + "_srv1",
-        networkId + "_rsw1");
-    facade.addLinkToNetwork(networkId + "_ln2", networkId, 1, networkId + "_srv2",
-        networkId + "_rsw1");
-    facade.addLinkToNetwork(networkId + "_ln3", networkId, 1, networkId + "_rsw1",
-        networkId + "_srv1");
-    facade.addLinkToNetwork(networkId + "_ln4", networkId, 1, networkId + "_rsw1",
-        networkId + "_srv2");
-    facade.addLinkToNetwork(networkId + "_ln5", networkId, 1, networkId + "_srv3",
-        networkId + "_rsw2");
-    facade.addLinkToNetwork(networkId + "_ln6", networkId, 1, networkId + "_srv4",
-        networkId + "_rsw2");
-    facade.addLinkToNetwork(networkId + "_ln7", networkId, 1, networkId + "_rsw2",
-        networkId + "_srv3");
-    facade.addLinkToNetwork(networkId + "_ln8", networkId, 1, networkId + "_rsw2",
-        networkId + "_srv4");
-
-    facade.addLinkToNetwork(networkId + "_ln9", networkId, 10, networkId + "_rsw1",
-        networkId + "_csw1");
-    facade.addLinkToNetwork(networkId + "_ln10", networkId, 10, networkId + "_rsw2",
-        networkId + "_csw1");
-    facade.addLinkToNetwork(networkId + "_ln11", networkId, 10, networkId + "_csw1",
-        networkId + "_rsw1");
-    facade.addLinkToNetwork(networkId + "_ln12", networkId, 10, networkId + "_csw1",
-        networkId + "_rsw2");
-  }
-
 
 }
