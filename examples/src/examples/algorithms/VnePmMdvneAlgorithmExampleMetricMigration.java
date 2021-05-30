@@ -15,11 +15,11 @@ import model.VirtualNetwork;
 
 /**
  * Runnable example for the VNE pattern matching VNE algorithm implementation that demonstrates the
- * removal and the migration of a virtual network.
+ * migration of a virtual network because of the optimization cost function (metric).
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class VnePmMdvneAlgorithmExampleRemovalMigration {
+public class VnePmMdvneAlgorithmExampleMetricMigration {
 
   /**
    * Main method to start the example. String array of arguments will be ignored.
@@ -44,7 +44,8 @@ public class VnePmMdvneAlgorithmExampleRemovalMigration {
 
     for (int i = 1; i <= 3; i++) {
       // Virtual network = one tier network
-      final OneTierConfig virtualConfig = new OneTierConfig(3, 1, false, 1, 1, 1, 1);
+      final OneTierConfig virtualConfig =
+          new OneTierConfig(3, 1, false, 1, 1, 1, (i % 3 == 0) ? 10 : 1);
       final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
       virtGen.createNetwork("virt" + i, true);
 
@@ -57,23 +58,6 @@ public class VnePmMdvneAlgorithmExampleRemovalMigration {
       final VnePmMdvneAlgorithm algo = VnePmMdvneAlgorithm.prepare(sNet, Set.of(vNet));
       algo.execute();
     }
-
-    /*
-     * Remove virtual network 2
-     */
-    ModelFacade.getInstance().removeNetworkFromRoot("virt2");
-
-    /*
-     * Add another small virtual network (4) to trigger a migration of virtual network 3
-     */
-    final OneTierConfig smallVirtConfig = new OneTierConfig(2, 1, false, 1, 1, 1, 1);
-    final OneTierNetworkGenerator smallVirtGen = new OneTierNetworkGenerator(smallVirtConfig);
-    smallVirtGen.createNetwork("virt4", true);
-    final SubstrateNetwork sNet =
-        (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
-    final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt4");
-    final VnePmMdvneAlgorithm algo = VnePmMdvneAlgorithm.prepare(sNet, Set.of(vNet));
-    algo.execute();
 
     // Save model to file
     ModelFacade.getInstance().persistModel();
