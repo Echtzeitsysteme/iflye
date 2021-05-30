@@ -170,13 +170,13 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     public void removeLinkPathMatch(final Match match) {
       final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
 
-      if (delta.hasRemoveVariable(varName)) {
-        delta.removeVariable(varName);
-      }
+      // if (delta.hasRemoveVariable(varName)) {
+      delta.removeVariable(varName);
+      // }
 
-      if (delta.hasRemoveConstraint("req" + varName)) {
-        delta.removeConstraint("req" + varName);
-      }
+      // if (delta.hasRemoveConstraint("req" + varName)) {
+      delta.removeConstraint("req" + varName);
+      // }
 
       variablesToMatch.remove(varName);
     }

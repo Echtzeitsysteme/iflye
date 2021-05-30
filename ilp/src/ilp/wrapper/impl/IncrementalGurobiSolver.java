@@ -389,9 +389,9 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
 
   @Override
   public void removeConstraint(final String name) throws IlpSolverException {
-    // if (!constraints.containsKey(name)) {
-    // return;
-    // }
+    if (!constraints.containsKey(name)) {
+      return;
+    }
 
     try {
       final GRBConstr removeConstr = constraints.remove(name);
@@ -418,8 +418,8 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
   public void removeVariable(final String name) throws IlpSolverException {
     final GRBVar grbVar = variables.remove(name);
     if (grbVar == null) {
-      throw new IllegalArgumentException("Gurobi Var to " + name + " does not exist.");
-      // return;
+      // throw new IllegalArgumentException("Gurobi Var to " + name + " does not exist.");
+      return;
     }
     final Set<GRBConstr> constraints = varConstraints.remove(grbVar);
     if (constraints != null && !constraints.isEmpty()) {
