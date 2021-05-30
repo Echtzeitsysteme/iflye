@@ -80,6 +80,16 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     }
 
     /**
+     * Removes a virtual to substrate network match.
+     * 
+     * @param match Match to get information from.
+     */
+    public void removeNetworkMatch(final Match match) {
+      delta.removeVariable("rej" + match.getVirtual().getName());
+      variablesToMatch.remove("rej" + match.getVirtual().getName());
+    }
+
+    /**
      * Adds a match from a virtual link to a substrate server.
      * 
      * @param match Match to get information from.
@@ -270,6 +280,15 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     }
 
     /**
+     * Removes a virtual server.
+     * 
+     * @param server VirtualServer to get information from.
+     */
+    public void removeVirtualServer(final VirtualServer server) {
+      delta.removeConstraint("vs" + server.getName());
+    }
+
+    /**
      * Adds a new virtual switch.
      * 
      * @param sw VirtualSwitch to get information from.
@@ -281,6 +300,15 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     }
 
     /**
+     * Removes a virtual switch.
+     * 
+     * @param sw VirtualSwitch to get information from.
+     */
+    public void removeVirtualSwitch(final VirtualSwitch sw) {
+      delta.removeConstraint("vw" + sw.getName());
+    }
+
+    /**
      * Adds a new virtual link.
      * 
      * @param link VirtualLink to get information from.
@@ -289,6 +317,15 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       delta.addEqualsConstraint("vl" + link.getName(), 1);
       delta.setVariableWeightForConstraint("vl" + link.getName(), 1,
           "rej" + link.getNetwork().getName());
+    }
+
+    /**
+     * Removes a virtual link.
+     * 
+     * @param link VirtualLink to get information from.
+     */
+    public void removeVirtualLink(final VirtualLink link) {
+      delta.removeConstraint("vl" + link.getName());
     }
 
     /**
@@ -415,7 +452,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     delta.getNewSwitchMatchPositives().forEach(gen::addSwitchMatch);
     delta.getRemovedSwitchMatchPositives().forEach(gen::removeSwitchMatch);
 
-    // Important: Due to the fact that both link constraint generating methods check the existance
+    // Important: Due to the fact that both link constraint generating methods check the existence
     // of the node mapping variables, the link constraints have to be added *after* all node
     // constraints.
     delta.getNewLinkPathMatchPositives().forEach(gen::addLinkPathMatch);
@@ -495,7 +532,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
    * @param gen ILP delta generator to add elements to.
    */
   private void addElementsToSolver(final IlpDeltaGenerator gen) {
-    // Substrate network
+    /*
+     * New substrate network
+     */
     if (!addedToSolver.contains(sNet)) {
       for (final Node n : sNet.getNodes()) {
         if (n instanceof SubstrateServer) {
@@ -514,7 +553,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       addedToSolver.add(sNet);
     }
 
-    // Virtual networks
+    /*
+     * New virtual network(s)
+     */
     final Iterator<VirtualNetwork> it = vNets.iterator();
     while (it.hasNext()) {
       final VirtualNetwork vNet = it.next();
@@ -539,6 +580,42 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
         addedToSolver.add(vNet);
       }
     }
+
+    /*
+     * Removed virtual network(s)
+     */
+    final Set<VirtualNetwork> vNetsToDelete = new HashSet<>();
+    final Iterator<Network> remIt = addedToSolver.iterator();
+    while (remIt.hasNext()) {
+      final Network net = remIt.next();
+      if (net instanceof VirtualNetwork) {
+        final VirtualNetwork vNet = (VirtualNetwork) net;
+        if (!facade.networkExists(vNet.getName())) {
+          for (final Node n : vNet.getNodes()) {
+            if (n instanceof VirtualServer) {
+              gen.removeVirtualServer((VirtualServer) n);
+            } else if (n instanceof VirtualSwitch) {
+              gen.removeVirtualSwitch((VirtualSwitch) n);
+            }
+          }
+
+          for (final Link l : vNet.getLinks()) {
+            if (l instanceof VirtualLink) {
+              gen.removeVirtualLink((VirtualLink) l);
+            }
+          }
+
+          gen.removeNetworkMatch(new Match(vNet, sNet));
+
+          // addedToSolver.remove(vNet);
+          vNetsToDelete.add(vNet);
+        }
+      }
+    }
+
+    vNetsToDelete.forEach(n -> {
+      addedToSolver.remove(n);
+    });
   }
 
   /**
@@ -584,7 +661,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       // If substrate element is a path, we have to update the residual bandwidths of all links,
       // because eMoflon does not support 'for-each' like operations. (Please also see
       // 'embeddingRules.gt'). If eMoflon supports this feature and the rule in 'embeddingRules.gt'
-      // got updated, this code snipped must be removed.
+      // got updated, this code snippet must be removed.
       if (m.getSubstrate() instanceof SubstratePath) {
         final SubstratePath subPath = (SubstratePath) m.getSubstrate();
         final VirtualLink virtLink = (VirtualLink) m.getVirtual();
