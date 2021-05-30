@@ -3,6 +3,10 @@ package patternmatching;
 import java.util.HashSet;
 import java.util.Set;
 import model.Element;
+import model.SubstratePath;
+import model.SubstrateServer;
+import model.VirtualLink;
+import model.VirtualServer;
 
 /**
  * Data object that holds new matches from a pattern matcher.
@@ -109,15 +113,19 @@ public class PatternMatchingDelta {
    */
   // private final Set<Match> newNetworkMatches = new HashSet<>();
   private final Set<Match> newServerMatchPositives = new HashSet<>();
+  private final Set<Match> updatedServerMatchPositives = new HashSet<>();
   private final Set<Match> removedServerMatchPositives = new HashSet<>();
 
   private final Set<Match> newSwitchMatchPositives = new HashSet<>();
+  private final Set<Match> updatedSwitchMatchPositives = new HashSet<>();
   private final Set<Match> removedSwitchMatchPositives = new HashSet<>();
 
   private final Set<Match> newLinkPathMatchPositives = new HashSet<>();
+  private final Set<Match> updatedLinkPathMatchPositives = new HashSet<>();
   private final Set<Match> removedLinkPathMatchPositives = new HashSet<>();
 
   private final Set<Match> newLinkServerMatchPositives = new HashSet<>();
+  private final Set<Match> updatedLinkServerPositives = new HashSet<>();
   private final Set<Match> removedLinkServerMatchPositives = new HashSet<>();
 
   /**
@@ -126,9 +134,18 @@ public class PatternMatchingDelta {
    * @param <T> Type parameter.
    * @param value Value of type T.
    * @param newMatches Set of type T for adding value to.
+   * @param updatedMatches Set of type T for updating matches.
+   * @param removedMatches Set of type T for removing matches.
    */
-  private <T> void addValue(final T value, final Set<T> newMatches) {
-    newMatches.add(value);
+  private <T> void addValue(final T value, final Set<T> newMatches, final Set<T> updatedMatches,
+      final Set<T> removedMatches) {
+    if (removedMatches.remove(value)) {
+      if (updatedMatches != null) {
+        updatedMatches.add(value);
+      }
+    } else {
+      newMatches.add(value);
+    }
   }
 
   /**
@@ -155,19 +172,23 @@ public class PatternMatchingDelta {
    */
 
   public void addServerMatchPositive(final Element virtual, final Element substrate) {
-    addValue(new Match(virtual, substrate), newServerMatchPositives);
+    addValue(new Match(virtual, substrate), newServerMatchPositives, updatedServerMatchPositives,
+        removedServerMatchPositives);
   }
 
   public void addSwitchMatchPositive(final Element virtual, final Element substrate) {
-    addValue(new Match(virtual, substrate), newSwitchMatchPositives);
+    addValue(new Match(virtual, substrate), newSwitchMatchPositives, updatedSwitchMatchPositives,
+        removedSwitchMatchPositives);
   }
 
   public void addLinkPathMatchPositive(final Element virtual, final Element substrate) {
-    addValue(new Match(virtual, substrate), newLinkPathMatchPositives);
+    addValue(new Match(virtual, substrate), newLinkPathMatchPositives,
+        updatedLinkPathMatchPositives, removedLinkPathMatchPositives);
   }
 
   public void addLinkServerMatchPositive(final Element virtual, final Element substrate) {
-    addValue(new Match(virtual, substrate), newLinkServerMatchPositives);
+    addValue(new Match(virtual, substrate), newLinkServerMatchPositives, updatedLinkServerPositives,
+        removedLinkServerMatchPositives);
   }
 
   /*
@@ -175,27 +196,37 @@ public class PatternMatchingDelta {
    */
 
   public void removeServerMatchPositive(final Element virtual, final Element substrate) {
-    // TODO: Change null to updatedServerMatchPositives
-    removeValue(new Match(virtual, substrate), newServerMatchPositives, null,
+    // If virtual element is currently embedded on substrate one, do **not** remove it's match
+    final SubstrateServer ssrv = (SubstrateServer) substrate;
+    final VirtualServer vsrv = (VirtualServer) virtual;
+    if (vsrv.getHost() != null && vsrv.getHost().equals(ssrv)) {
+      return;
+    }
+
+    removeValue(new Match(virtual, substrate), newServerMatchPositives, updatedServerMatchPositives,
         removedServerMatchPositives);
   }
 
   public void removeSwitchMatchPositive(final Element virtual, final Element substrate) {
-    // TODO: Change null
-    removeValue(new Match(virtual, substrate), newSwitchMatchPositives, null,
+    removeValue(new Match(virtual, substrate), newSwitchMatchPositives, updatedSwitchMatchPositives,
         removedSwitchMatchPositives);
   }
 
   public void removeLinkPathMatchPositive(final Element virtual, final Element substrate) {
-    // TODO: Change null
-    removeValue(new Match(virtual, substrate), newLinkPathMatchPositives, null,
-        removedLinkPathMatchPositives);
+    // If virtual element is currently embedded on substrate one, do **not** remove it's match
+    final SubstratePath spath = (SubstratePath) substrate;
+    final VirtualLink vl = (VirtualLink) virtual;
+    if (vl.getHost() != null && vl.getHost().equals(spath)) {
+      return;
+    }
+
+    removeValue(new Match(virtual, substrate), newLinkPathMatchPositives,
+        updatedLinkPathMatchPositives, removedLinkPathMatchPositives);
   }
 
   public void removeLinkServerMatchPositive(final Element virtual, final Element substrate) {
-    // TODO: Change null
-    removeValue(new Match(virtual, substrate), newLinkServerMatchPositives, null,
-        removedLinkServerMatchPositives);
+    removeValue(new Match(virtual, substrate), newLinkServerMatchPositives,
+        updatedLinkServerPositives, removedLinkServerMatchPositives);
   }
 
   /*
@@ -216,6 +247,22 @@ public class PatternMatchingDelta {
 
   public Set<Match> getNewLinkServerMatchPositives() {
     return newLinkServerMatchPositives;
+  }
+
+  public Set<Match> getUpdatedServerMatchPositives() {
+    return updatedServerMatchPositives;
+  }
+
+  public Set<Match> getUpdatedSwitchMatchPositives() {
+    return updatedSwitchMatchPositives;
+  }
+
+  public Set<Match> getUpdatedLinkPathMatchPositives() {
+    return updatedLinkPathMatchPositives;
+  }
+
+  public Set<Match> getUpdatedLinkServerPositives() {
+    return updatedLinkServerPositives;
   }
 
   public Set<Match> getRemovedServerMatchPositives() {

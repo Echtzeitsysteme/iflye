@@ -28,7 +28,7 @@ public class VnePmMdvneAlgorithmExampleSmall {
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 
-    // Substrate network = one tier network
+    // Substrate network = two tier network
     final OneTierConfig rackConfig = new OneTierConfig(2, 1, false, 10, 10, 10, 10);
     final TwoTierConfig substrateConfig = new TwoTierConfig();
     substrateConfig.setRack(rackConfig);

@@ -132,13 +132,33 @@ public class IlpDelta {
   }
 
   /**
-   * Returns true if there is a variable with matching name.
+   * Returns true if there is a add variable with matching name.
    * 
    * @param name Variable name to match.
-   * @return True if there is a variable with matching name.
+   * @return True if there is a add variable with matching name.
    */
   public boolean hasAddVariable(final String name) {
     return addVariables.containsKey(name);
+  }
+
+  /**
+   * Returns true if there is a remove variable with matching name.
+   * 
+   * @param name Variable name to match.
+   * @return True if there is a remove variable with matching name.
+   */
+  public boolean hasRemoveVariable(final String name) {
+    return removeVariables.contains(name);
+  }
+
+  /**
+   * Returns true if there is a remove constraint with matching name.
+   * 
+   * @param name Variable name to match.
+   * @return True if there is a remove constraint with matching name.
+   */
+  public boolean hasRemoveConstraint(final String name) {
+    return removeConstraints.contains(name);
   }
 
   /**

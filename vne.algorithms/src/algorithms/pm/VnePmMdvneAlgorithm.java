@@ -115,7 +115,15 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
      */
     public void removeLinkServerMatch(final Match match) {
       final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
+
+      // if (delta.hasRemoveVariable(varName)) {
       delta.removeVariable(varName);
+      // }
+
+      // if (delta.hasRemoveConstraint("req" + varName)) {
+      delta.removeConstraint("req" + varName);
+      // }
+
       variablesToMatch.remove(varName);
     }
 
@@ -161,7 +169,15 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
      */
     public void removeLinkPathMatch(final Match match) {
       final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
-      delta.removeVariable(varName);
+
+      if (delta.hasRemoveVariable(varName)) {
+        delta.removeVariable(varName);
+      }
+
+      if (delta.hasRemoveConstraint("req" + varName)) {
+        delta.removeConstraint("req" + varName);
+      }
+
       variablesToMatch.remove(varName);
     }
 
@@ -390,9 +406,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     delta.getNewServerMatchPositives().forEach(gen::addServerMatch);
     delta.getRemovedServerMatchPositives().forEach(gen::removeServerMatch);
 
-    // delta.getNewServerMatchNegatives().forEach(gen::addServerMatch);
-    // TODO: This has to be changed:
-    // delta.getNewServerMatchSwitchNegatives().forEach(gen::addServerSwitchMatch);
     delta.getNewSwitchMatchPositives().forEach(gen::addSwitchMatch);
     delta.getRemovedSwitchMatchPositives().forEach(gen::removeSwitchMatch);
 
@@ -401,7 +414,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     // constraints.
     delta.getNewLinkPathMatchPositives().forEach(gen::addLinkPathMatch);
     delta.getRemovedLinkPathMatchPositives().forEach(gen::removeLinkPathMatch);
-    // delta.getNewLinkPathMatchNegatives().forEach(gen::addLinkPathMatch);
     delta.getNewLinkServerMatchPositives().forEach(gen::addLinkServerMatch);
     delta.getRemovedLinkServerMatchPositives().forEach(gen::removeLinkServerMatch);
 
@@ -412,8 +424,20 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     Set<VirtualNetwork> rejectedNetworks = null;
     if (solve.isFeasible()) {
       rejectedNetworks = updateMappingsAndEmbed(ilpSolver.getMappings());
-      // Lock all variables (no migration implemented, yet)
-      ilpSolver.lockVariables(e -> true);
+
+      switch (AlgorithmConfig.mig) {
+        case NEVER:
+          // Lock all variables
+          ilpSolver.lockVariables(e -> true);
+          break;
+        case ALWAYS_FREE:
+          // Intended to do nothing
+          break;
+        default:
+          throw new UnsupportedOperationException(
+              "Case " + AlgorithmConfig.mig + " is not yet implemented.");
+      }
+
     } else {
       throw new IlpSolverException("Problem was infeasible.");
     }
