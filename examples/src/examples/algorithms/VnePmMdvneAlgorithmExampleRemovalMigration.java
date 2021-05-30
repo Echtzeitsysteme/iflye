@@ -3,11 +3,13 @@ package examples.algorithms;
 import java.util.Set;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Migration;
+import algorithms.AlgorithmConfig.Objective;
 import algorithms.pm.VnePmMdvneAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.OneTierNetworkGenerator;
 import generators.config.OneTierConfig;
+import metrics.TotalCommunicationCostMetricA;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
@@ -28,7 +30,8 @@ public class VnePmMdvneAlgorithmExampleRemovalMigration {
     // Setup
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
-    AlgorithmConfig.mig = Migration.NEVER;
+    AlgorithmConfig.mig = Migration.ALWAYS_FREE;
+    AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_A;
 
     // Substrate network = one tier network
     final OneTierConfig substrateConfig = new OneTierConfig(2, 1, false, 5, 5, 5, 100);
@@ -41,7 +44,8 @@ public class VnePmMdvneAlgorithmExampleRemovalMigration {
 
     for (int i = 1; i <= 3; i++) {
       // Virtual network = one tier network
-      final OneTierConfig virtualConfig = new OneTierConfig(3, 1, false, 1, 1, 1, 1);
+      final OneTierConfig virtualConfig =
+          new OneTierConfig(3, 1, false, 1, 1, 1, (i % 3 == 0) ? 10 : 1);
       final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
       virtGen.createNetwork("virt" + i, true);
 
@@ -63,18 +67,22 @@ public class VnePmMdvneAlgorithmExampleRemovalMigration {
     /*
      * Add another small virtual network (4) to trigger a migration of virtual network 3
      */
-    final OneTierConfig smallVirtConfig = new OneTierConfig(2, 1, false, 1, 1, 1, 1);
-    final OneTierNetworkGenerator smallVirtGen = new OneTierNetworkGenerator(smallVirtConfig);
-    smallVirtGen.createNetwork("virt4", true);
-    final SubstrateNetwork sNet =
-        (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
-    final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt4");
-    final VnePmMdvneAlgorithm algo = VnePmMdvneAlgorithm.prepare(sNet, Set.of(vNet));
-    algo.execute();
+    // final OneTierConfig smallVirtConfig = new OneTierConfig(2, 1, false, 1, 1, 1, 1);
+    // final OneTierNetworkGenerator smallVirtGen = new OneTierNetworkGenerator(smallVirtConfig);
+    // smallVirtGen.createNetwork("virt4", true);
+    // final SubstrateNetwork sNet =
+    // (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
+    // final VirtualNetwork vNet = (VirtualNetwork)
+    // ModelFacade.getInstance().getNetworkById("virt4");
+    // final VnePmMdvneAlgorithm algo = VnePmMdvneAlgorithm.prepare(sNet, Set.of(vNet));
+    // algo.execute();
 
     // Save model to file
     ModelFacade.getInstance().persistModel();
     System.out.println("=> Execution finished.");
+    final TotalCommunicationCostMetricA comCostA = new TotalCommunicationCostMetricA(
+        (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub"));
+    System.out.println("=> Total communication cost A: " + comCostA.getValue());
   }
 
 }

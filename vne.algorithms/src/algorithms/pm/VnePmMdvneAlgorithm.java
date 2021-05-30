@@ -20,6 +20,7 @@ import ilp.wrapper.config.IlpSolverConfig;
 import ilp.wrapper.impl.IncrementalGurobiSolver;
 import metrics.utils.CostUtility;
 import model.Link;
+import model.Network;
 import model.Node;
 import model.SubstrateElement;
 import model.SubstrateLink;
@@ -330,6 +331,11 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
   private Set<String> currentMappings = new HashSet<>();
 
   /**
+   * Set of networks that are already added to the solver.
+   */
+  private Set<Network> addedToSolver = new HashSet<>();
+
+  /**
    * Constructor that gets the substrate as well as the virtual network.
    * 
    * @param sNet Substrate network to work with.
@@ -490,18 +496,22 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
    */
   private void addElementsToSolver(final IlpDeltaGenerator gen) {
     // Substrate network
-    for (final Node n : sNet.getNodes()) {
-      if (n instanceof SubstrateServer) {
-        gen.addNewSubstrateServer((SubstrateServer) n);
-      } else if (n instanceof SubstrateSwitch) {
-        // Nothing to do here
+    if (!addedToSolver.contains(sNet)) {
+      for (final Node n : sNet.getNodes()) {
+        if (n instanceof SubstrateServer) {
+          gen.addNewSubstrateServer((SubstrateServer) n);
+        } else if (n instanceof SubstrateSwitch) {
+          // Nothing to do here
+        }
       }
-    }
 
-    for (final Link l : sNet.getLinks()) {
-      if (l instanceof SubstrateLink) {
-        gen.addNewSubstrateLink((SubstrateLink) l);
+      for (final Link l : sNet.getLinks()) {
+        if (l instanceof SubstrateLink) {
+          gen.addNewSubstrateLink((SubstrateLink) l);
+        }
       }
+
+      addedToSolver.add(sNet);
     }
 
     // Virtual networks
@@ -509,22 +519,25 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     while (it.hasNext()) {
       final VirtualNetwork vNet = it.next();
 
-      for (final Node n : vNet.getNodes()) {
-        if (n instanceof VirtualServer) {
-          gen.addNewVirtualServer((VirtualServer) n);
-        } else if (n instanceof VirtualSwitch) {
-          gen.addNewVirtualSwitch((VirtualSwitch) n);
+      if (!addedToSolver.contains(vNet)) {
+        for (final Node n : vNet.getNodes()) {
+          if (n instanceof VirtualServer) {
+            gen.addNewVirtualServer((VirtualServer) n);
+          } else if (n instanceof VirtualSwitch) {
+            gen.addNewVirtualSwitch((VirtualSwitch) n);
+          }
         }
-      }
 
-      for (final Link l : vNet.getLinks()) {
-        if (l instanceof VirtualLink) {
-          gen.addNewVirtualLink((VirtualLink) l);
+        for (final Link l : vNet.getLinks()) {
+          if (l instanceof VirtualLink) {
+            gen.addNewVirtualLink((VirtualLink) l);
+          }
         }
-      }
 
-      // Network match
-      gen.addNewNetworkMatch(new Match(vNet, sNet));
+        // Network match
+        gen.addNewNetworkMatch(new Match(vNet, sNet));
+        addedToSolver.add(vNet);
+      }
     }
   }
 
