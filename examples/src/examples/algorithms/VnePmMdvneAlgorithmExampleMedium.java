@@ -33,7 +33,7 @@ public class VnePmMdvneAlgorithmExampleMedium {
 
     final long start = System.nanoTime();
 
-    // Substrate network = one tier network
+    // Substrate network = two tier network
     final OneTierConfig rackConfig = new OneTierConfig(10, 1, false, 10, 10, 10, 10);
     final TwoTierConfig substrateConfig = new TwoTierConfig();
     substrateConfig.setRack(rackConfig);

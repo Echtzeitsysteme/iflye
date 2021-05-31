@@ -8,6 +8,9 @@ import generators.OneTierNetworkGenerator;
 import generators.TwoTierNetworkGenerator;
 import generators.config.OneTierConfig;
 import generators.config.TwoTierConfig;
+import metrics.AcceptedVnrMetric;
+import metrics.AveragePathLengthMetric;
+import metrics.TotalPathCostMetric;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
@@ -25,12 +28,12 @@ public class VneIlpPathAlgorithmExampleMedium {
    */
   public static void main(final String[] args) {
     // Setup
-    ModelFacadeConfig.MIN_PATH_LENGTH = 2;
+    ModelFacadeConfig.MIN_PATH_LENGTH = 1;
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 
     final long start = System.nanoTime();
 
-    // Substrate network = one tier network
+    // Substrate network = two tier network
     final OneTierConfig rackConfig = new OneTierConfig(10, 1, false, 10, 10, 10, 10);
     final TwoTierConfig substrateConfig = new TwoTierConfig();
     substrateConfig.setRack(rackConfig);
@@ -62,6 +65,15 @@ public class VneIlpPathAlgorithmExampleMedium {
     ModelFacade.getInstance().persistModel();
     System.out.println("=> Execution finished.");
     System.out.println("=> Elapsed time: " + (end - start) / 1_000_000_000 + " seconds");
+
+    final SubstrateNetwork sNet =
+        (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
+    final AcceptedVnrMetric acceptedVnrs = new AcceptedVnrMetric(sNet);
+    System.out.println("=> Accepted VNRs: " + (int) acceptedVnrs.getValue());
+    final TotalPathCostMetric totalPathCost = new TotalPathCostMetric(sNet);
+    System.out.println("=> Total path cost: " + totalPathCost.getValue());
+    final AveragePathLengthMetric averagePathLength = new AveragePathLengthMetric(sNet);
+    System.out.println("=> Average path length: " + averagePathLength.getValue());
   }
 
 }
