@@ -200,7 +200,7 @@ public class Ui {
       int counter = 0;
       for (final String act : switchToServerMappings.get(key)) {
         final Node srvNode = graph.addNode(act);
-        srvNode.setAttribute("ui.label", act.substring(act.indexOf("_") + 1));
+        srvNode.setAttribute("ui.label", act);
         srvNode.setAttribute("ui.style",
             "fill-color: rgb(255,255,255); " + "shape: rounded-box; "
                 + "stroke-color: rgb(155,000,000); " + "stroke-width: 4px; "
@@ -216,7 +216,7 @@ public class Ui {
       int counter = 0;
       for (final String act : switchMappings.get(key)) {
         final Node swNode = graph.addNode(act);
-        swNode.setAttribute("ui.label", act.substring(act.indexOf("_") + 1));
+        swNode.setAttribute("ui.label", act);
         swNode.setAttribute("ui.style",
             "fill-color: rgb(255,255,255); " + "shape: rounded-box; "
                 + "stroke-color: rgb(155,000,000); " + "stroke-width: 4px; "
