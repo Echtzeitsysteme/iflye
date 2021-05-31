@@ -29,11 +29,6 @@ public class ModelConverter {
    */
   private ModelConverter() {}
 
-  public static void main(final String[] args) {
-    jsonToModel("vnets.json");
-    ModelFacade.getInstance().persistModel();
-  }
-
   /**
    * Converts a JSON file from a given path to the model.
    * 
