@@ -53,6 +53,7 @@ public class VnePmMdvneAlgorithmExampleSmall {
 
     // Save model to file
     ModelFacade.getInstance().persistModel();
+    // ModelConverter.modelToJson(Set.of("virt"), "output.json");
     System.out.println("=> Execution finished.");
   }
 
