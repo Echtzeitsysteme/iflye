@@ -1,4 +1,4 @@
-package examples.scenarios;
+package model.converter;
 
 import java.io.FileWriter;
 import java.io.IOException;

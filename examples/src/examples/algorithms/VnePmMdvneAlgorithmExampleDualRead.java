@@ -3,11 +3,11 @@ package examples.algorithms;
 import java.util.List;
 import java.util.Set;
 import algorithms.ilp.VneIlpPathAlgorithm;
-import examples.scenarios.ModelConverter;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
+import model.converter.ModelConverter;
 
 /**
  * Runnable example for the VNE ILP algorithm implementation that reads a predetermined JSON file.
