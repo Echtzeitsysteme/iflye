@@ -19,6 +19,7 @@ import ilp.wrapper.Statistics;
 import ilp.wrapper.config.IlpSolverConfig;
 import ilp.wrapper.impl.IncrementalGurobiSolver;
 import metrics.utils.CostUtility;
+import model.Element;
 import model.Link;
 import model.Network;
 import model.Node;
@@ -476,11 +477,46 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
         case ALWAYS_FREE:
           // Intended to do nothing
           break;
+        case MAPPING_REMOVED:
+          ilpSolver.lockVariables(Entry::getValue);
+          break;
+        case ALWAYS_PENALTY:
+          // Remove penalty from migrated entries
+          for (final String previousMapping : previousMappings) {
+            if (currentMappings.contains(previousMapping)) {
+              continue;
+            }
+            if (variablesToMatch.get(previousMapping) != null) {
+              final Element virtualElement = variablesToMatch.get(previousMapping).getVirtual();
+              if (!(virtualElement instanceof VirtualServer)) {
+                continue;
+              } else {
+                final VirtualServer vsrv = (VirtualServer) virtualElement;
+                ilpSolver.addToVariableWeight(previousMapping,
+                    CostUtility.getServerMigrationCost(vsrv));
+              }
+            }
+          }
+
+          // Add penalty to new entries
+          for (final String currentMapping : currentMappings) {
+            if (previousMappings.contains(currentMapping)) {
+              continue;
+            }
+            final Element virtualElement = variablesToMatch.get(currentMapping).getVirtual();
+            if (!(virtualElement instanceof VirtualServer)) {
+              continue;
+            } else {
+              final VirtualServer vsrv = (VirtualServer) virtualElement;
+              ilpSolver.addToVariableWeight(currentMapping,
+                  -CostUtility.getServerMigrationCost(vsrv));
+            }
+          }
+          break;
         default:
           throw new UnsupportedOperationException(
               "Case " + AlgorithmConfig.mig + " is not yet implemented.");
       }
-
     } else {
       throw new IlpSolverException("Problem was infeasible.");
     }

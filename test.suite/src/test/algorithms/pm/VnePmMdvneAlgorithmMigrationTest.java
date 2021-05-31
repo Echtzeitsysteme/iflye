@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Migration;
@@ -55,19 +56,21 @@ public class VnePmMdvneAlgorithmMigrationTest {
 
   @AfterEach
   public void resetAlgo() {
-    algo.dispose();
+    if (algo != null) {
+      algo.dispose();
+    }
   }
 
   @Test
   public void testNoMigrationNormal() {
     AlgorithmConfig.mig = Migration.NEVER;
-    testSetupAndCheckNormal(60, 0);
+    testSetupAndCheckNormal(60, new int[] {1, 1, 10}, new int[] {1, 1, 1}, 5, 0);
   }
 
   @Test
   public void testAlwaysFreeMigrationNormal() {
     AlgorithmConfig.mig = Migration.ALWAYS_FREE;
-    testSetupAndCheckNormal(6, 1);
+    testSetupAndCheckNormal(6, new int[] {1, 1, 10}, new int[] {1, 1, 1}, 5, 1);
   }
 
   @Test
@@ -82,6 +85,31 @@ public class VnePmMdvneAlgorithmMigrationTest {
     testSetupAndCheckRemoval(0, 1);
   }
 
+  @Disabled("Removal of substrate servers is not yet possible")
+  @Test
+  public void testMappingRemovedMigration() {
+    AlgorithmConfig.mig = Migration.MAPPING_REMOVED;
+    // TODO: Implement this test after removal of substrate servers is possible.
+  }
+
+  /**
+   * Low penalty allows optional migration.
+   */
+  @Test
+  public void testAlwaysPenaltyLow() {
+    AlgorithmConfig.mig = Migration.ALWAYS_PENALTY;
+    testSetupAndCheckNormal(6, new int[] {1, 1, 10}, new int[] {1, 1, 1}, 5, 1);
+  }
+
+  /**
+   * High penalty prevents optional migration.
+   */
+  @Test
+  public void testAlwaysPenaltyHigh() {
+    AlgorithmConfig.mig = Migration.ALWAYS_PENALTY;
+    testSetupAndCheckNormal(60, new int[] {1, 1, 10}, new int[] {15, 15, 2}, 50, 0);
+  }
+
   /*
    * Utility methods
    */
@@ -94,11 +122,17 @@ public class VnePmMdvneAlgorithmMigrationTest {
    * 
    * @param totalComCostARef Reference for the total communication cost A metric after all
    *        embeddings.
+   * @param vNetBws Bandwidths of the virtual networks.
+   * @param slotsVirtualServer Number of CPU, memory, storage per virtual server for each network to
+   *        generate.
+   * @param slotsPerSubstrateServer Number of CPU, memory, storage per substrate server.
    * @param vsw3DepthRef The depth of the host of the virtual switch of the last virtual network.
    */
-  private void testSetupAndCheckNormal(final int totalComCostARef, final int vsw3DepthRef) {
+  private void testSetupAndCheckNormal(final int totalComCostARef, final int[] vNetBws,
+      final int[] slotsVirtualServer, final int slotsPerSubstrateServer, final int vsw3DepthRef) {
     // Substrate network = one tier network
-    final OneTierConfig substrateConfig = new OneTierConfig(2, 1, false, 5, 5, 5, 100);
+    final OneTierConfig substrateConfig = new OneTierConfig(2, 1, false, slotsPerSubstrateServer,
+        slotsPerSubstrateServer, slotsPerSubstrateServer, 100);
     final OneTierNetworkGenerator subGen = new OneTierNetworkGenerator(substrateConfig);
     subGen.createNetwork("sub", false);
 
@@ -107,8 +141,8 @@ public class VnePmMdvneAlgorithmMigrationTest {
      */
     for (int i = 1; i <= 3; i++) {
       // Virtual network = one tier network
-      final OneTierConfig virtualConfig =
-          new OneTierConfig(3, 1, false, 1, 1, 1, (i % 3 == 0) ? 10 : 1);
+      final OneTierConfig virtualConfig = new OneTierConfig(3, 1, false, slotsVirtualServer[i - 1],
+          slotsVirtualServer[i - 1], slotsVirtualServer[i - 1], vNetBws[i - 1]);
       final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
       virtGen.createNetwork("virt" + i, true);
 

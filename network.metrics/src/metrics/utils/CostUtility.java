@@ -10,6 +10,7 @@ import model.SubstratePath;
 import model.Switch;
 import model.VirtualElement;
 import model.VirtualLink;
+import model.VirtualServer;
 
 /**
  * Cost utility helper for {@link VneIlpPathAlgorithm} and {@link VnePmMdvneAlgorithm}.
@@ -277,5 +278,22 @@ public class CostUtility {
    * Cost for a VNE on multiple substrate racks.
    */
   public static final int TAF_C_GAMMA = 5;
+
+  /*
+   * Migration costs.
+   */
+
+  /**
+   * Migration costs for a virtual server as defined/implemented in [1].
+   * 
+   * [1] Tomaszek, S., Modellbasierte Einbettung von virtuellen Netzwerken in Rechenzentren,
+   * http://dx.doi.org/10.12921/TUPRINTS-00017362. – DOI 10.12921/TUPRINTS– 00017362, 2020.
+   * 
+   * @param vsrv Virtual server to migrate.
+   * @return Costs of the virtual server's migration.
+   */
+  public static int getServerMigrationCost(final VirtualServer vsrv) {
+    return vsrv.getCpu() + vsrv.getMemory() + vsrv.getStorage();
+  }
 
 }
