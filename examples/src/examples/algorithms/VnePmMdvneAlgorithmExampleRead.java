@@ -1,22 +1,23 @@
 package examples.algorithms;
 
+import java.util.List;
 import java.util.Set;
-import algorithms.pm.VnePmMdvneAlgorithm;
+import algorithms.ilp.VneIlpPathAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
-import generators.OneTierNetworkGenerator;
 import generators.TwoTierNetworkGenerator;
 import generators.config.OneTierConfig;
 import generators.config.TwoTierConfig;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
+import model.converter.ModelConverter;
 
 /**
- * Runnable example for the VNE pattern matching VNE algorithm implementation.
+ * Runnable example for the VNE ILP algorithm implementation that reads a predetermined JSON file.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class VnePmMdvneAlgorithmExampleSmall {
+public class VnePmMdvneAlgorithmExampleRead {
 
   /**
    * Main method to start the example. String array of arguments will be ignored.
@@ -28,32 +29,32 @@ public class VnePmMdvneAlgorithmExampleSmall {
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 
-    // Substrate network = one tier network
-    final OneTierConfig rackConfig = new OneTierConfig(2, 1, false, 10, 10, 10, 10);
+    // Substrate network = two tier network
+    final OneTierConfig rackConfig =
+        new OneTierConfig(2, 1, false, 32, 2_000_000_000, 2_000_000_000, 2_000);
     final TwoTierConfig substrateConfig = new TwoTierConfig();
     substrateConfig.setRack(rackConfig);
-    substrateConfig.setCoreBandwidth(100);
+    substrateConfig.setCoreBandwidth(10_000);
     substrateConfig.setNumberOfCoreSwitches(1);
     substrateConfig.setNumberOfRacks(2);
     final TwoTierNetworkGenerator subGen = new TwoTierNetworkGenerator(substrateConfig);
     subGen.createNetwork("sub", false);
 
-    // Virtual network = one tier network
-    final OneTierConfig virtualConfig = new OneTierConfig(2, 1, false, 10, 1, 1, 1);
-    final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
-    virtGen.createNetwork("virt", true);
+    // Virtual network = read from file
+    final List<String> vNetIds = ModelConverter.jsonToModel("vnets.json", true);
 
-    final SubstrateNetwork sNet =
-        (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
-    final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
+    for (final String vNetId : vNetIds) {
+      final SubstrateNetwork sNet =
+          (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
+      final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById(vNetId);
 
-    // Create and execute algorithm
-    final VnePmMdvneAlgorithm algo = VnePmMdvneAlgorithm.prepare(sNet, Set.of(vNet));
-    algo.execute();
+      // Create and execute algorithm
+      final VneIlpPathAlgorithm algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
+      algo.execute();
+    }
 
     // Save model to file
     ModelFacade.getInstance().persistModel();
-    // ModelConverter.modelToJson(Set.of("virt"), "output.json");
     System.out.println("=> Execution finished.");
   }
 
