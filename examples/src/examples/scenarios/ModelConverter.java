@@ -14,11 +14,12 @@ import com.google.gson.JsonObject;
 import facade.ModelFacade;
 import model.Link;
 import model.Node;
-import model.VirtualLink;
-import model.VirtualServer;
+import model.Server;
+import model.Switch;
 
 /**
- * Model converter that converts a JSON file with virtual network information to the model.
+ * Model converter that converts a JSON file with virtual or substrate network information to the
+ * model.
  * 
  * @author Maximilian Kratz (maximilian.kratz@stud.tu-darmstadt.de)
  */
@@ -33,9 +34,10 @@ public class ModelConverter {
    * Converts a JSON file from a given path to the model.
    * 
    * @param path Path to read JSON file from.
-   * @return List of all new virtual network IDs.
+   * @param isVirtual True if networks should be virtual.
+   * @return List of all new network IDs.
    */
-  public static List<String> jsonToModel(final String path) {
+  public static List<String> jsonToModel(final String path, final boolean isVirtual) {
     final JsonObject json = readFile(path);
     final JsonArray networks = (JsonArray) json.get("networks");
     final List<String> networkOutputIds = new LinkedList<String>();
@@ -47,63 +49,72 @@ public class ModelConverter {
       final JsonArray servers = (JsonArray) net.get("servers");
       final JsonArray links = (JsonArray) net.get("links");
 
-      createNetwork(name, switches, servers, links);
+      createNetwork(name, switches, servers, links, isVirtual);
       networkOutputIds.add(name.getAsString());
+
+      if (!isVirtual) {
+        ModelFacade.getInstance().createAllPathsForNetwork(name.getAsString());
+      }
     }
 
     return networkOutputIds;
   }
 
-  public static void modelToJson(final Collection<String> vNetIds, final String path) {
+  /**
+   * Converts the actual model to a JSON file for given collection of IDs and given file path.
+   * 
+   * @param netIds Collection of network IDs to include.
+   * @param path Path to save file to.
+   */
+  public static void modelToJson(final Collection<String> netIds, final String path) {
     final JsonObject json = new JsonObject();
-    final JsonArray jsonVnets = new JsonArray();
+    final JsonArray jsonNets = new JsonArray();
 
-    for (final String vNet : vNetIds) {
-      // final VirtualNetwork info = (VirtualNetwork)
-      // ModelFacade.getInstance().getNetworkById(vNet);
+    for (final String net : netIds) {
       final JsonObject jsonNet = new JsonObject();
       final JsonArray jsonSwitches = new JsonArray();
 
-      for (final Node swNode : ModelFacade.getInstance().getAllSwitchesOfNetwork(vNet)) {
-        final String sw = swNode.getName();
+      for (final Node swNode : ModelFacade.getInstance().getAllSwitchesOfNetwork(net)) {
+        final Switch sw = (Switch) swNode;
         final JsonObject jsonSwitch = new JsonObject();
-        jsonSwitch.addProperty("id", sw);
+        jsonSwitch.addProperty("id", sw.getName());
+        jsonSwitch.addProperty("depth", sw.getDepth());
         jsonSwitches.add(jsonSwitch);
       }
 
       final JsonArray jsonServers = new JsonArray();
 
-      for (final Node srv : ModelFacade.getInstance().getAllServersOfNetwork(vNet)) {
-        final VirtualServer srvInfo = (VirtualServer) srv;
+      for (final Node srv : ModelFacade.getInstance().getAllServersOfNetwork(net)) {
+        final Server srvInfo = (Server) srv;
         final JsonObject jsonServer = new JsonObject();
         jsonServer.addProperty("id", srv.getName());
         jsonServer.addProperty("cpu", srvInfo.getCpu());
         jsonServer.addProperty("memory", srvInfo.getMemory());
         jsonServer.addProperty("storage", srvInfo.getStorage());
+        jsonServer.addProperty("depth", srvInfo.getDepth());
         jsonServers.add(jsonServer);
       }
 
       final JsonArray jsonLinks = new JsonArray();
 
-      for (final Link l : ModelFacade.getInstance().getAllLinksOfNetwork(vNet)) {
-        final VirtualLink linkInfo = (VirtualLink) l;
+      for (final Link l : ModelFacade.getInstance().getAllLinksOfNetwork(net)) {
         final JsonObject jsonLink = new JsonObject();
         jsonLink.addProperty("id", l.getName());
-        jsonLink.addProperty("bw", linkInfo.getBandwidth());
-        jsonLink.addProperty("source", linkInfo.getSource().getName());
-        jsonLink.addProperty("target", linkInfo.getTarget().getName());
+        jsonLink.addProperty("bw", l.getBandwidth());
+        jsonLink.addProperty("source", l.getSource().getName());
+        jsonLink.addProperty("target", l.getTarget().getName());
         jsonLinks.add(jsonLink);
       }
 
-      jsonNet.addProperty("id", vNet);
+      jsonNet.addProperty("id", net);
       jsonNet.add("switches", jsonSwitches);
       jsonNet.add("servers", jsonServers);
       jsonNet.add("links", jsonLinks);
 
-      jsonVnets.add(jsonNet);
+      jsonNets.add(jsonNet);
     }
 
-    json.add("networks", jsonVnets);
+    json.add("networks", jsonNets);
     writeFile(path, json);
   }
 
@@ -114,17 +125,19 @@ public class ModelConverter {
    * @param switches JsonArray of switches.
    * @param servers JsonArray of servers.
    * @param links JsonArray of links.
+   * @param isVirtual True if network should be virtual.
    */
   private static void createNetwork(final JsonElement name, final JsonArray switches,
-      final JsonArray servers, final JsonArray links) {
+      final JsonArray servers, final JsonArray links, final boolean isVirtual) {
     // Network itself
     final String networkId = name.getAsString();
-    ModelFacade.getInstance().addNetworkToRoot(networkId, true);
+    ModelFacade.getInstance().addNetworkToRoot(networkId, isVirtual);
 
     // Switches
     for (final JsonElement actSw : switches) {
       final JsonObject sw = (JsonObject) actSw;
-      ModelFacade.getInstance().addSwitchToNetwork(sw.get("id").getAsString(), networkId, 0);
+      ModelFacade.getInstance().addSwitchToNetwork(sw.get("id").getAsString(), networkId,
+          sw.get("depth").getAsInt());
     }
 
     // Servers
@@ -132,7 +145,7 @@ public class ModelConverter {
       final JsonObject srv = (JsonObject) actSrv;
       ModelFacade.getInstance().addServerToNetwork(srv.get("id").getAsString(), networkId,
           srv.get("cpu").getAsInt(), srv.get("memory").getAsInt(), srv.get("storage").getAsInt(),
-          1);
+          srv.get("depth").getAsInt());
     }
 
     // Links
@@ -143,6 +156,12 @@ public class ModelConverter {
           link.get("target").getAsString());
     }
   }
+
+  /*
+   * Utility methods
+   * 
+   * TODO: These methods should be re-factored/moved to a generic helper class.
+   */
 
   private static void writeFile(final String path, final JsonObject json) {
     FileWriter file = null;

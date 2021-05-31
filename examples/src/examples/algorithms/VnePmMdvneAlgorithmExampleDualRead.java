@@ -6,9 +6,6 @@ import algorithms.ilp.VneIlpPathAlgorithm;
 import examples.scenarios.ModelConverter;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
-import generators.TwoTierNetworkGenerator;
-import generators.config.OneTierConfig;
-import generators.config.TwoTierConfig;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
@@ -17,7 +14,7 @@ import model.VirtualNetwork;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class VnePmMdvneAlgorithmExampleRead {
+public class VnePmMdvneAlgorithmExampleDualRead {
 
   /**
    * Main method to start the example. String array of arguments will be ignored.
@@ -27,25 +24,17 @@ public class VnePmMdvneAlgorithmExampleRead {
   public static void main(final String[] args) {
     // Setup
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
-    ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 2;
 
-    // Substrate network = two tier network
-    final OneTierConfig rackConfig =
-        new OneTierConfig(2, 1, false, 32, 2_000_000_000, 2_000_000_000, 2_000);
-    final TwoTierConfig substrateConfig = new TwoTierConfig();
-    substrateConfig.setRack(rackConfig);
-    substrateConfig.setCoreBandwidth(10_000);
-    substrateConfig.setNumberOfCoreSwitches(1);
-    substrateConfig.setNumberOfRacks(2);
-    final TwoTierNetworkGenerator subGen = new TwoTierNetworkGenerator(substrateConfig);
-    subGen.createNetwork("sub", false);
+    // Read substrate network from file
+    final List<String> sNetIds = ModelConverter.jsonToModel("snet.json", false);
 
-    // Virtual network = read from file
+    // Read all virtual networks from file
     final List<String> vNetIds = ModelConverter.jsonToModel("vnets.json", true);
 
     for (final String vNetId : vNetIds) {
       final SubstrateNetwork sNet =
-          (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
+          (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNetIds.get(0));
       final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById(vNetId);
 
       // Create and execute algorithm
