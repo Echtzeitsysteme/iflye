@@ -1165,12 +1165,14 @@ public class ModelFacade {
           final SubstrateElement host = vl.getHost();
           host.getGuestLinks().remove(vl);
 
-          if (host instanceof SubstratePath) {
-            final SubstratePath hostPath = (SubstratePath) host;
-            hostPath.setResidualBandwidth(hostPath.getResidualBandwidth() + vl.getBandwidth());
-            for (final Link hostPathLink : hostPath.getLinks()) {
-              final SubstrateLink sl = (SubstrateLink) hostPathLink;
-              sl.setResidualBandwidth(sl.getResidualBandwidth() + vl.getBandwidth());
+          if (!ModelFacadeConfig.IGNORE_BW) {
+            if (host instanceof SubstratePath) {
+              final SubstratePath hostPath = (SubstratePath) host;
+              hostPath.setResidualBandwidth(hostPath.getResidualBandwidth() + vl.getBandwidth());
+              for (final Link hostPathLink : hostPath.getLinks()) {
+                final SubstrateLink sl = (SubstrateLink) hostPathLink;
+                sl.setResidualBandwidth(sl.getResidualBandwidth() + vl.getBandwidth());
+              }
             }
           }
         }

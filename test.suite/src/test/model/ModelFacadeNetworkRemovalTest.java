@@ -7,10 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Set;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import algorithms.ilp.VneIlpPathAlgorithm;
 import facade.ModelFacade;
+import facade.config.ModelFacadeConfig;
 import model.SubstrateLink;
 import model.SubstrateNetwork;
 import model.SubstratePath;
@@ -34,6 +36,11 @@ public class ModelFacadeNetworkRemovalTest {
   protected ModelFacade facade = ModelFacade.getInstance();
 
   /**
+   * Old bandwidth ignore config.
+   */
+  private boolean oldIgnoreBw;
+
+  /**
    * Network ID to use in all tests.
    */
   private static final String netId = "net";
@@ -41,6 +48,12 @@ public class ModelFacadeNetworkRemovalTest {
   @BeforeEach
   public void resetModel() {
     facade.resetAll();
+    oldIgnoreBw = ModelFacadeConfig.IGNORE_BW;
+  }
+
+  @AfterEach
+  public void restoreConfig() {
+    ModelFacadeConfig.IGNORE_BW = oldIgnoreBw;
   }
 
   /*
@@ -161,6 +174,40 @@ public class ModelFacadeNetworkRemovalTest {
   public void testRejectNetworkDoesNotExist() {
     assertThrows(IllegalArgumentException.class, () -> {
       facade.removeNetworkFromRoot("aaa");
+    });
+  }
+
+  @Test
+  public void testNoBwIncreaseIfBwIgnoreIsTrue() {
+    ModelFacadeConfig.IGNORE_BW = true;
+    ModelFacadeServerRemovalTest.setUpOneTier(4, netId, false);
+    assertNotNull(facade.getNetworkById(netId));
+    ModelFacadeServerRemovalTest.setUpOneTier(2, "virt", true);
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById(netId);
+    final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
+
+    // Embed virtual onto substrate network
+    final VneIlpPathAlgorithm algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
+    assertTrue(algo.execute());
+    assertFalse(sNet.getGuests().isEmpty());
+
+    // Remove substrate network
+    facade.removeNetworkFromRoot("virt");
+
+    // All substrate links and paths must have bandwidth 1. This ensures that the removal did not
+    // increment the substrate bandwidth, if it was not decreased before.
+    // Links
+    sNet.getLinks().forEach(l -> {
+      final SubstrateLink sl = (SubstrateLink) l;
+      assertTrue(sl.getGuestLinks().isEmpty());
+      assertEquals(1, sl.getResidualBandwidth());
+    });
+
+    // Paths
+    sNet.getPaths().forEach(p -> {
+      final SubstratePath sp = (SubstratePath) p;
+      assertTrue(sp.getGuestLinks().isEmpty());
+      assertEquals(1, sp.getResidualBandwidth());
     });
   }
 
