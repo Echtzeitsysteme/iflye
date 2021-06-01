@@ -15,11 +15,11 @@ import model.VirtualNetwork;
 
 /**
  * Runnable example for the VNE pattern matching VNE algorithm implementation that demonstrates the
- * removal and the migration of a virtual network.
+ * removal of a substrate server and the migration of a virtual network.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class VnePmMdvneAlgorithmExampleRemovalMigration {
+public class VnePmMdvneAlgorithmExampleServerRemovalMigration {
 
   /**
    * Main method to start the example. String array of arguments will be ignored.
@@ -34,7 +34,7 @@ public class VnePmMdvneAlgorithmExampleRemovalMigration {
     AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_A;
 
     // Substrate network = one tier network
-    final OneTierConfig substrateConfig = new OneTierConfig(2, 1, false, 5, 5, 5, 100);
+    final OneTierConfig substrateConfig = new OneTierConfig(3, 1, false, 5, 5, 5, 100);
     final OneTierNetworkGenerator subGen = new OneTierNetworkGenerator(substrateConfig);
     subGen.createNetwork("sub", false);
 
@@ -59,14 +59,15 @@ public class VnePmMdvneAlgorithmExampleRemovalMigration {
     }
 
     /*
-     * Remove virtual network 2
+     * Remove first substrate server.
      */
-    ModelFacade.getInstance().removeNetworkFromRoot("virt2");
+    ModelFacade.getInstance().removeSubstrateServerFromNetwork("sub_srv_0");
 
     /*
-     * Add another small virtual network (4) to trigger a migration of virtual network 3
+     * Add another small virtual network (4) to trigger a migration of the virtual network that was
+     * on the first substrate server beforehand.
      */
-    final OneTierConfig smallVirtConfig = new OneTierConfig(2, 1, false, 1, 1, 1, 1);
+    final OneTierConfig smallVirtConfig = new OneTierConfig(1, 1, false, 1, 1, 1, 1);
     final OneTierNetworkGenerator smallVirtGen = new OneTierNetworkGenerator(smallVirtConfig);
     smallVirtGen.createNetwork("virt4", true);
     final SubstrateNetwork sNet =
@@ -74,6 +75,8 @@ public class VnePmMdvneAlgorithmExampleRemovalMigration {
     final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt4");
     final VnePmMdvneAlgorithm algo = VnePmMdvneAlgorithm.prepare(sNet, Set.of(vNet));
     algo.execute();
+
+    ModelFacade.getInstance().getRoot();
 
     // Save model to file
     ModelFacade.getInstance().persistModel();
