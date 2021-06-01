@@ -3,6 +3,7 @@ package test.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import java.util.HashSet;
@@ -479,6 +480,18 @@ public class ModelFacadePathBasicTest {
       final SubstratePath sp = (SubstratePath) p;
       assertEquals(sp.getBandwidth(), sp.getResidualBandwidth());
     }
+  }
+
+  /*
+   * Negative tests
+   */
+
+  @Test
+  public void testRejectVirtualNetwork() {
+    ModelFacade.getInstance().addNetworkToRoot("virt", true);
+    assertThrows(UnsupportedOperationException.class, () -> {
+      ModelFacade.getInstance().createAllPathsForNetwork("virt");
+    });
   }
 
   /*
