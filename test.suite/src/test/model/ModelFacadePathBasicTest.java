@@ -1,5 +1,6 @@
 package test.model;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -482,6 +483,40 @@ public class ModelFacadePathBasicTest {
     }
   }
 
+  @Test
+  public void testGetPathFromSourceToTargetNames() {
+    oneTierSetupTwoServers();
+    ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    assertFalse(allPaths.isEmpty());
+
+    for (final Path p : allPaths) {
+      final SubstratePath sp = (SubstratePath) p;
+      assertEquals(sp,
+          ModelFacade.getInstance().getPathFromSourceToTarget(sp.getSource(), sp.getTarget()));
+    }
+  }
+
+  @Test
+  public void testGetPathFromSourceToTargetNodes() {
+    oneTierSetupTwoServers();
+    ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    assertFalse(allPaths.isEmpty());
+
+    for (final Path p : allPaths) {
+      final SubstratePath sp = (SubstratePath) p;
+      assertEquals(sp, ModelFacade.getInstance().getPathFromSourceToTarget(sp.getSource().getName(),
+          sp.getTarget().getName()));
+    }
+  }
+
   /*
    * Negative tests
    */
@@ -492,6 +527,29 @@ public class ModelFacadePathBasicTest {
     assertThrows(UnsupportedOperationException.class, () -> {
       ModelFacade.getInstance().createAllPathsForNetwork("virt");
     });
+  }
+
+  @Test
+  public void testNullGetPathFromSourceToTargetNodes() {
+    oneTierSetupTwoServers();
+    ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 1;
+
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+    final Node source = ModelFacade.getInstance().getServerById("srv1");
+    final Node target = ModelFacade.getInstance().getServerById("srv2");
+    assertNull(ModelFacade.getInstance().getPathFromSourceToTarget(source, target));
+  }
+
+  @Test
+  public void testNoPathsGetPathFromSourceToTargetNodes() {
+    oneTierSetupTwoServers();
+    ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 1;
+
+    final Node source = ModelFacade.getInstance().getServerById("srv1");
+    final Node target = ModelFacade.getInstance().getServerById("srv2");
+    assertNull(ModelFacade.getInstance().getPathFromSourceToTarget(source, target));
   }
 
   /*
