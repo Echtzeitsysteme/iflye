@@ -1,17 +1,26 @@
 package test.model;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import facade.ModelFacade;
+import generators.GoogleFatTreeNetworkGenerator;
 import generators.OneTierNetworkGenerator;
+import generators.config.GoogleFatTreeConfig;
 import generators.config.OneTierConfig;
 import model.Link;
 import model.Path;
 import model.Server;
+import model.SubstrateServer;
+import model.VirtualLink;
+import model.VirtualServer;
+import model.VirtualSwitch;
 
 /**
  * Test class for the ModelFacade that tests the removal of substrate servers.
@@ -25,12 +34,19 @@ public class ModelFacadeServerRemovalTest {
    */
   protected ModelFacade facade = ModelFacade.getInstance();
 
+  /**
+   * Network ID to use in all tests.
+   */
   private static final String netId = "net";
 
   @BeforeEach
   public void resetModel() {
     facade.resetAll();
   }
+
+  /*
+   * Positive tests.
+   */
 
   @Test
   public void testRemovalOneTierServerOnlySmall() {
@@ -147,18 +163,160 @@ public class ModelFacadeServerRemovalTest {
     }
   }
 
+  @Test
+  public void testRemovalGoogleFatTreeServerOnlySmall() {
+    setUpGoogleFatTree(4);
+    assertEquals(16, facade.getAllServersOfNetwork(netId).size());
+    final String deletedId = netId + "_srv_0";
+    final Server deleted = facade.getServerById(deletedId);
+    facade.removeSubstrateServerFromNetwork(deletedId);
+    assertEquals(15, facade.getAllServersOfNetwork(netId).size());
+
+    // Check left over servers
+    facade.getAllServersOfNetwork(netId).forEach(s -> {
+      assertFalse(s.equals(deleted));
+    });
+  }
+
+  @Test
+  public void testRemovalGoogleFatTreeLinksOnlySmall() {
+    setUpGoogleFatTree(4);
+    assertEquals(16, facade.getAllServersOfNetwork(netId).size());
+    assertEquals(96, facade.getAllLinksOfNetwork(netId).size());
+    final String removeId = netId + "_srv_0";
+    facade.removeSubstrateServerFromNetwork(removeId);
+    assertEquals(94, facade.getAllLinksOfNetwork(netId).size());
+
+    // Check left over links
+    for (final Link l : facade.getAllLinksOfNetwork(netId)) {
+      assertFalse(l.getSource().getName().equals(removeId));
+      assertFalse(l.getTarget().getName().equals(removeId));
+    }
+  }
+
+  @Test
+  public void testRemovalGoogleFatTreePathsOnlySmall() {
+    setUpGoogleFatTree(4);
+    assertEquals(16, facade.getAllServersOfNetwork(netId).size());
+    assertEquals(496, facade.getAllPathsOfNetwork(netId).size());
+    final String removeId = netId + "_srv_0";
+    final Server removeServer = facade.getServerById(removeId);
+    facade.removeSubstrateServerFromNetwork(removeId);
+    assertEquals(462, facade.getAllPathsOfNetwork(netId).size());
+
+    // Check left over paths
+    for (final Path p : facade.getAllPathsOfNetwork(netId)) {
+      assertFalse(p.getSource().getName().equals(removeId));
+      assertFalse(p.getTarget().getName().equals(removeId));
+      assertFalse(p.getNodes().contains(removeServer));
+    }
+  }
+
+  @Test
+  public void testRemovalOneTierEmbeddingServer() {
+    setUpOneTier(2);
+    assertEquals(2, facade.getAllServersOfNetwork(netId).size());
+    final String removeId = netId + "_srv_0";
+
+    facade.addNetworkToRoot("vnet", true);
+    facade.addServerToNetwork("vnet_srv_0", "vnet", 1, 1, 1, 1);
+    facade.embedNetworkToNetwork(netId, "vnet");
+    facade.embedServerToServer(removeId, "vnet_srv_0");
+
+    final SubstrateServer deleted = ((SubstrateServer) facade.getServerById(removeId));
+    assertEquals(1, deleted.getGuestServers().size());
+    final VirtualServer guest = (VirtualServer) facade.getServerById("vnet_srv_0");
+    assertNotNull(guest.getHost());
+
+    facade.removeSubstrateServerFromNetwork(removeId);
+    assertEquals(1, facade.getAllServersOfNetwork(netId).size());
+    assertNull(guest.getHost());
+  }
+
+  @Test
+  public void testRemovalOneTierEmbeddingSwitch() {
+    setUpOneTier(2);
+    assertEquals(2, facade.getAllServersOfNetwork(netId).size());
+    final String removeId = netId + "_srv_0";
+
+    facade.addNetworkToRoot("vnet", true);
+    facade.addSwitchToNetwork("vnet_sw_0", "vnet", 0);
+    facade.embedNetworkToNetwork(netId, "vnet");
+    facade.embedSwitchToNode(removeId, "vnet_sw_0");
+
+    final SubstrateServer deleted = ((SubstrateServer) facade.getServerById(removeId));
+    assertEquals(1, deleted.getGuestSwitches().size());
+    final VirtualSwitch guest = (VirtualSwitch) facade.getSwitchById("vnet_sw_0");
+    assertNotNull(guest.getHost());
+
+    facade.removeSubstrateServerFromNetwork(removeId);
+    assertEquals(1, facade.getAllServersOfNetwork(netId).size());
+    assertNull(guest.getHost());
+  }
+
+  @Test
+  public void testRemovalOneTierEmbeddingLink() {
+    setUpOneTier(2);
+    assertEquals(2, facade.getAllServersOfNetwork(netId).size());
+    final String removeId = netId + "_srv_0";
+
+    facade.addNetworkToRoot("vnet", true);
+    facade.addSwitchToNetwork("vnet_sw_0", "vnet", 0);
+    facade.addServerToNetwork("vnet_srv_0", "vnet", 1, 1, 1, 1);
+    facade.addLinkToNetwork("vnet_l_0", "vnet", 1, "vnet_sw_0", "vnet_srv_0");
+    facade.embedNetworkToNetwork(netId, "vnet");
+    facade.embedSwitchToNode(removeId, "vnet_sw_0");
+    facade.embedServerToServer(removeId, "vnet_srv_0");
+    facade.embedLinkToServer(removeId, "vnet_l_0");
+
+    final SubstrateServer deleted = ((SubstrateServer) facade.getServerById(removeId));
+    assertEquals(1, deleted.getGuestLinks().size());
+    final VirtualLink guest = (VirtualLink) facade.getLinkById("vnet_l_0");
+    assertNotNull(guest.getHost());
+
+    facade.removeSubstrateServerFromNetwork(removeId);
+    assertEquals(1, facade.getAllServersOfNetwork(netId).size());
+    assertNull(guest.getHost());
+  }
+
+  /*
+   * Negative tests.
+   */
+
+  @Test
+  public void testRejectVirtualServer() {
+    setUpOneTier(2);
+    facade.addNetworkToRoot("vnet", true);
+    facade.addServerToNetwork("vnet_srv_0", "vnet", 1, 1, 1, 1);
+
+    assertThrows(IllegalArgumentException.class, () -> {
+      facade.removeSubstrateServerFromNetwork("vnet_srv_0");
+    });
+  }
+
   /*
    * Utility methods.
    */
 
   /**
-   * Sets an one tier based network with two servers up.
+   * Sets an one tier based network with n servers up.
    * 
    * @param servers Number of servers to create.
    */
   private void setUpOneTier(final int servers) {
     final OneTierConfig subConfig = new OneTierConfig(servers, 1, false, 1, 1, 1, 1);
     final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(subConfig);
+    gen.createNetwork(netId, false);
+  }
+
+  /**
+   * Sets a google fat tree based network with parameter k up.
+   * 
+   * @param k Google fat tree parameter.
+   */
+  private void setUpGoogleFatTree(final int k) {
+    final GoogleFatTreeConfig subConfig = new GoogleFatTreeConfig(k);
+    final GoogleFatTreeNetworkGenerator gen = new GoogleFatTreeNetworkGenerator(subConfig);
     gen.createNetwork(netId, false);
   }
 

@@ -30,6 +30,7 @@ import model.SubstrateNode;
 import model.SubstratePath;
 import model.SubstrateServer;
 import model.Switch;
+import model.VirtualElement;
 import model.VirtualLink;
 import model.VirtualNetwork;
 import model.VirtualServer;
@@ -1112,17 +1113,27 @@ public class ModelFacade {
     final SubstrateServer ssrv = (SubstrateServer) srv;
 
     // Remove embedding of all guests
+    final Set<VirtualElement> guestsToRemove = new HashSet<VirtualElement>();
     for (final VirtualServer guestSrv : ssrv.getGuestServers()) {
-      guestSrv.setHost(null);
+      guestsToRemove.add(guestSrv);
     }
 
     for (final VirtualSwitch guestSw : ssrv.getGuestSwitches()) {
-      guestSw.setHost(null);
+      guestsToRemove.add(guestSw);
     }
 
     for (final VirtualLink guestL : ssrv.getGuestLinks()) {
-      guestL.setHost(null);
+      guestsToRemove.add(guestL);
     }
+    guestsToRemove.forEach(e -> {
+      if (e instanceof VirtualServer) {
+        ((VirtualServer) e).setHost(null);
+      } else if (e instanceof VirtualSwitch) {
+        ((VirtualSwitch) e).setHost(null);
+      } else if (e instanceof VirtualLink) {
+        ((VirtualLink) e).setHost(null);
+      }
+    });
 
     // Remove all links
     final Set<SubstrateLink> linksToRemove = new HashSet<SubstrateLink>();
