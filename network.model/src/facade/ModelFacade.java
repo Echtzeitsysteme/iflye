@@ -1117,11 +1117,9 @@ public class ModelFacade {
     for (final VirtualServer guestSrv : ssrv.getGuestServers()) {
       guestsToRemove.add(guestSrv);
     }
-
     for (final VirtualSwitch guestSw : ssrv.getGuestSwitches()) {
       guestsToRemove.add(guestSw);
     }
-
     for (final VirtualLink guestL : ssrv.getGuestLinks()) {
       guestsToRemove.add(guestL);
     }
@@ -1132,31 +1130,25 @@ public class ModelFacade {
         ((VirtualSwitch) e).setHost(null);
       } else if (e instanceof VirtualLink) {
         ((VirtualLink) e).setHost(null);
+      } else {
+        throw new UnsupportedOperationException("Removal of guest " + e + " not yet implemented.");
       }
-    });
-
-    // Remove all links
-    final Set<SubstrateLink> linksToRemove = new HashSet<SubstrateLink>();
-    for (final Link l : getAllLinksOfNetwork(ssrv.getNetwork().getName())) {
-      final SubstrateLink sl = (SubstrateLink) l;
-      if (sl.getSource().equals(ssrv) || sl.getTarget().equals(ssrv)) {
-        linksToRemove.add(sl);
-      }
-    }
-    linksToRemove.forEach(sl -> {
-      removeSubstrateLink(sl);
     });
 
     // Remove all paths
-    final Set<SubstratePath> pathsToRemove = new HashSet<SubstratePath>();
-    for (final Path p : getAllPathsOfNetwork(ssrv.getNetwork().getName())) {
-      final SubstratePath sp = (SubstratePath) p;
-      if (sp.getNodes().contains(ssrv)) {
-        pathsToRemove.add(sp);
-      }
-    }
+    final Set<Path> pathsToRemove = new HashSet<Path>();
+    pathsToRemove.addAll(ssrv.getIncomingPaths());
+    pathsToRemove.addAll(ssrv.getOutgoingPaths());
     pathsToRemove.forEach(p -> {
       removeSubstratePath(p);
+    });
+
+    // Remove all links
+    final Set<Link> linksToRemove = new HashSet<Link>();
+    linksToRemove.addAll(ssrv.getIncomingLinks());
+    linksToRemove.addAll(ssrv.getOutgoingLinks());
+    linksToRemove.forEach(sl -> {
+      removeSubstrateLink(sl);
     });
 
     // Remove server itself
@@ -1168,7 +1160,23 @@ public class ModelFacade {
    * 
    * @param link Substrate link to remove from the network.
    */
-  private void removeSubstrateLink(final SubstrateLink link) {
+  private void removeSubstrateLink(final Link link) {
+    if (!(link instanceof SubstrateLink)) {
+      throw new IllegalArgumentException("Given link is not a substrate link.");
+    }
+    final SubstrateLink sl = (SubstrateLink) link;
+    sl.getGuestLinks().forEach(gl -> {
+      gl.setHost(null);
+    });
+    sl.getSource().getOutgoingLinks().remove(sl);
+    sl.getTarget().getIncomingLinks().remove(sl);
+
+    if (sl.getPaths() != null && !sl.getPaths().isEmpty()) {
+      sl.getPaths().forEach(p -> {
+        removeSubstratePath(p);
+      });
+    }
+
     getNetworkById(link.getNetwork().getName()).getLinks().remove(link);
   }
 
@@ -1177,8 +1185,26 @@ public class ModelFacade {
    * 
    * @param path Substrate path to remove from the network.
    */
-  private void removeSubstratePath(final SubstratePath path) {
-    getNetworkById(path.getNetwork().getName()).getPaths().remove(path);
+  private void removeSubstratePath(final Path path) {
+    if (!(path instanceof SubstratePath)) {
+      throw new IllegalArgumentException("Given path is not a substrate path.");
+    }
+    final SubstratePath sp = (SubstratePath) path;
+    sp.getGuestLinks().forEach(gl -> {
+      gl.setHost(null);
+    });
+    if (sp.getSource() != null) {
+      sp.getSource().getOutgoingPaths().remove(sp);
+    }
+
+    if (sp.getTarget() != null) {
+      sp.getTarget().getIncomingPaths().remove(sp);
+    }
+
+    // Not sure why exactly this is necessary
+    if (sp.getNetwork() != null) {
+      getNetworkById(sp.getNetwork().getName()).getPaths().remove(sp);
+    }
   }
 
 }
