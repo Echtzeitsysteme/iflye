@@ -65,7 +65,7 @@ public class ModelFacadeNetworkRemovalTest {
 
     // Embed virtual onto substrate network
     final VneIlpPathAlgorithm algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
-    algo.execute();
+    assertTrue(algo.execute());
     assertFalse(sNet.getGuests().isEmpty());
 
     // Remove substrate network
@@ -113,7 +113,7 @@ public class ModelFacadeNetworkRemovalTest {
 
     // Embed virtual onto substrate network
     final VneIlpPathAlgorithm algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
-    algo.execute();
+    assertTrue(algo.execute());
     assertFalse(sNet.getGuests().isEmpty());
 
     // Remove substrate network

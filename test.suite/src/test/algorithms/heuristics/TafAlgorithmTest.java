@@ -41,6 +41,11 @@ public class TafAlgorithmTest {
    */
   private int oldUpperLimit;
 
+  /**
+   * Old ignore bandwidth value.
+   */
+  private boolean oldIgnoreBw;
+
   @BeforeEach
   public void resetModel() {
     ModelFacade.getInstance().resetAll();
@@ -48,6 +53,7 @@ public class TafAlgorithmTest {
     // Save old values
     oldLowerLimit = ModelFacadeConfig.MIN_PATH_LENGTH;
     oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
+    oldIgnoreBw = ModelFacadeConfig.IGNORE_BW;
 
     // Network setup
     ModelFacade.getInstance().addNetworkToRoot("sub", false);
@@ -62,6 +68,7 @@ public class TafAlgorithmTest {
   public void restoreConfig() {
     ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
     ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
+    ModelFacadeConfig.IGNORE_BW = oldIgnoreBw;
   }
 
   /*
