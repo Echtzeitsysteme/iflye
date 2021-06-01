@@ -2,6 +2,7 @@ package test.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -440,6 +441,29 @@ public class ModelFacadePathAutoBasicTest {
     for (final Path p : generatedPaths) {
       assertTrue(p.getHops() <= 3);
     }
+  }
+
+  /*
+   * Negative tests
+   */
+
+  @Test
+  public void testRejectServerDifferentDepth() {
+    // Setup for this test
+    ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 1;
+    ModelFacade.getInstance().addNetworkToRoot("net", false);
+    ModelFacade.getInstance().addSwitchToNetwork("sw", "net", 0);
+    ModelFacade.getInstance().addServerToNetwork("1", "net", 1, 1, 1, 1);
+    ModelFacade.getInstance().addServerToNetwork("2", "net", 1, 1, 1, 2);
+    ModelFacade.getInstance().addLinkToNetwork("l1", "net", 1, "sw", "1");
+    ModelFacade.getInstance().addLinkToNetwork("l2", "net", 1, "1", "sw");
+    ModelFacade.getInstance().addLinkToNetwork("l3", "net", 1, "sw", "2");
+    ModelFacade.getInstance().addLinkToNetwork("l4", "net", 1, "2", "sw");
+
+    assertThrows(UnsupportedOperationException.class, () -> {
+      ModelFacade.getInstance().createAllPathsForNetwork("net");
+    });
   }
 
 }

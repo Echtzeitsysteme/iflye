@@ -1,8 +1,10 @@
 package test.model;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import java.util.HashSet;
@@ -479,6 +481,100 @@ public class ModelFacadePathBasicTest {
       final SubstratePath sp = (SubstratePath) p;
       assertEquals(sp.getBandwidth(), sp.getResidualBandwidth());
     }
+  }
+
+  @Test
+  public void testGetPathFromSourceToTargetNames() {
+    oneTierSetupTwoServers();
+    ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    assertFalse(allPaths.isEmpty());
+
+    for (final Path p : allPaths) {
+      final SubstratePath sp = (SubstratePath) p;
+      assertEquals(sp,
+          ModelFacade.getInstance().getPathFromSourceToTarget(sp.getSource(), sp.getTarget()));
+    }
+  }
+
+  @Test
+  public void testGetPathFromSourceToTargetNodes() {
+    oneTierSetupTwoServers();
+    ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    assertFalse(allPaths.isEmpty());
+
+    for (final Path p : allPaths) {
+      final SubstratePath sp = (SubstratePath) p;
+      assertEquals(sp, ModelFacade.getInstance().getPathFromSourceToTarget(sp.getSource().getName(),
+          sp.getTarget().getName()));
+    }
+  }
+
+  /*
+   * Negative tests
+   */
+
+  @Test
+  public void testRejectVirtualNetwork() {
+    ModelFacade.getInstance().addNetworkToRoot("virt", true);
+    assertThrows(UnsupportedOperationException.class, () -> {
+      ModelFacade.getInstance().createAllPathsForNetwork("virt");
+    });
+  }
+
+  @Test
+  public void testNullGetPathFromSourceToTargetNodes() {
+    oneTierSetupTwoServers();
+    ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 1;
+
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+    final Node source = ModelFacade.getInstance().getServerById("srv1");
+    final Node target = ModelFacade.getInstance().getServerById("srv2");
+    assertNull(ModelFacade.getInstance().getPathFromSourceToTarget(source, target));
+  }
+
+  @Test
+  public void testNoPathsGetPathFromSourceToTargetNodes() {
+    oneTierSetupTwoServers();
+    ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 1;
+
+    final Node source = ModelFacade.getInstance().getServerById("srv1");
+    final Node target = ModelFacade.getInstance().getServerById("srv2");
+    assertNull(ModelFacade.getInstance().getPathFromSourceToTarget(source, target));
+  }
+
+  @Test
+  public void testNoPathOverServer() {
+    ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 2;
+
+    ModelFacade.getInstance().addNetworkToRoot("net", false);
+    ModelFacade.getInstance().addServerToNetwork("1", "net", 1, 1, 1, 0);
+    ModelFacade.getInstance().addServerToNetwork("2", "net", 1, 1, 1, 0);
+    ModelFacade.getInstance().addServerToNetwork("3", "net", 1, 1, 1, 0);
+    ModelFacade.getInstance().addLinkToNetwork("l1", "net", 1, "1", "2");
+    ModelFacade.getInstance().addLinkToNetwork("l2", "net", 1, "2", "1");
+    ModelFacade.getInstance().addLinkToNetwork("l3", "net", 1, "2", "3");
+    ModelFacade.getInstance().addLinkToNetwork("l4", "net", 1, "3", "2");
+
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+
+    final List<Path> paths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+
+    assertEquals(4, paths.size());
+    paths.forEach(p -> {
+      assertEquals(1, p.getHops());
+      assertEquals(2, p.getNodes().size());
+    });
   }
 
   /*
