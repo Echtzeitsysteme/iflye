@@ -1098,4 +1098,76 @@ public class ModelFacade {
     return success;
   }
 
+  /**
+   * Removes a substrate server with the given ID from the network.
+   * 
+   * @param id Substrate server ID to remove.
+   */
+  public void removeSubstrateServerFromNetwork(final String id) {
+    final Server srv = getServerById(id);
+    if (srv instanceof VirtualServer) {
+      throw new IllegalArgumentException("Given ID is from a virtual server.");
+    }
+
+    final SubstrateServer ssrv = (SubstrateServer) srv;
+
+    // Remove embedding of all guests
+    for (final VirtualServer guestSrv : ssrv.getGuestServers()) {
+      guestSrv.setHost(null);
+    }
+
+    for (final VirtualSwitch guestSw : ssrv.getGuestSwitches()) {
+      guestSw.setHost(null);
+    }
+
+    for (final VirtualLink guestL : ssrv.getGuestLinks()) {
+      guestL.setHost(null);
+    }
+
+    // Remove all links
+    final Set<SubstrateLink> linksToRemove = new HashSet<SubstrateLink>();
+    for (final Link l : getAllLinksOfNetwork(ssrv.getNetwork().getName())) {
+      final SubstrateLink sl = (SubstrateLink) l;
+      if (sl.getSource().equals(ssrv) || sl.getTarget().equals(ssrv)) {
+        linksToRemove.add(sl);
+      }
+    }
+    linksToRemove.forEach(sl -> {
+      removeSubstrateLink(sl);
+    });
+
+    // Remove all paths
+    final Set<SubstratePath> pathsToRemove = new HashSet<SubstratePath>();
+    for (final Path p : getAllPathsOfNetwork(ssrv.getNetwork().getName())) {
+      final SubstratePath sp = (SubstratePath) p;
+      if (sp.getNodes().contains(ssrv)) {
+        pathsToRemove.add(sp);
+      }
+    }
+    pathsToRemove.forEach(p -> {
+      removeSubstratePath(p);
+    });
+
+    // Remove server itself
+    getNetworkById(ssrv.getNetwork().getName()).getNodes().remove(ssrv);
+  }
+
+  /**
+   * Removes the given substrate link from the network. Does not check any guests or paths.
+   * 
+   * @param link Substrate link to remove from the network.
+   */
+  private void removeSubstrateLink(final SubstrateLink link) {
+    getNetworkById(link.getNetwork().getName()).getLinks().remove(link);
+  }
+
+  /**
+   * Removes the given substrate path from the network. Does not check any guests.
+   * 
+   * @param path Substrate path to remove from the network.
+   */
+  private void removeSubstratePath(final SubstratePath path) {
+    getNetworkById(path.getNetwork().getName()).getPaths().remove(path);
+  }
+
 }
