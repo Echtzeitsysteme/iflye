@@ -92,11 +92,6 @@ public class ModelFacade {
   private Map<String, Path> paths = new HashMap<String, Path>();
   private Map<String, Link> links = new HashMap<String, Link>();
 
-  // TODO: Remove me later on.
-  public void dummy() {
-    System.out.println("=> Dummy method called.");
-  }
-
   /**
    * Returns the root node.
    * 
@@ -487,13 +482,15 @@ public class ModelFacade {
     for (final Node n : servers) {
       final SubstrateServer srv = (SubstrateServer) n;
 
-      if (srv.getDepth() < maxPathLength) {
-        if (srv.getDepth() != maxPathLength && maxPathLength != Integer.MAX_VALUE) {
+      if (srv.getDepth() != maxPathLength) {
+        if (maxPathLength != Integer.MAX_VALUE) {
           throw new UnsupportedOperationException("In network " + networkId
               + " are servers with different depths, which is not supported.");
         }
 
-        maxPathLength = srv.getDepth();
+        if (srv.getDepth() < maxPathLength) {
+          maxPathLength = srv.getDepth();
+        }
       }
     }
 
@@ -517,11 +514,13 @@ public class ModelFacade {
 
     // Check if a server is used as forwarding node (which is forbidden)
     for (int i = 0; i < links.size(); i++) {
-      if (i != 0 && i != links.size() - 1) {
+      if (i != 0) {
         if (links.get(i).getSource() instanceof Server) {
           return;
         }
+      }
 
+      if (i != links.size() - 1) {
         if (links.get(i).getTarget() instanceof Server) {
           return;
         }
