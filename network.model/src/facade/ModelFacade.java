@@ -1116,8 +1116,9 @@ public class ModelFacade {
       // Substrate network
       final SubstrateNetwork sNet = (SubstrateNetwork) net;
 
+      final Set<VirtualNetwork> guestHostToNulls = new HashSet<VirtualNetwork>();
       for (final VirtualNetwork guest : sNet.getGuests()) {
-        guest.setHost(null);
+        guestHostToNulls.add(guest);
         for (final Node n : getAllServersOfNetwork(guest.getName())) {
           final VirtualServer vsrv = (VirtualServer) n;
           vsrv.setHost(null);
@@ -1133,36 +1134,46 @@ public class ModelFacade {
           vl.setHost(null);
         }
       }
+
+      guestHostToNulls.forEach(g -> {
+        g.setHost(null);
+      });
     } else {
       // Virtual network
       final VirtualNetwork vNet = (VirtualNetwork) net;
-      vNet.getHost().getGuests().remove(vNet);
 
-      for (final Node n : getAllServersOfNetwork(vNet.getName())) {
-        final VirtualServer vsrv = (VirtualServer) n;
-        final SubstrateServer host = vsrv.getHost();
-        host.getGuestServers().remove(vsrv);
-        host.setResidualCpu(host.getResidualCpu() + vsrv.getCpu());
-        host.setResidualMemory(host.getResidualMemory() + vsrv.getMemory());
-        host.setResidualStorage(host.getResidualStorage() + vsrv.getStorage());
-      }
+      // Check if there is a host for this virtual network.
+      if (vNet.getHost() != null) {
+        vNet.getHost().getGuests().remove(vNet);
 
-      for (final Node n : getAllSwitchesOfNetwork(vNet.getName())) {
-        final VirtualSwitch vsw = (VirtualSwitch) n;
-        vsw.getHost().getGuestSwitches().remove(vsw);
-      }
+        for (final Node n : getAllServersOfNetwork(vNet.getName())) {
+          final VirtualServer vsrv = (VirtualServer) n;
+          final SubstrateServer host = vsrv.getHost();
+          host.getGuestServers().remove(vsrv);
+          host.setResidualCpu(host.getResidualCpu() + vsrv.getCpu());
+          host.setResidualMemory(host.getResidualMemory() + vsrv.getMemory());
+          host.setResidualStorage(host.getResidualStorage() + vsrv.getStorage());
+        }
 
-      for (final Link l : vNet.getLinks()) {
-        final VirtualLink vl = (VirtualLink) l;
-        final SubstrateElement host = vl.getHost();
-        host.getGuestLinks().remove(vl);
+        for (final Node n : getAllSwitchesOfNetwork(vNet.getName())) {
+          final VirtualSwitch vsw = (VirtualSwitch) n;
+          vsw.getHost().getGuestSwitches().remove(vsw);
+        }
 
-        if (host instanceof SubstratePath) {
-          final SubstratePath hostPath = (SubstratePath) host;
-          hostPath.setResidualBandwidth(hostPath.getResidualBandwidth() + vl.getBandwidth());
-          for (final Link hostPathLink : hostPath.getLinks()) {
-            final SubstrateLink sl = (SubstrateLink) hostPathLink;
-            sl.setResidualBandwidth(sl.getResidualBandwidth() + vl.getBandwidth());
+        for (final Link l : vNet.getLinks()) {
+          final VirtualLink vl = (VirtualLink) l;
+          final SubstrateElement host = vl.getHost();
+          host.getGuestLinks().remove(vl);
+
+          if (!ModelFacadeConfig.IGNORE_BW) {
+            if (host instanceof SubstratePath) {
+              final SubstratePath hostPath = (SubstratePath) host;
+              hostPath.setResidualBandwidth(hostPath.getResidualBandwidth() + vl.getBandwidth());
+              for (final Link hostPathLink : hostPath.getLinks()) {
+                final SubstrateLink sl = (SubstrateLink) hostPathLink;
+                sl.setResidualBandwidth(sl.getResidualBandwidth() + vl.getBandwidth());
+              }
+            }
           }
         }
       }
