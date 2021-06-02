@@ -1324,10 +1324,14 @@ public class ModelFacade {
             "Validation of virtual server " + vsrv.getName() + " was incorrect.");
       } else if (n instanceof VirtualSwitch) {
         final VirtualSwitch vsw = (VirtualSwitch) n;
-        if (host == null && vsw.getHost() == null) {
-          continue;
-        } else if (host.equals(vsw.getHost().getNetwork())) {
-          continue;
+        if (host == null) {
+          if (vsw.getHost() == null) {
+            continue;
+          }
+        } else {
+          if (vsw.getHost() != null && host.equals(vsw.getHost().getNetwork())) {
+            continue;
+          }
         }
         throw new InternalError(
             "Validation of virtual switch " + vsw.getName() + " was incorrect.");
