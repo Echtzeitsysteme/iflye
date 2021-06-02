@@ -1260,17 +1260,25 @@ public class ModelFacade {
       }
     }
 
-    for (final Link l : sNet.getLinks()) {
-      final SubstrateLink sl = (SubstrateLink) l;
-      int sumGuestBw = 0;
+    // If ignoring of bandwidth is activated, no link or path has to be checked.
+    if (ModelFacadeConfig.IGNORE_BW) {
+      return;
+    }
 
-      for (final VirtualLink gl : sl.getGuestLinks()) {
-        sumGuestBw += gl.getBandwidth();
-      }
+    // Check if virtual links are also embedded to substrate ones (additional to substrate paths).
+    if (ModelFacadeConfig.LINK_HOST_EMBED_PATH) {
+      for (final Link l : sNet.getLinks()) {
+        final SubstrateLink sl = (SubstrateLink) l;
+        int sumGuestBw = 0;
 
-      if (sl.getResidualBandwidth() != sl.getBandwidth() - sumGuestBw) {
-        throw new InternalError(
-            "Residual bandwidth value of link " + sl.getName() + " was incorrect.");
+        for (final VirtualLink gl : sl.getGuestLinks()) {
+          sumGuestBw += gl.getBandwidth();
+        }
+
+        if (sl.getResidualBandwidth() != sl.getBandwidth() - sumGuestBw) {
+          throw new InternalError(
+              "Residual bandwidth value of link " + sl.getName() + " was incorrect.");
+        }
       }
     }
 
