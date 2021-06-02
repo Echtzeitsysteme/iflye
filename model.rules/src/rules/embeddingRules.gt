@@ -1,48 +1,11 @@
 import "http://www.eclipse.org/emf/2002/Ecore"
 import "platform:/resource/network.model/model/Model.ecore"
 
-// Add elements
-//pattern substrateServer() {
-//	substrateServer: SubstrateServer
-//}
-//
-//pattern substrateLink() {
-//	substrateLink: SubstrateLink
-//}
-//
-//pattern virtualServer() {
-//	virtualServer: VirtualServer
-//}
-//
-//pattern virtualSwitch() {
-//	virtualSwitch: VirtualSwitch
-//}
-//
-//pattern virtualLink() {
-//	virtualLink: VirtualLink
-//}
-
-//
-// Networks
-//
-//
-//pattern networkMatch() {
-//	root: Root {
-//		-networks -> substrateNetwork
-//		-networks -> virtualNetwork
-//	}
-//	
-//	substrateNetwork: SubstrateNetwork
-//	virtualNetwork: VirtualNetwork
-//}
-
-// TODO: Remove all negative patterns
-
 //
 // Servers
 //
 
-// Substrate server must have at least the required resources available
+// Substrate server must have at least the required resources available.
 rule serverMatchPositive() {
 	root: Root {
 		-networks -> substrateNetwork
@@ -67,57 +30,51 @@ rule serverMatchPositive() {
 		-nodes -> virtualNode
 	}
 	
+	// Check residual resources
 	# virtualNode.cpu <= substrateNode.residualCpu
 	# virtualNode.memory <= substrateNode.residualMemory
 	# virtualNode.storage <= substrateNode.residualStorage
 }
 
-//// All server mappings but without the positive ones
-//// (These are forbidden via the condition below.)
-//pattern serverMatchNegative() {
-//	root: Root {
-//		-networks -> substrateNetwork
-//		-networks -> virtualNetwork
-//	}
-//	
-//	substrateNode: SubstrateServer
-//	virtualNode: VirtualServer
-//	
-//	substrateNetwork: SubstrateNetwork {
-//		-nodes -> substrateNode
-//	}
-//	
-//	virtualNetwork: VirtualNetwork {
-//		-nodes -> virtualNode
-//	}
-//}
-//when serverMatchNotValid
-//
-//condition serverMatchNotValid = forbid serverMatchPositive
+// All theoretical possible server mappings but without the positive ones.
+// (These are forbidden via the condition below.)
+rule serverMatchNegative() {
+	root: Root {
+		-networks -> substrateNetwork
+		-networks -> virtualNetwork
+	}
+	
+	substrateNode: SubstrateServer {
+		.residualCpu := substrateNode.residualCpu + virtualNode.cpu
+		.residualMemory := substrateNode.residualMemory + virtualNode.memory
+		.residualStorage := substrateNode.residualStorage + virtualNode.storage
+		-- -guestServers -> virtualNode
+	}
+	virtualNode: VirtualServer {
+		-- -host -> substrateNode
+	}
+	
+	substrateNetwork: SubstrateNetwork {
+		-nodes -> substrateNode
+	}
+	
+	virtualNetwork: VirtualNetwork {
+		-nodes -> virtualNode
+	}
+	
+	// Check total resources
+	# virtualNode.cpu <= substrateNode.cpu
+	# virtualNode.memory <= substrateNode.memory
+	# virtualNode.storage <= substrateNode.storage
+} when serverMatchNotPossible
 
-//pattern serverMatchSwitchNegative() {
-//	root: Root {
-//		-networks -> substrateNetwork
-//		-networks -> virtualNetwork
-//	}
-//	
-//	substrateNode: SubstrateSwitch
-//	virtualNode: VirtualServer
-//	
-//	substrateNetwork: SubstrateNetwork {
-//		-nodes -> substrateNode
-//	}
-//	
-//	virtualNetwork: VirtualNetwork {
-//		-nodes -> virtualNode
-//	}
-//}
+condition serverMatchNotPossible = forbid serverMatchPositive
 
 //
 // Switches
 //
 
-// Match from virtual switch to substrate node
+// Match from virtual switch to substrate node.
 // (Substrate node could either be a server or a switch.)
 rule switchNodeMatchPositive() {
 	root: Root {
@@ -145,7 +102,7 @@ rule switchNodeMatchPositive() {
 // Links
 //
 
-// Match from a virtual link to a substrate path (positive)
+// Match from a virtual link to a substrate path (positive).
 rule linkPathMatchPositive() {
 	root: Root {
 		-networks -> substrateNetwork
@@ -174,28 +131,37 @@ rule linkPathMatchPositive() {
 	# virtualLink.bandwidth <= substratePath.residualBandwidth
 }
 
-//// Match from a virtual link to a substrate path (but negative)
-//pattern linkPathMatchNegative() {
-//	root: Root {
-//		-networks -> substrateNetwork
-//		-networks -> virtualNetwork
-//	}
-//	
-//	substratePath: SubstratePath
-//	virtualLink: VirtualLink
-//	
-//	substrateNetwork: SubstrateNetwork {
-//		-paths -> substratePath
-//	}
-//	
-//	virtualNetwork: VirtualNetwork {
-//		-links -> virtualLink
-//	}
-//	
-//	# virtualLink.bandwidth > substratePath.residualBandwidth
-//}
+// All theoretical possible link-to-path mappings but without the positive ones.
+// (These are forbidden via the condition v.bw > s.residualBw.)
+rule linkPathMatchNegative() {
+	root: Root {
+		-networks -> substrateNetwork
+		-networks -> virtualNetwork
+	}
+	
+	substratePath: SubstratePath {
+		-- -guestLinks -> virtualLink
+		.residualBandwidth := substratePath.residualBandwidth + virtualLink.bandwidth
+		// TODO: There is no 'for-each' like functionality. Therefore, we have to update 
+		// the bandwidth of all substrate links contained in the substrate path "by hand".
+	}
+	virtualLink: VirtualLink {
+		-- -host -> substratePath
+	}
+	
+	substrateNetwork: SubstrateNetwork {
+		-paths -> substratePath
+	}
+	
+	virtualNetwork: VirtualNetwork {
+		-links -> virtualLink
+	}
+	
+	# virtualLink.bandwidth > substratePath.residualBandwidth
+	# virtualLink.bandwidth <= substratePath.bandwidth
+}
 
-// Match from virtual link to substrate server
+// Match from virtual link to substrate server.
 // This one does not have any constraints.
 rule linkServerMatchPositive() {
 	root: Root {
