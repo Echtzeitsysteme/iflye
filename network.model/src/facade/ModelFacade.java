@@ -1303,7 +1303,56 @@ public class ModelFacade {
    * @param vNet Virtual network to validate.
    */
   private void validateVirtualNetwork(final VirtualNetwork vNet) {
-    // TODO
+    // If virtual network is embedded, all of its elements have to be embedded.
+    SubstrateNetwork host = null;
+    if (vNet.getHost() != null) {
+      host = vNet.getHost();
+    } else {
+      // If virtual network is not embedded, all of its elements must not be embedded.
+      host = null;
+    }
+
+    for (final Node n : vNet.getNodes()) {
+      if (n instanceof VirtualServer) {
+        final VirtualServer vsrv = (VirtualServer) n;
+        if (host == null && vsrv.getHost() == null) {
+          continue;
+        } else if (host.equals(vsrv.getHost().getNetwork())) {
+          continue;
+        }
+        throw new InternalError(
+            "Validation of virtual server " + vsrv.getName() + " was incorrect.");
+      } else if (n instanceof VirtualSwitch) {
+        final VirtualSwitch vsw = (VirtualSwitch) n;
+        if (host == null && vsw.getHost() == null) {
+          continue;
+        } else if (host.equals(vsw.getHost().getNetwork())) {
+          continue;
+        }
+        throw new InternalError(
+            "Validation of virtual switch " + vsw.getName() + " was incorrect.");
+      }
+    }
+
+    for (final Link l : vNet.getLinks()) {
+      final VirtualLink vl = (VirtualLink) l;
+      if (host == null && vl.getHost() == null) {
+        continue;
+      } else {
+        if (vl.getHost() instanceof SubstrateServer) {
+          final SubstrateServer lHost = (SubstrateServer) vl.getHost();
+          if (host.equals(lHost.getNetwork())) {
+            continue;
+          }
+        } else if (vl.getHost() instanceof SubstratePath) {
+          final SubstratePath lHost = (SubstratePath) vl.getHost();
+          if (host.equals(lHost.getNetwork())) {
+            continue;
+          }
+        }
+      }
+      throw new InternalError("Validation of virtual link " + vl.getName() + " was incorrect.");
+    }
   }
 
 }
