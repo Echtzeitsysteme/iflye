@@ -50,6 +50,11 @@ public abstract class AAlgorithmTest {
    */
   private int oldUpperLimit;
 
+  /**
+   * Old bandwidth ignore value.
+   */
+  private boolean oldIgnoreBw;
+
   @BeforeEach
   public void resetModel() {
     facade.resetAll();
@@ -57,6 +62,7 @@ public abstract class AAlgorithmTest {
     // Save old values
     oldLowerLimit = ModelFacadeConfig.MIN_PATH_LENGTH;
     oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
+    oldIgnoreBw = ModelFacadeConfig.IGNORE_BW;
 
     // Network setup
     facade.addNetworkToRoot("sub", false);
@@ -68,8 +74,10 @@ public abstract class AAlgorithmTest {
 
   @AfterEach
   public void restoreConfig() {
+    facade.validateModel();
     ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
     ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
+    ModelFacadeConfig.IGNORE_BW = oldIgnoreBw;
   }
 
   /**

@@ -29,6 +29,7 @@ import model.SubstrateNetwork;
 import model.SubstrateNode;
 import model.SubstratePath;
 import model.SubstrateServer;
+import model.SubstrateSwitch;
 import model.Switch;
 import model.VirtualElement;
 import model.VirtualLink;
@@ -1203,6 +1204,158 @@ public class ModelFacade {
     // Not sure why exactly this is necessary
     if (sp.getNetwork() != null) {
       getNetworkById(sp.getNetwork().getName()).getPaths().remove(sp);
+    }
+  }
+
+  /**
+   * Validates the current state of the model, i.e. checks if: (1) Every virtual element of an
+   * embedded virtual network is embedded. (2) Every residual value of the substrate elements is
+   * equal to the total value minus the embedded values.
+   */
+  public void validateModel() {
+    for (final Network net : root.getNetworks()) {
+      if (net instanceof SubstrateNetwork) {
+        validateSubstrateNetwork((SubstrateNetwork) net);
+      } else if (net instanceof VirtualNetwork) {
+        validateVirtualNetwork((VirtualNetwork) net);
+      }
+    }
+  }
+
+  /**
+   * Validates a given substrate network.
+   * 
+   * @param sNet Substrate network to validate.
+   */
+  private void validateSubstrateNetwork(final SubstrateNetwork sNet) {
+    for (final Node n : sNet.getNodes()) {
+      if (n instanceof SubstrateServer) {
+        final SubstrateServer srv = (SubstrateServer) n;
+        int sumGuestCpu = 0;
+        int sumGuestMem = 0;
+        int sumGuestSto = 0;
+
+        for (final VirtualServer gs : srv.getGuestServers()) {
+          sumGuestCpu += gs.getCpu();
+          sumGuestMem += gs.getMemory();
+          sumGuestSto += gs.getStorage();
+        }
+
+        if (srv.getResidualCpu() != srv.getCpu() - sumGuestCpu) {
+          throw new InternalError(
+              "Residual CPU value of server " + srv.getName() + " was incorrect.");
+        }
+
+        if (srv.getResidualMemory() != srv.getMemory() - sumGuestMem) {
+          throw new InternalError(
+              "Residual memory value of server " + srv.getName() + " was incorrect.");
+        }
+
+        if (srv.getResidualStorage() != srv.getStorage() - sumGuestSto) {
+          throw new InternalError(
+              "Residual storage value of server " + srv.getName() + " was incorrect.");
+        }
+      } else if (n instanceof SubstrateSwitch) {
+        // Do nothing?
+      }
+    }
+
+    // If ignoring of bandwidth is activated, no link or path has to be checked.
+    if (ModelFacadeConfig.IGNORE_BW) {
+      return;
+    }
+
+    // Check if virtual links are also embedded to substrate ones (additional to substrate paths).
+    if (ModelFacadeConfig.LINK_HOST_EMBED_PATH) {
+      for (final Link l : sNet.getLinks()) {
+        final SubstrateLink sl = (SubstrateLink) l;
+        int sumGuestBw = 0;
+
+        for (final VirtualLink gl : sl.getGuestLinks()) {
+          sumGuestBw += gl.getBandwidth();
+        }
+
+        if (sl.getResidualBandwidth() != sl.getBandwidth() - sumGuestBw) {
+          throw new InternalError(
+              "Residual bandwidth value of link " + sl.getName() + " was incorrect.");
+        }
+      }
+    }
+
+    for (final Path p : sNet.getPaths()) {
+      final SubstratePath sp = (SubstratePath) p;
+      int sumGuestBw = 0;
+
+      for (final VirtualLink gl : sp.getGuestLinks()) {
+        sumGuestBw += gl.getBandwidth();
+      }
+
+      if (sp.getResidualBandwidth() != sp.getBandwidth() - sumGuestBw) {
+        throw new InternalError(
+            "Residual bandwidth value of path " + sp.getName() + " was incorrect.");
+      }
+    }
+  }
+
+  /**
+   * Validates a given virtual network.
+   * 
+   * @param vNet Virtual network to validate.
+   */
+  private void validateVirtualNetwork(final VirtualNetwork vNet) {
+    // If virtual network is embedded, all of its elements have to be embedded.
+    SubstrateNetwork host = null;
+    if (vNet.getHost() != null) {
+      host = vNet.getHost();
+    } else {
+      // If virtual network is not embedded, all of its elements must not be embedded.
+      host = null;
+    }
+
+    for (final Node n : vNet.getNodes()) {
+      if (n instanceof VirtualServer) {
+        final VirtualServer vsrv = (VirtualServer) n;
+        if (host == null && vsrv.getHost() == null) {
+          continue;
+        } else if (host.equals(vsrv.getHost().getNetwork())) {
+          continue;
+        }
+        throw new InternalError(
+            "Validation of virtual server " + vsrv.getName() + " was incorrect.");
+      } else if (n instanceof VirtualSwitch) {
+        final VirtualSwitch vsw = (VirtualSwitch) n;
+        if (host == null) {
+          if (vsw.getHost() == null) {
+            continue;
+          }
+        } else {
+          if (vsw.getHost() != null && host.equals(vsw.getHost().getNetwork())) {
+            continue;
+          }
+        }
+        throw new InternalError(
+            "Validation of virtual switch " + vsw.getName() + " was incorrect.");
+      }
+    }
+
+    for (final Link l : vNet.getLinks()) {
+      final VirtualLink vl = (VirtualLink) l;
+      if (host == null && vl.getHost() == null) {
+        continue;
+      } else {
+        if (vl.getHost() instanceof SubstrateServer) {
+          final SubstrateServer lHost = (SubstrateServer) vl.getHost();
+          if (host.equals(lHost.getNetwork())) {
+            continue;
+          }
+        } else if (vl.getHost() instanceof SubstratePath) {
+          final SubstratePath lHost = (SubstratePath) vl.getHost();
+          if (host.equals(lHost.getNetwork())) {
+            continue;
+          }
+        }
+      }
+      throw new InternalError("Validation of virtual link " + vl.getName() + " was incorrect.");
     }
   }
 
