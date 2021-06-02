@@ -270,12 +270,9 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
    * Creates the actual embeddings in the model based on the solved problem.
    */
   private void createEmbeddings() {
-    // Networks
-    final Iterator<VirtualNetwork> it = vNets.iterator();
-    while (it.hasNext()) {
-      final VirtualNetwork vNet = it.next();
-      facade.embedNetworkToNetwork(sNet.getName(), vNet.getName());
-    }
+    // We have to check if at least one node was embedded for each virtual network. If that is not
+    // the case, we must not embed the network itself to keep the model consistent.
+    final Set<VirtualNetwork> embedNetwork = new HashSet<VirtualNetwork>();
 
     // Nodes
     for (final VirtualNode vn : resultVirtualToSubstrateNodes.keySet()) {
@@ -286,6 +283,7 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
       } else {
         facade.embedSwitchToNode(sn.getName(), vn.getName());
       }
+      embedNetwork.add((VirtualNetwork) vn.getNetwork());
     }
 
     // Links
@@ -311,6 +309,13 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
           facade.embedLinkToPath(p.getName(), vl.getName());
         }
       }
+    }
+
+    // Networks
+    final Iterator<VirtualNetwork> it = embedNetwork.iterator();
+    while (it.hasNext()) {
+      final VirtualNetwork vNet = it.next();
+      facade.embedNetworkToNetwork(sNet.getName(), vNet.getName());
     }
   }
 

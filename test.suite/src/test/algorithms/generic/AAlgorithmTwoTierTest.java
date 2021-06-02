@@ -1,5 +1,6 @@
 package test.algorithms.generic;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -240,6 +241,7 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
     // servers is not possible although the total amount of resources could handle the virtual
     // network.
     assertFalse(algo.execute());
+    assertNull(vNet.getHost());
   }
 
   @Test

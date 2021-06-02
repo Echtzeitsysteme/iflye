@@ -3,7 +3,6 @@ package test.algorithms.heuristics;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Set;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import algorithms.heuristics.TafAlgorithm;
@@ -15,41 +14,23 @@ import generators.config.GoogleFatTreeConfig;
 import generators.config.OneTierConfig;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
+import test.algorithms.generic.AAlgorithmTest;
 
 /**
  * Test class for the TAF algorithm implementation using GoogleFatTree based substrate networks.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class TafAlgorithmGoogleFatTreeTest {
+public class TafAlgorithmGoogleFatTreeTest extends AAlgorithmTest {
 
-  /*
-   * Variables to save the ModelFacade's configuration of path limits to.
-   */
-
-  /**
-   * Old lower limit value.
-   */
-  private int oldLowerLimit;
-
-  /**
-   * Old upper limit value.
-   */
-  private int oldUpperLimit;
-
-  /**
-   * Old ignore bandwidth value.
-   */
-  private boolean oldIgnoreBw;
+  @Override
+  public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
+    algo = new TafAlgorithm(sNet, vNets);
+  }
 
   @BeforeEach
-  public void resetModel() {
-    ModelFacade.getInstance().resetAll();
-
-    // Save old values
-    oldLowerLimit = ModelFacadeConfig.MIN_PATH_LENGTH;
-    oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
-    oldIgnoreBw = ModelFacadeConfig.IGNORE_BW;
+  public void setUp() {
+    facade.resetAll();
 
     // Network setup
     ModelFacade.getInstance().addNetworkToRoot("sub", false);
@@ -58,13 +39,6 @@ public class TafAlgorithmGoogleFatTreeTest {
     // Normal model setup
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
     ModelFacadeConfig.IGNORE_BW = true;
-  }
-
-  @AfterEach
-  public void restoreConfig() {
-    ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
-    ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
-    ModelFacadeConfig.IGNORE_BW = oldIgnoreBw;
   }
 
   /*
