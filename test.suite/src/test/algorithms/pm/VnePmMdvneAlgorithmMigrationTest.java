@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import algorithms.AlgorithmConfig;
@@ -18,6 +17,7 @@ import metrics.TotalCommunicationCostMetricA;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 import model.VirtualSwitch;
+import test.algorithms.generic.AAlgorithmTest;
 
 /**
  * Test class for the VNE PM MdVNE algorithm implementation for checking the migration
@@ -25,12 +25,7 @@ import model.VirtualSwitch;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class VnePmMdvneAlgorithmMigrationTest {
-
-  /**
-   * Algorithm to test.
-   */
-  VnePmMdvneAlgorithm algo;
+public class VnePmMdvneAlgorithmMigrationTest extends AAlgorithmTest {
 
   /**
    * ModelFacade to work with.
@@ -43,21 +38,17 @@ public class VnePmMdvneAlgorithmMigrationTest {
    * @param sNet Substrate network.
    * @param vNets Set of virtual networks.
    */
+  @Override
   public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
     // Total communication cost A is needed for this test
     AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_A;
     algo = VnePmMdvneAlgorithm.prepare(sNet, vNets);
   }
 
-  @BeforeEach
-  public void resetModel() {
-    facade.resetAll();
-  }
-
   @AfterEach
   public void resetAlgo() {
     if (algo != null) {
-      algo.dispose();
+      ((VnePmMdvneAlgorithm) algo).dispose();
     }
   }
 
