@@ -33,7 +33,6 @@ public class VnePmMdvneAlgorithmTotalCommunicationCostBTest extends AAlgorithmMu
 
   @AfterEach
   public void resetAlgo() {
-    facade.validateModel();
     ((VnePmMdvneAlgorithm) algo).dispose();
   }
 

@@ -31,7 +31,6 @@ public class VnePmMdvneAlgorithmTotalPathCostTest extends AAlgorithmMultipleVnsT
 
   @AfterEach
   public void resetAlgo() {
-    facade.validateModel();
     if (algo != null) {
       ((VnePmMdvneAlgorithm) algo).dispose();
     }
