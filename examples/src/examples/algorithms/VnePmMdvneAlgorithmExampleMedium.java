@@ -11,6 +11,7 @@ import generators.config.TwoTierConfig;
 import metrics.AcceptedVnrMetric;
 import metrics.AveragePathLengthMetric;
 import metrics.TotalPathCostMetric;
+import metrics.manager.GlobalMetricsManager;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
@@ -31,7 +32,7 @@ public class VnePmMdvneAlgorithmExampleMedium {
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 
-    final long start = System.nanoTime();
+    GlobalMetricsManager.startRuntime();
 
     // Substrate network = one tier network
     final OneTierConfig rackConfig = new OneTierConfig(10, 1, false, 10, 10, 10, 10);
@@ -60,12 +61,21 @@ public class VnePmMdvneAlgorithmExampleMedium {
       algo.execute();
     }
 
-    final long end = System.nanoTime();
+    GlobalMetricsManager.stopRuntime();
 
     // Save model to file
     ModelFacade.getInstance().persistModel();
     System.out.println("=> Execution finished.");
-    System.out.println("=> Elapsed time: " + (end - start) / 1_000_000_000 + " seconds");
+
+    // Time measurements
+    System.out.println("=> Elapsed time (total): "
+        + GlobalMetricsManager.getRuntime().getValue() / 1_000_000_000 + " seconds");
+    System.out.println("=> Elapsed time (PM): "
+        + GlobalMetricsManager.getRuntime().getPmValue() / 1_000_000_000 + " seconds");
+    System.out.println("=> Elapsed time (ILP): "
+        + GlobalMetricsManager.getRuntime().getIlpValue() / 1_000_000_000 + " seconds");
+    System.out.println("=> Elapsed time (rest): "
+        + GlobalMetricsManager.getRuntime().getRestValue() / 1_000_000_000 + " seconds");
 
     final SubstrateNetwork sNet =
         (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
