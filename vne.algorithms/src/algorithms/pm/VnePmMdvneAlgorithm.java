@@ -18,6 +18,7 @@ import ilp.wrapper.IncrementalIlpSolver;
 import ilp.wrapper.Statistics;
 import ilp.wrapper.config.IlpSolverConfig;
 import ilp.wrapper.impl.IncrementalGurobiSolver;
+import metrics.manager.GlobalMetricsManager;
 import metrics.utils.CostUtility;
 import model.Link;
 import model.Node;
@@ -329,7 +330,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
   @Override
   public boolean execute() {
     init();
+    GlobalMetricsManager.startPmTime();
     final PatternMatchingDelta delta = patternMatcher.run();
+    GlobalMetricsManager.endPmTime();
 
     final IlpDeltaGenerator gen = new IlpDeltaGenerator();
 
@@ -355,7 +358,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     // apply delta in ILP generator
     gen.apply();
 
+    GlobalMetricsManager.startIlpTime();
     final Statistics solve = ilpSolver.solve();
+    GlobalMetricsManager.endIlpTime();
     Set<VirtualNetwork> rejectedNetworks = null;
     if (solve.isFeasible()) {
       rejectedNetworks = updateMappingsAndEmbed(ilpSolver.getMappings());

@@ -2,6 +2,7 @@ package ilp.wrapper.config;
 
 import org.cardygan.ilp.api.solver.CplexSolver;
 import org.cardygan.ilp.api.solver.GurobiSolver;
+import org.cardygan.ilp.api.solver.GurobiSolver.GurobiSolverBuilder;
 
 public interface IlpSolverConfig {
 
@@ -33,7 +34,9 @@ public interface IlpSolverConfig {
   public static org.cardygan.ilp.api.solver.Solver getSolver() {
     switch (IlpSolverConfig.solver) {
       case GUROBI:
-        return new GurobiSolver();
+        final GurobiSolverBuilder builder = GurobiSolver.create();
+        return builder.withLogging(ENABLE_ILP_OUTPUT).withTimeOut(TIME_OUT).withSeed(RANDOM_SEED)
+            .build();
       case CPLEX:
         return new CplexSolver();
     }
