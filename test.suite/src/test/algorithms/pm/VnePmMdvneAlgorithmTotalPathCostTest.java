@@ -1,7 +1,11 @@
 package test.algorithms.pm;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -124,6 +128,80 @@ public class VnePmMdvneAlgorithmTotalPathCostTest extends AAlgorithmMultipleVnsT
     assertThrows(UnsupportedOperationException.class, () -> {
       initAlgo(sNet, Set.of(currVnet));
     });
+  }
+
+  @Test
+  public void testNoEmbeddingIfFullOneByOne() {
+    oneTierSetupTwoServers("virt", 2);
+    twoTierSetupFourServers("sub", 4);
+    facade.createAllPathsForNetwork("sub");
+
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+
+    // First three must succeed
+    initAlgo(sNet, Set.of((VirtualNetwork) facade.getNetworkById("virt")));
+    assertTrue(algo.execute());
+
+    facade.addNetworkToRoot("virt2", true);
+    oneTierSetupTwoServers("virt2", 2);
+
+    initAlgo(sNet, Set.of((VirtualNetwork) facade.getNetworkById("virt2")));
+    assertTrue(algo.execute());
+
+    facade.addNetworkToRoot("virt3", true);
+    oneTierSetupTwoServers("virt3", 2);
+
+    initAlgo(sNet, Set.of((VirtualNetwork) facade.getNetworkById("virt3")));
+    assertTrue(algo.execute());
+
+    facade.addNetworkToRoot("virt4", true);
+    oneTierSetupThreeServers("virt4", 2);
+
+    // Last one must not succeed
+    initAlgo(sNet, Set.of((VirtualNetwork) facade.getNetworkById("virt4")));
+    assertFalse(algo.execute());
+
+    checkAllElementsEmbeddedOnSubstrateNetwork(sNet,
+        Set.of((VirtualNetwork) facade.getNetworkById("virt"),
+            (VirtualNetwork) facade.getNetworkById("virt2"),
+            (VirtualNetwork) facade.getNetworkById("virt3")));
+    final VirtualNetwork vNet4 = (VirtualNetwork) facade.getNetworkById("virt4");
+    assertNull(vNet4.getHost());
+  }
+
+  @Test
+  public void testPartialEmbeddingIfFullAllAtOnce() {
+    facade.addNetworkToRoot("virt2", true);
+    facade.addNetworkToRoot("virt3", true);
+    facade.addNetworkToRoot("virt4", true);
+    oneTierSetupTwoServers("virt", 2);
+    oneTierSetupTwoServers("virt2", 2);
+    oneTierSetupTwoServers("virt3", 2);
+    oneTierSetupThreeServers("virt4", 2);
+    twoTierSetupFourServers("sub", 4);
+    facade.createAllPathsForNetwork("sub");
+
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+
+    final Set<VirtualNetwork> vNets = new HashSet<VirtualNetwork>();
+    final VirtualNetwork vNet1 = (VirtualNetwork) facade.getNetworkById("virt");
+    final VirtualNetwork vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
+    final VirtualNetwork vNet3 = (VirtualNetwork) facade.getNetworkById("virt3");
+    final VirtualNetwork vNet4 = (VirtualNetwork) facade.getNetworkById("virt4");
+
+    vNets.add(vNet1);
+    vNets.add(vNet2);
+    vNets.add(vNet3);
+    vNets.add(vNet4);
+
+    initAlgo(sNet, vNets);
+    assertFalse(algo.execute());
+
+    // The first three networks must be embedded
+    assertNotNull(vNet1.getHost());
+    assertNotNull(vNet2.getHost());
+    assertNotNull(vNet3.getHost());
+    assertNull(vNet4.getHost());
   }
 
 }
