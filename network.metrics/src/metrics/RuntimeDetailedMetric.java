@@ -11,6 +11,8 @@ package metrics;
  */
 public class RuntimeDetailedMetric extends RuntimeMetric {
 
+  // TODO: Documentation.
+
   private long pmStart = 0;
   private long ilpStart = 0;
 
