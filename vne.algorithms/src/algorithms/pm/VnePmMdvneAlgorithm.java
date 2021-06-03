@@ -337,15 +337,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     final IlpDeltaGenerator gen = new IlpDeltaGenerator();
 
     // add new elements
-    // delta.getNewSubstrateServers().forEach(gen::addNewSubstrateServer);
-    // delta.getNewSubstrateLinks().forEach(gen::addNewSubstrateLink);
-    // delta.getNewVirtualServers().forEach(gen::addNewVirtualServer);
-    // delta.getNewVirtualSwitches().forEach(gen::addNewVirtualSwitch);
-    // delta.getNewVirtualLinks().forEach(gen::addNewVirtualLink);
     addElementsToSolver(gen);
 
     // add new matches
-    // delta.getNewNetworkMatches().forEach(gen::addNewNetworkMatch);
     delta.getNewServerMatchPositives().forEach(gen::addServerMatch);
     delta.getNewSwitchMatchPositives().forEach(gen::addSwitchMatch);
 
@@ -364,8 +358,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     Set<VirtualNetwork> rejectedNetworks = null;
     if (solve.isFeasible()) {
       rejectedNetworks = updateMappingsAndEmbed(ilpSolver.getMappings());
-      // Lock all variables (no migration implemented, yet)
-      ilpSolver.lockVariables(e -> true);
     } else {
       throw new IlpSolverException("Problem was infeasible.");
     }
@@ -392,8 +384,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     if (sNet.getPaths().isEmpty()) {
       throw new UnsupportedOperationException("Generated paths are missing in substrate network.");
     }
-
-    // TODO: Maybe check for total amount of paths here!
   }
 
   /**
@@ -499,7 +489,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       // If substrate element is a path, we have to update the residual bandwidths of all links,
       // because eMoflon does not support 'for-each' like operations. (Please also see
       // 'embeddingRules.gt'). If eMoflon supports this feature and the rule in 'embeddingRules.gt'
-      // got updated, this code snipped must be removed.
+      // got updated, this code snippet must be removed.
       if (m.getSubstrate() instanceof SubstratePath) {
         final SubstratePath subPath = (SubstratePath) m.getSubstrate();
         final VirtualLink virtLink = (VirtualLink) m.getVirtual();
@@ -519,10 +509,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
    * object.
    */
   public void init() {
-    if (ilpSolver == null) {
-      ilpSolver =
-          new IncrementalGurobiSolver(IlpSolverConfig.TIME_OUT, IlpSolverConfig.RANDOM_SEED);
-    }
+    ilpSolver = new IncrementalGurobiSolver(IlpSolverConfig.TIME_OUT, IlpSolverConfig.RANDOM_SEED);
 
     if (patternMatcher == null) {
       patternMatcher = new EmoflonPatternMatcherFactory().create();
