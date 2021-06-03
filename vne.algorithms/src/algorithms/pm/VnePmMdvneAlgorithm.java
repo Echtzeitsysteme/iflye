@@ -3,10 +3,7 @@ package algorithms.pm;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 import algorithms.AbstractAlgorithm;
@@ -261,16 +258,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
   private final Map<String, Match> variablesToMatch = new HashMap<>();
 
   /**
-   * Previous mappings (of the last run).
-   */
-  private Set<String> previousMappings = new HashSet<>();
-
-  /**
-   * Current (new) mappings (of the current run).
-   */
-  private Set<String> currentMappings = new HashSet<>();
-
-  /**
    * Constructor that gets the substrate as well as the virtual network.
    * 
    * @param sNet Substrate network to work with.
@@ -296,10 +283,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     if (vNets.size() == 0) {
       throw new IllegalArgumentException("Provided set of virtual networks was empty.");
     }
-
-    // if (instance != null) {
-    // instance.dispose();
-    // }
 
     if (instance == null) {
       instance = new VnePmMdvneAlgorithm(sNet, vNets);
@@ -454,26 +437,16 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
    * @return Returns a set of all virtual networks that could not be embedded.
    */
   private Set<VirtualNetwork> updateMappingsAndEmbed(final Map<String, Boolean> mappings) {
-    // Update mappings
-    previousMappings = currentMappings;
-    currentMappings = new HashSet<>();
-
-    final List<String> newMappings = new LinkedList<>();
-    for (final Entry<String, Boolean> entry : mappings.entrySet()) {
-      if (entry.getValue()) {
-        final String key = entry.getKey();
-        currentMappings.add(key);
-        if (!previousMappings.contains(key)) {
-          newMappings.add(key);
-        }
-      }
-    }
-
     // Embed elements
     final Set<VirtualNetwork> rejectedNetworks = new HashSet<VirtualNetwork>();
     final EmoflonPatternMatcher engine = (EmoflonPatternMatcher) patternMatcher;
 
-    for (final String s : newMappings) {
+    // for (final String s : newMappings) {
+    for (final String s : mappings.keySet()) {
+      if (!mappings.get(s)) {
+        continue;
+      }
+
       final Match m = variablesToMatch.get(s);
 
       // Network -> Network (rejected)
@@ -509,6 +482,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
    * object.
    */
   public void init() {
+    // Create new ILP solver object on every method call.
     ilpSolver = new IncrementalGurobiSolver(IlpSolverConfig.TIME_OUT, IlpSolverConfig.RANDOM_SEED);
 
     if (patternMatcher == null) {
