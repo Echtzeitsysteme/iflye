@@ -1,5 +1,6 @@
 package test.algorithms.generic;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.HashSet;
 import java.util.Set;
@@ -88,6 +89,26 @@ public abstract class AAlgorithmMultipleVnsTest extends AAlgorithmTwoTierTest {
     assertTrue(algo.execute());
 
     checkAllElementsEmbeddedOnSubstrateNetwork(sNet, vNets);
+  }
+
+  @Test
+  public void testMultipleVnsExistButEmbedOnlyOne() {
+    facade.addNetworkToRoot("virt2", true);
+    oneTierSetupTwoServers("virt", 2);
+    oneTierSetupTwoServers("virt2", 2);
+    twoTierSetupFourServers("sub", 8);
+    facade.createAllPathsForNetwork("sub");
+
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+    final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
+
+    initAlgo(sNet, Set.of(vNet));
+    assertTrue(algo.execute());
+
+    checkAllElementsEmbeddedOnSubstrateNetwork(sNet, Set.of(vNet));
+
+    final VirtualNetwork vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
+    assertNull(vNet2.getHost());
   }
 
 }
