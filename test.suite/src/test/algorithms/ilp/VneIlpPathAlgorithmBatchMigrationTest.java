@@ -18,8 +18,8 @@ import model.VirtualSwitch;
 import test.algorithms.generic.AAlgorithmTest;
 
 /**
- * Test class for the VNE ILP path algorithm implementation for checking the migration
- * functionality.
+ * Test class for the VNE ILP path algorithm (batch version) implementation for checking the
+ * migration functionality.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
