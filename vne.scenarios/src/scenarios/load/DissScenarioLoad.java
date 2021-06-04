@@ -11,7 +11,7 @@ import metrics.TotalPathCostMetric;
 import metrics.manager.GlobalMetricsManager;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
-import model.converter.ModelConverter;
+import model.converter.IncrementalModelConverter;
 
 /**
  * Runnable scenario for VNE algorithms that reads specified files from resource folder.
@@ -34,15 +34,11 @@ public class DissScenarioLoad {
 
     // Substrate network = read from file
     final List<String> sNetIds =
-        ModelConverter.jsonToModel("resources/two-tier-4-pods/snet.json", false);
+        IncrementalModelConverter.jsonToModel("resources/two-tier-4-pods/snet.json", false);
 
     if (sNetIds.size() != 1) {
       throw new UnsupportedOperationException("There is more than one substrate network.");
     }
-
-    // Virtual network = read from file
-    final List<String> vNetIds =
-        ModelConverter.jsonToModel("resources/two-tier-4-pods/vnets.json", true);
 
     GlobalMetricsManager.startRuntime();
 
@@ -50,7 +46,10 @@ public class DissScenarioLoad {
      * Embeddings themselves.
      */
 
-    for (final String vNetId : vNetIds) {
+    String vNetId = IncrementalModelConverter
+        .jsonToModelIncremental("resources/two-tier-4-pods/vnets.json", true);
+
+    while (vNetId != null) {
       final SubstrateNetwork sNet =
           (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNetIds.get(0));
       final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById(vNetId);
@@ -61,6 +60,9 @@ public class DissScenarioLoad {
       // final VneIlpPathAlgorithm algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
       final VnePmMdvneAlgorithm algo = VnePmMdvneAlgorithm.prepare(sNet, Set.of(vNet));
       algo.execute();
+
+      vNetId = IncrementalModelConverter
+          .jsonToModelIncremental("resources/two-tier-4-pods/vnets.json", true);
     }
 
     GlobalMetricsManager.stopRuntime();
