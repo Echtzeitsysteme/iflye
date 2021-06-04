@@ -64,7 +64,7 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
   /**
    * Wrapper class for substrate paths. A path may consist of a server or a list of links.
    */
-  private class VneIlpPath {
+  class VneIlpPath {
 
     private static final String PREFIX = "Path_";
 
@@ -181,28 +181,28 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
   }
 
   // ILP variables
-  private Model model;
-  private BinaryVar[][] nodeVariables;
-  private BinaryVar[][] pathVariables;
+  protected Model model;
+  protected BinaryVar[][] nodeVariables;
+  protected BinaryVar[][] pathVariables;
   private AtomicLong idGen = new AtomicLong(0);
 
   // The result object to be calculates
-  private Result ilpResult;
+  protected Result ilpResult;
 
   // Virtual network elements
-  private final List<VirtualNode> virtualNodes = new LinkedList<>();
-  private final List<VirtualLink> virtualLinks = new LinkedList<>();
+  protected final List<VirtualNode> virtualNodes = new LinkedList<>();
+  protected final List<VirtualLink> virtualLinks = new LinkedList<>();
 
   // Substrate network elements
-  private final List<SubstrateNode> substrateNodes = new LinkedList<>();
-  private final List<VneIlpPath> allSubstratePaths = new LinkedList<>();
+  protected final List<SubstrateNode> substrateNodes = new LinkedList<>();
+  protected final List<VneIlpPath> allSubstratePaths = new LinkedList<>();
   private final List<SubstrateLink> substrateLinks = new LinkedList<>();
 
   /*
    * Actual mapping results
    */
-  private final Map<VirtualNode, SubstrateNode> resultVirtualToSubstrateNodes = new HashMap<>();
-  private final Map<VirtualLink, List<SubstrateElement>> resultVirtualToSubstrateLink =
+  protected final Map<VirtualNode, SubstrateNode> resultVirtualToSubstrateNodes = new HashMap<>();
+  protected final Map<VirtualLink, List<SubstrateElement>> resultVirtualToSubstrateLink =
       new HashMap<>();
 
   /**
@@ -272,7 +272,7 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
   /**
    * Creates the actual embeddings in the model based on the solved problem.
    */
-  private void createEmbeddings() {
+  protected void createEmbeddings() {
     // We have to check if at least one node was embedded for each virtual network. If that is not
     // the case, we must not embed the network itself to keep the model consistent.
     final Set<VirtualNetwork> embedNetwork = new HashSet<VirtualNetwork>();
@@ -325,7 +325,7 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
   /**
    * Creates the objective based on the cost function for nodes and links.
    */
-  private void createMinOveralCostsObjective() {
+  protected void createMinOveralCostsObjective() {
     final List<ArithExpr> expr = new LinkedList<>();
     for (int v = 0; v < nodeVariables.length; v++) {
       for (int s = 0; s < nodeVariables[v].length; s++) {
@@ -375,7 +375,7 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
    * Creates the network information. This method extracts all nodes and links from given substrate
    * and virtual network as well as the substrate paths to generate.
    */
-  private void createNetworkInformation() {
+  protected void createNetworkInformation() {
     // Virtual networks
 
     final Iterator<VirtualNetwork> it = vNets.iterator();
@@ -417,7 +417,7 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
   /**
    * Initializes the node and path variable arrays.
    */
-  private void createAllVariables() {
+  protected void createAllVariables() {
     nodeVariables = new BinaryVar[virtualNodes.size()][substrateNodes.size()];
     pathVariables = new BinaryVar[virtualLinks.size()][allSubstratePaths.size()];
 
@@ -437,7 +437,7 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
   /**
    * Creates all node constraints for the ILP solver.
    */
-  private void createAllNodeConstraints() {
+  protected void createAllNodeConstraints() {
     // Every substrate node must be able to host the service type of the virtual node
     for (int v = 0; v < nodeVariables.length; v++) {
       for (int s = 0; s < nodeVariables[v].length; s++) {
@@ -496,7 +496,7 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
   /**
    * Creates all link constraints for the ILP solver.
    */
-  private void createAllLinkConstraints() {
+  protected void createAllLinkConstraints() {
     // Constraints for source/target node
     for (int v = 0; v < virtualLinks.size(); v++) {
       for (int s = 0; s < allSubstratePaths.size(); s++) {
@@ -546,7 +546,7 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
    * Adds a set of constraints which ensure that all virtual elements (nodes, links) are mapped
    * exactly once.
    */
-  private void addConstraintsEveryVirtualElementIsMappedExactlyOnce() {
+  protected void addConstraintsEveryVirtualElementIsMappedExactlyOnce() {
     final List<ArithExpr> expr = new LinkedList<ArithExpr>();
 
     for (final BinaryVar[] virtualVars : nodeVariables) {
@@ -607,7 +607,7 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
    * @param ilpStatistics Statistics object to get information from.
    * @return True if given statistics object was feasible.
    */
-  private static boolean isFeasible(final Statistics ilpStatistics) {
+  protected static boolean isFeasible(final Statistics ilpStatistics) {
     if (ilpStatistics.getStatus() == SolverStatus.INF_OR_UNBD
         || ilpStatistics.getStatus() == SolverStatus.INFEASIBLE) {
       return false;
