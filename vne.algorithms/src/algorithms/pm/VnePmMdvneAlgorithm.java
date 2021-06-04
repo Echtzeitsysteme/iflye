@@ -323,14 +323,22 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     addElementsToSolver(gen);
 
     // add new matches
-    delta.getNewServerMatchPositives().forEach(gen::addServerMatch);
-    delta.getNewSwitchMatchPositives().forEach(gen::addSwitchMatch);
+    delta.getNewServerMatchPositives().stream()
+        .filter(m -> vNets.contains(((VirtualServer) m.getVirtual()).getNetwork()))
+        .forEach(gen::addServerMatch);
+    delta.getNewSwitchMatchPositives().stream()
+        .filter(m -> vNets.contains(((VirtualSwitch) m.getVirtual()).getNetwork()))
+        .forEach(gen::addSwitchMatch);;
 
     // Important: Due to the fact that both link constraint generating methods check the existence
     // of the node mapping variables, the link constraints have to be added *after* all node
     // constraints.
-    delta.getNewLinkPathMatchPositives().forEach(gen::addLinkPathMatch);
-    delta.getNewLinkServerMatchPositives().forEach(gen::addLinkServerMatch);
+    delta.getNewLinkPathMatchPositives().stream()
+        .filter(m -> vNets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
+        .forEach(gen::addLinkPathMatch);;
+    delta.getNewLinkServerMatchPositives().stream()
+        .filter(m -> vNets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
+        .forEach(gen::addLinkServerMatch);;
 
     // apply delta in ILP generator
     gen.apply();
