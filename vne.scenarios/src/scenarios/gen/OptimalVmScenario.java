@@ -1,4 +1,4 @@
-package scenarios;
+package scenarios.gen;
 
 import java.util.Random;
 import java.util.Set;

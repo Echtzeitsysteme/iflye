@@ -1,4 +1,4 @@
-package scenarios;
+package scenarios.gen;
 
 import facade.ModelFacade;
 
