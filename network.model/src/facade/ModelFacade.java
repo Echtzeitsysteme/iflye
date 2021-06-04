@@ -24,6 +24,7 @@ import model.Node;
 import model.Path;
 import model.Root;
 import model.Server;
+import model.SubstrateElement;
 import model.SubstrateLink;
 import model.SubstrateNetwork;
 import model.SubstrateNode;
@@ -1097,6 +1098,61 @@ public class ModelFacade {
     }
 
     return success;
+  }
+
+  /**
+   * Removes a network embedding with the given ID from the substrate network.
+   * 
+   * @param id Virtual network ID to remove embedding for.
+   */
+  public void removeNetworkEmbedding(final String id) {
+    checkStringValid(id);
+    if (!networkExists(id)) {
+      throw new IllegalArgumentException("A network with id " + id + " does not exists!");
+    }
+
+    final Network net = getNetworkById(id);
+
+    if (net instanceof VirtualNetwork) {
+      // Virtual network
+      final VirtualNetwork vNet = (VirtualNetwork) net;
+
+      // Check if there is a host for this virtual network.
+      if (vNet.getHost() != null) {
+        vNet.getHost().getGuests().remove(vNet);
+
+        for (final Node n : getAllServersOfNetwork(vNet.getName())) {
+          final VirtualServer vsrv = (VirtualServer) n;
+          final SubstrateServer host = vsrv.getHost();
+          host.getGuestServers().remove(vsrv);
+          host.setResidualCpu(host.getResidualCpu() + vsrv.getCpu());
+          host.setResidualMemory(host.getResidualMemory() + vsrv.getMemory());
+          host.setResidualStorage(host.getResidualStorage() + vsrv.getStorage());
+        }
+
+        for (final Node n : getAllSwitchesOfNetwork(vNet.getName())) {
+          final VirtualSwitch vsw = (VirtualSwitch) n;
+          vsw.getHost().getGuestSwitches().remove(vsw);
+        }
+
+        for (final Link l : vNet.getLinks()) {
+          final VirtualLink vl = (VirtualLink) l;
+          final SubstrateElement host = vl.getHost();
+          host.getGuestLinks().remove(vl);
+
+          if (!ModelFacadeConfig.IGNORE_BW) {
+            if (host instanceof SubstratePath) {
+              final SubstratePath hostPath = (SubstratePath) host;
+              hostPath.setResidualBandwidth(hostPath.getResidualBandwidth() + vl.getBandwidth());
+              for (final Link hostPathLink : hostPath.getLinks()) {
+                final SubstrateLink sl = (SubstrateLink) hostPathLink;
+                sl.setResidualBandwidth(sl.getResidualBandwidth() + vl.getBandwidth());
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   /**

@@ -1,5 +1,6 @@
 package test.model;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -11,6 +12,9 @@ import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.OneTierNetworkGenerator;
 import generators.config.OneTierConfig;
+import model.Link;
+import model.Node;
+import model.Path;
 import model.SubstrateLink;
 import model.SubstrateNetwork;
 import model.SubstratePath;
@@ -274,6 +278,89 @@ public class ModelFacadeEmbeddingTest {
     assertEquals(guest, sp.getGuestLinks().get(0));
   }
 
+  @Test
+  public void testRemoveNetworkEmbedding() {
+    ModelFacadeConfig.LINK_HOST_EMBED_PATH = false;
+
+    // Substrate network
+    final OneTierConfig subConfig = new OneTierConfig(2, 1, false, 5, 5, 5, 10);
+    final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(subConfig);
+    gen.createNetwork("net", false);
+    assertFalse(ModelFacade.getInstance().getAllPathsOfNetwork("net").isEmpty());
+
+    // Virtual elements
+    ModelFacade.getInstance().addNetworkToRoot("v", true);
+    ModelFacade.getInstance().addServerToNetwork("vsrv1", "v", 1, 1, 1, 1);
+    ModelFacade.getInstance().addServerToNetwork("vsrv2", "v", 1, 1, 1, 1);
+    ModelFacade.getInstance().addSwitchToNetwork("vsw", "v", 0);
+    ModelFacade.getInstance().addLinkToNetwork("vl1", "v", 1, "vsrv1", "vsw");
+    ModelFacade.getInstance().addLinkToNetwork("vl2", "v", 1, "vsw", "vsrv1");
+    ModelFacade.getInstance().addLinkToNetwork("vl3", "v", 1, "vsrv2", "vsw");
+    ModelFacade.getInstance().addLinkToNetwork("vl4", "v", 1, "vsw", "vsrv2");
+
+    ModelFacade.getInstance().embedNetworkToNetwork("net", "v");
+    ModelFacade.getInstance().embedSwitchToNode("net_sw_0", "vsw");
+    ModelFacade.getInstance().embedServerToServer("net_srv_0", "vsrv1");
+    ModelFacade.getInstance().embedServerToServer("net_srv_1", "vsrv2");
+    final SubstratePath path1 = (SubstratePath) ModelFacade.getInstance()
+        .getPathFromSourceToTarget("net_srv_0", "net_sw_0");
+    final SubstratePath path2 = (SubstratePath) ModelFacade.getInstance()
+        .getPathFromSourceToTarget("net_sw_0", "net_srv_0");
+    final SubstratePath path3 = (SubstratePath) ModelFacade.getInstance()
+        .getPathFromSourceToTarget("net_srv_1", "net_sw_0");
+    final SubstratePath path4 = (SubstratePath) ModelFacade.getInstance()
+        .getPathFromSourceToTarget("net_sw_0", "net_srv_1");
+    ModelFacade.getInstance().embedLinkToPath(path1.getName(), "vl1");
+    ModelFacade.getInstance().embedLinkToPath(path2.getName(), "vl2");
+    ModelFacade.getInstance().embedLinkToPath(path3.getName(), "vl3");
+    ModelFacade.getInstance().embedLinkToPath(path4.getName(), "vl4");
+
+    // Remove embedding
+    ModelFacade.getInstance().removeNetworkEmbedding("v");
+
+    // Check all virtual elements
+    for (final Node n : ModelFacade.getInstance().getAllServersOfNetwork("v")) {
+      final VirtualServer vsrv = (VirtualServer) n;
+      assertNull(vsrv.getHost());
+    }
+
+    for (final Node n : ModelFacade.getInstance().getAllSwitchesOfNetwork("v")) {
+      final VirtualSwitch vsw = (VirtualSwitch) n;
+      assertNull(vsw.getHost());
+    }
+
+    for (final Link l : ModelFacade.getInstance().getAllLinksOfNetwork("v")) {
+      final VirtualLink vl = (VirtualLink) l;
+      assertNull(vl.getHost());
+    }
+
+    // Check all substrate elements
+    for (final Node n : ModelFacade.getInstance().getAllServersOfNetwork("net")) {
+      final SubstrateServer ssrv = (SubstrateServer) n;
+      assertTrue(ssrv.getGuestServers().isEmpty());
+      assertEquals(ssrv.getCpu(), ssrv.getResidualCpu());
+      assertEquals(ssrv.getMemory(), ssrv.getResidualMemory());
+      assertEquals(ssrv.getStorage(), ssrv.getResidualStorage());
+    }
+
+    for (final Node n : ModelFacade.getInstance().getAllSwitchesOfNetwork("net")) {
+      final SubstrateSwitch ssw = (SubstrateSwitch) n;
+      assertTrue(ssw.getGuestSwitches().isEmpty());
+    }
+
+    for (final Link l : ModelFacade.getInstance().getAllLinksOfNetwork("net")) {
+      final SubstrateLink sl = (SubstrateLink) l;
+      assertTrue(sl.getGuestLinks().isEmpty());
+      assertEquals(sl.getBandwidth(), sl.getResidualBandwidth());
+    }
+
+    for (final Path p : ModelFacade.getInstance().getAllPathsOfNetwork("net")) {
+      final SubstratePath sp = (SubstratePath) p;
+      assertTrue(sp.getGuestLinks().isEmpty());
+      assertEquals(sp.getBandwidth(), sp.getResidualBandwidth());
+    }
+  }
+
   /*
    * Negative tests.
    */
@@ -321,6 +408,13 @@ public class ModelFacadeEmbeddingTest {
     ModelFacade.getInstance().embedNetworkToNetwork("sub", "virt");
     assertThrows(IllegalArgumentException.class, () -> {
       ModelFacade.getInstance().embedNetworkToNetwork("sub", "virt");
+    });
+  }
+
+  @Test
+  public void testRemoveNetworkEmbeddingRejectIdNotExists() {
+    assertThrows(IllegalArgumentException.class, () -> {
+      ModelFacade.getInstance().removeNetworkEmbedding("42");
     });
   }
 

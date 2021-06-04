@@ -1,5 +1,6 @@
 package algorithms;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import facade.ModelFacade;
@@ -51,7 +52,8 @@ public abstract class AbstractAlgorithm {
     }
 
     this.sNet = sNet;
-    this.vNets = vNets;
+    this.vNets = new HashSet<VirtualNetwork>();
+    this.vNets.addAll(vNets);
   }
 
   /**
