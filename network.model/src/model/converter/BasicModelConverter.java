@@ -18,17 +18,17 @@ import model.Server;
 import model.Switch;
 
 /**
- * Model converter that converts a JSON file with virtual or substrate network information to the
- * model.
+ * Basic model converter that converts a JSON file with virtual or substrate network information to
+ * the model (all virtual networks at once).
  * 
  * @author Maximilian Kratz (maximilian.kratz@stud.tu-darmstadt.de)
  */
-public class ModelConverter {
+public class BasicModelConverter {
 
   /**
-   * Private constructor ensures static use only.
+   * Protected constructor ensures static use only.
    */
-  private ModelConverter() {}
+  protected BasicModelConverter() {}
 
   /**
    * Converts a JSON file from a given path to the model.
@@ -127,7 +127,7 @@ public class ModelConverter {
    * @param links JsonArray of links.
    * @param isVirtual True if network should be virtual.
    */
-  private static void createNetwork(final JsonElement name, final JsonArray switches,
+  protected static void createNetwork(final JsonElement name, final JsonArray switches,
       final JsonArray servers, final JsonArray links, final boolean isVirtual) {
     // Network itself
     final String networkId = name.getAsString();
@@ -163,7 +163,7 @@ public class ModelConverter {
    * TODO: These methods should be re-factored/moved to a generic helper class.
    */
 
-  private static void writeFile(final String path, final JsonObject json) {
+  protected static void writeFile(final String path, final JsonObject json) {
     FileWriter file = null;
     try {
       file = new FileWriter(path);
@@ -180,7 +180,7 @@ public class ModelConverter {
     }
   }
 
-  private static JsonObject readFile(final String path) {
+  protected static JsonObject readFile(final String path) {
     String read = "";
     try {
       read = Files.readString(Path.of(path));

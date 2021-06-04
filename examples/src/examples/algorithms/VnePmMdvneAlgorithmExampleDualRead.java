@@ -7,7 +7,7 @@ import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
-import model.converter.ModelConverter;
+import model.converter.BasicModelConverter;
 
 /**
  * Runnable example for the VNE ILP algorithm implementation that reads a predetermined JSON file.
@@ -27,10 +27,10 @@ public class VnePmMdvneAlgorithmExampleDualRead {
     ModelFacadeConfig.MAX_PATH_LENGTH = 2;
 
     // Read substrate network from file
-    final List<String> sNetIds = ModelConverter.jsonToModel("snet.json", false);
+    final List<String> sNetIds = BasicModelConverter.jsonToModel("snet.json", false);
 
     // Read all virtual networks from file
-    final List<String> vNetIds = ModelConverter.jsonToModel("vnets.json", true);
+    final List<String> vNetIds = BasicModelConverter.jsonToModel("vnets.json", true);
 
     for (final String vNetId : vNetIds) {
       final SubstrateNetwork sNet =

@@ -10,7 +10,7 @@ import generators.config.OneTierConfig;
 import generators.config.TwoTierConfig;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
-import model.converter.ModelConverter;
+import model.converter.BasicModelConverter;
 
 /**
  * Runnable example for the VNE ILP algorithm implementation that reads a predetermined JSON file.
@@ -41,7 +41,7 @@ public class VnePmMdvneAlgorithmExampleRead {
     subGen.createNetwork("sub", false);
 
     // Virtual network = read from file
-    final List<String> vNetIds = ModelConverter.jsonToModel("vnets.json", true);
+    final List<String> vNetIds = BasicModelConverter.jsonToModel("vnets.json", true);
 
     for (final String vNetId : vNetIds) {
       final SubstrateNetwork sNet =
