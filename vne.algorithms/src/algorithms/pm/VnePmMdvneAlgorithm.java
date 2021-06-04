@@ -463,22 +463,42 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
         continue;
       }
 
-      // Create embedding via matches and graph transformation
-      engine.apply((VirtualElement) m.getVirtual(), (SubstrateElement) m.getSubstrate());
+      // Embed element: Either use emoflon/GT or use manual mode.
+      switch (AlgorithmConfig.emb) {
+        case EMOFLON:
+          // Create embedding via matches and graph transformation
+          engine.apply((VirtualElement) m.getVirtual(), (SubstrateElement) m.getSubstrate());
 
-      // FIXME:
-      // If substrate element is a path, we have to update the residual bandwidths of all links,
-      // because eMoflon does not support 'for-each' like operations. (Please also see
-      // 'embeddingRules.gt'). If eMoflon supports this feature and the rule in 'embeddingRules.gt'
-      // got updated, this code snippet must be removed.
-      if (m.getSubstrate() instanceof SubstratePath) {
-        final SubstratePath subPath = (SubstratePath) m.getSubstrate();
-        final VirtualLink virtLink = (VirtualLink) m.getVirtual();
+          // FIXME:
+          // If substrate element is a path, we have to update the residual bandwidths of all links,
+          // because eMoflon does not support 'for-each' like operations. (Please also see
+          // 'embeddingRules.gt'). If eMoflon supports this feature and the rule in
+          // 'embeddingRules.gt' got updated, this code snippet must be removed.
+          if (m.getSubstrate() instanceof SubstratePath) {
+            final SubstratePath subPath = (SubstratePath) m.getSubstrate();
+            final VirtualLink virtLink = (VirtualLink) m.getVirtual();
 
-        subPath.getLinks().stream().forEach(l -> {
-          final SubstrateLink sl = (SubstrateLink) l;
-          sl.setResidualBandwidth(sl.getResidualBandwidth() - virtLink.getBandwidth());
-        });
+            subPath.getLinks().stream().forEach(l -> {
+              final SubstrateLink sl = (SubstrateLink) l;
+              sl.setResidualBandwidth(sl.getResidualBandwidth() - virtLink.getBandwidth());
+            });
+          }
+          break;
+        case MANUAL:
+          final VirtualElement ve = (VirtualElement) m.getVirtual();
+          final SubstrateElement se = (SubstrateElement) m.getSubstrate();
+          if (ve instanceof VirtualServer) {
+            facade.embedServerToServer(se.getName(), ve.getName());
+          } else if (ve instanceof VirtualSwitch) {
+            facade.embedSwitchToNode(se.getName(), ve.getName());
+          } else if (ve instanceof VirtualLink) {
+            if (se instanceof SubstrateServer) {
+              facade.embedLinkToServer(se.getName(), ve.getName());
+            } else if (se instanceof SubstratePath) {
+              facade.embedLinkToPath(se.getName(), ve.getName());
+            }
+          }
+          break;
       }
     }
 

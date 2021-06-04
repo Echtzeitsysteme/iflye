@@ -26,8 +26,24 @@ public class AlgorithmConfig {
   private AlgorithmConfig() {}
 
   /**
-   * Objective goal.
+   * Objective goal for the algorithms {@link VneIlpPathAlgorithm} and {@link VnePmMdvneAlgorithm}.
    */
   public static Objective obj = Objective.TOTAL_PATH_COST;
+
+  /**
+   * Embedding enumeration that defines the embedding functionality of the
+   * {@link VnePmMdvneAlgorithm}. Either it uses the calculates matches from emoflon or it uses
+   * methods implemented in the model facade.
+   * 
+   * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+   */
+  public enum Embedding {
+    EMOFLON, MANUAL;
+  }
+
+  /**
+   * Embedding mechanism for the {@link VnePmMdvneAlgorithm}
+   */
+  public static Embedding emb = Embedding.EMOFLON;
 
 }
