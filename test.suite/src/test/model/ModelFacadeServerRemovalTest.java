@@ -50,7 +50,7 @@ public class ModelFacadeServerRemovalTest {
 
   @Test
   public void testRemovalOneTierServerOnlySmall() {
-    setUpOneTier(2);
+    setUpOneTier(2, netId, false);
     assertEquals(2, facade.getAllServersOfNetwork(netId).size());
     facade.removeSubstrateServerFromNetwork(netId + "_srv_0");
     assertEquals(1, facade.getAllServersOfNetwork(netId).size());
@@ -61,7 +61,7 @@ public class ModelFacadeServerRemovalTest {
 
   @Test
   public void testRemovalOneTierLinksOnlySmall() {
-    setUpOneTier(2);
+    setUpOneTier(2, netId, false);
     assertEquals(2, facade.getAllServersOfNetwork(netId).size());
     assertEquals(4, facade.getAllLinksOfNetwork(netId).size());
     final String removeId = netId + "_srv_0";
@@ -77,7 +77,7 @@ public class ModelFacadeServerRemovalTest {
 
   @Test
   public void testRemovalOneTierPathsOnlySmall() {
-    setUpOneTier(2);
+    setUpOneTier(2, netId, false);
     assertEquals(2, facade.getAllServersOfNetwork(netId).size());
     assertEquals(6, facade.getAllPathsOfNetwork(netId).size());
     final String removeId = netId + "_srv_0";
@@ -95,7 +95,7 @@ public class ModelFacadeServerRemovalTest {
 
   @Test
   public void testRemovalOneTierServersOnlyLarge() {
-    setUpOneTier(20);
+    setUpOneTier(20, netId, false);
     assertEquals(20, facade.getAllServersOfNetwork(netId).size());
 
     final Set<Server> removedServers = new HashSet<Server>();
@@ -115,7 +115,7 @@ public class ModelFacadeServerRemovalTest {
 
   @Test
   public void testRemovalOneTierLinksOnlyLarge() {
-    setUpOneTier(20);
+    setUpOneTier(20, netId, false);
     assertEquals(20, facade.getAllServersOfNetwork(netId).size());
     assertEquals(40, facade.getAllLinksOfNetwork(netId).size());
 
@@ -140,7 +140,7 @@ public class ModelFacadeServerRemovalTest {
 
   @Test
   public void testRemovalOneTierPathsOnlyLarge() {
-    setUpOneTier(20);
+    setUpOneTier(20, netId, false);
     assertEquals(20, facade.getAllServersOfNetwork(netId).size());
     final int totalNumberOfPaths = 20 * (20 - 1 + 2);
     assertEquals(totalNumberOfPaths, facade.getAllPathsOfNetwork(netId).size());
@@ -214,7 +214,7 @@ public class ModelFacadeServerRemovalTest {
 
   @Test
   public void testRemovalOneTierEmbeddingServer() {
-    setUpOneTier(2);
+    setUpOneTier(2, netId, false);
     assertEquals(2, facade.getAllServersOfNetwork(netId).size());
     final String removeId = netId + "_srv_0";
 
@@ -235,7 +235,7 @@ public class ModelFacadeServerRemovalTest {
 
   @Test
   public void testRemovalOneTierEmbeddingSwitch() {
-    setUpOneTier(2);
+    setUpOneTier(2, netId, false);
     assertEquals(2, facade.getAllServersOfNetwork(netId).size());
     final String removeId = netId + "_srv_0";
 
@@ -256,7 +256,7 @@ public class ModelFacadeServerRemovalTest {
 
   @Test
   public void testRemovalOneTierEmbeddingLink() {
-    setUpOneTier(2);
+    setUpOneTier(2, netId, false);
     assertEquals(2, facade.getAllServersOfNetwork(netId).size());
     final String removeId = netId + "_srv_0";
 
@@ -285,7 +285,7 @@ public class ModelFacadeServerRemovalTest {
 
   @Test
   public void testRejectVirtualServer() {
-    setUpOneTier(2);
+    setUpOneTier(2, netId, false);
     facade.addNetworkToRoot("vnet", true);
     facade.addServerToNetwork("vnet_srv_0", "vnet", 1, 1, 1, 1);
 
@@ -302,11 +302,13 @@ public class ModelFacadeServerRemovalTest {
    * Sets an one tier based network with n servers up.
    * 
    * @param servers Number of servers to create.
+   * @param id Network id.
+   * @param isVirtual True if new network must be virtual.
    */
-  private void setUpOneTier(final int servers) {
+  static void setUpOneTier(final int servers, final String id, final boolean isVirtual) {
     final OneTierConfig subConfig = new OneTierConfig(servers, 1, false, 1, 1, 1, 1);
     final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(subConfig);
-    gen.createNetwork(netId, false);
+    gen.createNetwork(id, isVirtual);
   }
 
   /**
