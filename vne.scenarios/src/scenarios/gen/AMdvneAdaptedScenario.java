@@ -1,4 +1,4 @@
-package scenarios;
+package scenarios.gen;
 
 import java.util.Random;
 import generators.OneTierNetworkGenerator;

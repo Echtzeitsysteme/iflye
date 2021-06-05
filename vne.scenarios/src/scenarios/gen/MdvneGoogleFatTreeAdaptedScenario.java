@@ -1,4 +1,4 @@
-package scenarios;
+package scenarios.gen;
 
 import java.util.Set;
 import algorithms.AbstractAlgorithm;

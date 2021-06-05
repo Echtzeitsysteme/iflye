@@ -39,7 +39,6 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
    * Current state of the delta. Must be updated in every iteration.
    */
   private PatternMatchingDelta currentDelta = new PatternMatchingDelta();
-  // private SubstrateNetwork substrateNetwork;
 
   /**
    * Map for matches: (Virtual) element to (substrate) element.
@@ -50,9 +49,6 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
    * Map for GT matches: Tuple of virtual and substrate element to GraphTransformationMatch.
    */
   private final Map<Tuple, GraphTransformationMatch<?, ?>> tupleToGtMatch = new UnifiedMap<>();
-
-  // private Map<String, Element> allElements;
-  // private Map<String, VirtualNetwork> allVirtualNetworks;
 
   // TODO: Currently all update and removal functionality is missing!
 
@@ -66,40 +62,13 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
     api = emoflonPatternMatcherApp.initAPI();
 
     /*
-     * New elements
-     */
-
-    // api.substrateServer()
-    // .subscribeAppearing(m -> currentDelta.addSubstrateServer(m.getSubstrateServer()));
-    // api.substrateLink()
-    // .subscribeAppearing(m -> currentDelta.addSubstrateLink(m.getSubstrateLink()));
-    //
-    // api.virtualServer()
-    // .subscribeAppearing(m -> currentDelta.addVirtualServer(m.getVirtualServer()));
-    // api.virtualSwitch()
-    // .subscribeAppearing(m -> currentDelta.addVirtualSwitch(m.getVirtualSwitch()));
-    // api.virtualLink().subscribeAppearing(m -> currentDelta.addVirtualLink(m.getVirtualLink()));
-
-    /*
      * Matches
      */
-
-    // api.networkMatch().subscribeAppearing(
-    // m -> currentDelta.addNetworkMatch(m.getVirtualNetwork(), m.getSubstrateNetwork()));
 
     api.serverMatchPositive().subscribeAppearing(m -> {
       addMatch(currentDelta::addServerMatchPositive, m.getVirtualNode(), m.getSubstrateNode());
       tupleToGtMatch.put(new Tuple(m.getVirtualNode(), m.getSubstrateNode()), m);
     });
-
-    // api.serverMatchNegative().subscribeAppearing(m -> {
-    // addMatch(currentDelta::addServerMatchNegative, m.getVirtualNode(), m.getSubstrateNode());
-    // });
-
-    // api.serverMatchSwitchNegative().subscribeAppearing(m -> {
-    // addMatch(currentDelta::addServerMatchSwitchNegative, m.getVirtualNode(),
-    // m.getSubstrateNode());
-    // });
 
     api.switchNodeMatchPositive().subscribeAppearing(m -> {
       addMatch(currentDelta::addSwitchMatchPositive, m.getVirtualSwitch(), m.getSubstrateNode());
@@ -110,10 +79,6 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
       addMatch(currentDelta::addLinkPathMatchPositive, m.getVirtualLink(), m.getSubstratePath());
       tupleToGtMatch.put(new Tuple(m.getVirtualLink(), m.getSubstratePath()), m);
     });
-
-    // api.linkPathMatchNegative().subscribeAppearing(m -> {
-    // addMatch(currentDelta::addLinkPathMatchNegatives, m.getVirtualLink(), m.getSubstratePath());
-    // });
 
     api.linkServerMatchPositive().subscribeAppearing(m -> {
       addMatch(currentDelta::addLinkServerMatchPositive, m.getVirtualLink(),

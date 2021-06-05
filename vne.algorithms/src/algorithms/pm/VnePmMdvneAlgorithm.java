@@ -3,10 +3,7 @@ package algorithms.pm;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 import algorithms.AbstractAlgorithm;
@@ -165,23 +162,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       variablesToMatch.put(varName, match);
     }
 
-    // /**
-    // * Adds a (negative) match from a virtual server to a substrate switch. This method adds a
-    // * constraint that is only fulfillable if the server will not be placed onto a switch. This
-    // * placement is per definition of the model invalid.
-    // *
-    // * @param match Match to get information from.
-    // */
-    // public void addServerSwitchMatch(final Match match) {
-    // final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
-    // // TODO: This should be changed:
-    // delta.addVariable(varName, Integer.MAX_VALUE);
-    // delta.setVariableWeightForConstraint("vs" + match.getVirtual().getName(), 1, varName);
-    // // Add a constraint that strictly forbids this embedding
-    // delta.addLessOrEqualsConstraint("req" + varName, 0, new int[] {1}, new String[] {varName});
-    // variablesToMatch.put(varName, match);
-    // }
-
     /**
      * Adds a match from a virtual switch to a substrate switch.
      * 
@@ -278,16 +258,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
   private final Map<String, Match> variablesToMatch = new HashMap<>();
 
   /**
-   * Previous mappings (of the last run).
-   */
-  private Set<String> previousMappings = new HashSet<>();
-
-  /**
-   * Current (new) mappings (of the current run).
-   */
-  private Set<String> currentMappings = new HashSet<>();
-
-  /**
    * Constructor that gets the substrate as well as the virtual network.
    * 
    * @param sNet Substrate network to work with.
@@ -313,10 +283,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     if (vNets.size() == 0) {
       throw new IllegalArgumentException("Provided set of virtual networks was empty.");
     }
-
-    // if (instance != null) {
-    // instance.dispose();
-    // }
 
     if (instance == null) {
       instance = new VnePmMdvneAlgorithm(sNet, vNets);
@@ -354,33 +320,22 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     final IlpDeltaGenerator gen = new IlpDeltaGenerator();
 
     // add new elements
-    // delta.getNewSubstrateServers().forEach(gen::addNewSubstrateServer);
-    // delta.getNewSubstrateLinks().forEach(gen::addNewSubstrateLink);
-    // delta.getNewVirtualServers().forEach(gen::addNewVirtualServer);
-    // delta.getNewVirtualSwitches().forEach(gen::addNewVirtualSwitch);
-    // delta.getNewVirtualLinks().forEach(gen::addNewVirtualLink);
     addElementsToSolver(gen);
 
     // add new matches
-    // delta.getNewNetworkMatches().forEach(gen::addNewNetworkMatch);
     delta.getNewServerMatchPositives().stream()
         .filter(m -> vNets.contains(((VirtualServer) m.getVirtual()).getNetwork()))
         .forEach(gen::addServerMatch);
-
-    // delta.getNewServerMatchNegatives().forEach(gen::addServerMatch);
-    // TODO: This has to be changed:
-    // delta.getNewServerMatchSwitchNegatives().forEach(gen::addServerSwitchMatch);
     delta.getNewSwitchMatchPositives().stream()
         .filter(m -> vNets.contains(((VirtualSwitch) m.getVirtual()).getNetwork()))
         .forEach(gen::addSwitchMatch);;
 
-    // Important: Due to the fact that both link constraint generating methods check the existance
+    // Important: Due to the fact that both link constraint generating methods check the existence
     // of the node mapping variables, the link constraints have to be added *after* all node
     // constraints.
     delta.getNewLinkPathMatchPositives().stream()
         .filter(m -> vNets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
         .forEach(gen::addLinkPathMatch);;
-    // delta.getNewLinkPathMatchNegatives().forEach(gen::addLinkPathMatch);
     delta.getNewLinkServerMatchPositives().stream()
         .filter(m -> vNets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
         .forEach(gen::addLinkServerMatch);;
@@ -394,8 +349,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     Set<VirtualNetwork> rejectedNetworks = null;
     if (solve.isFeasible()) {
       rejectedNetworks = updateMappingsAndEmbed(ilpSolver.getMappings());
-      // Lock all variables (no migration implemented, yet)
-      ilpSolver.lockVariables(e -> true);
     } else {
       throw new IlpSolverException("Problem was infeasible.");
     }
@@ -422,8 +375,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     if (sNet.getPaths().isEmpty()) {
       throw new UnsupportedOperationException("Generated paths are missing in substrate network.");
     }
-
-    // TODO: Maybe check for total amount of paths here!
   }
 
   /**
@@ -494,26 +445,16 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
    * @return Returns a set of all virtual networks that could not be embedded.
    */
   private Set<VirtualNetwork> updateMappingsAndEmbed(final Map<String, Boolean> mappings) {
-    // Update mappings
-    previousMappings = currentMappings;
-    currentMappings = new HashSet<>();
-
-    final List<String> newMappings = new LinkedList<>();
-    for (final Entry<String, Boolean> entry : mappings.entrySet()) {
-      if (entry.getValue()) {
-        final String key = entry.getKey();
-        currentMappings.add(key);
-        if (!previousMappings.contains(key)) {
-          newMappings.add(key);
-        }
-      }
-    }
-
     // Embed elements
     final Set<VirtualNetwork> rejectedNetworks = new HashSet<VirtualNetwork>();
     final EmoflonPatternMatcher engine = (EmoflonPatternMatcher) patternMatcher;
 
-    for (final String s : newMappings) {
+    // for (final String s : newMappings) {
+    for (final String s : mappings.keySet()) {
+      if (!mappings.get(s)) {
+        continue;
+      }
+
       final Match m = variablesToMatch.get(s);
 
       // Network -> Network (rejected)
@@ -522,22 +463,42 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
         continue;
       }
 
-      // Create embedding via matches and graph transformation
-      engine.apply((VirtualElement) m.getVirtual(), (SubstrateElement) m.getSubstrate());
+      // Embed element: Either use emoflon/GT or use manual mode.
+      switch (AlgorithmConfig.emb) {
+        case EMOFLON:
+          // Create embedding via matches and graph transformation
+          engine.apply((VirtualElement) m.getVirtual(), (SubstrateElement) m.getSubstrate());
 
-      // FIXME:
-      // If substrate element is a path, we have to update the residual bandwidths of all links,
-      // because eMoflon does not support 'for-each' like operations. (Please also see
-      // 'embeddingRules.gt'). If eMoflon supports this feature and the rule in 'embeddingRules.gt'
-      // got updated, this code snipped must be removed.
-      if (m.getSubstrate() instanceof SubstratePath) {
-        final SubstratePath subPath = (SubstratePath) m.getSubstrate();
-        final VirtualLink virtLink = (VirtualLink) m.getVirtual();
+          // FIXME:
+          // If substrate element is a path, we have to update the residual bandwidths of all links,
+          // because eMoflon does not support 'for-each' like operations. (Please also see
+          // 'embeddingRules.gt'). If eMoflon supports this feature and the rule in
+          // 'embeddingRules.gt' got updated, this code snippet must be removed.
+          if (m.getSubstrate() instanceof SubstratePath) {
+            final SubstratePath subPath = (SubstratePath) m.getSubstrate();
+            final VirtualLink virtLink = (VirtualLink) m.getVirtual();
 
-        subPath.getLinks().stream().forEach(l -> {
-          final SubstrateLink sl = (SubstrateLink) l;
-          sl.setResidualBandwidth(sl.getResidualBandwidth() - virtLink.getBandwidth());
-        });
+            subPath.getLinks().stream().forEach(l -> {
+              final SubstrateLink sl = (SubstrateLink) l;
+              sl.setResidualBandwidth(sl.getResidualBandwidth() - virtLink.getBandwidth());
+            });
+          }
+          break;
+        case MANUAL:
+          final VirtualElement ve = (VirtualElement) m.getVirtual();
+          final SubstrateElement se = (SubstrateElement) m.getSubstrate();
+          if (ve instanceof VirtualServer) {
+            facade.embedServerToServer(se.getName(), ve.getName());
+          } else if (ve instanceof VirtualSwitch) {
+            facade.embedSwitchToNode(se.getName(), ve.getName());
+          } else if (ve instanceof VirtualLink) {
+            if (se instanceof SubstrateServer) {
+              facade.embedLinkToServer(se.getName(), ve.getName());
+            } else if (se instanceof SubstratePath) {
+              facade.embedLinkToPath(se.getName(), ve.getName());
+            }
+          }
+          break;
       }
     }
 
@@ -549,10 +510,8 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
    * object.
    */
   public void init() {
-    if (ilpSolver == null) {
-      ilpSolver =
-          new IncrementalGurobiSolver(IlpSolverConfig.TIME_OUT, IlpSolverConfig.RANDOM_SEED);
-    }
+    // Create new ILP solver object on every method call.
+    ilpSolver = new IncrementalGurobiSolver(IlpSolverConfig.TIME_OUT, IlpSolverConfig.RANDOM_SEED);
 
     if (patternMatcher == null) {
       patternMatcher = new EmoflonPatternMatcherFactory().create();
