@@ -1,5 +1,6 @@
 package scenarios.load;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import algorithms.AbstractAlgorithm;
@@ -21,7 +22,8 @@ import model.VirtualNetwork;
 import model.converter.IncrementalModelConverter;
 
 /**
- * Runnable scenario for VNE algorithms that reads specified files from resource folder.
+ * Runnable (incremental) scenario for VNE algorithms that reads specified files from resource
+ * folder.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
@@ -30,22 +32,22 @@ public class DissScenarioLoad {
   /**
    * Substrate network to use.
    */
-  private static SubstrateNetwork sNet;
+  protected static SubstrateNetwork sNet;
 
   /**
    * Configured algorithm to use for every embedding.
    */
-  private static String algoConfig;
+  protected static String algoConfig;
 
   /**
    * File path for the JSON file to load the substrate network from.
    */
-  private static String subNetPath;
+  protected static String subNetPath;
 
   /**
    * File path for the JSON file to load all substrate networks from.
    */
-  private static String virtNetsPath;
+  protected static String virtNetsPath;
 
   /**
    * Main method to start the example. String array of arguments will be parsed.
@@ -123,7 +125,7 @@ public class DissScenarioLoad {
    * 
    * @param args Arguments to parse.
    */
-  private static void parseArgs(final String[] args) {
+  protected static void parseArgs(final String[] args) {
     if (args == null || args.length < 6) {
       throw new IllegalArgumentException("Arguments are invalid.");
     }
@@ -163,12 +165,15 @@ public class DissScenarioLoad {
 
     // #5 Virtual network file path
     virtNetsPath = args[5];
+
+    // Print arguments into logs/system outputs
+    System.out.println("=> Arguments: " + Arrays.toString(args));
   }
 
   /**
    * Prints out all captured metrics that are relevant.
    */
-  private static void printMetrics() {
+  protected static void printMetrics() {
     // Time measurements
     System.out.println("=> Elapsed time (total): "
         + GlobalMetricsManager.getRuntime().getValue() / 1_000_000_000 + " seconds");
