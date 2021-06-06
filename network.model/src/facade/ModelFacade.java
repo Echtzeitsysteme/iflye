@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.moflon.core.utilities.eMoflonEMFUtil;
 import com.google.common.collect.Lists;
 import facade.config.ModelFacadeConfig;
@@ -1293,26 +1294,27 @@ public class ModelFacade {
               "Removal of guest " + e + " not yet implemented.");
         }
       });
-
-      // Remove all paths
-      final Set<Path> pathsToRemove = new HashSet<Path>();
-      pathsToRemove.addAll(ssrv.getIncomingPaths());
-      pathsToRemove.addAll(ssrv.getOutgoingPaths());
-      pathsToRemove.forEach(p -> {
-        removeSubstratePath(p);
-      });
-
-      // Remove all links
-      final Set<Link> linksToRemove = new HashSet<Link>();
-      linksToRemove.addAll(ssrv.getIncomingLinks());
-      linksToRemove.addAll(ssrv.getOutgoingLinks());
-      linksToRemove.forEach(sl -> {
-        removeSubstrateLink(sl);
-      });
     }
+
+    // Remove all paths
+    final Set<Path> pathsToRemove = new HashSet<Path>();
+    pathsToRemove.addAll(ssrv.getIncomingPaths());
+    pathsToRemove.addAll(ssrv.getOutgoingPaths());
+    pathsToRemove.forEach(p -> {
+      removeSubstratePath(p);
+    });
+
+    // Remove all links
+    final Set<Link> linksToRemove = new HashSet<Link>();
+    linksToRemove.addAll(ssrv.getIncomingLinks());
+    linksToRemove.addAll(ssrv.getOutgoingLinks());
+    linksToRemove.forEach(sl -> {
+      removeSubstrateLink(sl);
+    });
 
     // Remove server itself
     getNetworkById(ssrv.getNetwork().getName()).getNodes().remove(ssrv);
+    EcoreUtil.delete(ssrv);
   }
 
   /**
@@ -1332,12 +1334,16 @@ public class ModelFacade {
     sl.getTarget().getIncomingLinks().remove(sl);
 
     if (sl.getPaths() != null && !sl.getPaths().isEmpty()) {
+      final Set<SubstratePath> pathsToRemove = new HashSet<SubstratePath>();
       sl.getPaths().forEach(p -> {
         removeSubstratePath(p);
+        pathsToRemove.add((SubstratePath) p);
       });
+      sl.getPaths().removeAll(pathsToRemove);
     }
 
     getNetworkById(link.getNetwork().getName()).getLinks().remove(link);
+    EcoreUtil.delete(sl);
   }
 
   /**
@@ -1361,10 +1367,21 @@ public class ModelFacade {
       sp.getTarget().getIncomingPaths().remove(sp);
     }
 
-    // Not sure why exactly this is necessary
+    // Remove path from links
+    final Set<SubstrateLink> linksToRemove = new HashSet<SubstrateLink>();
+    sp.getLinks().forEach(l -> linksToRemove.add((SubstrateLink) l));
+    linksToRemove.forEach(l -> l.getPaths().remove(sp));
+
+    // Remove path from nodes
+    final Set<SubstrateNode> nodesToRemove = new HashSet<SubstrateNode>();
+    sp.getNodes().forEach(n -> nodesToRemove.add((SubstrateNode) n));
+    nodesToRemove.forEach(n -> n.getPaths().remove(sp));
+
+    // TODO:
     if (sp.getNetwork() != null) {
       getNetworkById(sp.getNetwork().getName()).getPaths().remove(sp);
     }
+    EcoreUtil.delete(sp);
   }
 
   /**
@@ -1418,6 +1435,28 @@ public class ModelFacade {
       } else if (n instanceof SubstrateSwitch) {
         // Do nothing?
       }
+
+      // Check links
+      if (!sNet.getLinks().containsAll(n.getIncomingLinks())) {
+        throw new InternalError(
+            "Incoming links of node " + n.getName() + " are missing in network.");
+      }
+
+      if (!sNet.getLinks().containsAll(n.getOutgoingLinks())) {
+        throw new InternalError(
+            "Outgoing links of node " + n.getName() + " are missing in network.");
+      }
+
+      // Check paths
+      if (!sNet.getPaths().containsAll(n.getIncomingPaths())) {
+        throw new InternalError(
+            "Incoming paths of node " + n.getName() + " are missing in network.");
+      }
+
+      if (!sNet.getPaths().containsAll(n.getOutgoingPaths())) {
+        throw new InternalError(
+            "Outgoing paths of node " + n.getName() + " are missing in network.");
+      }
     }
 
     // If ignoring of bandwidth is activated, no link or path has to be checked.
@@ -1453,6 +1492,22 @@ public class ModelFacade {
       if (sp.getResidualBandwidth() != sp.getBandwidth() - sumGuestBw) {
         throw new InternalError(
             "Residual bandwidth value of path " + sp.getName() + " was incorrect.");
+      }
+    }
+
+    // Check if links are contained in paths
+    for (final Link l : sNet.getLinks()) {
+      final SubstrateLink sl = (SubstrateLink) l;
+      if (!sNet.getPaths().containsAll(sl.getPaths())) {
+        throw new InternalError();
+      }
+    }
+
+    // Check if paths are contained in links
+    for (final Path p : sNet.getPaths()) {
+      final SubstratePath sp = (SubstratePath) p;
+      if (!sNet.getLinks().containsAll(sp.getLinks())) {
+        throw new InternalError();
       }
     }
   }
