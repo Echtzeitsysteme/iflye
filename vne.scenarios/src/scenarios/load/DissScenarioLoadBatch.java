@@ -74,6 +74,8 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
     ModelFacade.getInstance().persistModel();
     System.out.println("=> Execution finished.");
     printMetrics();
+
+    System.exit(0);
   }
 
 }

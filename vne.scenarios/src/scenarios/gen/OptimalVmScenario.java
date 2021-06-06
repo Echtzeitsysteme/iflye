@@ -123,6 +123,8 @@ public class OptimalVmScenario implements IScenario {
     // Save model to file
     ModelFacade.getInstance().persistModel();
     System.out.println("=> Scenario finished.");
+
+    System.exit(0);
   }
 
   /**

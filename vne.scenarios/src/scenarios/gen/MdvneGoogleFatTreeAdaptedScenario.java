@@ -72,6 +72,8 @@ public class MdvneGoogleFatTreeAdaptedScenario extends AMdvneAdaptedScenario imp
     // Save model to file
     ModelFacade.getInstance().persistModel();
     System.out.println("=> Scenario finished.");
+
+    System.exit(0);
   }
 
   /**

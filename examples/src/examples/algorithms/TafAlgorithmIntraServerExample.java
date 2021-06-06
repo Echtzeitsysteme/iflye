@@ -48,6 +48,8 @@ public class TafAlgorithmIntraServerExample {
     // Save model to file
     ModelFacade.getInstance().persistModel();
     System.out.println("=> Execution finished.");
+
+    System.exit(0);
   }
 
 }

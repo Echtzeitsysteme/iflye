@@ -66,6 +66,8 @@ public class MdvneAdaptedScenario extends AMdvneAdaptedScenario implements IScen
     // Save model to file
     ModelFacade.getInstance().persistModel();
     System.out.println("=> Scenario finished.");
+
+    System.exit(0);
   }
 
   /**

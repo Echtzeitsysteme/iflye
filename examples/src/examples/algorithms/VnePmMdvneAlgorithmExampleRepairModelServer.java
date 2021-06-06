@@ -95,6 +95,8 @@ public class VnePmMdvneAlgorithmExampleRepairModelServer {
     System.out.println("=> Total path cost: " + totalPathCost.getValue());
     final AveragePathLengthMetric averagePathLength = new AveragePathLengthMetric(sNet);
     System.out.println("=> Average path length: " + averagePathLength.getValue());
+
+    System.exit(0);
   }
 
 }

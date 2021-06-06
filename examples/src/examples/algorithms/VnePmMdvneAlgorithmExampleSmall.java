@@ -69,6 +69,8 @@ public class VnePmMdvneAlgorithmExampleSmall {
         + GlobalMetricsManager.getRuntime().getIlpValue() / 1_000_000_000 + " seconds");
     System.out.println("=> Elapsed time (rest): "
         + GlobalMetricsManager.getRuntime().getRestValue() / 1_000_000_000 + " seconds");
+
+    System.exit(0);
   }
 
 }
