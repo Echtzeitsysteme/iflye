@@ -16,8 +16,8 @@ import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
 /**
- * Runnable example for the VNE pattern matching VNE algorithm implementation that demonstrates the
- * repairing of the model consistency.
+ * Runnable example for the VNE PM algorithm implementation that demonstrates the repairing of the
+ * model consistency after removing an embedded virtual network ungracefully.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */

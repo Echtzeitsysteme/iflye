@@ -17,8 +17,9 @@ import model.VirtualNetwork;
 import model.VirtualServer;
 
 /**
- * Runnable example for the VNE pattern matching VNE algorithm implementation that demonstrates the
- * repairing of the model consistency.
+ * Runnable example for the VNE PM algorithm implementation that demonstrates the repairing of the
+ * model consistency after removing an substrate server hosting at least one element of a previously
+ * embedded virtual network ungracefully.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
@@ -48,7 +49,7 @@ public class VnePmMdvneAlgorithmExampleRepairModelServer {
 
     for (int i = 1; i <= 3; i++) {
       if (i == 3) {
-        ModelFacade.getInstance().removeSubstrateServerFromNetwork(
+        ModelFacade.getInstance().removeSubstrateServerFromNetworkSimple(
             ((VirtualServer) ModelFacade.getInstance().getServerById("virt_2_srv_1")).getHost()
                 .getName());
       }

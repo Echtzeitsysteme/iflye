@@ -1267,11 +1267,10 @@ public class ModelFacade {
    * Removes a substrate server with the given ID from the network.
    * 
    * @param id Substrate server ID to remove.
-   * @param recreateConsistency True if model must be consistent after the remove. Otherwise, the
-   *        substrate server will only be removed from the network.
+   * @param removeEmbeddings True if embeddings must be removed. Otherwise, the substrate server
+   *        will only be removed from the network together will all links and paths containing it.
    */
-  private void removeSubstrateServerFromNetwork(final String id,
-      final boolean recreateConsistency) {
+  private void removeSubstrateServerFromNetwork(final String id, final boolean removeEmbeddings) {
     final Server srv = getServerById(id);
     if (srv instanceof VirtualServer) {
       throw new IllegalArgumentException("Given ID is from a virtual server.");
@@ -1279,7 +1278,7 @@ public class ModelFacade {
 
     final SubstrateServer ssrv = (SubstrateServer) srv;
 
-    if (recreateConsistency) {
+    if (removeEmbeddings) {
       // Remove embedding of all guests
       final Set<VirtualElement> guestsToRemove = new HashSet<VirtualElement>();
       for (final VirtualServer guestSrv : ssrv.getGuestServers()) {
@@ -1310,7 +1309,7 @@ public class ModelFacade {
     pathsToRemove.addAll(ssrv.getIncomingPaths());
     pathsToRemove.addAll(ssrv.getOutgoingPaths());
     pathsToRemove.forEach(p -> {
-      removeSubstratePath(p);
+      removeSubstratePath(p, removeEmbeddings);
     });
 
     // Remove all links
@@ -1318,7 +1317,7 @@ public class ModelFacade {
     linksToRemove.addAll(ssrv.getIncomingLinks());
     linksToRemove.addAll(ssrv.getOutgoingLinks());
     linksToRemove.forEach(sl -> {
-      removeSubstrateLink(sl);
+      removeSubstrateLink(sl, removeEmbeddings);
     });
 
     // Remove server itself
@@ -1330,22 +1329,28 @@ public class ModelFacade {
    * Removes the given substrate link from the network. Does not check any guests or paths.
    * 
    * @param link Substrate link to remove from the network.
+   * @param removeEmbeddings True if embeddings must be removed. Otherwise, the substrate link will
+   *        only be removed from the network.
    */
-  private void removeSubstrateLink(final Link link) {
+  private void removeSubstrateLink(final Link link, final boolean removeEmbeddings) {
     if (!(link instanceof SubstrateLink)) {
       throw new IllegalArgumentException("Given link is not a substrate link.");
     }
     final SubstrateLink sl = (SubstrateLink) link;
-    sl.getGuestLinks().forEach(gl -> {
-      gl.setHost(null);
-    });
+
+    if (removeEmbeddings) {
+      sl.getGuestLinks().forEach(gl -> {
+        gl.setHost(null);
+      });
+    }
+
     sl.getSource().getOutgoingLinks().remove(sl);
     sl.getTarget().getIncomingLinks().remove(sl);
 
     if (sl.getPaths() != null && !sl.getPaths().isEmpty()) {
       final Set<SubstratePath> pathsToRemove = new HashSet<SubstratePath>();
       sl.getPaths().forEach(p -> {
-        removeSubstratePath(p);
+        removeSubstratePath(p, removeEmbeddings);
         pathsToRemove.add((SubstratePath) p);
       });
       sl.getPaths().removeAll(pathsToRemove);
@@ -1360,8 +1365,10 @@ public class ModelFacade {
    * Removes the given substrate path from the network. Does not check any guests.
    * 
    * @param path Substrate path to remove from the network.
+   * @param removeEmbeddings True if embeddings must be removed. Otherwise, the substrate path will
+   *        only be removed from the network.
    */
-  private void removeSubstratePath(final Path path) {
+  private void removeSubstratePath(final Path path, final boolean removeEmbeddings) {
     if (!(path instanceof SubstratePath)) {
       throw new IllegalArgumentException("Given path is not a substrate path.");
     }
@@ -1372,9 +1379,12 @@ public class ModelFacade {
     pathSourceMap.get(sp.getSource()).remove(sp);
 
     // Remove it from guest links
-    final Set<VirtualLink> guestLinksToRemove = new HashSet<VirtualLink>();
-    guestLinksToRemove.addAll(sp.getGuestLinks());
-    guestLinksToRemove.forEach(l -> l.setHost(null));
+    if (removeEmbeddings) {
+      final Set<VirtualLink> guestLinksToRemove = new HashSet<VirtualLink>();
+      guestLinksToRemove.addAll(sp.getGuestLinks());
+      guestLinksToRemove.forEach(l -> l.setHost(null));
+    }
+
     if (sp.getSource() != null) {
       sp.getSource().getOutgoingPaths().remove(sp);
     }
@@ -1393,10 +1403,7 @@ public class ModelFacade {
     sp.getNodes().forEach(n -> nodesToRemove.add((SubstrateNode) n));
     nodesToRemove.forEach(n -> n.getPaths().remove(sp));
 
-    // TODO:
-    if (sp.getNetwork() != null) {
-      getNetworkById(sp.getNetwork().getName()).getPaths().remove(sp);
-    }
+    getNetworkById(sp.getNetwork().getName()).getPaths().remove(sp);
     EcoreUtil.delete(sp);
   }
 
