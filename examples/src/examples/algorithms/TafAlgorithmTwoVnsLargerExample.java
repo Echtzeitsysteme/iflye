@@ -28,7 +28,7 @@ public class TafAlgorithmTwoVnsLargerExample {
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
     ModelFacadeConfig.IGNORE_BW = true;
 
-    // Substrate network = one tier network
+    // Substrate network = two tier network
     final OneTierConfig sRackConfig = new OneTierConfig(2, 1, false, 4, 4, 4, 20);
     final TwoTierConfig substrateConfig = new TwoTierConfig();
     substrateConfig.setNumberOfRacks(2);

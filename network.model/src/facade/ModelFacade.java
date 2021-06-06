@@ -1116,42 +1116,7 @@ public class ModelFacade {
     if (net instanceof VirtualNetwork) {
       // Virtual network
       final VirtualNetwork vNet = (VirtualNetwork) net;
-
-      // Check if there is a host for this virtual network.
-      if (vNet.getHost() != null) {
-        vNet.getHost().getGuests().remove(vNet);
-
-        for (final Node n : getAllServersOfNetwork(vNet.getName())) {
-          final VirtualServer vsrv = (VirtualServer) n;
-          final SubstrateServer host = vsrv.getHost();
-          host.getGuestServers().remove(vsrv);
-          host.setResidualCpu(host.getResidualCpu() + vsrv.getCpu());
-          host.setResidualMemory(host.getResidualMemory() + vsrv.getMemory());
-          host.setResidualStorage(host.getResidualStorage() + vsrv.getStorage());
-        }
-
-        for (final Node n : getAllSwitchesOfNetwork(vNet.getName())) {
-          final VirtualSwitch vsw = (VirtualSwitch) n;
-          vsw.getHost().getGuestSwitches().remove(vsw);
-        }
-
-        for (final Link l : vNet.getLinks()) {
-          final VirtualLink vl = (VirtualLink) l;
-          final SubstrateElement host = vl.getHost();
-          host.getGuestLinks().remove(vl);
-
-          if (!ModelFacadeConfig.IGNORE_BW) {
-            if (host instanceof SubstratePath) {
-              final SubstratePath hostPath = (SubstratePath) host;
-              hostPath.setResidualBandwidth(hostPath.getResidualBandwidth() + vl.getBandwidth());
-              for (final Link hostPathLink : hostPath.getLinks()) {
-                final SubstrateLink sl = (SubstrateLink) hostPathLink;
-                sl.setResidualBandwidth(sl.getResidualBandwidth() + vl.getBandwidth());
-              }
-            }
-          }
-        }
-      }
+      unembedVirtualNetwork(vNet);
     }
   }
 
@@ -1182,7 +1147,7 @@ public class ModelFacade {
    * @param recreateConsistency True if model must be consistent after the remove. Otherwise, the
    *        network will only be removed from the model.
    */
-  public void removeNetworkFromRoot(final String id, final boolean recreateConsistency) {
+  private void removeNetworkFromRoot(final String id, final boolean recreateConsistency) {
     checkStringValid(id);
     if (!networkExists(id)) {
       throw new IllegalArgumentException("A network with id " + id + " does not exists!");
@@ -1218,48 +1183,54 @@ public class ModelFacade {
           g.setHost(null);
         });
       } else {
-        // Virtual network
-        final VirtualNetwork vNet = (VirtualNetwork) net;
+        unembedVirtualNetwork((VirtualNetwork) net);
+      }
+    }
 
-        // Check if there is a host for this virtual network.
-        if (vNet.getHost() != null) {
-          vNet.getHost().getGuests().remove(vNet);
+    root.getNetworks().remove(net);
+  }
 
-          for (final Node n : getAllServersOfNetwork(vNet.getName())) {
-            final VirtualServer vsrv = (VirtualServer) n;
-            final SubstrateServer host = vsrv.getHost();
-            host.getGuestServers().remove(vsrv);
-            host.setResidualCpu(host.getResidualCpu() + vsrv.getCpu());
-            host.setResidualMemory(host.getResidualMemory() + vsrv.getMemory());
-            host.setResidualStorage(host.getResidualStorage() + vsrv.getStorage());
-          }
+  /**
+   * Removes the embedding of a virtual network.
+   * 
+   * @param vNet Virtual network to remove embedding for.
+   */
+  public void unembedVirtualNetwork(final VirtualNetwork vNet) {
+    // Check if there is a host for this virtual network.
+    if (vNet.getHost() != null) {
+      vNet.getHost().getGuests().remove(vNet);
 
-          for (final Node n : getAllSwitchesOfNetwork(vNet.getName())) {
-            final VirtualSwitch vsw = (VirtualSwitch) n;
-            vsw.getHost().getGuestSwitches().remove(vsw);
-          }
+      for (final Node n : vNet.getNodes()) {
+        if (n instanceof VirtualServer) {
+          final VirtualServer vsrv = (VirtualServer) n;
+          final SubstrateServer host = vsrv.getHost();
+          host.getGuestServers().remove(vsrv);
+          host.setResidualCpu(host.getResidualCpu() + vsrv.getCpu());
+          host.setResidualMemory(host.getResidualMemory() + vsrv.getMemory());
+          host.setResidualStorage(host.getResidualStorage() + vsrv.getStorage());
+        } else if (n instanceof VirtualSwitch) {
+          final VirtualSwitch vsw = (VirtualSwitch) n;
+          vsw.getHost().getGuestSwitches().remove(vsw);
+        }
+      }
 
-          for (final Link l : vNet.getLinks()) {
-            final VirtualLink vl = (VirtualLink) l;
-            final SubstrateElement host = vl.getHost();
-            host.getGuestLinks().remove(vl);
+      for (final Link l : vNet.getLinks()) {
+        final VirtualLink vl = (VirtualLink) l;
+        final SubstrateElement host = vl.getHost();
+        host.getGuestLinks().remove(vl);
 
-            if (!ModelFacadeConfig.IGNORE_BW) {
-              if (host instanceof SubstratePath) {
-                final SubstratePath hostPath = (SubstratePath) host;
-                hostPath.setResidualBandwidth(hostPath.getResidualBandwidth() + vl.getBandwidth());
-                for (final Link hostPathLink : hostPath.getLinks()) {
-                  final SubstrateLink sl = (SubstrateLink) hostPathLink;
-                  sl.setResidualBandwidth(sl.getResidualBandwidth() + vl.getBandwidth());
-                }
-              }
+        if (!ModelFacadeConfig.IGNORE_BW) {
+          if (host instanceof SubstratePath) {
+            final SubstratePath hostPath = (SubstratePath) host;
+            hostPath.setResidualBandwidth(hostPath.getResidualBandwidth() + vl.getBandwidth());
+            for (final Link hostPathLink : hostPath.getLinks()) {
+              final SubstrateLink sl = (SubstrateLink) hostPathLink;
+              sl.setResidualBandwidth(sl.getResidualBandwidth() + vl.getBandwidth());
             }
           }
         }
       }
     }
-
-    root.getNetworks().remove(net);
   }
 
   /**

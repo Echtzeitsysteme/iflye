@@ -31,7 +31,7 @@ public class VnePmMdvneAlgorithmExampleSmall {
 
     GlobalMetricsManager.startRuntime();
 
-    // Substrate network = one tier network
+    // Substrate network = two tier network
     final OneTierConfig rackConfig = new OneTierConfig(2, 1, false, 10, 10, 10, 10);
     final TwoTierConfig substrateConfig = new TwoTierConfig();
     substrateConfig.setRack(rackConfig);
@@ -64,14 +64,11 @@ public class VnePmMdvneAlgorithmExampleSmall {
     System.out.println("=> Elapsed time (total): "
         + GlobalMetricsManager.getRuntime().getValue() / 1_000_000_000 + " seconds");
     System.out.println("=> Elapsed time (PM): "
-        + GlobalMetricsManager.getRuntime().getPmValue() / 1_000_000_000
-        + " seconds");
+        + GlobalMetricsManager.getRuntime().getPmValue() / 1_000_000_000 + " seconds");
     System.out.println("=> Elapsed time (ILP): "
-        + GlobalMetricsManager.getRuntime().getIlpValue() / 1_000_000_000
-        + " seconds");
+        + GlobalMetricsManager.getRuntime().getIlpValue() / 1_000_000_000 + " seconds");
     System.out.println("=> Elapsed time (rest): "
-        + GlobalMetricsManager.getRuntime().getRestValue() / 1_000_000_000
-        + " seconds");
+        + GlobalMetricsManager.getRuntime().getRestValue() / 1_000_000_000 + " seconds");
   }
 
 }
