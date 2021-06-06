@@ -43,17 +43,17 @@ public abstract class AAlgorithmTest {
   /**
    * Old lower limit value.
    */
-  private int oldLowerLimit;
+  protected int oldLowerLimit;
 
   /**
    * Old upper limit value.
    */
-  private int oldUpperLimit;
+  protected int oldUpperLimit;
 
   /**
    * Old bandwidth ignore value.
    */
-  private boolean oldIgnoreBw;
+  protected boolean oldIgnoreBw;
 
   @BeforeEach
   public void resetModel() {

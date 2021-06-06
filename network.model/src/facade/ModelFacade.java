@@ -1428,6 +1428,14 @@ public class ModelFacade {
    * @param sNet Substrate network to validate.
    */
   private void validateSubstrateNetwork(final SubstrateNetwork sNet) {
+    // Check embedded virtual networks
+    sNet.getGuests().forEach(g -> {
+      if (!networkExists(g.getName())) {
+        throw new InternalError("Substrate network " + sNet.getName()
+            + " has embeddings from a virtual network that is not part of this model.");
+      }
+    });
+
     for (final Node n : sNet.getNodes()) {
       if (n instanceof SubstrateServer) {
         final SubstrateServer srv = (SubstrateServer) n;
