@@ -16,11 +16,12 @@ import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
 /**
- * Runnable example for the VNE pattern matching VNE algorithm implementation.
+ * Runnable example for the VNE PM algorithm implementation that demonstrates the repairing of the
+ * model consistency after removing an embedded virtual network ungracefully.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class VnePmMdvneAlgorithmExampleMedium {
+public class VnePmMdvneAlgorithmExampleRepairModelNetwork {
 
   /**
    * Main method to start the example. String array of arguments will be ignored.
@@ -35,18 +36,22 @@ public class VnePmMdvneAlgorithmExampleMedium {
     GlobalMetricsManager.startRuntime();
 
     // Substrate network = two tier network
-    final OneTierConfig rackConfig = new OneTierConfig(10, 1, false, 10, 10, 10, 10);
+    final OneTierConfig rackConfig = new OneTierConfig(2, 1, false, 1, 1, 1, 10);
     final TwoTierConfig substrateConfig = new TwoTierConfig();
     substrateConfig.setRack(rackConfig);
-    substrateConfig.setCoreBandwidth(100);
+    substrateConfig.setCoreBandwidth(10);
     substrateConfig.setNumberOfCoreSwitches(1);
     substrateConfig.setNumberOfRacks(6);
     final TwoTierNetworkGenerator subGen = new TwoTierNetworkGenerator(substrateConfig);
     subGen.createNetwork("sub", false);
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 1; i <= 3; i++) {
+      if (i == 3) {
+        ModelFacade.getInstance().removeNetworkFromRootSimple("virt_" + (i - 1));
+      }
+
       // Virtual network = one tier network
-      final OneTierConfig virtualConfig = new OneTierConfig(6, 1, false, 10, 1, 1, 1);
+      final OneTierConfig virtualConfig = new OneTierConfig(2, 1, false, 1, 1, 1, 1);
       final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
       virtGen.createNetwork("virt_" + i, true);
 
@@ -64,8 +69,9 @@ public class VnePmMdvneAlgorithmExampleMedium {
     GlobalMetricsManager.stopRuntime();
 
     // Save model to file
-    ModelFacade.getInstance().persistModel();
     System.out.println("=> Execution finished.");
+    ModelFacade.getInstance().validateModel();
+    ModelFacade.getInstance().persistModel();
 
     // Time measurements
     System.out.println("=> Elapsed time (total): "

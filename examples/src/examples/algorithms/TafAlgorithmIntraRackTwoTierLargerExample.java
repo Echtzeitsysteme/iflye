@@ -29,7 +29,7 @@ public class TafAlgorithmIntraRackTwoTierLargerExample {
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
     ModelFacadeConfig.IGNORE_BW = true;
 
-    // Substrate network = one tier network
+    // Substrate network = two tier network
     final OneTierConfig sRackConfig = new OneTierConfig(2, 1, false, 2, 2, 2, 20);
     final TwoTierConfig substrateConfig = new TwoTierConfig();
     substrateConfig.setNumberOfRacks(2);

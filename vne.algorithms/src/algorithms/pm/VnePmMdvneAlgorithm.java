@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
 import facade.config.ModelFacadeConfig;
@@ -288,7 +289,8 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       instance = new VnePmMdvneAlgorithm(sNet, vNets);
     }
     instance.sNet = sNet;
-    instance.vNets = vNets;
+    instance.vNets = new HashSet<VirtualNetwork>();
+    instance.vNets.addAll(vNets);
 
     instance.checkPreConditions();
     return instance;
@@ -313,6 +315,17 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
   @Override
   public boolean execute() {
     init();
+
+    // Repair model consistency: Substrate network
+    repairSubstrateNetwork();
+
+    // Repair model consistency: Virtual network(s)
+    final Set<VirtualNetwork> repairedVnets = repairVirtualNetworks();
+    if (!repairedVnets.isEmpty()) {
+      this.patternMatcher = new EmoflonPatternMatcherFactory().create();
+    }
+    vNets.addAll(repairedVnets);
+
     GlobalMetricsManager.startPmTime();
     final PatternMatchingDelta delta = patternMatcher.run();
     GlobalMetricsManager.endPmTime();
@@ -360,6 +373,39 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
   /*
    * Helper methods.
    */
+
+  /**
+   * Repairs the consistency of the substrate network. This is necessary, if a virtual network was
+   * removed "dirty" from the model and the residual values or guest references are not updated
+   * properly.
+   */
+  private void repairSubstrateNetwork() {
+    // Find all networks that were removed in the meantime
+    final Set<VirtualNetwork> removedGuests = sNet.getGuests().stream()
+        .filter(g -> !facade.networkExists(g.getName())).collect(Collectors.toSet());
+
+    // Remove embedding of all elements of the virtual network
+    removedGuests.forEach(g -> facade.unembedVirtualNetwork(g));
+  }
+
+  /**
+   * Repairs the consistency of all virtual networks. This is necessary if a substrate server was
+   * removed "dirty" from the model and the previously embedded virtual network is in a floating
+   * state. After detecting this state, the virtual network's embedding will be removed and it has
+   * to be embedded again.
+   * 
+   * @return Set of virtual networks that have to be embedded again, because their old embedding was
+   *         invalid.
+   */
+  private Set<VirtualNetwork> repairVirtualNetworks() {
+    // Find all virtual networks that are floating
+    final Set<VirtualNetwork> floatingGuests = sNet.getGuests().stream()
+        .filter(g -> facade.checkIfFloating(g)).collect(Collectors.toSet());
+
+    // Remove embedding of all elements of the virtual network so they can be embedded again
+    floatingGuests.forEach(g -> facade.unembedVirtualNetwork(g));
+    return floatingGuests;
+  }
 
   /**
    * Checks every condition necessary to run this algorithm. If a condition is not met, it throws an
