@@ -1352,6 +1352,7 @@ public class ModelFacade {
     }
 
     getNetworkById(link.getNetwork().getName()).getLinks().remove(link);
+    links.remove(sl.getName());
     EcoreUtil.delete(sl);
   }
 
@@ -1365,6 +1366,12 @@ public class ModelFacade {
       throw new IllegalArgumentException("Given path is not a substrate path.");
     }
     final SubstratePath sp = (SubstratePath) path;
+
+    // Remove path from look-up data structures
+    paths.remove(sp.getName());
+    pathSourceMap.get(sp.getSource()).remove(sp);
+
+    // Remove it from guest links
     final Set<VirtualLink> guestLinksToRemove = new HashSet<VirtualLink>();
     guestLinksToRemove.addAll(sp.getGuestLinks());
     guestLinksToRemove.forEach(l -> l.setHost(null));
