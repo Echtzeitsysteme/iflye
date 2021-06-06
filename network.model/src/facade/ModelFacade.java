@@ -1205,12 +1205,18 @@ public class ModelFacade {
         if (n instanceof VirtualServer) {
           final VirtualServer vsrv = (VirtualServer) n;
           final SubstrateServer host = vsrv.getHost();
+          if (host == null) {
+            continue;
+          }
           host.getGuestServers().remove(vsrv);
           host.setResidualCpu(host.getResidualCpu() + vsrv.getCpu());
           host.setResidualMemory(host.getResidualMemory() + vsrv.getMemory());
           host.setResidualStorage(host.getResidualStorage() + vsrv.getStorage());
         } else if (n instanceof VirtualSwitch) {
           final VirtualSwitch vsw = (VirtualSwitch) n;
+          if (vsw.getHost() == null) {
+            continue;
+          }
           vsw.getHost().getGuestSwitches().remove(vsw);
         }
       }
@@ -1218,6 +1224,9 @@ public class ModelFacade {
       for (final Link l : vNet.getLinks()) {
         final VirtualLink vl = (VirtualLink) l;
         final SubstrateElement host = vl.getHost();
+        if (host == null) {
+          continue;
+        }
         host.getGuestLinks().remove(vl);
 
         if (!ModelFacadeConfig.IGNORE_BW) {
@@ -1356,9 +1365,9 @@ public class ModelFacade {
       throw new IllegalArgumentException("Given path is not a substrate path.");
     }
     final SubstratePath sp = (SubstratePath) path;
-    sp.getGuestLinks().forEach(gl -> {
-      gl.setHost(null);
-    });
+    final Set<VirtualLink> guestLinksToRemove = new HashSet<VirtualLink>();
+    guestLinksToRemove.addAll(sp.getGuestLinks());
+    guestLinksToRemove.forEach(l -> l.setHost(null));
     if (sp.getSource() != null) {
       sp.getSource().getOutgoingPaths().remove(sp);
     }
@@ -1457,6 +1466,11 @@ public class ModelFacade {
         throw new InternalError(
             "Outgoing paths of node " + n.getName() + " are missing in network.");
       }
+
+      if (!sNet.getPaths().containsAll(n.getPaths())) {
+        throw new InternalError(
+            "Contained paths of node " + n.getName() + " are missing in network.");
+      }
     }
 
     // If ignoring of bandwidth is activated, no link or path has to be checked.
@@ -1532,6 +1546,8 @@ public class ModelFacade {
         final VirtualServer vsrv = (VirtualServer) n;
         if (host == null && vsrv.getHost() == null) {
           continue;
+        } else if (host == null || vsrv.getHost() == null) {
+          // Do nothing to trigger exception
         } else if (host.equals(vsrv.getHost().getNetwork())) {
           continue;
         }
@@ -1572,6 +1588,62 @@ public class ModelFacade {
       }
       throw new InternalError("Validation of virtual link " + vl.getName() + " was incorrect.");
     }
+  }
+
+  /**
+   * Checks if a given virtual network (ID) is currently in a floating state. A floating state is
+   * given if a substrate server hosting at least one component of the virtual network was removed
+   * in a "dirty" way. (This method checks every virtual element for valid substrate hosting, BTW.)
+   * 
+   * @param vNet The virtual network to check floating state for.
+   */
+  public boolean checkIfFloating(final VirtualNetwork vNet) {
+    for (final Node n : vNet.getNodes()) {
+      if (n instanceof VirtualServer) {
+        final VirtualServer vsrv = (VirtualServer) n;
+        if (vsrv.getHost() == null || vsrv.getHost().getNetwork() == null) {
+          return true;
+        }
+
+        if (!vsrv.getHost().getNetwork().getNodes().contains(vsrv.getHost())) {
+          return true;
+        }
+      } else if (n instanceof VirtualSwitch) {
+        final VirtualSwitch vsw = (VirtualSwitch) n;
+        if (vsw.getHost().getNetwork() == null) {
+          return true;
+        }
+
+        if (!vsw.getHost().getNetwork().getNodes().contains(vsw.getHost())) {
+          return true;
+        }
+      }
+    }
+
+    for (final Link l : vNet.getLinks()) {
+      final VirtualLink vl = (VirtualLink) l;
+      if (vl.getHost() instanceof SubstratePath) {
+        final SubstratePath host = (SubstratePath) vl.getHost();
+        if (host.getNetwork() == null) {
+          return true;
+        }
+
+        if (!host.getNetwork().getPaths().contains(host)) {
+          return true;
+        }
+      } else if (vl.getHost() instanceof SubstrateServer) {
+        final SubstrateServer host = (SubstrateServer) vl.getHost();
+        if (host.getNetwork() == null) {
+          return true;
+        }
+
+        if (!host.getNetwork().getNodes().contains(host)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
 }
