@@ -1156,11 +1156,33 @@ public class ModelFacade {
   }
 
   /**
+   * Removes a network with the given ID from the model and re-creates the consistency of the model
+   * afterwards.
+   * 
+   * @param id Network ID to remove.
+   */
+  public void removeNetworkFromRoot(final String id) {
+    removeNetworkFromRoot(id, true);
+  }
+
+  /**
+   * Removes a network with the given ID from the model and does not re-create the consistency of
+   * the model afterwards.
+   * 
+   * @param id Network ID to remove.
+   */
+  public void removeNetworkFromRootSimple(final String id) {
+    removeNetworkFromRoot(id, false);
+  }
+
+  /**
    * Removes a network with the given ID from the root.
    * 
    * @param id Network ID to remove network for.
+   * @param recreateConsistency True if model must be consistent after the remove. Otherwise, the
+   *        network will only be removed from the model.
    */
-  public void removeNetworkFromRoot(final String id) {
+  public void removeNetworkFromRoot(final String id, final boolean recreateConsistency) {
     checkStringValid(id);
     if (!networkExists(id)) {
       throw new IllegalArgumentException("A network with id " + id + " does not exists!");
@@ -1168,66 +1190,68 @@ public class ModelFacade {
 
     final Network net = getNetworkById(id);
 
-    if (net instanceof SubstrateNetwork) {
-      // Substrate network
-      final SubstrateNetwork sNet = (SubstrateNetwork) net;
+    if (recreateConsistency) {
+      if (net instanceof SubstrateNetwork) {
+        // Substrate network
+        final SubstrateNetwork sNet = (SubstrateNetwork) net;
 
-      final Set<VirtualNetwork> guestHostToNulls = new HashSet<VirtualNetwork>();
-      for (final VirtualNetwork guest : sNet.getGuests()) {
-        guestHostToNulls.add(guest);
-        for (final Node n : getAllServersOfNetwork(guest.getName())) {
-          final VirtualServer vsrv = (VirtualServer) n;
-          vsrv.setHost(null);
+        final Set<VirtualNetwork> guestHostToNulls = new HashSet<VirtualNetwork>();
+        for (final VirtualNetwork guest : sNet.getGuests()) {
+          guestHostToNulls.add(guest);
+          for (final Node n : getAllServersOfNetwork(guest.getName())) {
+            final VirtualServer vsrv = (VirtualServer) n;
+            vsrv.setHost(null);
+          }
+
+          for (final Node n : getAllSwitchesOfNetwork(guest.getName())) {
+            final VirtualSwitch vsw = (VirtualSwitch) n;
+            vsw.setHost(null);
+          }
+
+          for (final Link l : guest.getLinks()) {
+            final VirtualLink vl = (VirtualLink) l;
+            vl.setHost(null);
+          }
         }
 
-        for (final Node n : getAllSwitchesOfNetwork(guest.getName())) {
-          final VirtualSwitch vsw = (VirtualSwitch) n;
-          vsw.setHost(null);
-        }
+        guestHostToNulls.forEach(g -> {
+          g.setHost(null);
+        });
+      } else {
+        // Virtual network
+        final VirtualNetwork vNet = (VirtualNetwork) net;
 
-        for (final Link l : guest.getLinks()) {
-          final VirtualLink vl = (VirtualLink) l;
-          vl.setHost(null);
-        }
-      }
+        // Check if there is a host for this virtual network.
+        if (vNet.getHost() != null) {
+          vNet.getHost().getGuests().remove(vNet);
 
-      guestHostToNulls.forEach(g -> {
-        g.setHost(null);
-      });
-    } else {
-      // Virtual network
-      final VirtualNetwork vNet = (VirtualNetwork) net;
+          for (final Node n : getAllServersOfNetwork(vNet.getName())) {
+            final VirtualServer vsrv = (VirtualServer) n;
+            final SubstrateServer host = vsrv.getHost();
+            host.getGuestServers().remove(vsrv);
+            host.setResidualCpu(host.getResidualCpu() + vsrv.getCpu());
+            host.setResidualMemory(host.getResidualMemory() + vsrv.getMemory());
+            host.setResidualStorage(host.getResidualStorage() + vsrv.getStorage());
+          }
 
-      // Check if there is a host for this virtual network.
-      if (vNet.getHost() != null) {
-        vNet.getHost().getGuests().remove(vNet);
+          for (final Node n : getAllSwitchesOfNetwork(vNet.getName())) {
+            final VirtualSwitch vsw = (VirtualSwitch) n;
+            vsw.getHost().getGuestSwitches().remove(vsw);
+          }
 
-        for (final Node n : getAllServersOfNetwork(vNet.getName())) {
-          final VirtualServer vsrv = (VirtualServer) n;
-          final SubstrateServer host = vsrv.getHost();
-          host.getGuestServers().remove(vsrv);
-          host.setResidualCpu(host.getResidualCpu() + vsrv.getCpu());
-          host.setResidualMemory(host.getResidualMemory() + vsrv.getMemory());
-          host.setResidualStorage(host.getResidualStorage() + vsrv.getStorage());
-        }
+          for (final Link l : vNet.getLinks()) {
+            final VirtualLink vl = (VirtualLink) l;
+            final SubstrateElement host = vl.getHost();
+            host.getGuestLinks().remove(vl);
 
-        for (final Node n : getAllSwitchesOfNetwork(vNet.getName())) {
-          final VirtualSwitch vsw = (VirtualSwitch) n;
-          vsw.getHost().getGuestSwitches().remove(vsw);
-        }
-
-        for (final Link l : vNet.getLinks()) {
-          final VirtualLink vl = (VirtualLink) l;
-          final SubstrateElement host = vl.getHost();
-          host.getGuestLinks().remove(vl);
-
-          if (!ModelFacadeConfig.IGNORE_BW) {
-            if (host instanceof SubstratePath) {
-              final SubstratePath hostPath = (SubstratePath) host;
-              hostPath.setResidualBandwidth(hostPath.getResidualBandwidth() + vl.getBandwidth());
-              for (final Link hostPathLink : hostPath.getLinks()) {
-                final SubstrateLink sl = (SubstrateLink) hostPathLink;
-                sl.setResidualBandwidth(sl.getResidualBandwidth() + vl.getBandwidth());
+            if (!ModelFacadeConfig.IGNORE_BW) {
+              if (host instanceof SubstratePath) {
+                final SubstratePath hostPath = (SubstratePath) host;
+                hostPath.setResidualBandwidth(hostPath.getResidualBandwidth() + vl.getBandwidth());
+                for (final Link hostPathLink : hostPath.getLinks()) {
+                  final SubstrateLink sl = (SubstrateLink) hostPathLink;
+                  sl.setResidualBandwidth(sl.getResidualBandwidth() + vl.getBandwidth());
+                }
               }
             }
           }
@@ -1239,11 +1263,34 @@ public class ModelFacade {
   }
 
   /**
-   * Removes a substrate server with the given ID from the network.
+   * Removes a substrate server with the given ID from the network and re-creates the consistency of
+   * the model afterwards.
    * 
    * @param id Substrate server ID to remove.
    */
   public void removeSubstrateServerFromNetwork(final String id) {
+    removeSubstrateServerFromNetwork(id, true);
+  }
+
+  /**
+   * Removes a substrate server with the given ID from the network and does not re-create the
+   * consistency of the model afterwards.
+   * 
+   * @param id Substrate server ID to remove.
+   */
+  public void removeSubstrateServerFromNetworkSimple(final String id) {
+    removeSubstrateServerFromNetwork(id, false);
+  }
+
+  /**
+   * Removes a substrate server with the given ID from the network.
+   * 
+   * @param id Substrate server ID to remove.
+   * @param recreateConsistency True if model must be consistent after the remove. Otherwise, the
+   *        substrate server will only be removed from the network.
+   */
+  private void removeSubstrateServerFromNetwork(final String id,
+      final boolean recreateConsistency) {
     final Server srv = getServerById(id);
     if (srv instanceof VirtualServer) {
       throw new IllegalArgumentException("Given ID is from a virtual server.");
@@ -1251,44 +1298,47 @@ public class ModelFacade {
 
     final SubstrateServer ssrv = (SubstrateServer) srv;
 
-    // Remove embedding of all guests
-    final Set<VirtualElement> guestsToRemove = new HashSet<VirtualElement>();
-    for (final VirtualServer guestSrv : ssrv.getGuestServers()) {
-      guestsToRemove.add(guestSrv);
-    }
-    for (final VirtualSwitch guestSw : ssrv.getGuestSwitches()) {
-      guestsToRemove.add(guestSw);
-    }
-    for (final VirtualLink guestL : ssrv.getGuestLinks()) {
-      guestsToRemove.add(guestL);
-    }
-    guestsToRemove.forEach(e -> {
-      if (e instanceof VirtualServer) {
-        ((VirtualServer) e).setHost(null);
-      } else if (e instanceof VirtualSwitch) {
-        ((VirtualSwitch) e).setHost(null);
-      } else if (e instanceof VirtualLink) {
-        ((VirtualLink) e).setHost(null);
-      } else {
-        throw new UnsupportedOperationException("Removal of guest " + e + " not yet implemented.");
+    if (recreateConsistency) {
+      // Remove embedding of all guests
+      final Set<VirtualElement> guestsToRemove = new HashSet<VirtualElement>();
+      for (final VirtualServer guestSrv : ssrv.getGuestServers()) {
+        guestsToRemove.add(guestSrv);
       }
-    });
+      for (final VirtualSwitch guestSw : ssrv.getGuestSwitches()) {
+        guestsToRemove.add(guestSw);
+      }
+      for (final VirtualLink guestL : ssrv.getGuestLinks()) {
+        guestsToRemove.add(guestL);
+      }
+      guestsToRemove.forEach(e -> {
+        if (e instanceof VirtualServer) {
+          ((VirtualServer) e).setHost(null);
+        } else if (e instanceof VirtualSwitch) {
+          ((VirtualSwitch) e).setHost(null);
+        } else if (e instanceof VirtualLink) {
+          ((VirtualLink) e).setHost(null);
+        } else {
+          throw new UnsupportedOperationException(
+              "Removal of guest " + e + " not yet implemented.");
+        }
+      });
 
-    // Remove all paths
-    final Set<Path> pathsToRemove = new HashSet<Path>();
-    pathsToRemove.addAll(ssrv.getIncomingPaths());
-    pathsToRemove.addAll(ssrv.getOutgoingPaths());
-    pathsToRemove.forEach(p -> {
-      removeSubstratePath(p);
-    });
+      // Remove all paths
+      final Set<Path> pathsToRemove = new HashSet<Path>();
+      pathsToRemove.addAll(ssrv.getIncomingPaths());
+      pathsToRemove.addAll(ssrv.getOutgoingPaths());
+      pathsToRemove.forEach(p -> {
+        removeSubstratePath(p);
+      });
 
-    // Remove all links
-    final Set<Link> linksToRemove = new HashSet<Link>();
-    linksToRemove.addAll(ssrv.getIncomingLinks());
-    linksToRemove.addAll(ssrv.getOutgoingLinks());
-    linksToRemove.forEach(sl -> {
-      removeSubstrateLink(sl);
-    });
+      // Remove all links
+      final Set<Link> linksToRemove = new HashSet<Link>();
+      linksToRemove.addAll(ssrv.getIncomingLinks());
+      linksToRemove.addAll(ssrv.getOutgoingLinks());
+      linksToRemove.forEach(sl -> {
+        removeSubstrateLink(sl);
+      });
+    }
 
     // Remove server itself
     getNetworkById(ssrv.getNetwork().getName()).getNodes().remove(ssrv);
