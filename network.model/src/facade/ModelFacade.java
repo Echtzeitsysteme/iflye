@@ -763,6 +763,10 @@ public class ModelFacade {
     visitedNodes.clear();
     linksUntilNode.clear();
     counter.set(0);
+    links.clear();
+    paths.clear();
+    pathSourceMap.clear();
+    root = ModelFactory.eINSTANCE.createRoot();
   }
 
   /**
