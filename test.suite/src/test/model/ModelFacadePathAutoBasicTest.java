@@ -13,8 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
-import generators.GoogleFatTreeNetworkGenerator;
-import generators.config.GoogleFatTreeConfig;
+import generators.FatTreeNetworkGenerator;
+import generators.config.FatTreeConfig;
 import model.Path;
 import model.Switch;
 
@@ -428,8 +428,8 @@ public class ModelFacadePathAutoBasicTest {
     ModelFacadeConfig.MAX_PATH_LENGTH = 1;
     // ^maximum path length should be overwritten to 3
 
-    final GoogleFatTreeConfig subConf = new GoogleFatTreeConfig(4);
-    final GoogleFatTreeNetworkGenerator gen = new GoogleFatTreeNetworkGenerator(subConf);
+    final FatTreeConfig subConf = new FatTreeConfig(4);
+    final FatTreeNetworkGenerator gen = new FatTreeNetworkGenerator(subConf);
     gen.createNetwork("net", false);
 
     assertEquals(3, ModelFacadeConfig.MAX_PATH_LENGTH);

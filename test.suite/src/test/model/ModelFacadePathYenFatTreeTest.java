@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
-import generators.GoogleFatTreeNetworkGenerator;
-import generators.config.GoogleFatTreeConfig;
+import generators.FatTreeNetworkGenerator;
+import generators.config.FatTreeConfig;
 import model.Path;
 
 /**
@@ -19,7 +19,7 @@ import model.Path;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class ModelFacadePathYenGoogleFatTreeTest {
+public class ModelFacadePathYenFatTreeTest {
   /*
    * Variables to save the ModelFacade's configuration of path limits to.
    */
@@ -217,8 +217,8 @@ public class ModelFacadePathYenGoogleFatTreeTest {
    * @return All paths of the created network.
    */
   private List<Path> createNetworkAndGetPaths(final int k) {
-    final GoogleFatTreeConfig subConfig = new GoogleFatTreeConfig(k);
-    final GoogleFatTreeNetworkGenerator gen = new GoogleFatTreeNetworkGenerator(subConfig);
+    final FatTreeConfig subConfig = new FatTreeConfig(k);
+    final FatTreeNetworkGenerator gen = new FatTreeNetworkGenerator(subConfig);
     gen.createNetwork("sub", false);
 
     ModelFacade.getInstance().createAllPathsForNetwork("sub");

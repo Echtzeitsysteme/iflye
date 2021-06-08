@@ -10,8 +10,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import facade.ModelFacade;
-import generators.GoogleFatTreeNetworkGenerator;
-import generators.config.GoogleFatTreeConfig;
+import generators.FatTreeNetworkGenerator;
+import generators.config.FatTreeConfig;
 import generators.config.OneTierConfig;
 import model.Link;
 import model.Node;
@@ -23,7 +23,7 @@ import model.VirtualNetwork;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class GoogleFatTreeNetworkGeneratorTest extends IGeneratorTest {
+public class FatTreeNetworkGeneratorTest extends IGeneratorTest {
 
   /*
    * Positive tests
@@ -31,8 +31,8 @@ public class GoogleFatTreeNetworkGeneratorTest extends IGeneratorTest {
 
   @Test
   public void testNoNetworksAfterInit() {
-    final GoogleFatTreeConfig config = new GoogleFatTreeConfig(4);
-    new GoogleFatTreeNetworkGenerator(config);
+    final FatTreeConfig config = new FatTreeConfig(4);
+    new FatTreeNetworkGenerator(config);
     assertTrue(ModelFacade.getInstance().getAllNetworks().isEmpty());
   }
 
@@ -60,8 +60,8 @@ public class GoogleFatTreeNetworkGeneratorTest extends IGeneratorTest {
 
   @Test
   public void testVirtualNetwork() {
-    final GoogleFatTreeConfig config = new GoogleFatTreeConfig(4);
-    final GoogleFatTreeNetworkGenerator gen = new GoogleFatTreeNetworkGenerator(config);
+    final FatTreeConfig config = new FatTreeConfig(4);
+    final FatTreeNetworkGenerator gen = new FatTreeNetworkGenerator(config);
     gen.createNetwork("virt", true);
 
     assertNotNull(facade.getNetworkById("virt"));
@@ -71,10 +71,10 @@ public class GoogleFatTreeNetworkGeneratorTest extends IGeneratorTest {
 
   @Test
   public void testServerParameters() {
-    final GoogleFatTreeConfig config = new GoogleFatTreeConfig(4);
+    final FatTreeConfig config = new FatTreeConfig(4);
     final OneTierConfig rack = new OneTierConfig(-1, -1, false, 8, 9, 10, 1);
     config.setRack(rack);
-    final GoogleFatTreeNetworkGenerator gen = new GoogleFatTreeNetworkGenerator(config);
+    final FatTreeNetworkGenerator gen = new FatTreeNetworkGenerator(config);
     gen.createNetwork("test", false);
 
     assertFalse(facade.getAllServersOfNetwork("test").isEmpty());
@@ -89,12 +89,12 @@ public class GoogleFatTreeNetworkGeneratorTest extends IGeneratorTest {
 
   @Test
   public void testTwoSubstrateNetworks() {
-    final GoogleFatTreeConfig config = new GoogleFatTreeConfig(4);
+    final FatTreeConfig config = new FatTreeConfig(4);
     final OneTierConfig rack = new OneTierConfig(-1, -1, false, 8, 9, 10, 1);
     config.setRack(rack);
-    final GoogleFatTreeNetworkGenerator genA = new GoogleFatTreeNetworkGenerator(config);
+    final FatTreeNetworkGenerator genA = new FatTreeNetworkGenerator(config);
     genA.createNetwork("test1", false);
-    final GoogleFatTreeNetworkGenerator genB = new GoogleFatTreeNetworkGenerator(config);
+    final FatTreeNetworkGenerator genB = new FatTreeNetworkGenerator(config);
     genB.createNetwork("test2", false);
 
     assertFalse(facade.getAllServersOfNetwork("test1").isEmpty());
@@ -124,8 +124,8 @@ public class GoogleFatTreeNetworkGeneratorTest extends IGeneratorTest {
 
   @Test
   public void testInvalidKParameterModulo() {
-    final GoogleFatTreeConfig config = new GoogleFatTreeConfig(11);
-    final GoogleFatTreeNetworkGenerator gen = new GoogleFatTreeNetworkGenerator(config);
+    final FatTreeConfig config = new FatTreeConfig(11);
+    final FatTreeNetworkGenerator gen = new FatTreeNetworkGenerator(config);
     gen.createNetwork("test", false);
 
     // k % 2 != 0 must result in k = 4 (default value)
@@ -139,7 +139,7 @@ public class GoogleFatTreeNetworkGeneratorTest extends IGeneratorTest {
   @Test
   public void rejectConfigIsNull() {
     assertThrows(IllegalArgumentException.class, () -> {
-      new GoogleFatTreeNetworkGenerator(null);
+      new FatTreeNetworkGenerator(null);
     });
   }
 
@@ -151,8 +151,8 @@ public class GoogleFatTreeNetworkGeneratorTest extends IGeneratorTest {
    * Sets a default GoogleFatTree Network with k = 4 up. It's name/ID is "test".
    */
   private void basicKFourSetup() {
-    final GoogleFatTreeConfig config = new GoogleFatTreeConfig(4);
-    final GoogleFatTreeNetworkGenerator gen = new GoogleFatTreeNetworkGenerator(config);
+    final FatTreeConfig config = new FatTreeConfig(4);
+    final FatTreeNetworkGenerator gen = new FatTreeNetworkGenerator(config);
     gen.createNetwork("test", false);
   }
 
@@ -168,12 +168,12 @@ public class GoogleFatTreeNetworkGeneratorTest extends IGeneratorTest {
     final int uniqueAggrBw = 4;
     final int uniqueEdgeBw = 2;
 
-    final GoogleFatTreeConfig config = new GoogleFatTreeConfig(k);
+    final FatTreeConfig config = new FatTreeConfig(k);
     config.setBwAggrToEdge(uniqueAggrBw);
     config.setBwCoreToAggr(uniqueCoreBw);
     final OneTierConfig rack = new OneTierConfig(-1, -1, false, 1, 1, 1, uniqueEdgeBw);
     config.setRack(rack);
-    final GoogleFatTreeNetworkGenerator gen = new GoogleFatTreeNetworkGenerator(config);
+    final FatTreeNetworkGenerator gen = new FatTreeNetworkGenerator(config);
     gen.createNetwork("test", false);
 
     final int numberOfPods = k;

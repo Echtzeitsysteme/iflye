@@ -1,14 +1,15 @@
 package generators.config;
 
 /**
- * Configuration (container-)class for the google fat tree [1] network generator. [1] ALFARES ,
- * Mohammad ; L OUKISSAS , Alexander ; V AHDAT , Amin: A Scalable, Commodity Data Center Network
- * Architecture. In: Proceedings of the ACM SIGCOMM 2008 conference on Data communication. (2008),
- * S. pp. 63–74
+ * Configuration (container-)class for the fat tree [1] network generator.
+ * 
+ * [1] ALFARES , Mohammad ; L OUKISSAS , Alexander ; V AHDAT , Amin: A Scalable, Commodity Data
+ * Center Network Architecture. In: Proceedings of the ACM SIGCOMM 2008 conference on Data
+ * communication. (2008), S. pp. 63–74
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class GoogleFatTreeConfig implements IGeneratorConfig {
+public class FatTreeConfig implements IGeneratorConfig {
 
   /**
    * Parameter k that defines the network size.
@@ -16,7 +17,7 @@ public class GoogleFatTreeConfig implements IGeneratorConfig {
   private int k = 4;
 
   /**
-   * One OneTierConfig is a rack in a google fat tree network.
+   * One OneTierConfig is a rack in a fat tree network.
    */
   private OneTierConfig rack;
 
@@ -36,7 +37,7 @@ public class GoogleFatTreeConfig implements IGeneratorConfig {
    *
    * @param kparameter K force the structure.
    */
-  public GoogleFatTreeConfig(final int kparameter) {
+  public FatTreeConfig(final int kparameter) {
     if (kparameter >= this.k && kparameter % 2 == 0) {
       this.k = kparameter;
     }

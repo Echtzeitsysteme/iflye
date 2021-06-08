@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 import algorithms.heuristics.TafAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
-import generators.GoogleFatTreeNetworkGenerator;
+import generators.FatTreeNetworkGenerator;
 import generators.OneTierNetworkGenerator;
-import generators.config.GoogleFatTreeConfig;
+import generators.config.FatTreeConfig;
 import generators.config.OneTierConfig;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
@@ -21,7 +21,7 @@ import test.algorithms.generic.AAlgorithmTest;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class TafAlgorithmGoogleFatTreeTest extends AAlgorithmTest {
+public class TafAlgorithmFatTreeTest extends AAlgorithmTest {
 
   @Override
   public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
@@ -51,8 +51,8 @@ public class TafAlgorithmGoogleFatTreeTest extends AAlgorithmTest {
     final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtConfig);
     virtGen.createNetwork("virt", true);
 
-    final GoogleFatTreeConfig subConfig = new GoogleFatTreeConfig(4);
-    final GoogleFatTreeNetworkGenerator subGen = new GoogleFatTreeNetworkGenerator(subConfig);
+    final FatTreeConfig subConfig = new FatTreeConfig(4);
+    final FatTreeNetworkGenerator subGen = new FatTreeNetworkGenerator(subConfig);
     subGen.createNetwork("sub", false);
 
     final SubstrateNetwork sNet =
@@ -65,10 +65,10 @@ public class TafAlgorithmGoogleFatTreeTest extends AAlgorithmTest {
 
   @Test
   public void testHalfLoadSmallVirtualNetworks() {
-    final GoogleFatTreeConfig subConfig = new GoogleFatTreeConfig(4);
+    final FatTreeConfig subConfig = new FatTreeConfig(4);
     final OneTierConfig subRackConfig = new OneTierConfig(-1, -1, false, 2, 2, 2, 100);
     subConfig.setRack(subRackConfig);
-    final GoogleFatTreeNetworkGenerator subGen = new GoogleFatTreeNetworkGenerator(subConfig);
+    final FatTreeNetworkGenerator subGen = new FatTreeNetworkGenerator(subConfig);
     subGen.createNetwork("sub", false);
 
     // k = 4 -> 16 substrate servers
@@ -89,10 +89,10 @@ public class TafAlgorithmGoogleFatTreeTest extends AAlgorithmTest {
 
   @Test
   public void testFullLoadSmallVirtualNetworks() {
-    final GoogleFatTreeConfig subConfig = new GoogleFatTreeConfig(4);
+    final FatTreeConfig subConfig = new FatTreeConfig(4);
     final OneTierConfig subRackConfig = new OneTierConfig(-1, -1, false, 2, 2, 2, 100);
     subConfig.setRack(subRackConfig);
-    final GoogleFatTreeNetworkGenerator subGen = new GoogleFatTreeNetworkGenerator(subConfig);
+    final FatTreeNetworkGenerator subGen = new FatTreeNetworkGenerator(subConfig);
     subGen.createNetwork("sub", false);
 
     // k = 4 -> 16 substrate servers
@@ -113,10 +113,10 @@ public class TafAlgorithmGoogleFatTreeTest extends AAlgorithmTest {
 
   @Test
   public void testHalfLoadLargeVirtualNetwork() {
-    final GoogleFatTreeConfig subConfig = new GoogleFatTreeConfig(4);
+    final FatTreeConfig subConfig = new FatTreeConfig(4);
     final OneTierConfig subRackConfig = new OneTierConfig(-1, -1, false, 2, 2, 2, 100);
     subConfig.setRack(subRackConfig);
-    final GoogleFatTreeNetworkGenerator subGen = new GoogleFatTreeNetworkGenerator(subConfig);
+    final FatTreeNetworkGenerator subGen = new FatTreeNetworkGenerator(subConfig);
     subGen.createNetwork("sub", false);
 
     final OneTierConfig virtConfig = new OneTierConfig(8, 1, false, 2, 2, 2, 2);
@@ -133,10 +133,10 @@ public class TafAlgorithmGoogleFatTreeTest extends AAlgorithmTest {
 
   @Test
   public void testFullLoadLargeVirtualNetworkA() {
-    final GoogleFatTreeConfig subConfig = new GoogleFatTreeConfig(4);
+    final FatTreeConfig subConfig = new FatTreeConfig(4);
     final OneTierConfig subRackConfig = new OneTierConfig(-1, -1, false, 2, 2, 2, 100);
     subConfig.setRack(subRackConfig);
-    final GoogleFatTreeNetworkGenerator subGen = new GoogleFatTreeNetworkGenerator(subConfig);
+    final FatTreeNetworkGenerator subGen = new FatTreeNetworkGenerator(subConfig);
     subGen.createNetwork("sub", false);
 
     final OneTierConfig virtConfig = new OneTierConfig(16, 1, false, 2, 2, 2, 2);
@@ -153,10 +153,10 @@ public class TafAlgorithmGoogleFatTreeTest extends AAlgorithmTest {
 
   @Test
   public void testFullLoadLargeVirtualNetworkB() {
-    final GoogleFatTreeConfig subConfig = new GoogleFatTreeConfig(4);
+    final FatTreeConfig subConfig = new FatTreeConfig(4);
     final OneTierConfig subRackConfig = new OneTierConfig(-1, -1, false, 10, 10, 10, 100);
     subConfig.setRack(subRackConfig);
-    final GoogleFatTreeNetworkGenerator subGen = new GoogleFatTreeNetworkGenerator(subConfig);
+    final FatTreeNetworkGenerator subGen = new FatTreeNetworkGenerator(subConfig);
     subGen.createNetwork("sub", false);
 
     final OneTierConfig virtConfig = new OneTierConfig(80, 1, false, 2, 2, 2, 2);
@@ -176,10 +176,10 @@ public class TafAlgorithmGoogleFatTreeTest extends AAlgorithmTest {
    */
   @Test
   public void testFullReject() {
-    final GoogleFatTreeConfig subConfig = new GoogleFatTreeConfig(4);
+    final FatTreeConfig subConfig = new FatTreeConfig(4);
     final OneTierConfig subRackConfig = new OneTierConfig(-1, -1, false, 2, 2, 2, 100);
     subConfig.setRack(subRackConfig);
-    final GoogleFatTreeNetworkGenerator subGen = new GoogleFatTreeNetworkGenerator(subConfig);
+    final FatTreeNetworkGenerator subGen = new FatTreeNetworkGenerator(subConfig);
     subGen.createNetwork("sub", false);
 
     // k = 4 -> 16 substrate servers, but we want to request one more embedding

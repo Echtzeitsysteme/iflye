@@ -11,8 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
-import generators.GoogleFatTreeNetworkGenerator;
-import generators.config.GoogleFatTreeConfig;
+import generators.FatTreeNetworkGenerator;
+import generators.config.FatTreeConfig;
 import model.Path;
 
 /**
@@ -20,7 +20,7 @@ import model.Path;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class ModelFacadePathBasicGoogleFatTreeTest {
+public class ModelFacadePathBasicFatTreeTest {
 
   /*
    * Variables to save the ModelFacade's configuration of path limits to.
@@ -53,8 +53,8 @@ public class ModelFacadePathBasicGoogleFatTreeTest {
 
   @Test
   public void testPathsAfterNetworkCreation() {
-    final GoogleFatTreeConfig subConfig = new GoogleFatTreeConfig(4);
-    final GoogleFatTreeNetworkGenerator gen = new GoogleFatTreeNetworkGenerator(subConfig);
+    final FatTreeConfig subConfig = new FatTreeConfig(4);
+    final FatTreeNetworkGenerator gen = new FatTreeNetworkGenerator(subConfig);
     gen.createNetwork("net", false);
 
     assertTrue(!ModelFacade.getInstance().getAllPathsOfNetwork("net").isEmpty());
@@ -121,8 +121,8 @@ public class ModelFacadePathBasicGoogleFatTreeTest {
    */
 
   private List<Path> createNetworkAndGetPaths(final int k) {
-    final GoogleFatTreeConfig subConfig = new GoogleFatTreeConfig(k);
-    final GoogleFatTreeNetworkGenerator gen = new GoogleFatTreeNetworkGenerator(subConfig);
+    final FatTreeConfig subConfig = new FatTreeConfig(k);
+    final FatTreeNetworkGenerator gen = new FatTreeNetworkGenerator(subConfig);
     gen.createNetwork("sub", false);
 
     ModelFacade.getInstance().createAllPathsForNetwork("sub");

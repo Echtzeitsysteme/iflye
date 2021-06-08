@@ -4,19 +4,20 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import facade.ModelFacade;
+import generators.config.FatTreeConfig;
 import generators.config.GlobalGeneratorConfig;
-import generators.config.GoogleFatTreeConfig;
 import generators.config.IGeneratorConfig;
 
 /**
- * Basic implementation of a google fat tree [1] network topology generator. [1] ALFARES , Mohammad
- * ; L OUKISSAS , Alexander ; V AHDAT , Amin: A Scalable, Commodity Data Center Network
- * Architecture. In: Proceedings of the ACM SIGCOMM 2008 conference on Data communication. (2008),
- * S. pp. 63–74
+ * Basic implementation of a fat tree [1] network topology generator.
+ * 
+ * [1] ALFARES , Mohammad ; L OUKISSAS , Alexander ; V AHDAT , Amin: A Scalable, Commodity Data
+ * Center Network Architecture. In: Proceedings of the ACM SIGCOMM 2008 conference on Data
+ * communication. (2008), S. pp. 63–74
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class GoogleFatTreeNetworkGenerator implements INetworkGenerator {
+public class FatTreeNetworkGenerator implements INetworkGenerator {
 
   /**
    * Core switch ID prefix.
@@ -36,7 +37,7 @@ public class GoogleFatTreeNetworkGenerator implements INetworkGenerator {
   /**
    * Configuration of this network generator instance.
    */
-  private final GoogleFatTreeConfig config;
+  private final FatTreeConfig config;
 
   /**
    * List of generated core switch IDs.
@@ -68,12 +69,12 @@ public class GoogleFatTreeNetworkGenerator implements INetworkGenerator {
    * 
    * @param config Configuration for this generator.
    */
-  public GoogleFatTreeNetworkGenerator(final IGeneratorConfig config) {
-    if (!(config instanceof GoogleFatTreeConfig)) {
+  public FatTreeNetworkGenerator(final IGeneratorConfig config) {
+    if (!(config instanceof FatTreeConfig)) {
       throw new IllegalArgumentException("Configuration instance is not a GoogleFatTreeConfig.");
     }
 
-    this.config = (GoogleFatTreeConfig) config;
+    this.config = (FatTreeConfig) config;
 
     this.coreSwitchIds = new LinkedList<String>();
     this.aggregationSwitchIds = new LinkedList<String>();
