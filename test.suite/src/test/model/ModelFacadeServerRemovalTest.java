@@ -10,9 +10,9 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import facade.ModelFacade;
-import generators.GoogleFatTreeNetworkGenerator;
+import generators.FatTreeNetworkGenerator;
 import generators.OneTierNetworkGenerator;
-import generators.config.GoogleFatTreeConfig;
+import generators.config.FatTreeConfig;
 import generators.config.OneTierConfig;
 import model.Link;
 import model.Path;
@@ -317,8 +317,8 @@ public class ModelFacadeServerRemovalTest {
    * @param k Google fat tree parameter.
    */
   private void setUpGoogleFatTree(final int k) {
-    final GoogleFatTreeConfig subConfig = new GoogleFatTreeConfig(k);
-    final GoogleFatTreeNetworkGenerator gen = new GoogleFatTreeNetworkGenerator(subConfig);
+    final FatTreeConfig subConfig = new FatTreeConfig(k);
+    final FatTreeNetworkGenerator gen = new FatTreeNetworkGenerator(subConfig);
     gen.createNetwork(netId, false);
   }
 

@@ -1,8 +1,8 @@
 package examples.generators;
 
 import facade.ModelFacade;
-import generators.GoogleFatTreeNetworkGenerator;
-import generators.config.GoogleFatTreeConfig;
+import generators.FatTreeNetworkGenerator;
+import generators.config.FatTreeConfig;
 
 /**
  * Runnable example for the Google fat tree network generator. Creates one substrate network within
@@ -10,7 +10,7 @@ import generators.config.GoogleFatTreeConfig;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class GoogleFatTreeGeneratorExample {
+public class FatTreeGeneratorExample {
 
   /**
    * Main method to start the example. String array of arguments will be ignored.
@@ -19,10 +19,10 @@ public class GoogleFatTreeGeneratorExample {
    */
   public static void main(final String[] args) {
     // Google fat tree network generation
-    final GoogleFatTreeConfig config = new GoogleFatTreeConfig(4);
+    final FatTreeConfig config = new FatTreeConfig(4);
     config.setBwCoreToAggr(100);
     config.setBwAggrToEdge(40);
-    final GoogleFatTreeNetworkGenerator gen = new GoogleFatTreeNetworkGenerator(config);
+    final FatTreeNetworkGenerator gen = new FatTreeNetworkGenerator(config);
     gen.createNetwork("sub", false);
 
     // Save model to file

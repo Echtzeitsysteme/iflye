@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import facade.ModelFacade;
 import generators.config.GlobalGeneratorConfig;
-import generators.config.GoogleFatTreeConfig;
+import generators.config.FatTreeConfig;
 import generators.config.IGeneratorConfig;
 
 /**
@@ -16,7 +16,7 @@ import generators.config.IGeneratorConfig;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class GoogleFatTreeNetworkGenerator implements INetworkGenerator {
+public class FatTreeNetworkGenerator implements INetworkGenerator {
 
   /**
    * Core switch ID prefix.
@@ -36,7 +36,7 @@ public class GoogleFatTreeNetworkGenerator implements INetworkGenerator {
   /**
    * Configuration of this network generator instance.
    */
-  private final GoogleFatTreeConfig config;
+  private final FatTreeConfig config;
 
   /**
    * List of generated core switch IDs.
@@ -68,12 +68,12 @@ public class GoogleFatTreeNetworkGenerator implements INetworkGenerator {
    * 
    * @param config Configuration for this generator.
    */
-  public GoogleFatTreeNetworkGenerator(final IGeneratorConfig config) {
-    if (!(config instanceof GoogleFatTreeConfig)) {
+  public FatTreeNetworkGenerator(final IGeneratorConfig config) {
+    if (!(config instanceof FatTreeConfig)) {
       throw new IllegalArgumentException("Configuration instance is not a GoogleFatTreeConfig.");
     }
 
-    this.config = (GoogleFatTreeConfig) config;
+    this.config = (FatTreeConfig) config;
 
     this.coreSwitchIds = new LinkedList<String>();
     this.aggregationSwitchIds = new LinkedList<String>();

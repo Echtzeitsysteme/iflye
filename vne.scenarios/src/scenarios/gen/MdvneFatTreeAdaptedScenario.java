@@ -5,8 +5,8 @@ import algorithms.AbstractAlgorithm;
 import algorithms.heuristics.TafAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
-import generators.GoogleFatTreeNetworkGenerator;
-import generators.config.GoogleFatTreeConfig;
+import generators.FatTreeNetworkGenerator;
+import generators.config.FatTreeConfig;
 import generators.config.OneTierConfig;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
@@ -21,7 +21,7 @@ import model.VirtualNetwork;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class MdvneGoogleFatTreeAdaptedScenario extends AMdvneAdaptedScenario implements IScenario {
+public class MdvneFatTreeAdaptedScenario extends AMdvneAdaptedScenario implements IScenario {
 
   /**
    * Google Fat Tree scaling parameter.
@@ -49,7 +49,7 @@ public class MdvneGoogleFatTreeAdaptedScenario extends AMdvneAdaptedScenario imp
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
     ModelFacadeConfig.MAX_PATH_LENGTH = 6;
 
-    final MdvneGoogleFatTreeAdaptedScenario scen = new MdvneGoogleFatTreeAdaptedScenario();
+    final MdvneFatTreeAdaptedScenario scen = new MdvneFatTreeAdaptedScenario();
 
     scen.substrateSetup("sub");
     final SubstrateNetwork sub = (SubstrateNetwork) facade.getNetworkById("sub");
@@ -84,11 +84,11 @@ public class MdvneGoogleFatTreeAdaptedScenario extends AMdvneAdaptedScenario imp
   private void substrateSetup(final String substrateNetworkId) {
     final OneTierConfig substrateRackConfig = new OneTierConfig(serversPerRack, 1, false,
         substrateCpu, substrateMem, substrateSto, substrateBwSrv);
-    final GoogleFatTreeConfig substrateConfig = new GoogleFatTreeConfig(k);
+    final FatTreeConfig substrateConfig = new FatTreeConfig(k);
     substrateConfig.setRack(substrateRackConfig);
     substrateConfig.setBwCoreToAggr(substrateBwCore);
     substrateConfig.setBwAggrToEdge(substrateBwAggr);
-    final GoogleFatTreeNetworkGenerator subGen = new GoogleFatTreeNetworkGenerator(substrateConfig);
+    final FatTreeNetworkGenerator subGen = new FatTreeNetworkGenerator(substrateConfig);
     subGen.createNetwork(substrateNetworkId, false);
   }
 

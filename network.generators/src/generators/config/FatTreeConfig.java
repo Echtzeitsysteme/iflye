@@ -8,7 +8,7 @@ package generators.config;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class GoogleFatTreeConfig implements IGeneratorConfig {
+public class FatTreeConfig implements IGeneratorConfig {
 
   /**
    * Parameter k that defines the network size.
@@ -36,7 +36,7 @@ public class GoogleFatTreeConfig implements IGeneratorConfig {
    *
    * @param kparameter K force the structure.
    */
-  public GoogleFatTreeConfig(final int kparameter) {
+  public FatTreeConfig(final int kparameter) {
     if (kparameter >= this.k && kparameter % 2 == 0) {
       this.k = kparameter;
     }
