@@ -4,15 +4,16 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import facade.ModelFacade;
-import generators.config.GlobalGeneratorConfig;
 import generators.config.FatTreeConfig;
+import generators.config.GlobalGeneratorConfig;
 import generators.config.IGeneratorConfig;
 
 /**
- * Basic implementation of a google fat tree [1] network topology generator. [1] ALFARES , Mohammad
- * ; L OUKISSAS , Alexander ; V AHDAT , Amin: A Scalable, Commodity Data Center Network
- * Architecture. In: Proceedings of the ACM SIGCOMM 2008 conference on Data communication. (2008),
- * S. pp. 63–74
+ * Basic implementation of a fat tree [1] network topology generator.
+ * 
+ * [1] ALFARES , Mohammad ; L OUKISSAS , Alexander ; V AHDAT , Amin: A Scalable, Commodity Data
+ * Center Network Architecture. In: Proceedings of the ACM SIGCOMM 2008 conference on Data
+ * communication. (2008), S. pp. 63–74
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */

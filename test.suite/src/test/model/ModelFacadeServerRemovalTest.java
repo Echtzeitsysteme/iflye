@@ -164,8 +164,8 @@ public class ModelFacadeServerRemovalTest {
   }
 
   @Test
-  public void testRemovalGoogleFatTreeServerOnlySmall() {
-    setUpGoogleFatTree(4);
+  public void testRemovalFatTreeServerOnlySmall() {
+    setUpFatTree(4);
     assertEquals(16, facade.getAllServersOfNetwork(netId).size());
     final String deletedId = netId + "_srv_0";
     final Server deleted = facade.getServerById(deletedId);
@@ -179,8 +179,8 @@ public class ModelFacadeServerRemovalTest {
   }
 
   @Test
-  public void testRemovalGoogleFatTreeLinksOnlySmall() {
-    setUpGoogleFatTree(4);
+  public void testRemovalFatTreeLinksOnlySmall() {
+    setUpFatTree(4);
     assertEquals(16, facade.getAllServersOfNetwork(netId).size());
     assertEquals(96, facade.getAllLinksOfNetwork(netId).size());
     final String removeId = netId + "_srv_0";
@@ -195,8 +195,8 @@ public class ModelFacadeServerRemovalTest {
   }
 
   @Test
-  public void testRemovalGoogleFatTreePathsOnlySmall() {
-    setUpGoogleFatTree(4);
+  public void testRemovalFatTreePathsOnlySmall() {
+    setUpFatTree(4);
     assertEquals(16, facade.getAllServersOfNetwork(netId).size());
     assertEquals(496, facade.getAllPathsOfNetwork(netId).size());
     final String removeId = netId + "_srv_0";
@@ -312,11 +312,11 @@ public class ModelFacadeServerRemovalTest {
   }
 
   /**
-   * Sets a google fat tree based network with parameter k up.
+   * Sets a fat tree based network with parameter k up.
    * 
-   * @param k Google fat tree parameter.
+   * @param k Fat tree parameter.
    */
-  private void setUpGoogleFatTree(final int k) {
+  private void setUpFatTree(final int k) {
     final FatTreeConfig subConfig = new FatTreeConfig(k);
     final FatTreeNetworkGenerator gen = new FatTreeNetworkGenerator(subConfig);
     gen.createNetwork(netId, false);
