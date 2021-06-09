@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import ilp.wrapper.IncrementalIlpSolver.Constraint;
@@ -26,17 +28,17 @@ public class IlpDelta {
   /*
    * Added variables and constraints.
    */
-  final Map<String, Variable> addVariables = new HashMap<>();
-  final Map<String, Constraint> addEqConstraints = new HashMap<>();
-  final Map<String, Constraint> addLeConstraints = new HashMap<>();
+  final SortedMap<String, Variable> addVariables = new TreeMap<>();
+  final SortedMap<String, Constraint> addEqConstraints = new TreeMap<>();
+  final SortedMap<String, Constraint> addLeConstraints = new TreeMap<>();
 
   /*
    * Changed variable and constraint parameters.
    */
-  final Map<String, Double> changeVariableWeights = new HashMap<>();
-  final Map<String, int[]> changeVariableBounds = new HashMap<>();
-  final Map<String, Map<String, Double>> changeConstraintVariableWeights = new HashMap<>();
-  final Map<String, Double> changeConstraintRight = new HashMap<>();
+  final SortedMap<String, Double> changeVariableWeights = new TreeMap<>();
+  final SortedMap<String, int[]> changeVariableBounds = new TreeMap<>();
+  final SortedMap<String, Map<String, Double>> changeConstraintVariableWeights = new TreeMap<>();
+  final SortedMap<String, Double> changeConstraintRight = new TreeMap<>();
 
   /*
    * Removed variables and constraints.
@@ -255,6 +257,28 @@ public class IlpDelta {
     } else {
       changeConstraintVariableWeights.computeIfAbsent(name, k -> new HashMap<>()).put(var, weight);
     }
+  }
+
+  @Override
+  public String toString() {
+    final StringBuilder builder = new StringBuilder();
+
+    for (final String key : addVariables.keySet()) {
+      builder.append(key + addVariables.get(key));
+      builder.append(System.lineSeparator());
+    }
+
+    for (final String key : addEqConstraints.keySet()) {
+      builder.append(key + addEqConstraints.get(key));
+      builder.append(System.lineSeparator());
+    }
+
+    for (final String key : addLeConstraints.keySet()) {
+      builder.append(key + addLeConstraints.get(key));
+      builder.append(System.lineSeparator());
+    }
+
+    return builder.toString();
   }
 
 }
