@@ -907,6 +907,15 @@ public class ModelFacade {
   }
 
   /**
+   * Saves the model to given file path.
+   * 
+   * @param path File path as string.
+   */
+  public void persistModel(final String path) {
+    eMoflonEMFUtil.saveModel(root, path);
+  }
+
+  /**
    * Loads the model from file.
    */
   public void loadModel() {

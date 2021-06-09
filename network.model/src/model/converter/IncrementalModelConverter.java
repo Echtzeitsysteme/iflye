@@ -34,7 +34,7 @@ public class IncrementalModelConverter extends BasicModelConverter {
   public static String jsonToModelIncremental(final String path, final boolean isVirtual) {
     if (networks == null) {
       // Initial run
-      final JsonObject json = readFile(path);
+      final JsonObject json = readFileToJson(path);
       networks = (JsonArray) json.get("networks");
     }
 

@@ -38,7 +38,7 @@ public class BasicModelConverter {
    * @return List of all new network IDs.
    */
   public static List<String> jsonToModel(final String path, final boolean isVirtual) {
-    final JsonObject json = readFile(path);
+    final JsonObject json = readFileToJson(path);
     final JsonArray networks = (JsonArray) json.get("networks");
     final List<String> networkOutputIds = new LinkedList<String>();
 
@@ -115,7 +115,7 @@ public class BasicModelConverter {
     }
 
     json.add("networks", jsonNets);
-    writeFile(path, json);
+    writeFileFromJson(path, json);
   }
 
   /**
@@ -163,11 +163,15 @@ public class BasicModelConverter {
    * TODO: These methods should be re-factored/moved to a generic helper class.
    */
 
-  protected static void writeFile(final String path, final JsonObject json) {
+  protected static void writeFileFromJson(final String path, final JsonObject json) {
+    writeFile(path, json.toString());
+  }
+
+  public static void writeFile(final String path, final String string) {
     FileWriter file = null;
     try {
       file = new FileWriter(path);
-      file.write(json.toString());
+      file.write(string);
     } catch (final IOException e) {
       e.printStackTrace();
     } finally {
@@ -180,14 +184,18 @@ public class BasicModelConverter {
     }
   }
 
-  protected static JsonObject readFile(final String path) {
+  protected static JsonObject readFileToJson(final String path) {
+    return new Gson().fromJson(readFile(path), JsonObject.class);
+  }
+
+  public static String readFile(final String path) {
     String read = "";
     try {
       read = Files.readString(Path.of(path));
     } catch (final IOException e) {
       throw new IllegalArgumentException();
     }
-    return new Gson().fromJson(read, JsonObject.class);
+    return read;
   }
 
 }
