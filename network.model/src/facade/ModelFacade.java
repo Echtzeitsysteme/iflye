@@ -3,6 +3,7 @@ package facade;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -463,8 +464,17 @@ public class ModelFacade {
 
         final Map<SubstrateNode, List<SubstrateLink>> actMap = gen.getAllFastestPaths(snet, srv);
 
-        // Iterate over all "paths" of the current node
-        for (final SubstrateNode n : actMap.keySet()) {
+        final List<SubstrateNode> sortedKeys = new LinkedList<SubstrateNode>();
+        sortedKeys.addAll(actMap.keySet());
+        sortedKeys.sort(new Comparator<SubstrateNode>() {
+
+          @Override
+          public int compare(final SubstrateNode o1, final SubstrateNode o2) {
+            return o1.getName().compareTo(o2.getName());
+          }
+        });
+
+        for (final SubstrateNode n : sortedKeys) {
           createBidirectionalPathFromLinks(actMap.get(n));
         }
       }
