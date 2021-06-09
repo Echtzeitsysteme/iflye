@@ -453,8 +453,18 @@ public class ModelFacade {
         final Map<SubstrateNode, List<List<SubstrateLink>>> actMap =
             gen.getAllKFastestPaths(snet, srv, ModelFacadeConfig.YEN_K);
 
+        final List<SubstrateNode> sortedKeys = new LinkedList<SubstrateNode>();
+        sortedKeys.addAll(actMap.keySet());
+        sortedKeys.sort(new Comparator<SubstrateNode>() {
+
+          @Override
+          public int compare(final SubstrateNode o1, final SubstrateNode o2) {
+            return o1.getName().compareTo(o2.getName());
+          }
+        });
+
         // Iterate over all "paths" of the current node
-        for (final SubstrateNode n : actMap.keySet()) {
+        for (final SubstrateNode n : sortedKeys) {
           for (final List<SubstrateLink> l : actMap.get(n)) {
             createBidirectionalPathFromLinks(l);
           }

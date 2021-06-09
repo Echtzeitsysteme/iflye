@@ -1,8 +1,8 @@
 package test.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
@@ -33,13 +33,31 @@ public class ModelFacadePathConsistencyTest {
    */
   private int oldUpperLimit;
 
-  @Before
+  /**
+   * Old ignore bandwidth value.
+   */
+  private boolean oldIgnoreBw;
+
+  /**
+   * Old link host embed path value.
+   */
+  private boolean oldLinkHostEmbedPath;
+
+  /**
+   * Old Yen path generation value.
+   */
+  private boolean oldYenPathGen;
+
+  @BeforeEach
   public void resetModel() {
     ModelFacade.getInstance().resetAll();
 
     // Save old values
     oldLowerLimit = ModelFacadeConfig.MIN_PATH_LENGTH;
     oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
+    oldIgnoreBw = ModelFacadeConfig.IGNORE_BW;
+    oldLinkHostEmbedPath = ModelFacadeConfig.LINK_HOST_EMBED_PATH;
+    oldYenPathGen = ModelFacadeConfig.YEN_PATH_GEN;
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
     ModelFacadeConfig.IGNORE_BW = false;
@@ -47,14 +65,17 @@ public class ModelFacadePathConsistencyTest {
     ModelFacadeConfig.YEN_PATH_GEN = false;
   }
 
-  @After
+  @AfterEach
   public void restoreConfig() {
     ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
     ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
+    ModelFacadeConfig.IGNORE_BW = oldIgnoreBw;
+    ModelFacadeConfig.LINK_HOST_EMBED_PATH = oldLinkHostEmbedPath;
+    ModelFacadeConfig.YEN_PATH_GEN = oldYenPathGen;
   }
 
   @Test
-  public void testFatTreePathGen() {
+  public void testFatTreePathGenDijkstra() {
     final FatTreeConfig subConfig = new FatTreeConfig(6);
     final FatTreeNetworkGenerator gen = new FatTreeNetworkGenerator(subConfig);
     gen.createNetwork("sub", false);
@@ -64,8 +85,25 @@ public class ModelFacadePathConsistencyTest {
       builder.append(p.getName() + System.lineSeparator());
     });
 
-    // BasicModelConverter.writeFile("resources/refPath.txt", builder.toString());
-    final String refPath = BasicModelConverter.readFile("resources/refPath.txt");
+    // BasicModelConverter.writeFile("resources/refPathDijkstra.txt", builder.toString());
+    final String refPath = BasicModelConverter.readFile("resources/refPathDijkstra.txt");
+    assertEquals(refPath, builder.toString());
+  }
+
+  @Test
+  public void testFatTreePathGenYen() {
+    ModelFacadeConfig.YEN_PATH_GEN = true;
+    final FatTreeConfig subConfig = new FatTreeConfig(6);
+    final FatTreeNetworkGenerator gen = new FatTreeNetworkGenerator(subConfig);
+    gen.createNetwork("sub", false);
+
+    final StringBuilder builder = new StringBuilder();
+    ModelFacade.getInstance().getAllPathsOfNetwork("sub").forEach(p -> {
+      builder.append(p.getName() + System.lineSeparator());
+    });
+
+    // BasicModelConverter.writeFile("resources/refPathYen.txt", builder.toString());
+    final String refPath = BasicModelConverter.readFile("resources/refPathYen.txt");
     assertEquals(refPath, builder.toString());
   }
 
