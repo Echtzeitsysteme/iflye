@@ -8,7 +8,7 @@ import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.FatTreeNetworkGenerator;
 import generators.config.FatTreeConfig;
-import model.converter.BasicModelConverter;
+import model.converter.FileUtils;
 
 /**
  * Test class for the ModelFacade that tests the consistency of the path generation. This test class
@@ -85,8 +85,8 @@ public class ModelFacadePathConsistencyTest {
       builder.append(p.getName() + System.lineSeparator());
     });
 
-    // BasicModelConverter.writeFile("resources/refPathDijkstra.txt", builder.toString());
-    final String refPath = BasicModelConverter.readFile("resources/refPathDijkstra.txt");
+    // FileUtils.writeFile("resources/refPathDijkstra.txt", builder.toString());
+    final String refPath = FileUtils.readFile("resources/refPathDijkstra.txt");
     assertEquals(refPath, builder.toString());
   }
 
@@ -102,8 +102,8 @@ public class ModelFacadePathConsistencyTest {
       builder.append(p.getName() + System.lineSeparator());
     });
 
-    // BasicModelConverter.writeFile("resources/refPathYen.txt", builder.toString());
-    final String refPath = BasicModelConverter.readFile("resources/refPathYen.txt");
+    // FileUtils.writeFile("resources/refPathYen.txt", builder.toString());
+    final String refPath = FileUtils.readFile("resources/refPathYen.txt");
     assertEquals(refPath, builder.toString());
   }
 

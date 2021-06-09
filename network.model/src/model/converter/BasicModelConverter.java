@@ -1,13 +1,8 @@
 package model.converter;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -38,7 +33,7 @@ public class BasicModelConverter {
    * @return List of all new network IDs.
    */
   public static List<String> jsonToModel(final String path, final boolean isVirtual) {
-    final JsonObject json = readFileToJson(path);
+    final JsonObject json = FileUtils.readFileToJson(path);
     final JsonArray networks = (JsonArray) json.get("networks");
     final List<String> networkOutputIds = new LinkedList<String>();
 
@@ -115,7 +110,7 @@ public class BasicModelConverter {
     }
 
     json.add("networks", jsonNets);
-    writeFileFromJson(path, json);
+    FileUtils.writeFileFromJson(path, json);
   }
 
   /**
@@ -155,47 +150,6 @@ public class BasicModelConverter {
           link.get("bw").getAsInt(), link.get("source").getAsString(),
           link.get("target").getAsString());
     }
-  }
-
-  /*
-   * Utility methods
-   * 
-   * TODO: These methods should be re-factored/moved to a generic helper class.
-   */
-
-  protected static void writeFileFromJson(final String path, final JsonObject json) {
-    writeFile(path, json.toString());
-  }
-
-  public static void writeFile(final String path, final String string) {
-    FileWriter file = null;
-    try {
-      file = new FileWriter(path);
-      file.write(string);
-    } catch (final IOException e) {
-      e.printStackTrace();
-    } finally {
-      try {
-        file.flush();
-        file.close();
-      } catch (final IOException e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
-  protected static JsonObject readFileToJson(final String path) {
-    return new Gson().fromJson(readFile(path), JsonObject.class);
-  }
-
-  public static String readFile(final String path) {
-    String read = "";
-    try {
-      read = Files.readString(Path.of(path));
-    } catch (final IOException e) {
-      throw new IllegalArgumentException();
-    }
-    return read;
   }
 
 }
