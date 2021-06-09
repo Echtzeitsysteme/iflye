@@ -13,8 +13,8 @@ import model.VirtualNetwork;
 
 /**
  * Adapted evaluation scenario of the dissertation [1]. In comparison to the evaluation section of
- * the dissertation [1], this scenario uses a Google Fat Tree based substrate network. All other
- * parameters are left as in {@link MdvneAdaptedScenario}.
+ * the dissertation [1], this scenario uses a Fat Tree based substrate network. All other parameters
+ * are left as in {@link MdvneAdaptedScenario}.
  * 
  * [1] Tomaszek, S., Modellbasierte Einbettung von virtuellen Netzwerken in Rechenzentren,
  * http://dx.doi.org/10.12921/TUPRINTS-00017362. – DOI 10.12921/TUPRINTS– 00017362, 2020.
@@ -24,7 +24,7 @@ import model.VirtualNetwork;
 public class MdvneFatTreeAdaptedScenario extends AMdvneAdaptedScenario implements IScenario {
 
   /**
-   * Google Fat Tree scaling parameter.
+   * Fat Tree scaling parameter.
    */
   private static int k = 8;
 

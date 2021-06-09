@@ -14,8 +14,8 @@ import generators.config.FatTreeConfig;
 import model.Path;
 
 /**
- * Test class for the ModelFacade that tests all Yen path related creations for Google Fat Tree
- * networks. This test class only tests the number of created paths against a reference function.
+ * Test class for the ModelFacade that tests all Yen path related creations for Fat Tree networks.
+ * This test class only tests the number of created paths against a reference function.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
@@ -68,7 +68,7 @@ public class ModelFacadePathYenFatTreeTest {
   }
 
   @Test
-  public void testGoogleFatTreeAggrPlanePathLength1() {
+  public void testFatTreeAggrPlanePathLength1() {
     setExactPathLength(1);
     final List<Path> allPaths = createPlaneNetworkAndGetPaths();
 
@@ -77,7 +77,7 @@ public class ModelFacadePathYenFatTreeTest {
   }
 
   @Test
-  public void testGoogleFatTreeAggrPlanePathLength2() {
+  public void testFatTreeAggrPlanePathLength2() {
     setExactPathLength(2);
     ModelFacadeConfig.YEN_K = 3;
     final List<Path> allPaths = createPlaneNetworkAndGetPaths();
@@ -87,7 +87,7 @@ public class ModelFacadePathYenFatTreeTest {
   }
 
   @Test
-  public void testGoogleFatTreeAggrPlanePathLength3() {
+  public void testFatTreeAggrPlanePathLength3() {
     setExactPathLength(3);
     ModelFacadeConfig.YEN_K = 3;
     final List<Path> allPaths = createPlaneNetworkAndGetPaths();
@@ -97,7 +97,7 @@ public class ModelFacadePathYenFatTreeTest {
   }
 
   @Test
-  public void testGoogleFatTreeAggrPlanePathLength4() {
+  public void testFatTreeAggrPlanePathLength4() {
     setExactPathLength(4);
     ModelFacadeConfig.YEN_K = 3;
     final List<Path> allPaths = createPlaneNetworkAndGetPaths();
@@ -109,7 +109,7 @@ public class ModelFacadePathYenFatTreeTest {
   }
 
   @Test
-  public void testK4GoogleFatTreePathLength1() {
+  public void testK4FatTreePathLength1() {
     ModelFacadeConfig.YEN_K = 1;
     setExactPathLength(1);
     final List<Path> allPaths = createNetworkAndGetPaths(4);
@@ -121,7 +121,7 @@ public class ModelFacadePathYenFatTreeTest {
   }
 
   @Test
-  public void testK4GoogleFatTreePathLength2() {
+  public void testK4FatTreePathLength2() {
     ModelFacadeConfig.YEN_K = 1;
     setExactPathLength(2);
     final List<Path> allPaths = createNetworkAndGetPaths(4);
@@ -133,7 +133,7 @@ public class ModelFacadePathYenFatTreeTest {
   }
 
   @Test
-  public void testK4GoogleFatTreePathLength3() {
+  public void testK4FatTreePathLength3() {
     ModelFacadeConfig.YEN_K = 10;
     setExactPathLength(3);
     final List<Path> allPaths = createNetworkAndGetPaths(4);
@@ -145,7 +145,7 @@ public class ModelFacadePathYenFatTreeTest {
   }
 
   @Test
-  public void testK4GoogleFatTreePathLength4() {
+  public void testK4FatTreePathLength4() {
     ModelFacadeConfig.YEN_K = 3;
     setExactPathLength(4);
     final List<Path> allPaths = createNetworkAndGetPaths(4);
@@ -157,7 +157,7 @@ public class ModelFacadePathYenFatTreeTest {
   }
 
   @Test
-  public void testK6GoogleFatTreePathLength1() {
+  public void testK6FatTreePathLength1() {
     ModelFacadeConfig.YEN_K = 1;
     setExactPathLength(1);
     final List<Path> allPaths = createNetworkAndGetPaths(6);
@@ -169,7 +169,7 @@ public class ModelFacadePathYenFatTreeTest {
   }
 
   @Test
-  public void testK6GoogleFatTreePathLength2() {
+  public void testK6FatTreePathLength2() {
     ModelFacadeConfig.YEN_K = 1;
     setExactPathLength(2);
     final List<Path> allPaths = createNetworkAndGetPaths(6);
@@ -182,7 +182,7 @@ public class ModelFacadePathYenFatTreeTest {
 
   @Disabled("Long runtime")
   @Test
-  public void testK6GoogleFatTreePathLength3() {
+  public void testK6FatTreePathLength3() {
     ModelFacadeConfig.YEN_K = 4;
     setExactPathLength(3);
     final List<Path> allPaths = createNetworkAndGetPaths(6);
@@ -195,7 +195,7 @@ public class ModelFacadePathYenFatTreeTest {
 
   @Disabled("Long runtime")
   @Test
-  public void testK6GoogleFatTreePathLength4() {
+  public void testK6FatTreePathLength4() {
     ModelFacadeConfig.YEN_K = 3;
     setExactPathLength(4);
     final List<Path> allPaths = createNetworkAndGetPaths(6);
@@ -211,7 +211,7 @@ public class ModelFacadePathYenFatTreeTest {
    */
 
   /**
-   * Creates a Google Fat Tree network for given parameter k.
+   * Creates a Fat Tree network for given parameter k.
    * 
    * @param k Parameter.
    * @return All paths of the created network.
@@ -227,7 +227,7 @@ public class ModelFacadePathYenFatTreeTest {
   }
 
   /**
-   * Creates one plane of a Google Fat Tree network.
+   * Creates one plane of a Fat Tree network.
    * 
    * @return All paths of the plane.
    */
@@ -284,7 +284,7 @@ public class ModelFacadePathYenFatTreeTest {
    * Calculates the number of paths for a given parameter k and the given parameter of number of
    * hops.
    * 
-   * @param k Google Fat Tree parameter.
+   * @param k Fat Tree parameter.
    * @param hops Number of hops.
    * @return Number of possible paths.
    */

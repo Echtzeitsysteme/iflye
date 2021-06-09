@@ -5,8 +5,8 @@ import generators.FatTreeNetworkGenerator;
 import generators.config.FatTreeConfig;
 
 /**
- * Runnable example for the Google fat tree network generator. Creates one substrate network within
- * the model.
+ * Runnable example for the fat tree network generator. Creates one substrate network within the
+ * model.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
@@ -18,7 +18,7 @@ public class FatTreeGeneratorExample {
    * @param args Will be ignored.
    */
   public static void main(final String[] args) {
-    // Google fat tree network generation
+    // Fat tree network generation
     final FatTreeConfig config = new FatTreeConfig(4);
     config.setBwCoreToAggr(100);
     config.setBwAggrToEdge(40);

@@ -19,7 +19,7 @@ import model.Server;
 import model.VirtualNetwork;
 
 /**
- * Test class for the GoogleFatTreeNetworkGenerator.
+ * Test class for the FatTreeNetworkGenerator.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
@@ -148,7 +148,7 @@ public class FatTreeNetworkGeneratorTest extends IGeneratorTest {
    */
 
   /**
-   * Sets a default GoogleFatTree Network with k = 4 up. It's name/ID is "test".
+   * Sets a default FatTree Network with k = 4 up. It's name/ID is "test".
    */
   private void basicKFourSetup() {
     final FatTreeConfig config = new FatTreeConfig(4);
@@ -161,7 +161,7 @@ public class FatTreeNetworkGeneratorTest extends IGeneratorTest {
    * also covers specific switch types (core, aggregation, and edge switches) as well as different
    * link bandwidths (core to aggregation, aggregation to edge, and edge to servers).
    * 
-   * @param k Google Fat Tree build parameter.
+   * @param k Fat Tree build parameter.
    */
   private void checkNumberOfElementsK(final int k) {
     final int uniqueCoreBw = 7;
