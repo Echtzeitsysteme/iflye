@@ -440,7 +440,7 @@ public class ModelFacade {
       ModelFacadeConfig.MAX_PATH_LENGTH = determineMaxPathLengthForTree(networkdId);
     }
 
-    getAllServersOfNetwork(networkdId).parallelStream().forEach((s) -> {
+    getAllServersOfNetwork(networkdId).stream().forEach((s) -> {
       final SubstrateServer srv = (SubstrateServer) s;
       final IPathGen gen;
 
