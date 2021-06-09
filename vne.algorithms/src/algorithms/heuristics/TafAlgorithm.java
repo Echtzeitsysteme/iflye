@@ -178,7 +178,7 @@ public class TafAlgorithm extends AbstractAlgorithm {
    * Public constructor that initializes the instance of this algorithm.
    * 
    * @param sNet Substrate network to embed virtual network in.
-   * @param vNet Virtual network to generate embedding for.
+   * @param vNets Virtual network to generate embedding for.
    */
   public TafAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
     super(sNet, vNets);

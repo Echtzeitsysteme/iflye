@@ -379,7 +379,7 @@ public class ModelFacade {
    * @param bandwidth Bandwidth amount.
    * @param sourceId ID of the source node.
    * @param targetId ID of the target node.
-   * @return
+   * @return True if link creation was successful.
    */
   public boolean addLinkToNetwork(final String id, final String networkId, final int bandwidth,
       final String sourceId, final String targetId) {
@@ -894,7 +894,7 @@ public class ModelFacade {
   }
 
   /**
-   * Checks integer validity (<0).
+   * Checks integer validity (must be greater or equal to 0).
    * 
    * @param ints Possible array of integers to check.
    */
@@ -1651,6 +1651,7 @@ public class ModelFacade {
    * in a "dirty" way. (This method checks every virtual element for valid substrate hosting, BTW.)
    * 
    * @param vNet The virtual network to check floating state for.
+   * @return True if virtual network is in a floating state.
    */
   public boolean checkIfFloating(final VirtualNetwork vNet) {
     for (final Node n : vNet.getNodes()) {

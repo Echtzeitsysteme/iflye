@@ -82,6 +82,9 @@ public abstract class AAlgorithmTest {
 
   /**
    * Initializes the algorithm to test.
+   * 
+   * @param sNet Substrate network.
+   * @param vNets Set of virtual networks.
    */
   public abstract void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets);
 

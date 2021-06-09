@@ -12,7 +12,7 @@ import model.VirtualElement;
 import model.VirtualLink;
 
 /**
- * Cost utility helper for {@link VneIlpPathAlgorithm} and {@link VnePmMdvneAlgorithm}.
+ * Cost utility helper for the VneIlpPathAlgorithm and the VnePmMdvneAlgorithm.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */

@@ -40,7 +40,7 @@ public abstract class AbstractAlgorithm {
    * Initializes a new abstract algorithm with a given substrate and given virtual networks.
    *
    * @param sNet Substrate network to work with.
-   * @param vNet A set of virtual networks to work with.
+   * @param vNets A set of virtual networks to work with.
    */
   public AbstractAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
     if (sNet == null || vNets == null) {

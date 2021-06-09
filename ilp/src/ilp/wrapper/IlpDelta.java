@@ -113,9 +113,8 @@ public class IlpDelta {
   /**
    * Adds a variable with a given name and solution weight.
    * 
-   * @param name
-   * @param solutionWeight
-   * @throws IlpSolverException
+   * @param name Name of the variable to add.
+   * @param solutionWeight Weight of the variable in solution.
    */
   public void addVariable(final String name, final double solutionWeight) {
     addVariables.put(name, new Variable(name, solutionWeight));

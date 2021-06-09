@@ -24,7 +24,7 @@ public class SimpleVne extends AbstractAlgorithm {
    * Initializes a new object of this simple VNE algorithm.
    * 
    * @param sNet Substrate network to work with.
-   * @param vNet Set of virtual networks to work with.
+   * @param vNets Set of virtual networks to work with.
    */
   public SimpleVne(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
     super(sNet, vNets);
