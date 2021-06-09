@@ -190,7 +190,7 @@ public class Dijkstra implements IPathGen {
         Collections.synchronizedMap(new HashMap<SubstrateNode, List<SubstrateLink>>());
     dijkstra(net, start);
 
-    net.getNodes().parallelStream().forEach((n) -> {
+    net.getNodes().stream().forEach((n) -> {
       final SubstrateNode sn = (SubstrateNode) n;
       if (!sn.equals(start)) {
         paths.put(sn, shortestPath(sn));
@@ -214,7 +214,7 @@ public class Dijkstra implements IPathGen {
 
     dijkstra(net, start);
 
-    net.getNodes().parallelStream().forEach((n) -> {
+    net.getNodes().stream().forEach((n) -> {
       final SubstrateNode sn = (SubstrateNode) n;
       if (!sn.equals(start)) {
         final List<List<SubstrateLink>> act = new LinkedList<List<SubstrateLink>>();

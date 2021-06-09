@@ -3,6 +3,7 @@ package facade;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -440,7 +441,7 @@ public class ModelFacade {
       ModelFacadeConfig.MAX_PATH_LENGTH = determineMaxPathLengthForTree(networkdId);
     }
 
-    getAllServersOfNetwork(networkdId).parallelStream().forEach((s) -> {
+    getAllServersOfNetwork(networkdId).stream().forEach((s) -> {
       final SubstrateServer srv = (SubstrateServer) s;
       final IPathGen gen;
 
@@ -452,8 +453,18 @@ public class ModelFacade {
         final Map<SubstrateNode, List<List<SubstrateLink>>> actMap =
             gen.getAllKFastestPaths(snet, srv, ModelFacadeConfig.YEN_K);
 
+        final List<SubstrateNode> sortedKeys = new LinkedList<SubstrateNode>();
+        sortedKeys.addAll(actMap.keySet());
+        sortedKeys.sort(new Comparator<SubstrateNode>() {
+
+          @Override
+          public int compare(final SubstrateNode o1, final SubstrateNode o2) {
+            return o1.getName().compareTo(o2.getName());
+          }
+        });
+
         // Iterate over all "paths" of the current node
-        for (final SubstrateNode n : actMap.keySet()) {
+        for (final SubstrateNode n : sortedKeys) {
           for (final List<SubstrateLink> l : actMap.get(n)) {
             createBidirectionalPathFromLinks(l);
           }
@@ -463,8 +474,17 @@ public class ModelFacade {
 
         final Map<SubstrateNode, List<SubstrateLink>> actMap = gen.getAllFastestPaths(snet, srv);
 
-        // Iterate over all "paths" of the current node
-        for (final SubstrateNode n : actMap.keySet()) {
+        final List<SubstrateNode> sortedKeys = new LinkedList<SubstrateNode>();
+        sortedKeys.addAll(actMap.keySet());
+        sortedKeys.sort(new Comparator<SubstrateNode>() {
+
+          @Override
+          public int compare(final SubstrateNode o1, final SubstrateNode o2) {
+            return o1.getName().compareTo(o2.getName());
+          }
+        });
+
+        for (final SubstrateNode n : sortedKeys) {
           createBidirectionalPathFromLinks(actMap.get(n));
         }
       }
@@ -904,6 +924,15 @@ public class ModelFacade {
    */
   public void persistModel() {
     eMoflonEMFUtil.saveModel(root, PERSISTANT_MODEL_PATH);
+  }
+
+  /**
+   * Saves the model to given file path.
+   * 
+   * @param path File path as string.
+   */
+  public void persistModel(final String path) {
+    eMoflonEMFUtil.saveModel(root, path);
   }
 
   /**
