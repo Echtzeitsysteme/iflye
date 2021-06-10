@@ -38,12 +38,14 @@ public class AlgorithmConfig {
    * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
    */
   public enum Embedding {
-    EMOFLON, MANUAL;
+    EMOFLON, // Emoflon PM as it is
+    EMOFLON_WO_UPDATE, // Emoflon PM without the update functionality
+    MANUAL; // Use ModelFacade methods
   }
 
   /**
    * Embedding mechanism for the {@link VnePmMdvneAlgorithm}
    */
-  public static Embedding emb = Embedding.EMOFLON;
+  public static Embedding emb = Embedding.EMOFLON_WO_UPDATE;
 
 }

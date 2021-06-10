@@ -93,17 +93,18 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
    * 
    * @param virt Virtual element to embed.
    * @param sub Substrate element to embed on.
+   * @param doUpdate True if PM should do updates.
    */
-  public void apply(final VirtualElement virt, final SubstrateElement sub) {
+  public void apply(final VirtualElement virt, final SubstrateElement sub, final boolean doUpdate) {
     final GraphTransformationMatch<?, ?> match = tupleToGtMatch.get(new Tuple(virt, sub));
     if (match instanceof ServerMatchPositiveMatch) {
-      api.serverMatchPositive().apply((ServerMatchPositiveMatch) match);
+      api.serverMatchPositive().apply((ServerMatchPositiveMatch) match, doUpdate);
     } else if (match instanceof SwitchNodeMatchPositiveMatch) {
-      api.switchNodeMatchPositive().apply((SwitchNodeMatchPositiveMatch) match);
+      api.switchNodeMatchPositive().apply((SwitchNodeMatchPositiveMatch) match, doUpdate);
     } else if (match instanceof LinkPathMatchPositiveMatch) {
-      api.linkPathMatchPositive().apply((LinkPathMatchPositiveMatch) match);
+      api.linkPathMatchPositive().apply((LinkPathMatchPositiveMatch) match, doUpdate);
     } else if (match instanceof LinkServerMatchPositiveMatch) {
-      api.linkServerMatchPositive().apply((LinkServerMatchPositiveMatch) match);
+      api.linkServerMatchPositive().apply((LinkServerMatchPositiveMatch) match, doUpdate);
     }
   }
 

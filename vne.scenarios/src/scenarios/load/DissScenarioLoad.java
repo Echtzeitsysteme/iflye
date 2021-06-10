@@ -119,7 +119,8 @@ public class DissScenarioLoad {
    * <ol>
    * <li>#0: Algorithm "pm" or "ilp"</li>
    * <li>#1: Objective "total-path", "total-comm-a" "total-comm-b"</li>
-   * <li>#2: Embedding "emoflon" or "manual" [only relevant for VNE PM algorithm]
+   * <li>#2: Embedding "emoflon", "emoflon_wo_update" or "manual" [only relevant for VNE PM
+   * algorithm]
    * <li>#3: Maximum path length</li>
    * <li>#4: Substrate network file to load, e.g. "resources/two-tier-4-pods/snet.json"</li>
    * <li>#5: Virtual network(s) file to loag, e.g. "resources/two-tier-4-pods/vnets.json"</li>
@@ -152,6 +153,9 @@ public class DissScenarioLoad {
     switch (args[2]) {
       case "emoflon":
         AlgorithmConfig.emb = Embedding.EMOFLON;
+        break;
+      case "emoflon_wo_update":
+        AlgorithmConfig.emb = Embedding.EMOFLON_WO_UPDATE;
         break;
       case "manual":
         AlgorithmConfig.emb = Embedding.MANUAL;
