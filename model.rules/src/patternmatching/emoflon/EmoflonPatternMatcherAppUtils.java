@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import patternmatching.emoflon.apps.EmoflonPatternMatcherHiPEApp;
 import rules.api.RulesAPI;
 
 /**
@@ -35,7 +36,7 @@ public class EmoflonPatternMatcherAppUtils {
    * 
    * @return Path of the created temporary directory.
    */
-  protected static Path createTempDir() {
+  public static Path createTempDir() {
     if (tempDir == null) {
       try {
         tempDir = Files.createTempDirectory("eMoflonTmp");
@@ -51,13 +52,13 @@ public class EmoflonPatternMatcherAppUtils {
    * 
    * @param workspacePath The path of the workspace.
    */
-  static void extractFiles(final String workspacePath) {
+  public static void extractFiles(final String workspacePath) {
     final File target = new File(workspacePath + RulesAPI.patternPath);
     if (target.exists()) {
       return;
     }
     try (final InputStream is =
-        EmoflonPatternMatcherApp.class.getResourceAsStream("/rules/api/ibex-patterns.xmi")) {
+        EmoflonPatternMatcherHiPEApp.class.getResourceAsStream("/rules/api/ibex-patterns.xmi")) {
       target.getParentFile().mkdirs();
       if (is == null) {
         throw new IllegalStateException("ibex-patterns are missing from the resources");

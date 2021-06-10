@@ -1,11 +1,12 @@
-package patternmatching.emoflon;
+package patternmatching.emoflon.apps;
 
 import org.eclipse.emf.common.util.URI;
 import model.Root;
-import rules.api.RulesHiPEApp;
+import patternmatching.emoflon.EmoflonPatternMatcherAppUtils;
+import rules.api.RulesViatraApp;
 
 /**
- * Wrapper class for initializing the Rules HiPe App pattern matcher.
+ * Wrapper class for initializing the Rules Viatra App pattern matcher.
  * 
  * Parts of this implementation are heavily inspired, taken or adapted from the idyve project [1].
  * 
@@ -15,14 +16,14 @@ import rules.api.RulesHiPEApp;
  * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class EmoflonPatternMatcherApp extends RulesHiPEApp {
+public class EmoflonPatternMatcherViatraApp extends RulesViatraApp {
 
   /**
    * Constructor that initializes the model resources for a given root node.
    * 
    * @param root Root node to initialize model for.
    */
-  public EmoflonPatternMatcherApp(final Root root) {
+  public EmoflonPatternMatcherViatraApp(final Root root) {
     super(EmoflonPatternMatcherAppUtils.createTempDir().normalize().toString() + "/");
     EmoflonPatternMatcherAppUtils.extractFiles(workspacePath);
     if (root.eResource() == null) {
