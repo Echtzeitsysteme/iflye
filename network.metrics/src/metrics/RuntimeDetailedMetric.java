@@ -15,9 +15,11 @@ public class RuntimeDetailedMetric extends RuntimeMetric {
 
   private long pmStart = 0;
   private long ilpStart = 0;
+  private long deployStart = 0;
 
   private long pmCumulative = 0;
   private long ilpCumulative = 0;
+  private long deployCumulative = 0;
 
   public void startPmTime() {
     this.pmStart = System.nanoTime();
@@ -37,6 +39,15 @@ public class RuntimeDetailedMetric extends RuntimeMetric {
     ilpStart = 0;
   }
 
+  public void startDeployTime() {
+    this.deployStart = System.nanoTime();
+  }
+
+  public void endDeployTime() {
+    deployCumulative += System.nanoTime() - deployStart;
+    deployStart = 0;
+  }
+
   public double getPmValue() {
     return pmCumulative;
   }
@@ -45,8 +56,12 @@ public class RuntimeDetailedMetric extends RuntimeMetric {
     return ilpCumulative;
   }
 
+  public double getDeployValue() {
+    return deployCumulative;
+  }
+
   public double getRestValue() {
-    return getValue() - pmCumulative - ilpCumulative;
+    return getValue() - pmCumulative - ilpCumulative - deployCumulative;
   }
 
 }

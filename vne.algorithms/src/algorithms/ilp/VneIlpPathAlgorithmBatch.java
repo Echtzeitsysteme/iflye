@@ -95,7 +95,9 @@ public class VneIlpPathAlgorithmBatch extends VneIlpPathAlgorithm {
       System.err.println("Problem was infeasible.");
     }
 
+    GlobalMetricsManager.startDeployTime();
     createEmbeddings();
+    GlobalMetricsManager.endDeployTime();
 
     return isFeasible(ilpResult.getStatistics());
   }

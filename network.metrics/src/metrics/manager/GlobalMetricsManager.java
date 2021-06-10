@@ -76,6 +76,24 @@ public class GlobalMetricsManager {
   }
 
   /**
+   * Sets a start point for the deploy time measurement.
+   */
+  public static void startDeployTime() {
+    if (rt != null) {
+      rt.startDeployTime();
+    }
+  }
+
+  /**
+   * Sets an end point for the deploy time mesaurement and increments the global deploy time value.
+   */
+  public static void endDeployTime() {
+    if (rt != null) {
+      rt.endDeployTime();
+    }
+  }
+
+  /**
    * Stops the global runtime measurement.
    */
   public static void stopRuntime() {
@@ -83,5 +101,7 @@ public class GlobalMetricsManager {
       rt.stop();
     }
   }
+
+
 
 }

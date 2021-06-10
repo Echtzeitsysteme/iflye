@@ -183,6 +183,8 @@ public class DissScenarioLoad {
         + GlobalMetricsManager.getRuntime().getPmValue() / 1_000_000_000 + " seconds");
     System.out.println("=> Elapsed time (ILP): "
         + GlobalMetricsManager.getRuntime().getIlpValue() / 1_000_000_000 + " seconds");
+    System.out.println("=> Elapsed time (deploy): "
+        + GlobalMetricsManager.getRuntime().getDeployValue() / 1_000_000_000 + " seconds");
     System.out.println("=> Elapsed time (rest): "
         + GlobalMetricsManager.getRuntime().getRestValue() / 1_000_000_000 + " seconds");
 

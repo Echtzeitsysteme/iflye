@@ -264,7 +264,9 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
       System.err.println("Problem was infeasible.");
     }
 
+    GlobalMetricsManager.startDeployTime();
     createEmbeddings();
+    GlobalMetricsManager.endDeployTime();
 
     return isFeasible(ilpResult.getStatistics());
   }

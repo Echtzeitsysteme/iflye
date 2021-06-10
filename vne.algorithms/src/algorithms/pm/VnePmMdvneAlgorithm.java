@@ -361,12 +361,14 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     GlobalMetricsManager.endIlpTime();
     Set<VirtualNetwork> rejectedNetworks = null;
     if (solve.isFeasible()) {
+      GlobalMetricsManager.startDeployTime();
       rejectedNetworks = updateMappingsAndEmbed(ilpSolver.getMappings());
     } else {
       throw new IlpSolverException("Problem was infeasible.");
     }
 
     embedNetworks(rejectedNetworks);
+    GlobalMetricsManager.endDeployTime();
     return rejectedNetworks.isEmpty();
   }
 
