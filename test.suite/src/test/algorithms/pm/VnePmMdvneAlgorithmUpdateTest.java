@@ -33,7 +33,9 @@ public class VnePmMdvneAlgorithmUpdateTest extends AAlgorithmTest {
 
   @AfterEach
   public void resetAlgo() {
-    ((VnePmMdvneAlgorithm) algo).dispose();
+    if (algo != null) {
+      ((VnePmMdvneAlgorithm) algo).dispose();
+    }
   }
 
   /*
@@ -58,6 +60,33 @@ public class VnePmMdvneAlgorithmUpdateTest extends AAlgorithmTest {
 
     // All networks must be embedded
     assertEquals(3, sNet.getGuests().size());
+    facade.validateModel();
+  }
+
+  @Test
+  public void testUpdateRecursiveMultiple() {
+    createSubstrateScenario();
+    createSmallVirtualNetworkAndEmbedItOn("vnet1", "sub_srv_0");
+    createSmallVirtualNetworkAndEmbedItOn("vnet2", "sub_srv_0");
+    createSmallVirtualNetworkAndEmbedItOn("vnet3", "sub_srv_1");
+    createSmallVirtualNetworkAndEmbedItOn("vnet4", "sub_srv_1");
+    createSmallVirtualNetworkAndEmbedItOn("vnet5", "sub_srv_2");
+    createSmallVirtualNetworkAndEmbedItOn("vnet6", "sub_srv_2");
+
+    /*
+     * Last virtual network (that must trigger the updates)
+     */
+    final OneTierConfig virtualConfig = new OneTierConfig(2, 1, false, 3, 3, 3, 1);
+    final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
+    virtGen.createNetwork("virt7", true);
+    final SubstrateNetwork sNet =
+        (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
+    final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt7");
+    initAlgo(sNet, Set.of(vNet));
+    assertTrue(algo.execute());
+
+    // All networks must be embedded
+    assertEquals(7, sNet.getGuests().size());
     facade.validateModel();
   }
 
@@ -96,10 +125,7 @@ public class VnePmMdvneAlgorithmUpdateTest extends AAlgorithmTest {
    */
 
   private void createSmallScenario() {
-    // Substrate network = one tier network
-    final OneTierConfig subConfig = new OneTierConfig(3, 1, false, 4, 4, 4, 10);
-    final OneTierNetworkGenerator subGen = new OneTierNetworkGenerator(subConfig);
-    subGen.createNetwork("sub", false);
+    createSubstrateScenario();
 
     /*
      * First virtual network
@@ -134,6 +160,27 @@ public class VnePmMdvneAlgorithmUpdateTest extends AAlgorithmTest {
     // Remove second virtual network to get a scenario in which two substrate servers are half
     // filled with guest networks.
     ModelFacade.getInstance().removeNetworkFromRoot("virt2");
+  }
+
+  private void createSubstrateScenario() {
+    // Substrate network = one tier network
+    final OneTierConfig subConfig = new OneTierConfig(3, 1, false, 4, 4, 4, 10);
+    final OneTierNetworkGenerator subGen = new OneTierNetworkGenerator(subConfig);
+    subGen.createNetwork("sub", false);
+  }
+
+  private void createSmallVirtualNetworkAndEmbedItOn(final String vNetId, final String ssrvId) {
+    // Create network
+    final OneTierConfig virtualConfig = new OneTierConfig(1, 1, false, 1, 1, 1, 1);
+    OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
+    virtGen.createNetwork(vNetId, true);
+
+    // Embed it on
+    facade.embedNetworkToNetwork(facade.getServerById(ssrvId).getNetwork().getName(), vNetId);
+    facade.embedSwitchToNode(ssrvId, vNetId + "_sw_0");
+    facade.embedServerToServer(ssrvId, vNetId + "_srv_0");
+    facade.embedLinkToServer(ssrvId, vNetId + "_ln_0");
+    facade.embedLinkToServer(ssrvId, vNetId + "_ln_1");
   }
 
 }
