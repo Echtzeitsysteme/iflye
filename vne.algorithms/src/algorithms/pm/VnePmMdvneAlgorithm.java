@@ -77,12 +77,18 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     final Map<String, List<String>> sosMappings = new HashMap<String, List<String>>();
 
     /**
-     * Adds a SOS1 mapping to the collection.
+     * Adds a SOS1 mapping to the collection. This method immediately returns, if the algorithm
+     * configuration option for SOS1 constraints is disabled.
      * 
      * @param v Virtual element ID.
      * @param vs Virtual to substrate element ID mapping.
      */
     public void addSosMappings(final String v, final String vs) {
+      // If the algorithm configuration for the SOS constraint feature is disabled, return.
+      if (!AlgorithmConfig.pmSosEnabled) {
+        return;
+      }
+
       if (!sosMappings.containsKey(v)) {
         sosMappings.put(v, new LinkedList<String>());
       }
