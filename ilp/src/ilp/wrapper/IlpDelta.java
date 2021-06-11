@@ -10,6 +10,7 @@ import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import ilp.wrapper.IncrementalIlpSolver.Constraint;
+import ilp.wrapper.IncrementalIlpSolver.SosConstraint;
 import ilp.wrapper.IncrementalIlpSolver.Variable;
 
 /**
@@ -31,6 +32,7 @@ public class IlpDelta {
   final SortedMap<String, Variable> addVariables = new TreeMap<>();
   final SortedMap<String, Constraint> addEqConstraints = new TreeMap<>();
   final SortedMap<String, Constraint> addLeConstraints = new TreeMap<>();
+  final SortedMap<String, SosConstraint> addSosConstraints = new TreeMap<>();
 
   /*
    * Changed variable and constraint parameters.
@@ -45,6 +47,19 @@ public class IlpDelta {
    */
   final List<String> removeVariables = new LinkedList<>();
   final List<String> removeConstraints = new LinkedList<>();
+
+  /**
+   * Adds an SOS1 constraint with given name. Uses all variables corresponding to the given variable
+   * IDs for the constraint.
+   * 
+   * @param name Name of the new constraint.
+   * @param varIds List of variable IDs for the variables to use in the new constraint.
+   */
+  public void addSosConstraint(final String name, final List<String> varIds) {
+    final List<Variable> vars = new LinkedList<Variable>();
+    varIds.forEach(id -> vars.add(addVariables.get(id)));
+    addSosConstraints.put(name, new SosConstraint(name, vars));
+  }
 
   /**
    * Adds a simple equals constraint.
@@ -159,6 +174,10 @@ public class IlpDelta {
     if (!addLeConstraints.isEmpty()) {
       solver.addLessOrEqualsConstraints(
           addLeConstraints.values().toArray(new Constraint[addLeConstraints.size()]));
+    }
+    if (!addSosConstraints.isEmpty()) {
+      solver.addSosConstraints(
+          addSosConstraints.values().toArray(new SosConstraint[addSosConstraints.size()]));
     }
 
     if (!changeVariableWeights.isEmpty()) {

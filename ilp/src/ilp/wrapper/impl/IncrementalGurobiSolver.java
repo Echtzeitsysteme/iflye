@@ -206,6 +206,34 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
   }
 
   @Override
+  public void addSosConstraint(final SosConstraint constraint) {
+    // All weights has to be 1
+    final double[] weights = new double[constraint.getVars().size()];
+    for (int i = 0; i < weights.length; i++) {
+      weights[i] = 1;
+    }
+
+    // Get all actual variable objects
+    final GRBVar[] vars = new GRBVar[constraint.getVars().size()];
+    for (int i = 0; i < vars.length; i++) {
+      vars[i] = getVariable(constraint.getVars().get(i).getName());
+    }
+
+    try {
+      model.addSOS(vars, weights, GRB.SOS_TYPE1);
+    } catch (final GRBException e) {
+      throw new IlpSolverException(e);
+    }
+  }
+
+  @Override
+  public void addSosConstraints(final SosConstraint[] constraints) {
+    for (final SosConstraint c : constraints) {
+      addSosConstraint(c);
+    }
+  }
+
+  @Override
   public void addEqualsConstraint(final String name, final double right) throws IlpSolverException {
     addConstraint(name, right, new double[0], new String[0], GRB.EQUAL);
   }

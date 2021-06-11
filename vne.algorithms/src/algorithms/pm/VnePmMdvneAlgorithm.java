@@ -3,6 +3,8 @@ package algorithms.pm;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -67,6 +69,27 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     final IlpDelta delta = new IlpDelta();
 
     /**
+     * Mappings for the SOS1 constraints. Each virtual element IDs is a key and the corresponding
+     * value is a list of virtual to substrate element ID mappings.
+     * 
+     * Example: vlink1 -> {vlink1spath1, vlink1spath2, vlink2sserver3, vlink2sserver7}
+     */
+    final Map<String, List<String>> sosMappings = new HashMap<String, List<String>>();
+
+    /**
+     * Adds a SOS1 mapping to the collection.
+     * 
+     * @param v Virtual element ID.
+     * @param vs Virtual to substrate element ID mapping.
+     */
+    public void addSosMappings(final String v, final String vs) {
+      if (!sosMappings.containsKey(v)) {
+        sosMappings.put(v, new LinkedList<String>());
+      }
+      sosMappings.get(v).add(vs);
+    }
+
+    /**
      * Adds a new match from a virtual to a substrate network.
      * 
      * @param match Match to get information from.
@@ -105,6 +128,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       delta.addLessOrEqualsConstraint("req" + varName, 0, new int[] {2, -1, -1},
           new String[] {varName, sourceVarName, targetVarName});
       variablesToMatch.put(varName, match);
+
+      // SOS match
+      addSosMappings(match.getVirtual().getName(), varName);
     }
 
     /**
@@ -140,6 +166,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       forEachLink(sPath, l -> delta.setVariableWeightForConstraint("sl" + l.getName(),
           vLink.getBandwidth(), varName));
       variablesToMatch.put(varName, match);
+
+      // SOS match
+      addSosMappings(match.getVirtual().getName(), varName);
     }
 
     /**
@@ -161,6 +190,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       delta.setVariableWeightForConstraint("sto" + match.getSubstrate().getName(),
           vServer.getStorage(), varName);
       variablesToMatch.put(varName, match);
+
+      // SOS match
+      addSosMappings(match.getVirtual().getName(), varName);
     }
 
     /**
@@ -174,6 +206,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
           getNodeCost((VirtualNode) match.getVirtual(), (SubstrateNode) match.getSubstrate()));
       delta.setVariableWeightForConstraint("vw" + match.getVirtual().getName(), 1, varName);
       variablesToMatch.put(varName, match);
+
+      // SOS match
+      addSosMappings(match.getVirtual().getName(), varName);
     }
 
     /**
@@ -233,6 +268,11 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
      * Applies the delta to the ILP solver object.
      */
     public void apply() {
+      // Before applying the ILP delta, add all SOS1 constraint mappings to it. This can't be done
+      // beforehand, because the individual mappings may be extended while adding more matches.
+      for (final String key : sosMappings.keySet()) {
+        delta.addSosConstraint(key, sosMappings.get(key));
+      }
       delta.apply(ilpSolver);
     }
 
@@ -341,17 +381,17 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
         .forEach(gen::addServerMatch);
     delta.getNewSwitchMatchPositives().stream()
         .filter(m -> vNets.contains(((VirtualSwitch) m.getVirtual()).getNetwork()))
-        .forEach(gen::addSwitchMatch);;
+        .forEach(gen::addSwitchMatch);
 
     // Important: Due to the fact that both link constraint generating methods check the existence
     // of the node mapping variables, the link constraints have to be added *after* all node
     // constraints.
     delta.getNewLinkPathMatchPositives().stream()
         .filter(m -> vNets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
-        .forEach(gen::addLinkPathMatch);;
+        .forEach(gen::addLinkPathMatch);
     delta.getNewLinkServerMatchPositives().stream()
         .filter(m -> vNets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
-        .forEach(gen::addLinkServerMatch);;
+        .forEach(gen::addLinkServerMatch);
 
     // apply delta in ILP generator
     gen.apply();
