@@ -305,6 +305,12 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
   private final Map<String, Match> variablesToMatch = new HashMap<>();
 
   /**
+   * Set of ignored virtual networks. Ignored virtual networks are requests, that can not fit on the
+   * substrate network at all and are therefore ignored (as they are not given to the ILP solver).
+   */
+  private final Set<VirtualNetwork> ignoredVnets = new HashSet<VirtualNetwork>();
+
+  /**
    * Constructor that gets the substrate as well as the virtual network.
    * 
    * @param sNet Substrate network to work with.
@@ -362,6 +368,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
   public boolean execute() {
     init();
 
+    // Check overall embedding possibility
+    checkOverallResources();
+
     // Repair model consistency: Substrate network
     repairSubstrateNetwork();
 
@@ -383,9 +392,11 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 
     // add new matches
     delta.getNewServerMatchPositives().stream()
+        .filter(m -> !ignoredVnets.contains(((VirtualServer) m.getVirtual()).getNetwork()))
         .filter(m -> vNets.contains(((VirtualServer) m.getVirtual()).getNetwork()))
         .forEach(gen::addServerMatch);
     delta.getNewSwitchMatchPositives().stream()
+        .filter(m -> !ignoredVnets.contains(((VirtualSwitch) m.getVirtual()).getNetwork()))
         .filter(m -> vNets.contains(((VirtualSwitch) m.getVirtual()).getNetwork()))
         .forEach(gen::addSwitchMatch);
 
@@ -393,9 +404,11 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     // of the node mapping variables, the link constraints have to be added *after* all node
     // constraints.
     delta.getNewLinkPathMatchPositives().stream()
+        .filter(m -> !ignoredVnets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
         .filter(m -> vNets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
         .forEach(gen::addLinkPathMatch);
     delta.getNewLinkServerMatchPositives().stream()
+        .filter(m -> !ignoredVnets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
         .filter(m -> vNets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
         .forEach(gen::addLinkServerMatch);
 
@@ -413,9 +426,52 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
       throw new IlpSolverException("Problem was infeasible.");
     }
 
+    rejectedNetworks.addAll(ignoredVnets);
     embedNetworks(rejectedNetworks);
     GlobalMetricsManager.endDeployTime();
     return rejectedNetworks.isEmpty();
+  }
+
+  /**
+   * Checks the overall resource availability for all nodes of all virtual networks and all nodes of
+   * the substrate network. If a network can not be placed on the substrate network at all, the
+   * method adds it to the set of ignored networks.
+   */
+  private void checkOverallResources() {
+    // Calculate total residual resources for substrate servers
+    int subTotalResidualCpu = 0;
+    int subTotalResidualMem = 0;
+    int subTotalResidualSto = 0;
+
+    for (final Node n : sNet.getNodes()) {
+      if (n instanceof SubstrateServer) {
+        final SubstrateServer ssrv = (SubstrateServer) n;
+        subTotalResidualCpu += ssrv.getResidualCpu();
+        subTotalResidualMem += ssrv.getResidualMemory();
+        subTotalResidualSto += ssrv.getResidualStorage();
+      }
+    }
+
+    for (final VirtualNetwork vNet : vNets) {
+      // Calculate needed resources for current virtual network candidate
+      int virtTotalCpu = 0;
+      int virtTotalMem = 0;
+      int virtTotalSto = 0;
+
+      for (final Node n : vNet.getNodes()) {
+        if (n instanceof VirtualServer) {
+          final VirtualServer vsrv = (VirtualServer) n;
+          virtTotalCpu += vsrv.getCpu();
+          virtTotalMem += vsrv.getMemory();
+          virtTotalSto += vsrv.getStorage();
+        }
+      }
+
+      if (!(subTotalResidualCpu >= virtTotalCpu && subTotalResidualMem >= virtTotalMem
+          && subTotalResidualSto >= virtTotalSto)) {
+        ignoredVnets.add(vNet);
+      }
+    }
   }
 
   /*
@@ -511,6 +567,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     final Iterator<VirtualNetwork> it = vNets.iterator();
     while (it.hasNext()) {
       final VirtualNetwork vNet = it.next();
+      if (ignoredVnets.contains(vNet)) {
+        continue;
+      }
 
       for (final Node n : vNet.getNodes()) {
         if (n instanceof VirtualServer) {
