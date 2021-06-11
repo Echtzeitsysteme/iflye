@@ -64,8 +64,8 @@ public class VnePmMdvneAlgorithmRepairModelServerTest extends AAlgorithmTest {
     final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
     // Embed first virtual network with another algorithm
-    AbstractAlgorithm algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
-    assertTrue(algo.execute());
+    final AbstractAlgorithm algoLoc = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
+    assertTrue(algoLoc.execute());
 
     // Remove a used substrate server ungracefully
     final VirtualServer vsrvToRemoveHost = (VirtualServer) facade.getServerById("virt_srv_1");
@@ -78,7 +78,7 @@ public class VnePmMdvneAlgorithmRepairModelServerTest extends AAlgorithmTest {
     final VirtualNetwork vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
 
     // Embed the second virtual network
-    algo = VnePmMdvneAlgorithm.prepare(sNet, Set.of(vNet2));
+    initAlgo(sNet, Set.of(vNet2));
     assertTrue(algo.execute());
     assertNotNull(((VirtualNetwork) facade.getNetworkById("virt")).getHost());
     assertNotNull(((VirtualNetwork) facade.getNetworkById("virt2")).getHost());
@@ -95,8 +95,8 @@ public class VnePmMdvneAlgorithmRepairModelServerTest extends AAlgorithmTest {
     final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
     // Embed first virtual network with another algorithm
-    AbstractAlgorithm algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
-    assertTrue(algo.execute());
+    final AbstractAlgorithm algoLoc = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
+    assertTrue(algoLoc.execute());
 
     // Remove a used substrate server ungracefully
     final VirtualServer vsrvToRemoveHost1 = (VirtualServer) facade.getServerById("virt_srv_0");
@@ -111,7 +111,7 @@ public class VnePmMdvneAlgorithmRepairModelServerTest extends AAlgorithmTest {
     final VirtualNetwork vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
 
     // Embed the second virtual network
-    algo = VnePmMdvneAlgorithm.prepare(sNet, Set.of(vNet2));
+    initAlgo(sNet, Set.of(vNet2));
     assertTrue(algo.execute());
     assertNotNull(((VirtualNetwork) facade.getNetworkById("virt")).getHost());
     assertNotNull(((VirtualNetwork) facade.getNetworkById("virt2")).getHost());
@@ -129,8 +129,8 @@ public class VnePmMdvneAlgorithmRepairModelServerTest extends AAlgorithmTest {
     final Set<VirtualNetwork> vNets = new HashSet<VirtualNetwork>();
     final VirtualNetwork vNet = ((VirtualNetwork) facade.getNetworkById("virt"));
     vNets.add(vNet);
-    AbstractAlgorithm algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
-    assertTrue(algo.execute());
+    AbstractAlgorithm algoLoc = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
+    assertTrue(algoLoc.execute());
 
     // Create more virtual networks and embed them one by one (because it is faster)
     for (int i = 1; i <= 5; i++) {
@@ -139,8 +139,8 @@ public class VnePmMdvneAlgorithmRepairModelServerTest extends AAlgorithmTest {
       virtGen.createNetwork("virt" + i, true);
       final VirtualNetwork vNetI = (VirtualNetwork) facade.getNetworkById("virt" + i);
       vNets.add(vNetI);
-      algo = new VneIlpPathAlgorithm(sNet, Set.of(vNetI));
-      assertTrue(algo.execute());
+      algoLoc = new VneIlpPathAlgorithm(sNet, Set.of(vNetI));
+      assertTrue(algoLoc.execute());
     }
 
     // Embed first virtual network with another algorithm
@@ -160,7 +160,7 @@ public class VnePmMdvneAlgorithmRepairModelServerTest extends AAlgorithmTest {
     final VirtualNetwork vNet99 = (VirtualNetwork) facade.getNetworkById("virt99");
 
     // Embed the second virtual network
-    algo = VnePmMdvneAlgorithm.prepare(sNet, Set.of(vNet99));
+    initAlgo(sNet, Set.of(vNet99));
     assertTrue(algo.execute());
     assertNotNull(((VirtualNetwork) facade.getNetworkById("virt99")).getHost());
     vNets.forEach(v -> {
@@ -179,8 +179,8 @@ public class VnePmMdvneAlgorithmRepairModelServerTest extends AAlgorithmTest {
     final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
     // Embed first virtual network with another algorithm
-    AbstractAlgorithm algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
-    assertTrue(algo.execute());
+    final AbstractAlgorithm algoLoc = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
+    assertTrue(algoLoc.execute());
 
     // Remove a used substrate server ungracefully
     final VirtualServer vsrvToRemoveHost = (VirtualServer) facade.getServerById("virt_srv_0");
@@ -194,7 +194,7 @@ public class VnePmMdvneAlgorithmRepairModelServerTest extends AAlgorithmTest {
     final VirtualNetwork vNet3 = (VirtualNetwork) facade.getNetworkById("virt3");
 
     // Embed the second virtual network
-    algo = VnePmMdvneAlgorithm.prepare(sNet, Set.of(vNet3));
+    initAlgo(sNet, Set.of(vNet3));
     assertTrue(algo.execute());
     assertNotNull(((VirtualNetwork) facade.getNetworkById("virt")).getHost());
     assertNull(((VirtualNetwork) facade.getNetworkById("virt2")).getHost());
