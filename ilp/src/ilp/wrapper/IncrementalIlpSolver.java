@@ -86,7 +86,36 @@ public interface IncrementalIlpSolver {
   }
 
   /**
+   * SOS1 constraint implementation.
+   * 
+   * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+   */
+  public static class SosConstraint {
+    private final String name;
+    private final List<Variable> vars;
+
+    public SosConstraint(final String name, final List<Variable> vars) {
+      this.name = name;
+      this.vars = vars;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public List<Variable> getVars() {
+      return vars;
+    }
+
+  }
+
+  /**
    * ILP variable implementation.
+   * 
+   * Parts of this implementation are heavily inspired, taken or adapted from the idyve project [1].
+   * 
+   * [1] Tomaszek, S., Modellbasierte Einbettung von virtuellen Netzwerken in Rechenzentren,
+   * http://dx.doi.org/10.12921/TUPRINTS-00017362. – DOI 10.12921/TUPRINTS– 00017362, 2020.
    * 
    * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
    * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
@@ -114,6 +143,10 @@ public interface IncrementalIlpSolver {
     }
 
   }
+
+  void addSosConstraint(final SosConstraint constraint);
+
+  void addSosConstraints(final SosConstraint[] constraints);
 
   void addEqualsConstraint(final String name, final double right) throws IlpSolverException;
 

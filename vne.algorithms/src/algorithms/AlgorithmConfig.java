@@ -48,4 +48,10 @@ public class AlgorithmConfig {
    */
   public static Embedding emb = Embedding.EMOFLON_WO_UPDATE;
 
+  /**
+   * If true, the {@link VnePmMdvneAlgorithm} will create additional SOS1 constraints for each
+   * virtual element to map. This may give the ILP solver a head-start to solve the problem.
+   */
+  public static boolean pmSosEnabled = true;
+
 }
