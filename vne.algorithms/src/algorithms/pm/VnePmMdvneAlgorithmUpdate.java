@@ -31,6 +31,12 @@ import patternmatching.emoflon.EmoflonPatternMatcherFactory;
 public class VnePmMdvneAlgorithmUpdate extends VnePmMdvneAlgorithm {
 
   /**
+   * Set of virtual networks that are rejected despite they could not have been embedded through the
+   * update mechanism.
+   */
+  final Set<VirtualNetwork> rejectedDespiteUpdate = new HashSet<VirtualNetwork>();
+
+  /**
    * Constructor that gets the substrate as well as the virtual network.
    * 
    * @param sNet Substrate network to work with.
@@ -127,6 +133,7 @@ public class VnePmMdvneAlgorithmUpdate extends VnePmMdvneAlgorithm {
     if (solve.isFeasible()) {
       GlobalMetricsManager.startDeployTime();
       rejectedNetworks = updateMappingsAndEmbed(ilpSolver.getMappings());
+      rejectedDespiteUpdate.addAll(rejectedNetworks);
     } else {
       throw new IlpSolverException("Problem was infeasible.");
     }
@@ -136,10 +143,10 @@ public class VnePmMdvneAlgorithmUpdate extends VnePmMdvneAlgorithm {
       rejectedNetworks = recursiveUpdateEmbedding();
     }
 
-    rejectedNetworks.addAll(ignoredVnets);
-    embedNetworks(rejectedNetworks);
+    rejectedDespiteUpdate.addAll(ignoredVnets);
+    embedNetworks(rejectedDespiteUpdate);
     GlobalMetricsManager.endDeployTime();
-    return rejectedNetworks.isEmpty();
+    return rejectedDespiteUpdate.isEmpty();
   }
 
   /**
@@ -205,6 +212,8 @@ public class VnePmMdvneAlgorithmUpdate extends VnePmMdvneAlgorithm {
     } else {
       throw new IlpSolverException("Problem was infeasible.");
     }
+
+    rejectedDespiteUpdate.retainAll(rejectedNetworks);
 
     if (!rejectedNetworks.isEmpty()) {
       rejectedNetworks = recursiveUpdateEmbedding();
