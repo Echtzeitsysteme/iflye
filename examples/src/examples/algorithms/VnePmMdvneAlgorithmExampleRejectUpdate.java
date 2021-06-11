@@ -2,7 +2,7 @@ package examples.algorithms;
 
 import java.util.Set;
 import algorithms.AbstractAlgorithm;
-import algorithms.pm.VnePmMdvneAlgorithm;
+import algorithms.pm.VnePmMdvneAlgorithmUpdate;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.OneTierNetworkGenerator;
@@ -37,20 +37,51 @@ public class VnePmMdvneAlgorithmExampleRejectUpdate {
     final OneTierNetworkGenerator subGen = new OneTierNetworkGenerator(subConfig);
     subGen.createNetwork("sub", false);
 
-    // Virtual network = one tier network
+    /*
+     * First virtual network
+     */
     final OneTierConfig virtualConfig = new OneTierConfig(2, 1, false, 1, 1, 1, 1);
-    final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
+    OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
     virtGen.createNetwork("virt", true);
-    virtGen.createNetwork("virt2", true);
 
     SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
     VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
-    AbstractAlgorithm algo = VnePmMdvneAlgorithm.prepare(sNet, Set.of(vNet));
+    AbstractAlgorithm algo = VnePmMdvneAlgorithmUpdate.prepare(sNet, Set.of(vNet));
     algo.execute();
 
+    /*
+     * Second virtual network
+     */
+    virtGen.createNetwork("virt2", true);
     sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
     vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt2");
-    algo = VnePmMdvneAlgorithm.prepare(sNet, Set.of(vNet));
+    algo = VnePmMdvneAlgorithmUpdate.prepare(sNet, Set.of(vNet));
+    algo.execute();
+
+    /*
+     * Third virtual network
+     */
+    virtGen.createNetwork("virt3", true);
+    sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
+    vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt3");
+    algo = VnePmMdvneAlgorithmUpdate.prepare(sNet, Set.of(vNet));
+    algo.execute();
+
+    // Remove second virtual network to get a scenario in which two substrate servers are half
+    // filled with guest networks.
+    ModelFacade.getInstance().removeNetworkFromRoot("virt2");
+
+    /*
+     * Fourth virtual network
+     */
+    virtualConfig.setCpuPerServer(3);
+    virtualConfig.setMemoryPerServer(3);
+    virtualConfig.setStoragePerServer(3);
+    virtGen = new OneTierNetworkGenerator(virtualConfig);
+    virtGen.createNetwork("virt4", true);
+    sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
+    vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt4");
+    algo = VnePmMdvneAlgorithmUpdate.prepare(sNet, Set.of(vNet));
     algo.execute();
 
     GlobalMetricsManager.stopRuntime();
