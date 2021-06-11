@@ -208,7 +208,7 @@ public class VnePmMdvneAlgorithmTotalCommunicationCostBTest extends AAlgorithmMu
       targetName = sLn4.getName();
     }
 
-    assertEquals(refHost1, sourceName);
+    assertEquals(refSwHost, sourceName);
     assertEquals(refHost2, targetName);
   }
 
