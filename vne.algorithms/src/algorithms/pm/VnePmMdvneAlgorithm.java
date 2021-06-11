@@ -439,9 +439,11 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
    */
   private void checkOverallResources() {
     // Calculate total residual resources for substrate servers
-    int subTotalResidualCpu = 0;
-    int subTotalResidualMem = 0;
-    int subTotalResidualSto = 0;
+    // Datatype long is needed, because of the possible large values of substrate server residual
+    // resources (e.g. from the diss scenario).
+    long subTotalResidualCpu = 0;
+    long subTotalResidualMem = 0;
+    long subTotalResidualSto = 0;
 
     for (final Node n : sNet.getNodes()) {
       if (n instanceof SubstrateServer) {
@@ -454,9 +456,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 
     for (final VirtualNetwork vNet : vNets) {
       // Calculate needed resources for current virtual network candidate
-      int virtTotalCpu = 0;
-      int virtTotalMem = 0;
-      int virtTotalSto = 0;
+      long virtTotalCpu = 0;
+      long virtTotalMem = 0;
+      long virtTotalSto = 0;
 
       for (final Node n : vNet.getNodes()) {
         if (n instanceof VirtualServer) {
