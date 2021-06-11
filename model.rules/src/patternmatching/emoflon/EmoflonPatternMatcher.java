@@ -11,8 +11,13 @@ import model.Root;
 import model.SubstrateElement;
 import model.VirtualElement;
 import patternmatching.IncrementalPatternMatcher;
+import patternmatching.PatternMatchingConfig;
 import patternmatching.PatternMatchingDelta;
+import patternmatching.emoflon.apps.EmoflonPatternMatcherDemoclesApp;
+import patternmatching.emoflon.apps.EmoflonPatternMatcherHiPEApp;
+import patternmatching.emoflon.apps.EmoflonPatternMatcherViatraApp;
 import rules.api.RulesAPI;
+import rules.api.RulesApp;
 import rules.api.matches.LinkPathMatchPositiveMatch;
 import rules.api.matches.LinkServerMatchPositiveMatch;
 import rules.api.matches.ServerMatchPositiveMatch;
@@ -33,7 +38,7 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
   /**
    * Wrapper that initializes the API object.
    */
-  private final EmoflonPatternMatcherApp emoflonPatternMatcherApp;
+  private final RulesApp emoflonPatternMatcherApp;
 
   /**
    * Current state of the delta. Must be updated in every iteration.
@@ -58,7 +63,20 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
    * @param root Root node to work with.
    */
   public EmoflonPatternMatcher(final Root root) {
-    emoflonPatternMatcherApp = new EmoflonPatternMatcherApp(root);
+    switch (PatternMatchingConfig.pm) {
+      case HIPE:
+        emoflonPatternMatcherApp = new EmoflonPatternMatcherHiPEApp(root);
+        break;
+      case DEMOCLES:
+        emoflonPatternMatcherApp = new EmoflonPatternMatcherDemoclesApp(root);
+        break;
+      case VIATRA:
+        emoflonPatternMatcherApp = new EmoflonPatternMatcherViatraApp(root);
+        break;
+      default:
+        throw new UnsupportedOperationException();
+    }
+
     api = emoflonPatternMatcherApp.initAPI();
 
     /*

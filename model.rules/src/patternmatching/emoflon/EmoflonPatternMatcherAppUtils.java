@@ -5,13 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.eclipse.emf.common.util.URI;
-import model.Root;
+import patternmatching.emoflon.apps.EmoflonPatternMatcherHiPEApp;
 import rules.api.RulesAPI;
-import rules.api.RulesHiPEApp;
 
 /**
- * Wrapper class for initializing the Rules HiPe App pattern matcher.
+ * Utility class for the Rules Apps.
  * 
  * Parts of this implementation are heavily inspired, taken or adapted from the idyve project [1].
  * 
@@ -21,7 +19,13 @@ import rules.api.RulesHiPEApp;
  * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class EmoflonPatternMatcherApp extends RulesHiPEApp {
+public class EmoflonPatternMatcherAppUtils {
+
+  /**
+   * Private constructor forbids instantiation of objects.
+   */
+  private EmoflonPatternMatcherAppUtils() {}
+
   /**
    * Temporary directory (path).
    */
@@ -32,7 +36,7 @@ public class EmoflonPatternMatcherApp extends RulesHiPEApp {
    * 
    * @return Path of the created temporary directory.
    */
-  private static Path createTempDir() {
+  public static Path createTempDir() {
     if (tempDir == null) {
       try {
         tempDir = Files.createTempDirectory("eMoflonTmp");
@@ -44,31 +48,17 @@ public class EmoflonPatternMatcherApp extends RulesHiPEApp {
   }
 
   /**
-   * Constructor that initializes the model resources for a given root node.
-   * 
-   * @param root Root node to initialize model for.
-   */
-  public EmoflonPatternMatcherApp(final Root root) {
-    super(createTempDir().normalize().toString() + "/");
-    extractFiles();
-    if (root.eResource() == null) {
-      createModel(URI.createURI("model.xmi"));
-      resourceSet.getResources().get(0).getContents().add(root);
-    } else {
-      resourceSet = root.eResource().getResourceSet();
-    }
-  }
-
-  /**
    * Extracts the specified 'ibex-patterns.xmi' file if not already present.
+   * 
+   * @param workspacePath The path of the workspace.
    */
-  private void extractFiles() {
+  public static void extractFiles(final String workspacePath) {
     final File target = new File(workspacePath + RulesAPI.patternPath);
     if (target.exists()) {
       return;
     }
     try (final InputStream is =
-        EmoflonPatternMatcherApp.class.getResourceAsStream("/rules/api/ibex-patterns.xmi")) {
+        EmoflonPatternMatcherHiPEApp.class.getResourceAsStream("/rules/api/ibex-patterns.xmi")) {
       target.getParentFile().mkdirs();
       if (is == null) {
         throw new IllegalStateException("ibex-patterns are missing from the resources");
