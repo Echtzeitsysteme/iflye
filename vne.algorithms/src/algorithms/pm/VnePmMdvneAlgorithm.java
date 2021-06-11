@@ -385,6 +385,41 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     final PatternMatchingDelta delta = patternMatcher.run();
     GlobalMetricsManager.endPmTime();
 
+    delta2Ilp(delta);
+    final Set<VirtualNetwork> rejectedNetworks = solveIlp();
+
+    rejectedNetworks.addAll(ignoredVnets);
+    embedNetworks(rejectedNetworks);
+    GlobalMetricsManager.endDeployTime();
+    return rejectedNetworks.isEmpty();
+  }
+
+  /**
+   * Solves the created ILP problem, embeds all accepted elements and returns a set of virtual
+   * networks that could not be embedded.
+   * 
+   * @return Set of virtual networks that could not be embedded.
+   */
+  protected Set<VirtualNetwork> solveIlp() {
+    GlobalMetricsManager.startIlpTime();
+    final Statistics solve = ilpSolver.solve();
+    GlobalMetricsManager.endIlpTime();
+    Set<VirtualNetwork> rejectedNetworks = new HashSet<VirtualNetwork>();
+    if (solve.isFeasible()) {
+      GlobalMetricsManager.startDeployTime();
+      rejectedNetworks = updateMappingsAndEmbed(ilpSolver.getMappings());
+    } else {
+      throw new IlpSolverException("Problem was infeasible.");
+    }
+    return rejectedNetworks;
+  }
+
+  /**
+   * Translates the given pattern matching delta to an ILP formulation.
+   * 
+   * @param delta Pattern matching delta to translate into an ILP formulation.
+   */
+  protected void delta2Ilp(final PatternMatchingDelta delta) {
     final IlpDeltaGenerator gen = new IlpDeltaGenerator();
 
     // add new elements
@@ -414,22 +449,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 
     // apply delta in ILP generator
     gen.apply();
-
-    GlobalMetricsManager.startIlpTime();
-    final Statistics solve = ilpSolver.solve();
-    GlobalMetricsManager.endIlpTime();
-    Set<VirtualNetwork> rejectedNetworks = null;
-    if (solve.isFeasible()) {
-      GlobalMetricsManager.startDeployTime();
-      rejectedNetworks = updateMappingsAndEmbed(ilpSolver.getMappings());
-    } else {
-      throw new IlpSolverException("Problem was infeasible.");
-    }
-
-    rejectedNetworks.addAll(ignoredVnets);
-    embedNetworks(rejectedNetworks);
-    GlobalMetricsManager.endDeployTime();
-    return rejectedNetworks.isEmpty();
   }
 
   /**

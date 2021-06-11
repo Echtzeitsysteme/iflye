@@ -3,15 +3,11 @@ package algorithms.pm;
 import java.util.HashSet;
 import java.util.Set;
 import facade.ModelFacade;
-import ilp.wrapper.IlpSolverException;
-import ilp.wrapper.Statistics;
 import metrics.manager.GlobalMetricsManager;
 import model.Node;
 import model.SubstrateNetwork;
-import model.VirtualLink;
 import model.VirtualNetwork;
 import model.VirtualServer;
-import model.VirtualSwitch;
 import patternmatching.PatternMatchingDelta;
 import patternmatching.emoflon.EmoflonPatternMatcherFactory;
 
@@ -96,47 +92,9 @@ public class VnePmMdvneAlgorithmUpdate extends VnePmMdvneAlgorithm {
     final PatternMatchingDelta delta = patternMatcher.run();
     GlobalMetricsManager.endPmTime();
 
-    final IlpDeltaGenerator gen = new IlpDeltaGenerator();
-
-    // add new elements
-    addElementsToSolver(gen);
-
-    // add new matches
-    delta.getNewServerMatchPositives().stream()
-        .filter(m -> !ignoredVnets.contains(((VirtualServer) m.getVirtual()).getNetwork()))
-        .filter(m -> vNets.contains(((VirtualServer) m.getVirtual()).getNetwork()))
-        .forEach(gen::addServerMatch);
-    delta.getNewSwitchMatchPositives().stream()
-        .filter(m -> !ignoredVnets.contains(((VirtualSwitch) m.getVirtual()).getNetwork()))
-        .filter(m -> vNets.contains(((VirtualSwitch) m.getVirtual()).getNetwork()))
-        .forEach(gen::addSwitchMatch);
-
-    // Important: Due to the fact that both link constraint generating methods check the existence
-    // of the node mapping variables, the link constraints have to be added *after* all node
-    // constraints.
-    delta.getNewLinkPathMatchPositives().stream()
-        .filter(m -> !ignoredVnets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
-        .filter(m -> vNets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
-        .forEach(gen::addLinkPathMatch);
-    delta.getNewLinkServerMatchPositives().stream()
-        .filter(m -> !ignoredVnets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
-        .filter(m -> vNets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
-        .forEach(gen::addLinkServerMatch);
-
-    // apply delta in ILP generator
-    gen.apply();
-
-    GlobalMetricsManager.startIlpTime();
-    final Statistics solve = ilpSolver.solve();
-    GlobalMetricsManager.endIlpTime();
-    Set<VirtualNetwork> rejectedNetworks = null;
-    if (solve.isFeasible()) {
-      GlobalMetricsManager.startDeployTime();
-      rejectedNetworks = updateMappingsAndEmbed(ilpSolver.getMappings());
-      rejectedDespiteUpdate.addAll(rejectedNetworks);
-    } else {
-      throw new IlpSolverException("Problem was infeasible.");
-    }
+    delta2Ilp(delta);
+    Set<VirtualNetwork> rejectedNetworks = solveIlp();
+    rejectedDespiteUpdate.addAll(rejectedNetworks);
 
     if (!rejectedNetworks.isEmpty()) {
       System.out.println("=> Started recursive embedding update.");
@@ -172,47 +130,9 @@ public class VnePmMdvneAlgorithmUpdate extends VnePmMdvneAlgorithm {
     final PatternMatchingDelta delta = patternMatcher.run();
     GlobalMetricsManager.endPmTime();
 
-    final IlpDeltaGenerator gen = new IlpDeltaGenerator();
-
-    // add new elements
-    addElementsToSolver(gen);
-
-    // add new matches
-    delta.getNewServerMatchPositives().stream()
-        .filter(m -> !ignoredVnets.contains(((VirtualServer) m.getVirtual()).getNetwork()))
-        .filter(m -> vNets.contains(((VirtualServer) m.getVirtual()).getNetwork()))
-        .forEach(gen::addServerMatch);
-    delta.getNewSwitchMatchPositives().stream()
-        .filter(m -> !ignoredVnets.contains(((VirtualSwitch) m.getVirtual()).getNetwork()))
-        .filter(m -> vNets.contains(((VirtualSwitch) m.getVirtual()).getNetwork()))
-        .forEach(gen::addSwitchMatch);
-
-    // Important: Due to the fact that both link constraint generating methods check the existence
-    // of the node mapping variables, the link constraints have to be added *after* all node
-    // constraints.
-    delta.getNewLinkPathMatchPositives().stream()
-        .filter(m -> !ignoredVnets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
-        .filter(m -> vNets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
-        .forEach(gen::addLinkPathMatch);
-    delta.getNewLinkServerMatchPositives().stream()
-        .filter(m -> !ignoredVnets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
-        .filter(m -> vNets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
-        .forEach(gen::addLinkServerMatch);
-
-    // apply delta in ILP generator
-    gen.apply();
-
-    GlobalMetricsManager.startIlpTime();
-    final Statistics solve = ilpSolver.solve();
-    GlobalMetricsManager.endIlpTime();
-    Set<VirtualNetwork> rejectedNetworks = null;
-    if (solve.isFeasible()) {
-      GlobalMetricsManager.startDeployTime();
-      rejectedNetworks = updateMappingsAndEmbed(ilpSolver.getMappings());
-    } else {
-      throw new IlpSolverException("Problem was infeasible.");
-    }
-
+    delta2Ilp(delta);
+    Set<VirtualNetwork> rejectedNetworks = solveIlp();
+    rejectedDespiteUpdate.addAll(rejectedNetworks);
     rejectedDespiteUpdate.retainAll(rejectedNetworks);
 
     if (!rejectedNetworks.isEmpty()) {
