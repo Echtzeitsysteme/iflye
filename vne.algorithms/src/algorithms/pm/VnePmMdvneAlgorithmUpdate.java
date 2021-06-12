@@ -8,6 +8,7 @@ import model.Node;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 import model.VirtualServer;
+import model.VirtualSwitch;
 import patternmatching.PatternMatchingDelta;
 import patternmatching.emoflon.EmoflonPatternMatcherFactory;
 
@@ -96,9 +97,11 @@ public class VnePmMdvneAlgorithmUpdate extends VnePmMdvneAlgorithm {
     Set<VirtualNetwork> rejectedNetworks = solveIlp();
     rejectedDespiteUpdate.addAll(rejectedNetworks);
 
+    // Check if embedding update routing must be started
     if (!rejectedNetworks.isEmpty()) {
-      System.out.println("=> Started recursive embedding update.");
-      rejectedNetworks = recursiveUpdateEmbedding();
+      System.out.println("=> Started embedding update.");
+      embedNetworks(rejectedNetworks);
+      rejectedNetworks = tryUpdateEmbedding();
     }
 
     rejectedDespiteUpdate.addAll(ignoredVnets);
@@ -109,37 +112,68 @@ public class VnePmMdvneAlgorithmUpdate extends VnePmMdvneAlgorithm {
 
   /**
    * Removes the smallest virtual network currently embedded on the substrate one and tries the
-   * embedding job again. If it fails again, the method calls itself again to remove the next
-   * smallest virtual network currently embedded until there is no network left.
+   * embedding job again. If it fails again, the method removes the next smallest virtual network
+   * and tries again. If no virtual network to remove is left, the method returns a set of rejected
+   * networks.
    * 
    * @return Set of virtual networks that could not be embedded onto the substrate one.
    */
-  private Set<VirtualNetwork> recursiveUpdateEmbedding() {
-    final VirtualNetwork removalCandidate = findAndUnembedSmallestNetwork();
+  private Set<VirtualNetwork> tryUpdateEmbedding() {
+    Set<VirtualNetwork> rejectedNetworks = new HashSet<VirtualNetwork>();
+    VirtualNetwork removalCandidate = findAndUnembedSmallestNetwork();
 
-    // Recursive exit condition
-    if (removalCandidate == null) {
-      return new HashSet<VirtualNetwork>();
-    }
+    while (removalCandidate != null) {
+      unembedAll(vNets);
+      vNets.add(removalCandidate);
+      unembedAll(vNets);
+      init();
+      this.patternMatcher = new EmoflonPatternMatcherFactory().create();
 
-    vNets.add(removalCandidate);
-    init();
-    this.patternMatcher = new EmoflonPatternMatcherFactory().create();
+      GlobalMetricsManager.startPmTime();
+      final PatternMatchingDelta delta = patternMatcher.run();
+      GlobalMetricsManager.endPmTime();
 
-    GlobalMetricsManager.startPmTime();
-    final PatternMatchingDelta delta = patternMatcher.run();
-    GlobalMetricsManager.endPmTime();
+      delta2Ilp(delta);
+      rejectedNetworks.clear();
+      rejectedNetworks.addAll(solveIlp());
 
-    delta2Ilp(delta);
-    Set<VirtualNetwork> rejectedNetworks = solveIlp();
-    rejectedDespiteUpdate.addAll(rejectedNetworks);
-    rejectedDespiteUpdate.retainAll(rejectedNetworks);
+      rejectedDespiteUpdate.addAll(rejectedNetworks);
+      rejectedDespiteUpdate.retainAll(rejectedNetworks);
 
-    if (!rejectedNetworks.isEmpty()) {
-      rejectedNetworks = recursiveUpdateEmbedding();
+      if (rejectedNetworks.isEmpty()) {
+        break;
+      }
+
+      removalCandidate = findAndUnembedSmallestNetwork();
     }
 
     return rejectedNetworks;
+  }
+
+  /**
+   * Method that removed the embedding for all given networks if there exists one. Moreover, this
+   * method "repairs" the possible floating state if the virtual network itself is not embedded, but
+   * its elements are.
+   * 
+   * @param vNets Set of virtual networks to remove embeddings for.
+   */
+  private void unembedAll(final Set<VirtualNetwork> vNets) {
+    for (final VirtualNetwork vNet : vNets) {
+      final Node n = vNet.getNodes().get(0);
+      if (n instanceof VirtualSwitch) {
+        if (((VirtualSwitch) n).getHost() != null) {
+          ModelFacade.getInstance().embedNetworkToNetwork(sNet.getName(), vNet.getName());
+        }
+      } else if (n instanceof VirtualServer) {
+        if (((VirtualServer) n).getHost() != null) {
+          ModelFacade.getInstance().embedNetworkToNetwork(sNet.getName(), vNet.getName());
+        }
+      }
+
+      if (vNet.getHost() != null) {
+        ModelFacade.getInstance().removeNetworkEmbedding(vNet.getName());
+      }
+    }
   }
 
   /**
