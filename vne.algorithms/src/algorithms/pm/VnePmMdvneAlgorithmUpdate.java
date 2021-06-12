@@ -158,18 +158,25 @@ public class VnePmMdvneAlgorithmUpdate extends VnePmMdvneAlgorithm {
    * @param vNets Set of virtual networks to remove embeddings for.
    */
   private void unembedAll(final Set<VirtualNetwork> vNets) {
+    // Iterate over all given virtual networks
     for (final VirtualNetwork vNet : vNets) {
-      final Node n = vNet.getNodes().get(0);
-      if (n instanceof VirtualSwitch) {
-        if (((VirtualSwitch) n).getHost() != null) {
-          ModelFacade.getInstance().embedNetworkToNetwork(sNet.getName(), vNet.getName());
-        }
-      } else if (n instanceof VirtualServer) {
-        if (((VirtualServer) n).getHost() != null) {
-          ModelFacade.getInstance().embedNetworkToNetwork(sNet.getName(), vNet.getName());
+      // If virtual network has no host, but one of the nodes is embedded -> Embed the whole virtual
+      // network object again (otherwise the removal of the virtual network fails)
+      if (vNet.getHost() == null) {
+        final Node n = vNet.getNodes().get(0);
+
+        if (n instanceof VirtualSwitch) {
+          if (((VirtualSwitch) n).getHost() != null) {
+            ModelFacade.getInstance().embedNetworkToNetwork(sNet.getName(), vNet.getName());
+          }
+        } else if (n instanceof VirtualServer) {
+          if (((VirtualServer) n).getHost() != null) {
+            ModelFacade.getInstance().embedNetworkToNetwork(sNet.getName(), vNet.getName());
+          }
         }
       }
 
+      // Remove embedding of whole virtual network with all of its elements
       if (vNet.getHost() != null) {
         ModelFacade.getInstance().removeNetworkEmbedding(vNet.getName());
       }
