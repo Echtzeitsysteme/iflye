@@ -2,6 +2,7 @@ package algorithms;
 
 import algorithms.ilp.VneIlpPathAlgorithm;
 import algorithms.pm.VnePmMdvneAlgorithm;
+import algorithms.pm.VnePmMdvneAlgorithmUpdate;
 
 /**
  * Configuration of the algorithms {@link VneIlpPathAlgorithm} and {@link VnePmMdvneAlgorithm}.
@@ -21,16 +22,6 @@ public class AlgorithmConfig {
   }
 
   /**
-   * Private constructor ensures no instantiation of this class.
-   */
-  private AlgorithmConfig() {}
-
-  /**
-   * Objective goal for the algorithms {@link VneIlpPathAlgorithm} and {@link VnePmMdvneAlgorithm}.
-   */
-  public static Objective obj = Objective.TOTAL_PATH_COST;
-
-  /**
    * Embedding enumeration that defines the embedding functionality of the
    * {@link VnePmMdvneAlgorithm}. Either it uses the calculates matches from emoflon or it uses
    * methods implemented in the model facade.
@@ -44,6 +35,16 @@ public class AlgorithmConfig {
   }
 
   /**
+   * Private constructor ensures no instantiation of this class.
+   */
+  private AlgorithmConfig() {}
+
+  /**
+   * Objective goal for the algorithms {@link VneIlpPathAlgorithm} and {@link VnePmMdvneAlgorithm}.
+   */
+  public static Objective obj = Objective.TOTAL_PATH_COST;
+
+  /**
    * Embedding mechanism for the {@link VnePmMdvneAlgorithm}
    */
   public static Embedding emb = Embedding.EMOFLON_WO_UPDATE;
@@ -53,5 +54,11 @@ public class AlgorithmConfig {
    * virtual element to map. This may give the ILP solver a head-start to solve the problem.
    */
   public static boolean pmSosEnabled = true;
+
+  /**
+   * Number of how often the {@link VnePmMdvneAlgorithmUpdate} should try to achieve a valid
+   * embedding while using the update functionality. Must at least be set to 1.
+   */
+  public static int pmNoUpdates = 6;
 
 }

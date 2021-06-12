@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
@@ -25,10 +26,20 @@ import test.algorithms.generic.AAlgorithmTest;
  */
 public class VnePmMdvneAlgorithmUpdateTest extends AAlgorithmTest {
 
+  /**
+   * Old value of algorithm configuration number of tries.
+   */
+  private int oldNumberOftries;
+
   @Override
   public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
     AlgorithmConfig.obj = Objective.TOTAL_PATH_COST;
     algo = VnePmMdvneAlgorithmUpdate.prepare(sNet, vNets);
+  }
+
+  @BeforeEach
+  public void saveOldValue() {
+    oldNumberOftries = AlgorithmConfig.pmNoUpdates;
   }
 
   @AfterEach
@@ -36,6 +47,7 @@ public class VnePmMdvneAlgorithmUpdateTest extends AAlgorithmTest {
     if (algo != null) {
       ((VnePmMdvneAlgorithm) algo).dispose();
     }
+    AlgorithmConfig.pmNoUpdates = oldNumberOftries;
   }
 
   /*
@@ -43,7 +55,7 @@ public class VnePmMdvneAlgorithmUpdateTest extends AAlgorithmTest {
    */
 
   @Test
-  public void testUpdateRecursiveOnce() {
+  public void testUpdateOnce() {
     createSmallScenario();
 
     /*
@@ -64,7 +76,7 @@ public class VnePmMdvneAlgorithmUpdateTest extends AAlgorithmTest {
   }
 
   @Test
-  public void testUpdateRecursiveMultiple() {
+  public void testUpdateMultiple() {
     createSubstrateScenario();
     createSmallVirtualNetworkAndEmbedItOn("vnet1", "sub_srv_0");
     createSmallVirtualNetworkAndEmbedItOn("vnet2", "sub_srv_0");
@@ -90,6 +102,35 @@ public class VnePmMdvneAlgorithmUpdateTest extends AAlgorithmTest {
     facade.validateModel();
   }
 
+  @Test
+  public void testUpdateTryLimit() {
+    createSubstrateScenario();
+    createSmallVirtualNetworkAndEmbedItOn("vnet1", "sub_srv_0");
+    createSmallVirtualNetworkAndEmbedItOn("vnet2", "sub_srv_0");
+    createSmallVirtualNetworkAndEmbedItOn("vnet3", "sub_srv_1");
+    createSmallVirtualNetworkAndEmbedItOn("vnet4", "sub_srv_1");
+    createSmallVirtualNetworkAndEmbedItOn("vnet5", "sub_srv_2");
+    createSmallVirtualNetworkAndEmbedItOn("vnet6", "sub_srv_2");
+
+    AlgorithmConfig.pmNoUpdates = 2;
+
+    /*
+     * Last virtual network (that must trigger the updates)
+     */
+    final OneTierConfig virtualConfig = new OneTierConfig(2, 1, false, 3, 3, 3, 1);
+    final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
+    virtGen.createNetwork("virt7", true);
+    final SubstrateNetwork sNet =
+        (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
+    final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt7");
+    initAlgo(sNet, Set.of(vNet));
+    assertFalse(algo.execute());
+
+    // All previously embedded networks still must be embedded
+    assertEquals(6, sNet.getGuests().size());
+    facade.validateModel();
+  }
+
   /*
    * Negative tests.
    */
@@ -100,7 +141,7 @@ public class VnePmMdvneAlgorithmUpdateTest extends AAlgorithmTest {
    * already filled up to a point were the last virtual network can never be embedded.)
    */
   @Test
-  public void testUpdateRecursiveNotPossible() {
+  public void testUpdateNotPossible() {
     createSmallScenario();
 
     /*

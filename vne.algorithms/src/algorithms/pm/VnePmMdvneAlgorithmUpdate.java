@@ -2,6 +2,7 @@ package algorithms.pm;
 
 import java.util.HashSet;
 import java.util.Set;
+import algorithms.AlgorithmConfig;
 import facade.ModelFacade;
 import metrics.manager.GlobalMetricsManager;
 import model.Node;
@@ -121,6 +122,7 @@ public class VnePmMdvneAlgorithmUpdate extends VnePmMdvneAlgorithm {
   private Set<VirtualNetwork> tryUpdateEmbedding() {
     Set<VirtualNetwork> rejectedNetworks = new HashSet<VirtualNetwork>();
     VirtualNetwork removalCandidate = findAndUnembedSmallestNetwork();
+    int tries = 0;
 
     while (removalCandidate != null) {
       unembedAll(vNets);
@@ -141,6 +143,13 @@ public class VnePmMdvneAlgorithmUpdate extends VnePmMdvneAlgorithm {
       rejectedDespiteUpdate.retainAll(rejectedNetworks);
 
       if (rejectedNetworks.isEmpty()) {
+        break;
+      }
+
+      tries++;
+
+      // Check number of already tried updates; if threshold reached, stop trying.
+      if (tries >= AlgorithmConfig.pmNoUpdates) {
         break;
       }
 
