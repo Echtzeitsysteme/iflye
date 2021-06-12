@@ -9,6 +9,7 @@ import algorithms.AlgorithmConfig.Embedding;
 import algorithms.AlgorithmConfig.Objective;
 import algorithms.ilp.VneIlpPathAlgorithm;
 import algorithms.pm.VnePmMdvneAlgorithm;
+import algorithms.pm.VnePmMdvneAlgorithmUpdate;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import metrics.AcceptedVnrMetric;
@@ -83,6 +84,9 @@ public class DissScenarioLoad {
       switch (algoConfig) {
         case "pm":
           algo = VnePmMdvneAlgorithm.prepare(sNet, Set.of(vNet));
+          break;
+        case "pm-update":
+          algo = VnePmMdvneAlgorithmUpdate.prepare(sNet, Set.of(vNet));
           break;
         case "ilp":
           algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));

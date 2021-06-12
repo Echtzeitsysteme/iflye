@@ -60,8 +60,8 @@ public class VnePmMdvneAlgorithmRepairModelNetworkTest extends AAlgorithmTest {
     final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
     // Embed first virtual network with another algorithm
-    AbstractAlgorithm algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
-    assertTrue(algo.execute());
+    AbstractAlgorithm algoLoc = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
+    assertTrue(algoLoc.execute());
 
     // Remove the first virtual network ungracefully
     facade.removeNetworkFromRootSimple("virt");
@@ -73,7 +73,7 @@ public class VnePmMdvneAlgorithmRepairModelNetworkTest extends AAlgorithmTest {
     final VirtualNetwork vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
 
     // Embed the second virtual network
-    algo = VnePmMdvneAlgorithm.prepare(sNet, Set.of(vNet2));
+    initAlgo(sNet, Set.of(vNet2));
     assertTrue(algo.execute());
     assertNotNull(((VirtualNetwork) facade.getNetworkById("virt2")).getHost());
 
@@ -90,6 +90,7 @@ public class VnePmMdvneAlgorithmRepairModelNetworkTest extends AAlgorithmTest {
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
     final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
+    // Usage of other algorithm on purpose
     final VneIlpPathAlgorithm algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
     assertTrue(algo.execute());
 

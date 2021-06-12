@@ -6,6 +6,7 @@ import java.util.Set;
 import algorithms.AbstractAlgorithm;
 import algorithms.ilp.VneIlpPathAlgorithm;
 import algorithms.pm.VnePmMdvneAlgorithm;
+import algorithms.pm.VnePmMdvneAlgorithmUpdate;
 import facade.ModelFacade;
 import metrics.manager.GlobalMetricsManager;
 import model.SubstrateNetwork;
@@ -51,6 +52,9 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
     switch (algoConfig) {
       case "pm":
         algo = VnePmMdvneAlgorithm.prepare(sNet, vNets);
+        break;
+      case "pm-update":
+        algo = VnePmMdvneAlgorithmUpdate.prepare(sNet, vNets);
         break;
       case "ilp":
         algo = new VneIlpPathAlgorithm(sNet, vNets);

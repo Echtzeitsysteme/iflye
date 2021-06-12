@@ -1,6 +1,7 @@
 package test.algorithms.pm;
 
 import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -12,7 +13,10 @@ import org.junit.jupiter.api.Test;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
 import algorithms.pm.VnePmMdvneAlgorithm;
+import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
+import generators.OneTierNetworkGenerator;
+import generators.config.OneTierConfig;
 import model.SubstrateLink;
 import model.SubstrateNetwork;
 import model.SubstratePath;
@@ -202,6 +206,32 @@ public class VnePmMdvneAlgorithmTotalPathCostTest extends AAlgorithmMultipleVnsT
     assertNotNull(vNet2.getHost());
     assertNotNull(vNet3.getHost());
     assertNull(vNet4.getHost());
+  }
+
+  @Test
+  public void testOneTierFull() {
+    // Substrate network = one tier network
+    final OneTierConfig subConfig = new OneTierConfig(2, 1, false, 4, 4, 4, 10);
+    final OneTierNetworkGenerator subGen = new OneTierNetworkGenerator(subConfig);
+    subGen.createNetwork("sub", false);
+
+    // Virtual network = one tier network
+    final OneTierConfig virtualConfig = new OneTierConfig(2, 1, false, 1, 1, 1, 1);
+    final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
+    virtGen.createNetwork("virt", true);
+
+    SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
+    VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
+    initAlgo(sNet, Set.of(vNet));
+    assertTrue(algo.execute());
+
+    virtGen.createNetwork("virt2", true);
+    sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
+    vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt2");
+    initAlgo(sNet, Set.of(vNet));
+    assertTrue(algo.execute());
+
+    assertEquals(2, sNet.getGuests().size());
   }
 
 }
