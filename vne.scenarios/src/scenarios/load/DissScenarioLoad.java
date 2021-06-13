@@ -221,16 +221,18 @@ public class DissScenarioLoad {
     }
 
     // #2 Embedding
-    switch (cmd.getOptionValue("embedding")) {
-      case "emoflon":
-        AlgorithmConfig.emb = Embedding.EMOFLON;
-        break;
-      case "emoflon_wo_update":
-        AlgorithmConfig.emb = Embedding.EMOFLON_WO_UPDATE;
-        break;
-      case "manual":
-        AlgorithmConfig.emb = Embedding.MANUAL;
-        break;
+    if (cmd.getOptionValue("embedding") != null) {
+      switch (cmd.getOptionValue("embedding")) {
+        case "emoflon":
+          AlgorithmConfig.emb = Embedding.EMOFLON;
+          break;
+        case "emoflon_wo_update":
+          AlgorithmConfig.emb = Embedding.EMOFLON_WO_UPDATE;
+          break;
+        case "manual":
+          AlgorithmConfig.emb = Embedding.MANUAL;
+          break;
+      }
     }
 
     // #3 Maximum path length
@@ -244,13 +246,17 @@ public class DissScenarioLoad {
     virtNetsPath = cmd.getOptionValue("vnetfile");
 
     // #6 Number of update tries
-    AlgorithmConfig.pmNoUpdates = Integer.valueOf(cmd.getOptionValue("tries"));
+    if (cmd.getOptionValue("tries") != null) {
+      AlgorithmConfig.pmNoUpdates = Integer.valueOf(cmd.getOptionValue("tries"));
+    }
 
     // #7: K fastest paths
-    final int K = Integer.valueOf(cmd.getOptionValue("kfastestpaths"));
-    if (K > 1) {
-      ModelFacadeConfig.YEN_PATH_GEN = true;
-      ModelFacadeConfig.YEN_K = K;
+    if (cmd.getOptionValue("kfastestpaths") != null) {
+      final int K = Integer.valueOf(cmd.getOptionValue("kfastestpaths"));
+      if (K > 1) {
+        ModelFacadeConfig.YEN_PATH_GEN = true;
+        ModelFacadeConfig.YEN_K = K;
+      }
     }
 
     // Print arguments into logs/system outputs
