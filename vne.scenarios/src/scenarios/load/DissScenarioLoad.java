@@ -150,6 +150,7 @@ public class DissScenarioLoad {
         break;
       case "total-comm-b":
         AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_B;
+        break;
       case "total-comm-c":
         AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_C;
         break;
