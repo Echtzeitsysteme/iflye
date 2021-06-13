@@ -22,26 +22,6 @@ public class TotalCommunicationCostMetricCTest extends ATotalCommunicationCostMe
    * Positive tests
    */
 
-  @Test
-  public void testEmbeddingTwoHops() {
-    createTwoTierSubstrateNetwork();
-    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-    final TotalCommunicationCostMetricC metric = new TotalCommunicationCostMetricC(sNet);
-
-    assertEquals(2 * 2 * 2 * 3 + 2, metric.getValue());
-  }
-
-  @Override
-  @Test
-  public void testEmbeddingSameHost() {
-    createSubstrateNetwork();
-    setupEmbeddingSameHost();
-    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-    setMetric(sNet);
-
-    assertEquals(0 + 2, metric.getValue());
-  }
-
   @Override
   @Test
   public void testEmbeddingTwoHosts() {
@@ -50,7 +30,7 @@ public class TotalCommunicationCostMetricCTest extends ATotalCommunicationCostMe
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
     setMetric(sNet);
 
-    assertEquals(2 * 2 * 3 + 2.0 / (0.5 + 0.5 + 0.5 + 1), metric.getValue());
+    assertEquals(2 * 2 * 3 + 3, metric.getValue());
   }
 
 }

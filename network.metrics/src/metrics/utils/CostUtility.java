@@ -134,15 +134,12 @@ public class CostUtility {
    */
   public static double getTotalCommunicationCostNodeC(final VirtualElement virtualElement,
       final SubstrateElement substrateElement) {
-    if (virtualElement instanceof VirtualServer) {
+    if (virtualElement instanceof VirtualServer && substrateElement instanceof SubstrateServer) {
       // final VirtualServer vsrv = (VirtualServer) virtualElement;
       final SubstrateServer ssrv = (SubstrateServer) substrateElement;
-      return 1.0 / ( //
-      (1.0 * ssrv.getResidualCpu() / ssrv.getCpu()) //
-          + (1.0 * ssrv.getResidualMemory() / ssrv.getMemory()) //
-          + (1.0 * ssrv.getResidualStorage() / ssrv.getStorage()) //
-          + 1 //
-      );
+      return 1.0 * ssrv.getResidualCpu() / ssrv.getCpu()
+          + 1.0 * ssrv.getResidualMemory() / ssrv.getMemory()
+          + 1.0 * ssrv.getResidualStorage() / ssrv.getStorage();
     }
 
     return 0;
