@@ -90,9 +90,10 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
         env.set(IntParam.OutputFlag, 0);
       }
       if (IlpSolverConfig.IMPROVE_PARAMS) {
-        env.set(IntParam.DegenMoves, 1);
-        env.set(DoubleParam.Heuristics, 0.001);
-        env.set(IntParam.CutPasses, 1);
+        // env.set(IntParam.DegenMoves, 1);
+        // env.set(DoubleParam.Heuristics, 0.001);
+        // env.set(IntParam.CutPasses, 1);
+        env.set(IntParam.NormAdjust, 1);
       }
       model = new GRBModel(env);
       model.set(DoubleParam.TimeLimit, timelimit);
