@@ -136,6 +136,8 @@ public class DissScenarioLoad {
    * <li>#3: Maximum path length</li>
    * <li>#4: Substrate network file to load, e.g. "resources/two-tier-4-pods/snet.json"</li>
    * <li>#5: Virtual network(s) file to loag, e.g. "resources/two-tier-4-pods/vnets.json"</li>
+   * <li>#6: Number of update tries [only relevant for VNE PM algorithm]</li>
+   * <li>#7: K fastest paths between two nodes</li>
    * </ol>
    * 
    * @param args Arguments to parse.
@@ -154,7 +156,7 @@ public class DissScenarioLoad {
     options.addOption(obj);
 
     // Embedding strategy (only for the PM algorithm)
-    final Option emb = new Option("e", "embedding", true, "embedding to use for PM algorithm");
+    final Option emb = new Option("e", "embedding", true, "embedding to use for the PM algorithm");
     emb.setRequired(false);
     options.addOption(emb);
 
@@ -173,6 +175,18 @@ public class DissScenarioLoad {
     virtNetFile.setRequired(true);
     options.addOption(virtNetFile);
 
+    // Number of tries for the updating functionality of the PM algorithm
+    final Option tries =
+        new Option("t", "tries", true, "number of update tries for the PM algorithm");
+    tries.setRequired(false);
+    options.addOption(tries);
+
+    // K fastest paths to generate
+    final Option paths =
+        new Option("k", "kfastestpaths", true, "k fastest paths between two nodes to generate");
+    paths.setRequired(false);
+    options.addOption(paths);
+
     final CommandLineParser parser = new DefaultParser();
     final HelpFormatter formatter = new HelpFormatter();
     CommandLine cmd = null;
@@ -181,7 +195,7 @@ public class DissScenarioLoad {
       cmd = parser.parse(options, args);
     } catch (final ParseException e) {
       System.out.println(e.getMessage());
-      formatter.printHelp("utility-name", options);
+      formatter.printHelp("cli parameters", options);
       System.exit(1);
     }
 
@@ -228,6 +242,16 @@ public class DissScenarioLoad {
 
     // #5 Virtual network file path
     virtNetsPath = cmd.getOptionValue("vnetfile");
+
+    // #6 Number of update tries
+    AlgorithmConfig.pmNoUpdates = Integer.valueOf(cmd.getOptionValue("tries"));
+
+    // #7: K fastest paths
+    final int K = Integer.valueOf(cmd.getOptionValue("kfastestpaths"));
+    if (K > 1) {
+      ModelFacadeConfig.YEN_PATH_GEN = true;
+      ModelFacadeConfig.YEN_K = K;
+    }
 
     // Print arguments into logs/system outputs
     System.out.println("=> Arguments: " + Arrays.toString(args));
