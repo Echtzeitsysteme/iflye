@@ -122,7 +122,7 @@ public class DissScenarioLoad {
    * Parses the given arguments to configure the scenario.
    * <ol>
    * <li>#0: Algorithm "pm" or "ilp"</li>
-   * <li>#1: Objective "total-path", "total-comm-a" "total-comm-b"</li>
+   * <li>#1: Objective "total-path", "total-comm-a", "total-comm-b", "total-comm-c"</li>
    * <li>#2: Embedding "emoflon", "emoflon_wo_update" or "manual" [only relevant for VNE PM
    * algorithm]
    * <li>#3: Maximum path length</li>
@@ -150,6 +150,8 @@ public class DissScenarioLoad {
         break;
       case "total-comm-b":
         AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_B;
+      case "total-comm-c":
+        AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_C;
         break;
     }
 

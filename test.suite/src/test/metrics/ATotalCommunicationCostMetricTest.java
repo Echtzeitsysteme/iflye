@@ -73,8 +73,8 @@ public abstract class ATotalCommunicationCostMetricTest extends AMetricTest {
    */
   protected void createTwoTierSubstrateNetwork() {
     facade.addNetworkToRoot("sub", false);
-    facade.addServerToNetwork("ssrv1", "sub", 0, 0, 0, 0);
-    facade.addServerToNetwork("ssrv2", "sub", 0, 0, 0, 0);
+    facade.addServerToNetwork("ssrv1", "sub", 1, 1, 1, 1);
+    facade.addServerToNetwork("ssrv2", "sub", 1, 1, 1, 1);
     facade.addSwitchToNetwork("cssw", "sub", 0);
     facade.addSwitchToNetwork("rssw1", "sub", 0);
     facade.addSwitchToNetwork("rssw2", "sub", 0);
