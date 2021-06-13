@@ -10,6 +10,11 @@ import metrics.RuntimeDetailedMetric;
 public class GlobalMetricsManager {
 
   /**
+   * Global time measurement array.
+   */
+  private static final double[] globalTimeMeasurement = new double[5];
+
+  /**
    * Global runtime detailed metric.
    */
   static RuntimeDetailedMetric rt;
@@ -85,7 +90,7 @@ public class GlobalMetricsManager {
   }
 
   /**
-   * Sets an end point for the deploy time mesaurement and increments the global deploy time value.
+   * Sets an end point for the deploy time measurement and increments the global deploy time value.
    */
   public static void endDeployTime() {
     if (rt != null) {
@@ -102,6 +107,25 @@ public class GlobalMetricsManager {
     }
   }
 
+  /**
+   * Resets the global runtime measurement.
+   */
+  public static void resetRuntime() {
+    globalTimeMeasurement[0] += rt.getValue();
+    globalTimeMeasurement[1] += rt.getPmValue();
+    globalTimeMeasurement[2] += rt.getIlpValue();
+    globalTimeMeasurement[3] += rt.getDeployValue();
+    globalTimeMeasurement[4] += rt.getRestValue();
+    rt = null;
+  }
 
+  /**
+   * Returns the global captured time array.
+   * 
+   * @return Global captured time array.
+   */
+  public static double[] getGlobalTimeArray() {
+    return globalTimeMeasurement;
+  }
 
 }

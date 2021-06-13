@@ -1,5 +1,11 @@
 package scenarios.load;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -10,6 +16,8 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Embedding;
@@ -59,6 +67,11 @@ public class DissScenarioLoad {
   protected static String virtNetsPath;
 
   /**
+   * File path for the metric CSV output.
+   */
+  protected static String csvPath = null;
+
+  /**
    * Main method to start the example. String array of arguments will be parsed.
    * 
    * @param args See {@link #parseArgs(String[])}.
@@ -74,7 +87,6 @@ public class DissScenarioLoad {
     }
 
     sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNetIds.get(0));
-    GlobalMetricsManager.startRuntime();
 
     /*
      * Every embedding starts here.
@@ -102,7 +114,13 @@ public class DissScenarioLoad {
         default:
           throw new IllegalArgumentException("Configured algorithm not known.");
       }
+      GlobalMetricsManager.startRuntime();
       algo.execute();
+      GlobalMetricsManager.stopRuntime();
+
+      // Save metrics to CSV file
+      appendCsvLine(vNet.getName());
+      GlobalMetricsManager.resetRuntime();
 
       // Get next virtual network ID to embed
       vNetId = IncrementalModelConverter.jsonToModelIncremental(virtNetsPath, true);
@@ -111,8 +129,6 @@ public class DissScenarioLoad {
     /*
      * End of every embedding.
      */
-
-    GlobalMetricsManager.stopRuntime();
 
     /*
      * Evaluation.
@@ -135,9 +151,10 @@ public class DissScenarioLoad {
    * algorithm]
    * <li>#3: Maximum path length</li>
    * <li>#4: Substrate network file to load, e.g. "resources/two-tier-4-pods/snet.json"</li>
-   * <li>#5: Virtual network(s) file to loag, e.g. "resources/two-tier-4-pods/vnets.json"</li>
+   * <li>#5: Virtual network(s) file to load, e.g. "resources/two-tier-4-pods/vnets.json"</li>
    * <li>#6: Number of update tries [only relevant for VNE PM algorithm]</li>
    * <li>#7: K fastest paths between two nodes</li>
+   * <li>#8: CSV metric file path</li>
    * </ol>
    * 
    * @param args Arguments to parse.
@@ -186,6 +203,11 @@ public class DissScenarioLoad {
         new Option("k", "kfastestpaths", true, "k fastest paths between two nodes to generate");
     paths.setRequired(false);
     options.addOption(paths);
+
+    // CSV output path
+    final Option csv = new Option("c", "csvpath", true, "file path for the CSV metric file");
+    csv.setRequired(false);
+    options.addOption(csv);
 
     final CommandLineParser parser = new DefaultParser();
     final HelpFormatter formatter = new HelpFormatter();
@@ -259,6 +281,11 @@ public class DissScenarioLoad {
       }
     }
 
+    // #8: CSV metric file path
+    if (cmd.getOptionValue("csvpath") != null) {
+      csvPath = cmd.getOptionValue("csvpath");
+    }
+
     // Print arguments into logs/system outputs
     System.out.println("=> Arguments: " + Arrays.toString(args));
   }
@@ -269,15 +296,15 @@ public class DissScenarioLoad {
   protected static void printMetrics() {
     // Time measurements
     System.out.println("=> Elapsed time (total): "
-        + GlobalMetricsManager.getRuntime().getValue() / 1_000_000_000 + " seconds");
+        + GlobalMetricsManager.getGlobalTimeArray()[0] / 1_000_000_000 + " seconds");
     System.out.println("=> Elapsed time (PM): "
-        + GlobalMetricsManager.getRuntime().getPmValue() / 1_000_000_000 + " seconds");
+        + GlobalMetricsManager.getGlobalTimeArray()[2] / 1_000_000_000 + " seconds");
     System.out.println("=> Elapsed time (ILP): "
-        + GlobalMetricsManager.getRuntime().getIlpValue() / 1_000_000_000 + " seconds");
+        + GlobalMetricsManager.getGlobalTimeArray()[3] / 1_000_000_000 + " seconds");
     System.out.println("=> Elapsed time (deploy): "
-        + GlobalMetricsManager.getRuntime().getDeployValue() / 1_000_000_000 + " seconds");
+        + GlobalMetricsManager.getGlobalTimeArray()[4] / 1_000_000_000 + " seconds");
     System.out.println("=> Elapsed time (rest): "
-        + GlobalMetricsManager.getRuntime().getRestValue() / 1_000_000_000 + " seconds");
+        + GlobalMetricsManager.getGlobalTimeArray()[5] / 1_000_000_000 + " seconds");
 
     // Embedding quality metrics
     System.out.println("=> Accepted VNRs: " + (int) new AcceptedVnrMetric(sNet).getValue());
@@ -289,6 +316,59 @@ public class DissScenarioLoad {
         "=> Total communication cost B: " + new TotalCommunicationCostMetricB(sNet).getValue());
     System.out.println(
         "=> Total communication cost C: " + new TotalCommunicationCostMetricC(sNet).getValue());
+  }
+
+  /**
+   * Appends the current state of the metrics to the CSV file.
+   * 
+   * @param lastVnr The Name of the last embedded virtual network (request).
+   */
+  protected static void appendCsvLine(final String lastVnr) {
+    // If file path is null, do not create a file at all
+    if (csvPath == null) {
+      return;
+    }
+
+    try {
+      BufferedWriter out;
+      // If file does not exist, write header to it
+      if (Files.notExists(Path.of(csvPath))) {
+        out = Files.newBufferedWriter(Paths.get(csvPath), StandardOpenOption.APPEND,
+            StandardOpenOption.CREATE);
+        try (final CSVPrinter printer = new CSVPrinter(out,
+            CSVFormat.DEFAULT.withHeader("timestamp", "lastVNR", "time_pm", "time_ilp",
+                "time_deploy", "time_rest", "accepted_vnrs", "total_path_cost",
+                "average_path_length", "total_communication_cost_a", "total_communication_cost_b",
+                "total_communication_cost_c"))) {
+          printer.close();
+        }
+      }
+
+      out = Files.newBufferedWriter(Paths.get(csvPath), StandardOpenOption.APPEND,
+          StandardOpenOption.CREATE);
+      try (final CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT)) {
+        printer.printRecord( //
+            java.time.LocalDateTime.now(), // time stamp
+            lastVnr, // name of the last embedded virtual network
+            GlobalMetricsManager.getRuntime().getPmValue() / 1_000_000_000, // PM time
+            GlobalMetricsManager.getRuntime().getIlpValue() / 1_000_000_000, // ILP time
+            GlobalMetricsManager.getRuntime().getDeployValue() / 1_000_000_000, // Deploy time
+            GlobalMetricsManager.getRuntime().getRestValue() / 1_000_000_000, // Rest time
+            (int) new AcceptedVnrMetric(sNet).getValue(), //
+            new TotalPathCostMetric(sNet).getValue(), //
+            new AveragePathLengthMetric(sNet).getValue(), //
+            new TotalCommunicationCostMetricA(sNet).getValue(), //
+            new TotalCommunicationCostMetricB(sNet).getValue(), //
+            new TotalCommunicationCostMetricC(sNet).getValue() //
+        );
+        printer.close();
+      }
+      out.close();
+
+    } catch (final IOException e) {
+      // TODO: Error handling
+      e.printStackTrace();
+    }
   }
 
 }
