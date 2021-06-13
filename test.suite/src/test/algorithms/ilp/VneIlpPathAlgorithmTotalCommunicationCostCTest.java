@@ -11,6 +11,7 @@ import algorithms.AlgorithmConfig.Objective;
 import algorithms.ilp.VneIlpPathAlgorithm;
 import model.Path;
 import model.Server;
+import model.SubstrateElement;
 import model.SubstrateNetwork;
 import model.VirtualLink;
 import model.VirtualNetwork;
@@ -187,6 +188,48 @@ public class VneIlpPathAlgorithmTotalCommunicationCostCTest extends AAlgorithmMu
     final Path pLn6 = (Path) vLn6.getHost();
     assertEquals(refSwHostName, pLn6.getSource().getName());
     assertEquals(serverHost3, pLn6.getTarget().getName());
+  }
+
+  /**
+   * Tests if the algorithm prefers using already filled up substrate servers.
+   */
+  @Test
+  public void testPreferenceOfFilledServers() {
+    // Setup
+    oneTierSetupThreeServers("sub", 4);
+    oneTierSetupTwoServers("virt", 1);
+    facade.createAllPathsForNetwork("sub");
+
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+    final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
+
+    initAlgo(sNet, Set.of(vNet));
+    assertTrue(algo.execute());
+
+    // Actual test starts here
+    facade.addNetworkToRoot("virt2", true);
+    oneTierSetupTwoServers("virt2", 1);
+    final VirtualNetwork vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
+
+    initAlgo(sNet, Set.of(vNet2));
+    assertTrue(algo.execute());
+
+    // Test expects that all virtual networks are placed on the same substrate server
+    final SubstrateElement ref = ((VirtualServer) vNet.getNodes().get(1)).getHost();
+
+    vNet.getNodes().forEach(n -> {
+      if (n instanceof VirtualServer) {
+        final VirtualServer vsrv = (VirtualServer) n;
+        assertEquals(ref, vsrv.getHost());
+      }
+    });
+
+    vNet2.getNodes().forEach(n -> {
+      if (n instanceof VirtualServer) {
+        final VirtualServer vsrv = (VirtualServer) n;
+        assertEquals(ref, vsrv.getHost());
+      }
+    });
   }
 
 }

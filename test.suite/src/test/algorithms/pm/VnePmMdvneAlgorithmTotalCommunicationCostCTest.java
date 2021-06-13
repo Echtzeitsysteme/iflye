@@ -237,8 +237,6 @@ public class VnePmMdvneAlgorithmTotalCommunicationCostCTest extends AAlgorithmMu
     initAlgo(sNet, Set.of(vNet2));
     assertTrue(algo.execute());
 
-    facade.persistModel();
-
     // Test expects that all virtual networks are placed on the same substrate server
     final SubstrateElement ref = ((VirtualServer) vNet.getNodes().get(1)).getHost();
 
