@@ -298,13 +298,13 @@ public class DissScenarioLoad {
     System.out.println("=> Elapsed time (total): "
         + GlobalMetricsManager.getGlobalTimeArray()[0] / 1_000_000_000 + " seconds");
     System.out.println("=> Elapsed time (PM): "
-        + GlobalMetricsManager.getGlobalTimeArray()[2] / 1_000_000_000 + " seconds");
+        + GlobalMetricsManager.getGlobalTimeArray()[1] / 1_000_000_000 + " seconds");
     System.out.println("=> Elapsed time (ILP): "
-        + GlobalMetricsManager.getGlobalTimeArray()[3] / 1_000_000_000 + " seconds");
+        + GlobalMetricsManager.getGlobalTimeArray()[2] / 1_000_000_000 + " seconds");
     System.out.println("=> Elapsed time (deploy): "
-        + GlobalMetricsManager.getGlobalTimeArray()[4] / 1_000_000_000 + " seconds");
+        + GlobalMetricsManager.getGlobalTimeArray()[3] / 1_000_000_000 + " seconds");
     System.out.println("=> Elapsed time (rest): "
-        + GlobalMetricsManager.getGlobalTimeArray()[5] / 1_000_000_000 + " seconds");
+        + GlobalMetricsManager.getGlobalTimeArray()[4] / 1_000_000_000 + " seconds");
 
     // Embedding quality metrics
     System.out.println("=> Accepted VNRs: " + (int) new AcceptedVnrMetric(sNet).getValue());
