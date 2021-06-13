@@ -20,6 +20,53 @@ import model.VirtualServer;
  */
 public class CostUtility {
 
+  private static class MathUtility {
+    static double getAngleBetweenServers(final SubstrateServer sserver,
+        final VirtualServer vserver) {
+      final int[] a = serverToVector(sserver);
+      final int[] b = serverToVector(vserver);
+      final double cos = scalarProduct(a, b) / (vectorAmount(a) * vectorAmount(b));
+      // TODO: Remove me
+      System.err.println(sserver.getResidualCpu() + ", " + sserver.getResidualMemory() + ", "
+          + sserver.getResidualStorage() + "; " + vserver.getCpu() + ", " + vserver.getMemory()
+          + ", " + vserver.getStorage() + "; angle: " + Math.acos(cos) / Math.PI);
+      return Math.acos(cos);
+    }
+
+    static int scalarProduct(final int[] a, final int[] b) {
+      int val = 0;
+      for (int i = 0; i < a.length; i++) {
+        val += (a[i] + b[i]);
+      }
+      return val;
+    }
+
+    static double vectorAmount(final int[] a) {
+      double val = 0;
+      for (int i = 0; i < a.length; i++) {
+        val += Math.pow(a[i], 2);
+      }
+      return Math.sqrt(val);
+    }
+
+    static int[] serverToVector(final Server server) {
+      final int[] vec = new int[3];
+      if (server instanceof VirtualServer) {
+        final VirtualServer vsrv = (VirtualServer) server;
+        vec[0] = vsrv.getCpu();
+        vec[1] = vsrv.getMemory();
+        vec[2] = vsrv.getStorage();
+      } else {
+        final SubstrateServer ssrv = (SubstrateServer) server;
+        vec[0] = ssrv.getResidualCpu();
+        vec[1] = ssrv.getResidualMemory();
+        vec[2] = ssrv.getResidualStorage();
+      }
+
+      return vec;
+    }
+  }
+
   /**
    * Returns the total path cost for a link to path/server embedding.
    * 
@@ -146,6 +193,27 @@ public class CostUtility {
   }
 
   /**
+   * Returns the adapted total communication cost for a node to node embedding. This one prefers
+   * already filled up substrate servers over empty ones. The difference is calculated by the angle
+   * between the two resource vectors.
+   * 
+   * @param virtualElement Virtual node to embed.
+   * @param substrateElement Substrate node to embed.
+   * @return Cost for this particular mapping.
+   */
+  public static double getTotalCommunicationCostNodeD(final VirtualElement virtualElement,
+      final SubstrateElement substrateElement) {
+    if (virtualElement instanceof VirtualServer && substrateElement instanceof SubstrateServer) {
+      final VirtualServer vsrv = (VirtualServer) virtualElement;
+      final SubstrateServer ssrv = (SubstrateServer) substrateElement;
+
+      return MathUtility.getAngleBetweenServers(ssrv, vsrv) / Math.PI;
+    }
+
+    return 0;
+  }
+
+  /**
    * Returns the total communication cost for a link to element embedding as defined in [1].
    * 
    * [1] Tomaszek, S., Modellbasierte Einbettung von virtuellen Netzwerken in Rechenzentren,
@@ -226,7 +294,7 @@ public class CostUtility {
    * @param host Substrate element hosting the virtual link.
    * @return Total communication cost for a link to element embedding.
    */
-  public static double getTotalCommunicationCostLinkBC(final VirtualLink virt,
+  public static double getTotalCommunicationCostLinkBCD(final VirtualLink virt,
       final SubstrateElement host) {
     if (host instanceof Server) {
       // Server -> 0 hops
@@ -268,11 +336,11 @@ public class CostUtility {
    * @param hosts List of substrate elements hosting the virtual link.
    * @return Total communication cost for a link to element embedding.
    */
-  public static double getTotalCommunicationCostLinkBC(final VirtualLink virt,
+  public static double getTotalCommunicationCostLinkBCD(final VirtualLink virt,
       final List<SubstrateElement> hosts) {
     if (hosts.size() == 1) {
       // One host object -> call other cost method for calculation
-      return getTotalCommunicationCostLinkBC(virt, hosts.get(0));
+      return getTotalCommunicationCostLinkBCD(virt, hosts.get(0));
     } else if (hosts.size() > 1) {
       // More than one host object -> n hops * virtual bandwidth
       return virt.getBandwidth() * hosts.size();

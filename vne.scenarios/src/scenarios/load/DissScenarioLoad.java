@@ -155,6 +155,9 @@ public class DissScenarioLoad {
       case "total-comm-c":
         AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_C;
         break;
+      case "total-comm-d":
+        AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_D;
+        break;
     }
 
     // #2 Embedding

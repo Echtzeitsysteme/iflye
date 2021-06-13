@@ -21,7 +21,8 @@ public class AlgorithmConfig {
     TOTAL_PATH_COST, // [1]
     TOTAL_COMMUNICATION_COST_A, // [2]
     TOTAL_COMMUNICATION_COST_B, // [3,4] (One hop = 1 cost, no node costs)
-    TOTAL_COMMUNICATION_COST_C; // [5] (One hop = 1 cost, with node costs)
+    TOTAL_COMMUNICATION_COST_C, // [5] (One hop = 1 cost, with node costs)
+    TOTAL_COMMUNICATION_COST_D; // [5] (One hop = 1 cost, with node cost angle between resources)
 
     /*
      * [1] Tomaszek S., Leblebici E., Wang L., Schürr A. (2018) Virtual Network Embedding: Reducing
