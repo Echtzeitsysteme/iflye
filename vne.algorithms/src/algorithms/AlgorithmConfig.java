@@ -18,7 +18,30 @@ public class AlgorithmConfig {
    * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
    */
   public enum Objective {
-    TOTAL_PATH_COST, TOTAL_COMMUNICATION_COST_A, TOTAL_COMMUNICATION_COST_B;
+    TOTAL_PATH_COST, // [1]
+    TOTAL_COMMUNICATION_COST_A, // [2]
+    TOTAL_COMMUNICATION_COST_B, // [3,4] (One hop = 1 cost, no node costs)
+    TOTAL_COMMUNICATION_COST_C; // [5] (One hop = 1 cost, with node costs)
+
+    /*
+     * [1] Tomaszek S., Leblebici E., Wang L., Schürr A. (2018) Virtual Network Embedding: Reducing
+     * the Search Space by Model Transformation Techniques. In: Rensink A., Sánchez Cuadrado J.
+     * (eds) Theory and Practice of Model Transformation. ICMT 2018. Lecture Notes in Computer
+     * Science, vol 10888. Springer, Cham
+     * 
+     * [2] Tomaszek, S., Modellbasierte Einbettung von virtuellen Netzwerken in Rechenzentren,
+     * http://dx.doi.org/10.12921/TUPRINTS-00017362. – DOI 10.12921/TUPRINTS– 00017362, 2020.
+     * 
+     * [3] Meng, Xiaoqiao, Vasileios Pappas, and Li Zhang. "Improving the scalability of data center
+     * networks with traffic-aware virtual machine placement." 2010 Proceedings IEEE INFOCOM. IEEE,
+     * 2010.
+     * 
+     * [4] M. G. Rabbani, R. P. Esteves, M. Podlesny, G. Simon, L. Z. Granville and R. Boutaba, "On
+     * tackling virtual data center embedding problem," 2013 IFIP/IEEE International Symposium on
+     * Integrated Network Management (IM 2013), 2013, pp. 177-184.
+     * 
+     * [5] As in [3,4] but with node cost that decreases if a substrate server gets filled up.
+     */
   }
 
   /**
