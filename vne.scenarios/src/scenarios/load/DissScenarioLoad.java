@@ -16,6 +16,7 @@ import metrics.AcceptedVnrMetric;
 import metrics.AveragePathLengthMetric;
 import metrics.TotalCommunicationCostMetricA;
 import metrics.TotalCommunicationCostMetricB;
+import metrics.TotalCommunicationCostMetricC;
 import metrics.TotalPathCostMetric;
 import metrics.manager.GlobalMetricsManager;
 import model.SubstrateNetwork;
@@ -207,6 +208,8 @@ public class DissScenarioLoad {
         "=> Total communication cost A: " + new TotalCommunicationCostMetricA(sNet).getValue());
     System.out.println(
         "=> Total communication cost B: " + new TotalCommunicationCostMetricB(sNet).getValue());
+    System.out.println(
+        "=> Total communication cost C: " + new TotalCommunicationCostMetricC(sNet).getValue());
   }
 
 }
