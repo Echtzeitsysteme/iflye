@@ -74,8 +74,8 @@ public class TotalTafCommunicationCostMetricTest extends AMetricTest {
    */
   private void setupTwoTierSubstrateNetwork() {
     facade.addNetworkToRoot("sub", false);
-    facade.addServerToNetwork("ssrv1", "sub", 0, 0, 0, 2);
-    facade.addServerToNetwork("ssrv2", "sub", 0, 0, 0, 2);
+    facade.addServerToNetwork("ssrv1", "sub", 1, 1, 1, 2);
+    facade.addServerToNetwork("ssrv2", "sub", 1, 1, 1, 2);
     facade.addSwitchToNetwork("scsw", "sub", 0);
     facade.addSwitchToNetwork("srsw1", "sub", 1);
     facade.addSwitchToNetwork("srsw2", "sub", 1);

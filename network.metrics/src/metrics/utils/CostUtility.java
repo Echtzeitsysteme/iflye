@@ -7,9 +7,11 @@ import model.Server;
 import model.SubstrateElement;
 import model.SubstrateLink;
 import model.SubstratePath;
+import model.SubstrateServer;
 import model.Switch;
 import model.VirtualElement;
 import model.VirtualLink;
+import model.VirtualServer;
 
 /**
  * Cost utility helper for the VneIlpPathAlgorithm and the VnePmMdvneAlgorithm.
@@ -21,10 +23,12 @@ public class CostUtility {
   /**
    * Returns the total path cost for a link to path/server embedding.
    * 
-   * Implementation of the cost function of paper [1]. [1] Tomaszek S., Leblebici E., Wang L.,
-   * Schürr A. (2018) Virtual Network Embedding: Reducing the Search Space by Model Transformation
-   * Techniques. In: Rensink A., Sánchez Cuadrado J. (eds) Theory and Practice of Model
-   * Transformation. ICMT 2018. Lecture Notes in Computer Science, vol 10888. Springer, Cham
+   * Implementation of the cost function of paper [1].
+   * 
+   * [1] Tomaszek S., Leblebici E., Wang L., Schürr A. (2018) Virtual Network Embedding: Reducing
+   * the Search Space by Model Transformation Techniques. In: Rensink A., Sánchez Cuadrado J. (eds)
+   * Theory and Practice of Model Transformation. ICMT 2018. Lecture Notes in Computer Science, vol
+   * 10888. Springer, Cham
    *
    * @param hosts List of substrate elements.
    * @return Cost for this particular mapping.
@@ -47,10 +51,12 @@ public class CostUtility {
   /**
    * Returns the total path cost for a link to path/server embedding.
    * 
-   * Implementation of the cost function of paper [1]. [1] Tomaszek S., Leblebici E., Wang L.,
-   * Schürr A. (2018) Virtual Network Embedding: Reducing the Search Space by Model Transformation
-   * Techniques. In: Rensink A., Sánchez Cuadrado J. (eds) Theory and Practice of Model
-   * Transformation. ICMT 2018. Lecture Notes in Computer Science, vol 10888. Springer, Cham
+   * Implementation of the cost function of paper [1].
+   * 
+   * [1] Tomaszek S., Leblebici E., Wang L., Schürr A. (2018) Virtual Network Embedding: Reducing
+   * the Search Space by Model Transformation Techniques. In: Rensink A., Sánchez Cuadrado J. (eds)
+   * Theory and Practice of Model Transformation. ICMT 2018. Lecture Notes in Computer Science, vol
+   * 10888. Springer, Cham
    *
    * @param host Substrate element hosting the virtual link.
    * @return Cost for this particular mapping.
@@ -73,10 +79,12 @@ public class CostUtility {
   /**
    * Returns the total path cost for a node to node embedding.
    * 
-   * Implementation of the cost function of paper [1]. [1] Tomaszek S., Leblebici E., Wang L.,
-   * Schürr A. (2018) Virtual Network Embedding: Reducing the Search Space by Model Transformation
-   * Techniques. In: Rensink A., Sánchez Cuadrado J. (eds) Theory and Practice of Model
-   * Transformation. ICMT 2018. Lecture Notes in Computer Science, vol 10888. Springer, Cham
+   * Implementation of the cost function of paper [1].
+   * 
+   * [1] Tomaszek S., Leblebici E., Wang L., Schürr A. (2018) Virtual Network Embedding: Reducing
+   * the Search Space by Model Transformation Techniques. In: Rensink A., Sánchez Cuadrado J. (eds)
+   * Theory and Practice of Model Transformation. ICMT 2018. Lecture Notes in Computer Science, vol
+   * 10888. Springer, Cham
    * 
    * @param virtualElement Virtual node to embed.
    * @param substrateElement Substrate node to embed.
@@ -103,14 +111,37 @@ public class CostUtility {
   /**
    * Returns the total communication cost for a node to node embedding (cost = 0).
    * 
-   * Implementation of the cost function of paper [1]. [1] Meng, Xiaoqiao, Vasileios Pappas, and Li
-   * Zhang. "Improving the scalability of data center networks with traffic-aware virtual machine
-   * placement." 2010 Proceedings IEEE INFOCOM. IEEE, 2010.
+   * Implementation of the cost function of paper [1].
+   * 
+   * [1] Meng, Xiaoqiao, Vasileios Pappas, and Li Zhang. "Improving the scalability of data center
+   * networks with traffic-aware virtual machine placement." 2010 Proceedings IEEE INFOCOM. IEEE,
+   * 2010.
    * 
    * @return Total communication cost for a node to node embedding.
    */
-  public static double getTotalCommunicationCostNode() {
+  public static double getTotalCommunicationCostNodeAB() {
     // Node to node placement does not increment the total communication cost metric
+    return 0;
+  }
+
+  /**
+   * Returns the adapted total communication cost for a node to node embedding. This one prefers
+   * already filled up substrate servers over empty ones.
+   * 
+   * @param virtualElement Virtual node to embed.
+   * @param substrateElement Substrate node to embed.
+   * @return Cost for this particular mapping.
+   */
+  public static double getTotalCommunicationCostNodeC(final VirtualElement virtualElement,
+      final SubstrateElement substrateElement) {
+    if (virtualElement instanceof VirtualServer && substrateElement instanceof SubstrateServer) {
+      // final VirtualServer vsrv = (VirtualServer) virtualElement;
+      final SubstrateServer ssrv = (SubstrateServer) substrateElement;
+      return 1.0 * ssrv.getResidualCpu() / ssrv.getCpu()
+          + 1.0 * ssrv.getResidualMemory() / ssrv.getMemory()
+          + 1.0 * ssrv.getResidualStorage() / ssrv.getStorage();
+    }
+
     return 0;
   }
 
@@ -195,7 +226,7 @@ public class CostUtility {
    * @param host Substrate element hosting the virtual link.
    * @return Total communication cost for a link to element embedding.
    */
-  public static double getTotalCommunicationCostLinkB(final VirtualLink virt,
+  public static double getTotalCommunicationCostLinkBC(final VirtualLink virt,
       final SubstrateElement host) {
     if (host instanceof Server) {
       // Server -> 0 hops
@@ -237,11 +268,11 @@ public class CostUtility {
    * @param hosts List of substrate elements hosting the virtual link.
    * @return Total communication cost for a link to element embedding.
    */
-  public static double getTotalCommunicationCostLinkB(final VirtualLink virt,
+  public static double getTotalCommunicationCostLinkBC(final VirtualLink virt,
       final List<SubstrateElement> hosts) {
     if (hosts.size() == 1) {
       // One host object -> call other cost method for calculation
-      return getTotalCommunicationCostLinkB(virt, hosts.get(0));
+      return getTotalCommunicationCostLinkBC(virt, hosts.get(0));
     } else if (hosts.size() > 1) {
       // More than one host object -> n hops * virtual bandwidth
       return virt.getBandwidth() * hosts.size();

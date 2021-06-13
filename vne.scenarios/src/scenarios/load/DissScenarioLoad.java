@@ -16,6 +16,7 @@ import metrics.AcceptedVnrMetric;
 import metrics.AveragePathLengthMetric;
 import metrics.TotalCommunicationCostMetricA;
 import metrics.TotalCommunicationCostMetricB;
+import metrics.TotalCommunicationCostMetricC;
 import metrics.TotalPathCostMetric;
 import metrics.manager.GlobalMetricsManager;
 import model.SubstrateNetwork;
@@ -122,7 +123,7 @@ public class DissScenarioLoad {
    * Parses the given arguments to configure the scenario.
    * <ol>
    * <li>#0: Algorithm "pm" or "ilp"</li>
-   * <li>#1: Objective "total-path", "total-comm-a" "total-comm-b"</li>
+   * <li>#1: Objective "total-path", "total-comm-a", "total-comm-b", "total-comm-c"</li>
    * <li>#2: Embedding "emoflon", "emoflon_wo_update" or "manual" [only relevant for VNE PM
    * algorithm]
    * <li>#3: Maximum path length</li>
@@ -150,6 +151,9 @@ public class DissScenarioLoad {
         break;
       case "total-comm-b":
         AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_B;
+        break;
+      case "total-comm-c":
+        AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_C;
         break;
     }
 
@@ -204,6 +208,8 @@ public class DissScenarioLoad {
         "=> Total communication cost A: " + new TotalCommunicationCostMetricA(sNet).getValue());
     System.out.println(
         "=> Total communication cost B: " + new TotalCommunicationCostMetricB(sNet).getValue());
+    System.out.println(
+        "=> Total communication cost C: " + new TotalCommunicationCostMetricC(sNet).getValue());
   }
 
 }
