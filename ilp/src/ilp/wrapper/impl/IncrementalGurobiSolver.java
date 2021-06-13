@@ -89,6 +89,11 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
       if (!IlpSolverConfig.ENABLE_ILP_OUTPUT) {
         env.set(IntParam.OutputFlag, 0);
       }
+      if (IlpSolverConfig.IMPROVE_PARAMS) {
+        env.set(IntParam.DegenMoves, 1);
+        env.set(DoubleParam.Heuristics, 0.001);
+        env.set(IntParam.CutPasses, 1);
+      }
       model = new GRBModel(env);
       model.set(DoubleParam.TimeLimit, timelimit);
       model.set(IntParam.Seed, randomSeed);
@@ -584,6 +589,7 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
       // final long beforeUpdate = System.nanoTime();
       model.update();
       // GenericMethodHelper.printToConsole("Start ILP Solving.");
+      // model.tune();
       final long start = System.nanoTime();
       model.optimize();
       // final long endOptimize = System.nanoTime();

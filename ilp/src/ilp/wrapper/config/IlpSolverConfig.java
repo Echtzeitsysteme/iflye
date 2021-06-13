@@ -27,6 +27,11 @@ public interface IlpSolverConfig {
   public static final int RANDOM_SEED = 0;
 
   /**
+   * Set improved parameters for the ILP solver.
+   */
+  public static final boolean IMPROVE_PARAMS = false;
+
+  /**
    * Returns a new instance of the configured solver.
    * 
    * @return New instance of the configured solver.
