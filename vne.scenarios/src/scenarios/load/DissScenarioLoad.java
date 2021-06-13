@@ -3,6 +3,13 @@ package scenarios.load;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Embedding;
@@ -134,15 +141,57 @@ public class DissScenarioLoad {
    * @param args Arguments to parse.
    */
   protected static void parseArgs(final String[] args) {
-    if (args == null || args.length < 6) {
-      throw new IllegalArgumentException("Arguments are invalid.");
+    final Options options = new Options();
+
+    // Algorithm
+    final Option algo = new Option("a", "algorithm", true, "algorithm to use");
+    algo.setRequired(true);
+    options.addOption(algo);
+
+    // Objective function
+    final Option obj = new Option("o", "objective", true, "objective to use");
+    obj.setRequired(true);
+    options.addOption(obj);
+
+    // Embedding strategy (only for the PM algorithm)
+    final Option emb = new Option("e", "embedding", true, "embedding to use for PM algorithm");
+    emb.setRequired(false);
+    options.addOption(emb);
+
+    // Maximum path length to generate paths with
+    final Option pathLength = new Option("l", "path-length", true, "maximum path length");
+    pathLength.setRequired(true);
+    options.addOption(pathLength);
+
+    // JSON file for the substrate network to load
+    final Option subNetFile = new Option("s", "snetfile", true, "substrate network file to load");
+    subNetFile.setRequired(true);
+    options.addOption(subNetFile);
+
+    // JSON file for the virtual network(s) to load
+    final Option virtNetFile = new Option("v", "vnetfile", true, "virtual network(s) file to load");
+    virtNetFile.setRequired(true);
+    options.addOption(virtNetFile);
+
+    final CommandLineParser parser = new DefaultParser();
+    final HelpFormatter formatter = new HelpFormatter();
+    CommandLine cmd = null;
+
+    try {
+      cmd = parser.parse(options, args);
+    } catch (final ParseException e) {
+      System.out.println(e.getMessage());
+      formatter.printHelp("utility-name", options);
+      System.exit(1);
     }
 
+    // Parsing finished. Here starts the configuration.
+
     // #0 Algorithm
-    algoConfig = args[0];
+    algoConfig = cmd.getOptionValue("algorithm");
 
     // #1 Objective
-    switch (args[1]) {
+    switch (cmd.getOptionValue("objective")) {
       case "total-path":
         AlgorithmConfig.obj = Objective.TOTAL_PATH_COST;
         break;
@@ -158,7 +207,7 @@ public class DissScenarioLoad {
     }
 
     // #2 Embedding
-    switch (args[2]) {
+    switch (cmd.getOptionValue("embedding")) {
       case "emoflon":
         AlgorithmConfig.emb = Embedding.EMOFLON;
         break;
@@ -172,13 +221,13 @@ public class DissScenarioLoad {
 
     // #3 Maximum path length
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
-    ModelFacadeConfig.MAX_PATH_LENGTH = Integer.valueOf(args[3]);
+    ModelFacadeConfig.MAX_PATH_LENGTH = Integer.valueOf(cmd.getOptionValue("path-length"));
 
     // #4 Substrate network file path
-    subNetPath = args[4];
+    subNetPath = cmd.getOptionValue("snetfile");
 
     // #5 Virtual network file path
-    virtNetsPath = args[5];
+    virtNetsPath = cmd.getOptionValue("vnetfile");
 
     // Print arguments into logs/system outputs
     System.out.println("=> Arguments: " + Arrays.toString(args));
