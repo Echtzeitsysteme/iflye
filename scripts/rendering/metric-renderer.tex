@@ -1,0 +1,176 @@
+\documentclass{article}
+\usepackage{pgfplots}
+\usepgfplotslibrary{units}
+\usepackage[labelfont=bf]{caption}
+
+\edef \csv{%
+	\directlua{
+	tex.sprint(os.getenv('CSV_PATH'))
+}}
+
+\begin{document}
+	\begin{figure}
+		\begin{tikzpicture}
+			\begin{axis}[
+				width=1.0\linewidth,
+				height=0.6\linewidth,
+				grid=major, 
+				grid style={dashed,black!20},
+				tick label style={/pgf/number format/fixed},			
+				xlabel=VNR no.,
+				ylabel=PM time,
+				x unit=,
+				y unit=s,
+				legend style={at={(0.02,0.90)},anchor=west}
+				]
+				\addplot table [x=counter, y=time_pm, col sep=comma] {\csv};
+			\end{axis}
+		\end{tikzpicture}
+		\caption{PM time in seconds.}
+	\end{figure}
+
+	\begin{figure}
+		\begin{tikzpicture}
+			\begin{axis}[
+				width=1.0\linewidth,
+				height=0.6\linewidth,
+				grid=major, 
+				grid style={dashed,black!20},
+				tick label style={/pgf/number format/fixed},			
+				xlabel=VNR no.,
+				ylabel=ILP time,
+				x unit=,
+				y unit=s,
+				legend style={at={(0.02,0.90)},anchor=west}
+				]
+				\addplot table [x=counter, y=time_ilp, col sep=comma] {\csv};
+			\end{axis}
+		\end{tikzpicture}
+		\caption{ILP time in seconds.}
+	\end{figure}
+
+	\begin{figure}
+		\begin{tikzpicture}
+			\begin{axis}[
+				width=1.0\linewidth,
+				height=0.6\linewidth,
+				grid=major, 
+				grid style={dashed,black!20},
+				tick label style={/pgf/number format/fixed},			
+				xlabel=VNR no.,
+				ylabel=Deploy time,
+				x unit=,
+				y unit=s,
+				legend style={at={(0.02,0.90)},anchor=west}
+				]
+				\addplot table [x=counter, y=time_deploy, col sep=comma] {\csv};
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Deploy time in seconds.}
+	\end{figure}
+
+	\begin{figure}
+		\begin{tikzpicture}
+			\begin{axis}[
+				width=1.0\linewidth,
+				height=0.6\linewidth,
+				grid=major, 
+				grid style={dashed,black!20},
+				tick label style={/pgf/number format/fixed},			
+				xlabel=VNR no.,
+				ylabel=Rest time,
+				x unit=,
+				y unit=s,
+				legend style={at={(0.02,0.90)},anchor=west}
+				]
+				\addplot table [x=counter, y=time_rest, col sep=comma] {\csv};
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Rest time in seconds.}
+	\end{figure}
+
+	\begin{figure}
+		\begin{tikzpicture}
+			\begin{axis}[
+				width=1.0\linewidth,
+				height=0.6\linewidth,
+				grid=major, 
+				grid style={dashed,black!20},
+				tick label style={/pgf/number format/fixed},			
+				xlabel=VNR no.,
+				ylabel=Accepted VNRs,
+				x unit=,
+				y unit=,
+				legend style={at={(0.02,0.90)},anchor=west}
+				]
+				\addplot table [x=counter, y=accepted_vnrs, col sep=comma] {\csv};
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Number of accepted VNRs.}
+	\end{figure}
+
+	\begin{figure}
+		\begin{tikzpicture}
+			\begin{axis}[
+				width=1.0\linewidth,
+				height=0.6\linewidth,
+				grid=major, 
+				grid style={dashed,black!20},
+				tick label style={/pgf/number format/fixed},			
+				xlabel=VNR no.,
+				ylabel=Total path cost metric,
+				x unit=,
+				y unit=,
+				legend style={at={(0.02,0.90)},anchor=west}
+				]
+				\addplot table [x=counter, y=total_path_cost, col sep=comma] {\csv};
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Total path cost metric.}
+	\end{figure}
+
+	\begin{figure}
+		\begin{tikzpicture}
+			\begin{axis}[
+				width=1.0\linewidth,
+				height=0.6\linewidth,
+				grid=major, 
+				grid style={dashed,black!20},
+				tick label style={/pgf/number format/fixed},			
+				xlabel=VNR no.,
+				ylabel=Average path length metric,
+				x unit=,
+				y unit=,
+				legend style={at={(0.02,0.90)},anchor=west}
+				]
+				\addplot table [x=counter, y=average_path_length, col sep=comma] {\csv};
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Average path length metric.}
+	\end{figure}
+
+	\begin{figure}
+		\begin{tikzpicture}
+			\begin{axis}[
+				width=1.0\linewidth,
+				height=0.6\linewidth,
+				grid=major, 
+				grid style={dashed,black!20},
+				tick label style={/pgf/number format/fixed},			
+				xlabel=VNR no.,
+				ylabel=Total communication cost metric,
+				x unit=,
+				y unit=,
+				legend style={at={(0.02,0.84)},anchor=west}
+				]
+				\addplot [color = red, mark = *] table [x=counter, y=total_communication_cost_a, col sep=comma] {\csv};
+				\addplot [color = blue, mark = x] table [x=counter, y=total_communication_cost_b, col sep=comma] {\csv};
+				\addplot [color = green, mark = x] table [x=counter, y=total_communication_cost_c, col sep=comma] {\csv};
+				\addlegendentry{Type A}
+				\addlegendentry{Type B}
+				\addlegendentry{Type C}
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Total communication cost A/B/C metric.}
+	\end{figure}
+\end{document}

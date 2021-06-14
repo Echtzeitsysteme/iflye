@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+
+# Set env vars
+source env.sh
+
+# Config
+export DATE=$(date +"%FT%H-%M-%S")
+export JAR="Untitled.jar"
+export ARGS="-a pm-update -o total-comm-a -e emoflon_wo_update -l 2 -s resources/two-tier-4-pods/snet.json -v resources/two-tier-4-pods/vnets.json -c metrics/$DATE.csv"
+
+# Make sure that folder for hipe-network exists
+mkdir -p bin
+mkdir -p metrics
+
+# Extract hipe-network.xmi file
+unzip -o *.jar "*/hipe-network.xmi"
+rsync -a ./rules ./bin
+rm -r ./rules
+
+# Execute the program itself and save its output to logfile
+mkdir -p logs
+java -Xmx10g -jar $JAR $ARGS 2>&1 | tee "./logs/$DATE.log"
