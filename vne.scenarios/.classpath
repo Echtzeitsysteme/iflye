@@ -13,5 +13,7 @@
 	<classpathentry kind="lib" path="lib/commons-cli-1.4/commons-cli-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-cli-1.4/commons-cli-1.4-javadoc.jar"/>
 	<classpathentry kind="lib" path="lib/commons-cli-1.4/commons-cli-1.4-sources.jar"/>
+	<classpathentry kind="lib" path="lib/commons-csv-1.8/commons-csv-1.8.jar"/>
+	<classpathentry kind="lib" path="lib/commons-csv-1.8/commons-csv-1.8-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -37,7 +37,6 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
     }
 
     sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNetIds.get(0));
-    GlobalMetricsManager.startRuntime();
 
     /*
      * Every embedding starts here.
@@ -62,13 +61,18 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
       default:
         throw new IllegalArgumentException("Configured algorithm not known.");
     }
+
+    GlobalMetricsManager.startRuntime();
     algo.execute();
+    GlobalMetricsManager.stopRuntime();
 
     /*
      * End of every embedding.
      */
 
-    GlobalMetricsManager.stopRuntime();
+    // Save metrics to CSV file
+    appendCsvLine("batch-all");
+    GlobalMetricsManager.resetRuntime();
 
     /*
      * Evaluation.
