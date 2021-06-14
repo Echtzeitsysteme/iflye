@@ -13,6 +13,13 @@ export ARGS="-a pm-update -o total-comm-a -e emoflon_wo_update -l 2 -s resources
 # Make sure that folder for hipe-network exists
 mkdir -p bin
 mkdir -p metrics
+mkdir -p resources
+
+# Get resources from scenario project
+if ! [[ "$(find . -maxdepth 3 -type f -iname \*.json)" ]];
+then 
+    rsync -a ../vne.scenarios/resources .
+fi
 
 # Extract hipe-network.xmi file
 unzip -o *.jar "*/hipe-network.xmi"
