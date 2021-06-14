@@ -2,18 +2,28 @@
 
 set -e
 
-function run {
+function setup {
     # Make sure that folder for hipe-network exists
     mkdir -p bin
     mkdir -p metrics
+    mkdir -p resources
+
+    # Get resources from scenario project
+    if ! [[ "$(find . -maxdepth 3 -type f -iname \*.json)" ]];
+    then 
+        rsync -a ../vne.scenarios/resources .
+    fi
 
     # Extract hipe-network.xmi file
     unzip -o *.jar "*/hipe-network.xmi"
     rsync -a ./rules ./bin
     rm -r ./rules
 
-    # Execute the program itself and save its output to logfile
     mkdir -p logs
+}
+
+function run {
+    # Execute the program itself and save its output to logfile
     java -Xmx10g -jar $JAR $ARGS 2>&1 | tee "./logs/$RUN_NAME.log"
 }
 
@@ -26,6 +36,8 @@ algorithms=(pm pm-update ilp)
 scenarios=(two-tier-4-pods two-tier-8-pods two-tier-12-pods fat-tree-4-pods fat-tree-8-pods)
 path_lengths=(2 3 4)
 k_paths=(1 2)
+
+setup
 
 for a in "${algorithms[@]}"
 do
