@@ -72,6 +72,11 @@ public class DissScenarioLoad {
   protected static String csvPath = null;
 
   /**
+   * Counter for the number of lines within the CSV output file.
+   */
+  protected static int csvCounter = 0;
+
+  /**
    * Main method to start the example. String array of arguments will be parsed.
    * 
    * @param args See {@link #parseArgs(String[])}.
@@ -336,7 +341,7 @@ public class DissScenarioLoad {
         out = Files.newBufferedWriter(Paths.get(csvPath), StandardOpenOption.APPEND,
             StandardOpenOption.CREATE);
         try (final CSVPrinter printer = new CSVPrinter(out,
-            CSVFormat.DEFAULT.withHeader("timestamp", "lastVNR", "time_pm", "time_ilp",
+            CSVFormat.DEFAULT.withHeader("counter", "timestamp", "lastVNR", "time_pm", "time_ilp",
                 "time_deploy", "time_rest", "accepted_vnrs", "total_path_cost",
                 "average_path_length", "total_communication_cost_a", "total_communication_cost_b",
                 "total_communication_cost_c"))) {
@@ -348,6 +353,7 @@ public class DissScenarioLoad {
           StandardOpenOption.CREATE);
       try (final CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT)) {
         printer.printRecord( //
+            csvCounter++, // line counter
             java.time.LocalDateTime.now(), // time stamp
             lastVnr, // name of the last embedded virtual network
             GlobalMetricsManager.getRuntime().getPmValue() / 1_000_000_000, // PM time
@@ -364,7 +370,6 @@ public class DissScenarioLoad {
         printer.close();
       }
       out.close();
-
     } catch (final IOException e) {
       // TODO: Error handling
       e.printStackTrace();
