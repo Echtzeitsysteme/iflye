@@ -28,4 +28,4 @@ rm -r ./rules
 
 # Execute the program itself and save its output to logfile
 mkdir -p logs
-java -Xmx10g -jar $JAR $ARGS 2>&1 | tee "./logs/$DATE.log"
+java -Xmx32g -jar $JAR $ARGS 2>&1 | tee "./logs/$DATE.log"
