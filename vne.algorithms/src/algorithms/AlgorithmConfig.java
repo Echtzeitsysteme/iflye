@@ -84,4 +84,10 @@ public class AlgorithmConfig {
    */
   public static int pmNoUpdates = 6;
 
+  /**
+   * If true, the network rejection cost will be calculated based on the size of the virtual network
+   * and its resources. If false, the cost will be static.
+   */
+  public static boolean netRejCostDynamic = false;
+
 }

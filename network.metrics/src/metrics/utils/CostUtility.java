@@ -2,6 +2,7 @@ package metrics.utils;
 
 import java.util.List;
 import model.Link;
+import model.Node;
 import model.Path;
 import model.Server;
 import model.SubstrateElement;
@@ -11,6 +12,7 @@ import model.SubstrateServer;
 import model.Switch;
 import model.VirtualElement;
 import model.VirtualLink;
+import model.VirtualNetwork;
 import model.VirtualServer;
 
 /**
@@ -282,12 +284,38 @@ public class CostUtility {
   }
 
   /**
-   * Returns the costs to reject a virtual network.
+   * Returns the static costs to reject a virtual network.
    * 
    * @return Cost to reject a virtual network.
    */
   public static double getNetworkRejectionCost() {
     return 1_000_000;
+  }
+
+  /**
+   * Returns the dynamic costs to reject a virtual network.
+   * 
+   * @param vNet Virtual network to calculate rejection cost for.
+   * @return Cost to reject a virtual network.
+   */
+  public static double getNetworkRejectionCost(final VirtualNetwork vNet) {
+    double cost = 0;
+    final double bwFactor = 10;
+    final double srvFactor = 10;
+
+    for (final Node n : vNet.getNodes()) {
+      if (n instanceof VirtualServer) {
+        final VirtualServer vsrv = (VirtualServer) n;
+        cost += srvFactor * (vsrv.getCpu() + vsrv.getMemory() + vsrv.getStorage());
+      }
+    }
+
+    for (final Link l : vNet.getLinks()) {
+      final VirtualLink vl = (VirtualLink) l;
+      cost += bwFactor * vl.getBandwidth();
+    }
+
+    return cost;
   }
 
   /*

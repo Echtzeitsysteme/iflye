@@ -101,9 +101,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
      * @param match Match to get information from.
      */
     public void addNewNetworkMatch(final Match match) {
-      delta.addVariable("rej" + match.getVirtual().getName(),
-          CostUtility.getNetworkRejectionCost());
-      variablesToMatch.put("rej" + match.getVirtual().getName(), match);
+      final VirtualNetwork vNet = (VirtualNetwork) match.getVirtual();
+      delta.addVariable("rej" + vNet.getName(), getNetRejCost(vNet));
+      variablesToMatch.put("rej" + vNet.getName(), match);
     }
 
     /**
@@ -770,6 +770,14 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
         return CostUtility.getTotalCommunicationCostLinkBC(virt, sub);
       default:
         throw new UnsupportedOperationException();
+    }
+  }
+
+  public double getNetRejCost(final VirtualNetwork vNet) {
+    if (AlgorithmConfig.netRejCostDynamic) {
+      return CostUtility.getNetworkRejectionCost(vNet);
+    } else {
+      return CostUtility.getNetworkRejectionCost();
     }
   }
 
