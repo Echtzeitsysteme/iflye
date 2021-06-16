@@ -13,6 +13,7 @@ import model.SubstrateNetwork;
 import model.VirtualNetwork;
 import model.converter.BasicModelConverter;
 import model.converter.IncrementalModelConverter;
+import scenario.util.CsvUtil;
 
 /**
  * Runnable (batch) scenario for VNE algorithms that reads specified files from resource folder.
@@ -71,7 +72,7 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
      */
 
     // Save metrics to CSV file
-    appendCsvLine("batch-all");
+    CsvUtil.appendCsvLine("batch-all", csvPath, sNet);
     GlobalMetricsManager.resetRuntime();
 
     /*
