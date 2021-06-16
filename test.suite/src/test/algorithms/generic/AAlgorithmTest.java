@@ -7,6 +7,7 @@ import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import algorithms.AbstractAlgorithm;
+import algorithms.AlgorithmConfig;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import model.Link;
@@ -55,6 +56,11 @@ public abstract class AAlgorithmTest {
    */
   protected boolean oldIgnoreBw;
 
+  /**
+   * Old dynamic network rejection switch value.
+   */
+  protected boolean oldNetRejCost;
+
   @BeforeEach
   public void resetModel() {
     facade.resetAll();
@@ -63,6 +69,7 @@ public abstract class AAlgorithmTest {
     oldLowerLimit = ModelFacadeConfig.MIN_PATH_LENGTH;
     oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
     oldIgnoreBw = ModelFacadeConfig.IGNORE_BW;
+    oldNetRejCost = AlgorithmConfig.netRejCostDynamic;
 
     // Network setup
     facade.addNetworkToRoot("sub", false);
@@ -78,6 +85,7 @@ public abstract class AAlgorithmTest {
     ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
     ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
     ModelFacadeConfig.IGNORE_BW = oldIgnoreBw;
+    AlgorithmConfig.netRejCostDynamic = oldNetRejCost;
   }
 
   /**

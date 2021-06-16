@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -174,38 +176,35 @@ public class VnePmMdvneAlgorithmTotalPathCostTest extends AAlgorithmMultipleVnsT
   }
 
   @Test
-  public void testPartialEmbeddingIfFullAllAtOnce() {
-    facade.addNetworkToRoot("virt2", true);
-    facade.addNetworkToRoot("virt3", true);
-    facade.addNetworkToRoot("virt4", true);
-    oneTierSetupTwoServers("virt", 2);
-    oneTierSetupTwoServers("virt2", 2);
-    oneTierSetupTwoServers("virt3", 2);
-    oneTierSetupThreeServers("virt4", 2);
-    twoTierSetupFourServers("sub", 4);
-    facade.createAllPathsForNetwork("sub");
-
+  public void testPartialEmbeddingIfFullAllAtOnceStaticRejCost() {
+    AlgorithmConfig.netRejCostDynamic = false;
     final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+    final List<VirtualNetwork> vNets = rejectionSetup();
 
-    final Set<VirtualNetwork> vNets = new HashSet<VirtualNetwork>();
-    final VirtualNetwork vNet1 = (VirtualNetwork) facade.getNetworkById("virt");
-    final VirtualNetwork vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
-    final VirtualNetwork vNet3 = (VirtualNetwork) facade.getNetworkById("virt3");
-    final VirtualNetwork vNet4 = (VirtualNetwork) facade.getNetworkById("virt4");
-
-    vNets.add(vNet1);
-    vNets.add(vNet2);
-    vNets.add(vNet3);
-    vNets.add(vNet4);
-
-    initAlgo(sNet, vNets);
+    initAlgo(sNet, new HashSet<VirtualNetwork>(vNets));
     assertFalse(algo.execute());
 
     // The first three networks must be embedded
-    assertNotNull(vNet1.getHost());
-    assertNotNull(vNet2.getHost());
-    assertNotNull(vNet3.getHost());
-    assertNull(vNet4.getHost());
+    assertNotNull(vNets.get(0).getHost());
+    assertNotNull(vNets.get(1).getHost());
+    assertNotNull(vNets.get(2).getHost());
+    assertNull(vNets.get(3).getHost());
+  }
+
+  @Test
+  public void testPartialEmbeddingIfFullAllAtOnceDynamicRejCost() {
+    AlgorithmConfig.netRejCostDynamic = true;
+    final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+    final List<VirtualNetwork> vNets = rejectionSetup();
+
+    initAlgo(sNet, new HashSet<VirtualNetwork>(vNets));
+    assertFalse(algo.execute());
+
+    // The last network must be embedded, because its rejection cost is larger
+    assertNotNull(vNets.get(0).getHost());
+    assertNotNull(vNets.get(1).getHost());
+    assertNull(vNets.get(2).getHost());
+    assertNotNull(vNets.get(3).getHost());
   }
 
   @Test
@@ -232,6 +231,35 @@ public class VnePmMdvneAlgorithmTotalPathCostTest extends AAlgorithmMultipleVnsT
     assertTrue(algo.execute());
 
     assertEquals(2, sNet.getGuests().size());
+  }
+
+  /*
+   * Utility methods
+   */
+
+  private List<VirtualNetwork> rejectionSetup() {
+    facade.addNetworkToRoot("virt2", true);
+    facade.addNetworkToRoot("virt3", true);
+    facade.addNetworkToRoot("virt4", true);
+    oneTierSetupTwoServers("virt", 2);
+    oneTierSetupTwoServers("virt2", 2);
+    oneTierSetupTwoServers("virt3", 2);
+    oneTierSetupThreeServers("virt4", 2);
+    twoTierSetupFourServers("sub", 4);
+    facade.createAllPathsForNetwork("sub");
+
+    final List<VirtualNetwork> vNets = new LinkedList<VirtualNetwork>();
+    final VirtualNetwork vNet1 = (VirtualNetwork) facade.getNetworkById("virt");
+    final VirtualNetwork vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
+    final VirtualNetwork vNet3 = (VirtualNetwork) facade.getNetworkById("virt3");
+    final VirtualNetwork vNet4 = (VirtualNetwork) facade.getNetworkById("virt4");
+
+    vNets.add(vNet1);
+    vNets.add(vNet2);
+    vNets.add(vNet3);
+    vNets.add(vNet4);
+
+    return vNets;
   }
 
 }
