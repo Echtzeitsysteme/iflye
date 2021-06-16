@@ -9,13 +9,13 @@ function setup {
     mkdir -p resources
 
     # Get resources from scenario project
-    if ! [[ "$(find . -maxdepth 3 -type f -iname \*.json)" ]];
+    if ! [[ "$(find ./resources -maxdepth 3 -type f -iname \*.json)" ]];
     then 
         rsync -a ../vne.scenarios/resources .
     fi
 
     # Extract hipe-network.xmi file
-    unzip -o *.jar "*/hipe-network.xmi"
+    unzip -o $JAR "*/hipe-network.xmi"
     rsync -a ./rules ./bin
     rm -r ./rules
 
@@ -31,7 +31,7 @@ function run {
 source env.sh
 
 # Config
-export JAR="Untitled.jar"
+export JAR="iflye.jar"
 algorithms=(pm pm-update ilp)
 scenarios=(two-tier-4-pods two-tier-8-pods two-tier-12-pods fat-tree-4-pods fat-tree-8-pods)
 path_lengths=(2 3 4)

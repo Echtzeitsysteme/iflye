@@ -125,3 +125,5 @@ scripts/resources/
 scripts/*.jar
 scripts/*.xmi
 scripts/rendering/*.pdf
+
+scripts/main/
