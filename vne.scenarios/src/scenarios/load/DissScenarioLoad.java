@@ -55,7 +55,7 @@ public class DissScenarioLoad {
   protected static String subNetPath;
 
   /**
-   * File path for the JSON file to load all substrate networks from.
+   * File path for the JSON file to load all virtual networks from.
    */
   protected static String virtNetsPath;
 
