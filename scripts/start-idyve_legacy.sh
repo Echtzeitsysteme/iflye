@@ -11,7 +11,7 @@ mkdir -p $OUTPUT
 # Config
 export DATE=$(date +"%FT%H-%M-%S")
 export JAR="idyve.jar"
-export ARGS="mdvne 4 two-tier 2 $OUTPUT"
+export ARGS="mdvne 4 two-tier 2 $OUTPUT 600 0"
 
 # Extract ibex-patterns.xmi file
 unzip -o $JAR "*/ibex-patterns.xmi"

@@ -8,7 +8,7 @@ source env.sh
 # Config
 export DATE=$(date +"%FT%H-%M-%S")
 export JAR="iflye.jar"
-export ARGS="-a pm -o total-comm-a -e emoflon_wo_update -l 2 -s resources/two-tier-4-pods/snet.json -v resources/two-tier-4-pods/vnets.json -c metrics/$DATE.csv"
+export ARGS="-a pm -o total-comm-a -e emoflon_wo_update -l 2 -s resources/two-tier-4-pods/snet.json -v resources/two-tier-4-pods/vnets.json -c metrics/$DATE.csv -i 600"
 
 # Make sure that folder for hipe-network exists
 mkdir -p bin

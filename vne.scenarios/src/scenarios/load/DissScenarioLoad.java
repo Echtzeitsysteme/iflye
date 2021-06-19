@@ -19,6 +19,7 @@ import algorithms.pm.VnePmMdvneAlgorithm;
 import algorithms.pm.VnePmMdvneAlgorithmUpdate;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
+import ilp.wrapper.config.IlpSolverConfig;
 import metrics.AcceptedVnrMetric;
 import metrics.AveragePathLengthMetric;
 import metrics.TotalCommunicationCostMetricA;
@@ -148,6 +149,7 @@ public class DissScenarioLoad {
    * <li>#6: Number of update tries [only relevant for VNE PM algorithm]</li>
    * <li>#7: K fastest paths between two nodes</li>
    * <li>#8: CSV metric file path</li>
+   * <li>#9: ILP solver timeout value</li>
    * </ol>
    * 
    * @param args Arguments to parse.
@@ -201,6 +203,17 @@ public class DissScenarioLoad {
     final Option csv = new Option("c", "csvpath", true, "file path for the CSV metric file");
     csv.setRequired(false);
     options.addOption(csv);
+
+    // ILP solver timeout
+    final Option ilpTimeout =
+        new Option("i", "ilptimeout", true, "ILP solver timeout value in seconds");
+    ilpTimeout.setRequired(false);
+    options.addOption(ilpTimeout);
+
+    // ILP solver random seed
+    final Option ilpRandomSeed = new Option("r", "ilprandomseed", true, "ILP solver random seed");
+    ilpRandomSeed.setRequired(false);
+    options.addOption(ilpRandomSeed);
 
     final CommandLineParser parser = new DefaultParser();
     final HelpFormatter formatter = new HelpFormatter();
@@ -277,6 +290,16 @@ public class DissScenarioLoad {
     // #8: CSV metric file path
     if (cmd.getOptionValue("csvpath") != null) {
       csvPath = cmd.getOptionValue("csvpath");
+    }
+
+    // #9: ILP solver timeout value
+    if (cmd.getOptionValue("ilptimeout") != null) {
+      IlpSolverConfig.TIME_OUT = Integer.valueOf(cmd.getOptionValue("ilptimeout"));
+    }
+
+    // #10: ILP solver random seed
+    if (cmd.getOptionValue("ilprandomseed") != null) {
+      IlpSolverConfig.RANDOM_SEED = Integer.valueOf(cmd.getOptionValue("ilprandomseed"));
     }
 
     // Print arguments into logs/system outputs

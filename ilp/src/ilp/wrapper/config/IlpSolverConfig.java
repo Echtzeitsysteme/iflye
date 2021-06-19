@@ -4,7 +4,12 @@ import org.cardygan.ilp.api.solver.CplexSolver;
 import org.cardygan.ilp.api.solver.GurobiSolver;
 import org.cardygan.ilp.api.solver.GurobiSolver.GurobiSolverBuilder;
 
-public interface IlpSolverConfig {
+public class IlpSolverConfig {
+
+  /**
+   * Private constructor ensures no instantiation of this class.
+   */
+  private IlpSolverConfig() {}
 
   /**
    * If true, enables the output of the ILP solvers.
@@ -19,12 +24,12 @@ public interface IlpSolverConfig {
   /**
    * Timeout for the ILP solver.
    */
-  public static final int TIME_OUT = Integer.MAX_VALUE;
+  public static int TIME_OUT = Integer.MAX_VALUE;
 
   /**
    * Random seed for the ILP solver.
    */
-  public static final int RANDOM_SEED = 0;
+  public static int RANDOM_SEED = 0;
 
   /**
    * Returns a new instance of the configured solver.
