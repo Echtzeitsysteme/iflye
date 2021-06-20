@@ -127,3 +127,7 @@ scripts/*.xmi
 scripts/rendering/*.pdf
 
 scripts/main/
+
+scripts/ts
+
+scripts/idyve-output/
