@@ -38,6 +38,7 @@ setup
 # Example arguments:
 # pm two-tier-4-pods 4 1
 # $1 $2              $3 $4
+# pm two-tier-4-pods auto 1
 
 export a=$1
 export s=$2
