@@ -499,25 +499,34 @@ public class ModelFacade {
    * @return Maximum path length.
    */
   private int determineMaxPathLengthForTree(final String networkId) {
-    int maxPathLength = Integer.MAX_VALUE;
+    int maxServerDepth = Integer.MAX_VALUE;
 
     final List<Node> servers = getAllServersOfNetwork(networkId);
     for (final Node n : servers) {
       final SubstrateServer srv = (SubstrateServer) n;
 
-      if (srv.getDepth() != maxPathLength) {
-        if (maxPathLength != Integer.MAX_VALUE) {
+      if (srv.getDepth() != maxServerDepth) {
+        if (maxServerDepth != Integer.MAX_VALUE) {
           throw new UnsupportedOperationException("In network " + networkId
               + " are servers with different depths, which is not supported.");
         }
 
-        if (srv.getDepth() < maxPathLength) {
-          maxPathLength = srv.getDepth();
+        if (srv.getDepth() < maxServerDepth) {
+          maxServerDepth = srv.getDepth();
         }
       }
     }
 
-    return maxPathLength;
+    int minSwitchDepth = Integer.MAX_VALUE;
+    final List<Node> switches = getAllSwitchesOfNetwork(networkId);
+    for (final Node n : switches) {
+      final SubstrateSwitch sw = (SubstrateSwitch) n;
+      if (sw.getDepth() < minSwitchDepth) {
+        minSwitchDepth = sw.getDepth();
+      }
+    }
+
+    return maxServerDepth - minSwitchDepth;
   }
 
   /**
