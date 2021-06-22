@@ -443,6 +443,27 @@ public class ModelFacadePathAutoBasicTest {
     }
   }
 
+  @Test
+  public void testNetworkWithNonZeroCoreSwitchDepth() {
+    // Setup for this test
+    ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+    ModelFacadeConfig.MAX_PATH_LENGTH = 3;
+    // ^maximum path length should be overwritten to 1
+
+    ModelFacade.getInstance().addNetworkToRoot("net", false);
+    ModelFacade.getInstance().addSwitchToNetwork("sw", "net", 3);
+    ModelFacade.getInstance().addServerToNetwork("1", "net", 1, 1, 1, 4);
+    ModelFacade.getInstance().addServerToNetwork("2", "net", 1, 1, 1, 4);
+    ModelFacade.getInstance().addLinkToNetwork("l1", "net", 1, "sw", "1");
+    ModelFacade.getInstance().addLinkToNetwork("l2", "net", 1, "1", "sw");
+    ModelFacade.getInstance().addLinkToNetwork("l3", "net", 1, "sw", "2");
+    ModelFacade.getInstance().addLinkToNetwork("l4", "net", 1, "2", "sw");
+
+    ModelFacade.getInstance().createAllPathsForNetwork("net");
+
+    assertEquals(1, ModelFacadeConfig.MAX_PATH_LENGTH);
+  }
+
   /*
    * Negative tests
    */

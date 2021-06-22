@@ -8,6 +8,7 @@ import algorithms.ilp.VneIlpPathAlgorithm;
 import algorithms.pm.VnePmMdvneAlgorithm;
 import algorithms.pm.VnePmMdvneAlgorithmUpdate;
 import facade.ModelFacade;
+import facade.config.ModelFacadeConfig;
 import metrics.manager.GlobalMetricsManager;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
@@ -38,6 +39,12 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
     }
 
     sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNetIds.get(0));
+
+    // Print maximum path length (after possible auto determination)
+    if (ModelFacadeConfig.MAX_PATH_LENGTH_AUTO) {
+      System.out.println("=> Using path length auto determination");
+    }
+    System.out.println("=> Using max path length " + ModelFacadeConfig.MAX_PATH_LENGTH);
 
     /*
      * Every embedding starts here.

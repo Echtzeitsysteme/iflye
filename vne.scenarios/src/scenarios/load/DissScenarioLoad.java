@@ -82,6 +82,12 @@ public class DissScenarioLoad {
 
     sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNetIds.get(0));
 
+    // Print maximum path length (after possible auto determination)
+    if (ModelFacadeConfig.MAX_PATH_LENGTH_AUTO) {
+      System.out.println("=> Using path length auto determination");
+    }
+    System.out.println("=> Using max path length " + ModelFacadeConfig.MAX_PATH_LENGTH);
+
     /*
      * Every embedding starts here.
      */
@@ -143,13 +149,14 @@ public class DissScenarioLoad {
    * <li>#1: Objective "total-path", "total-comm-a", "total-comm-b", "total-comm-c"</li>
    * <li>#2: Embedding "emoflon", "emoflon_wo_update" or "manual" [only relevant for VNE PM
    * algorithm]
-   * <li>#3: Maximum path length</li>
+   * <li>#3: Maximum path length: int or "auto"</li>
    * <li>#4: Substrate network file to load, e.g. "resources/two-tier-4-pods/snet.json"</li>
    * <li>#5: Virtual network(s) file to load, e.g. "resources/two-tier-4-pods/vnets.json"</li>
    * <li>#6: Number of update tries [only relevant for VNE PM algorithm]</li>
    * <li>#7: K fastest paths between two nodes</li>
    * <li>#8: CSV metric file path</li>
    * <li>#9: ILP solver timeout value</li>
+   * <li>#10: ILP solver random seed value</li>
    * </ol>
    * 
    * @param args Arguments to parse.
@@ -174,7 +181,7 @@ public class DissScenarioLoad {
 
     // Maximum path length to generate paths with
     final Option pathLength = new Option("l", "path-length", true, "maximum path length");
-    pathLength.setRequired(true);
+    pathLength.setRequired(false);
     options.addOption(pathLength);
 
     // JSON file for the substrate network to load
@@ -265,7 +272,14 @@ public class DissScenarioLoad {
 
     // #3 Maximum path length
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
-    ModelFacadeConfig.MAX_PATH_LENGTH = Integer.valueOf(cmd.getOptionValue("path-length"));
+    String pathLengthParam = cmd.getOptionValue("path-length");
+    if (pathLengthParam != null) {
+      if (pathLengthParam.equals("auto")) {
+        ModelFacadeConfig.MAX_PATH_LENGTH_AUTO = true;
+      } else {
+        ModelFacadeConfig.MAX_PATH_LENGTH = Integer.valueOf(cmd.getOptionValue("path-length"));
+      }
+    }
 
     // #4 Substrate network file path
     subNetPath = cmd.getOptionValue("snetfile");
