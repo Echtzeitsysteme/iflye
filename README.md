@@ -57,6 +57,15 @@ Therefore, it acts as a kind of abstract model representation.
 Feel free to check out some examples in [vne.scenarios/resources/*/](vne.scenarios/resources/).
 
 
+## Visualization
+
+For easier debugging purposes, a basic GUI for visualizing networks is implemented in the project [network.visualization](network.visualization/) based on [GraphViz](http://www.graphviz.org/download/).
+Currently, it can render tree-based networks as tree structures or use the automatic mode of GraphViz from a model file `model.xmi` in the [examples project](examples/).
+
+![](gfx/gui-tree.png)
+![](gfx/gui-auto.png)
+
+
 ## License
 
 This project is licensed under the GNU General Public License v3.0 - see the [LICENSE.md](LICENSE.md) file for more details.
