@@ -82,6 +82,12 @@ public class DissScenarioLoad {
 
     sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNetIds.get(0));
 
+    // Print maximum path length (after possible auto determination)
+    if (ModelFacadeConfig.MAX_PATH_LENGTH_AUTO) {
+      System.out.println("=> Using path length auto determination");
+    }
+    System.out.println("=> Using max path length " + ModelFacadeConfig.MAX_PATH_LENGTH);
+
     /*
      * Every embedding starts here.
      */
@@ -144,12 +150,14 @@ public class DissScenarioLoad {
    * <li>#2: Embedding "emoflon", "emoflon_wo_update" or "manual" [only relevant for VNE PM
    * algorithm]
    * <li>#3: Maximum path length</li>
-   * <li>#4: Substrate network file to load, e.g. "resources/two-tier-4-pods/snet.json"</li>
-   * <li>#5: Virtual network(s) file to load, e.g. "resources/two-tier-4-pods/vnets.json"</li>
-   * <li>#6: Number of update tries [only relevant for VNE PM algorithm]</li>
-   * <li>#7: K fastest paths between two nodes</li>
-   * <li>#8: CSV metric file path</li>
-   * <li>#9: ILP solver timeout value</li>
+   * <li>#4: Maximum path length auto determination</li>
+   * <li>#5: Substrate network file to load, e.g. "resources/two-tier-4-pods/snet.json"</li>
+   * <li>#6: Virtual network(s) file to load, e.g. "resources/two-tier-4-pods/vnets.json"</li>
+   * <li>#7: Number of update tries [only relevant for VNE PM algorithm]</li>
+   * <li>#8: K fastest paths between two nodes</li>
+   * <li>#9: CSV metric file path</li>
+   * <li>#10: ILP solver timeout value</li>
+   * <li>#11: ILP solver random seed value</li>
    * </ol>
    * 
    * @param args Arguments to parse.
@@ -174,8 +182,14 @@ public class DissScenarioLoad {
 
     // Maximum path length to generate paths with
     final Option pathLength = new Option("l", "path-length", true, "maximum path length");
-    pathLength.setRequired(true);
+    pathLength.setRequired(false);
     options.addOption(pathLength);
+
+    // Maximum path length auto determination
+    final Option pathLengthAuto =
+        new Option("la", "path-length-auto", false, "maximum path length auto determination");
+    pathLengthAuto.setRequired(false);
+    options.addOption(pathLengthAuto);
 
     // JSON file for the substrate network to load
     final Option subNetFile = new Option("s", "snetfile", true, "substrate network file to load");
@@ -265,20 +279,27 @@ public class DissScenarioLoad {
 
     // #3 Maximum path length
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
-    ModelFacadeConfig.MAX_PATH_LENGTH = Integer.valueOf(cmd.getOptionValue("path-length"));
+    if (cmd.getOptionValue("path-length") != null) {
+      ModelFacadeConfig.MAX_PATH_LENGTH = Integer.valueOf(cmd.getOptionValue("path-length"));
+    }
 
-    // #4 Substrate network file path
+    // #4 Maximum path length auto determination
+    if (cmd.hasOption("path-length-auto")) {
+      ModelFacadeConfig.MAX_PATH_LENGTH_AUTO = true;
+    }
+
+    // #5 Substrate network file path
     subNetPath = cmd.getOptionValue("snetfile");
 
-    // #5 Virtual network file path
+    // #6 Virtual network file path
     virtNetsPath = cmd.getOptionValue("vnetfile");
 
-    // #6 Number of update tries
+    // #7 Number of update tries
     if (cmd.getOptionValue("tries") != null) {
       AlgorithmConfig.pmNoUpdates = Integer.valueOf(cmd.getOptionValue("tries"));
     }
 
-    // #7: K fastest paths
+    // #8: K fastest paths
     if (cmd.getOptionValue("kfastestpaths") != null) {
       final int K = Integer.valueOf(cmd.getOptionValue("kfastestpaths"));
       if (K > 1) {
@@ -287,17 +308,17 @@ public class DissScenarioLoad {
       }
     }
 
-    // #8: CSV metric file path
+    // #9: CSV metric file path
     if (cmd.getOptionValue("csvpath") != null) {
       csvPath = cmd.getOptionValue("csvpath");
     }
 
-    // #9: ILP solver timeout value
+    // #10: ILP solver timeout value
     if (cmd.getOptionValue("ilptimeout") != null) {
       IlpSolverConfig.TIME_OUT = Integer.valueOf(cmd.getOptionValue("ilptimeout"));
     }
 
-    // #10: ILP solver random seed
+    // #11: ILP solver random seed
     if (cmd.getOptionValue("ilprandomseed") != null) {
       IlpSolverConfig.RANDOM_SEED = Integer.valueOf(cmd.getOptionValue("ilprandomseed"));
     }
