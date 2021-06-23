@@ -13,7 +13,7 @@ function setup {
 
 function run {
     # Execute the program itself and save its output to logfile
-    java -Xmx32g -jar $JAR $ARGS 2>&1 | tee "./logs/$RUN_NAME.log"
+    java -Xmx64g -jar $JAR $ARGS 2>&1 | tee "./logs/$RUN_NAME.log"
 }
 
 # Set env vars

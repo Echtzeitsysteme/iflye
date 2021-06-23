@@ -36,7 +36,7 @@ export p=$4
 
 export RUN_NAME="${a}_${s}-${p}-pods_l${l}_k1"
 mkdir -p $OUTPUT$RUN_NAME
-export ARGS="$a $p $s $l $OUTPUT$RUN_NAME/ 600 0 NEVER"
+export ARGS="$a $p $s $l $OUTPUT$RUN_NAME/ 600 0 ALWAYS_FREE"
 echo "#"
 echo "# => Using ARGS: $ARGS"
 echo "#"
