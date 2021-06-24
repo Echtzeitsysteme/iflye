@@ -15,6 +15,7 @@ import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Embedding;
 import algorithms.AlgorithmConfig.Objective;
 import algorithms.ilp.VneIlpPathAlgorithm;
+import algorithms.ilp.VneIlpPathAlgorithmBatch;
 import algorithms.pm.VnePmMdvneAlgorithm;
 import algorithms.pm.VnePmMdvneAlgorithmUpdate;
 import facade.ModelFacade;
@@ -111,6 +112,9 @@ public class DissScenarioLoad {
         case "ilp":
           algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
           break;
+        case "ilp-batch":
+          algo = new VneIlpPathAlgorithmBatch(sNet, Set.of(vNet));
+          break;
         default:
           throw new IllegalArgumentException("Configured algorithm not known.");
       }
@@ -145,7 +149,7 @@ public class DissScenarioLoad {
   /**
    * Parses the given arguments to configure the scenario.
    * <ol>
-   * <li>#0: Algorithm "pm" or "ilp"</li>
+   * <li>#0: Algorithm "pm", "pm-update", "ilp" or "ilp-batch"</li>
    * <li>#1: Objective "total-path", "total-comm-a", "total-comm-b", "total-comm-c"</li>
    * <li>#2: Embedding "emoflon", "emoflon_wo_update" or "manual" [only relevant for VNE PM
    * algorithm]
