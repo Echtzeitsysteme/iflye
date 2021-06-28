@@ -582,6 +582,7 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
         }
       }
       model.update();
+      model.set(DoubleParam.OptimalityTol, IlpSolverConfig.OPT_TOL);
       final long start = System.nanoTime();
       model.optimize();
       synchronized (vals) {

@@ -32,6 +32,13 @@ public class IlpSolverConfig {
   public static int RANDOM_SEED = 0;
 
   /**
+   * Optimality tolerance for the ILP implementation part of the PM algorithm. This value is the
+   * default value of the Gurobi solver (1e-6) taken from
+   * https://www.gurobi.com/documentation/9.1/refman/optimalitytol.html#parameter:OptimalityTol.
+   */
+  public static double OPT_TOL = 0.000_001;
+
+  /**
    * Returns a new instance of the configured solver.
    * 
    * @return New instance of the configured solver.
