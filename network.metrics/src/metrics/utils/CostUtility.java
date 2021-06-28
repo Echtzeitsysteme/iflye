@@ -158,11 +158,7 @@ public class CostUtility {
   public static double getTotalCommunicationCostNodeD(final VirtualElement virtualElement,
       final SubstrateElement substrateElement) {
     if (virtualElement instanceof VirtualServer && substrateElement instanceof SubstrateServer) {
-      try {
-        return 1.0 / getTotalCommunicationCostNodeC(virtualElement, substrateElement);
-      } catch (final ArithmeticException ex) {
-        return Integer.MAX_VALUE;
-      }
+      return 1.0 / getTotalCommunicationCostNodeC(virtualElement, substrateElement);
     }
 
     return 0;
