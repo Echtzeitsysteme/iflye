@@ -161,6 +161,7 @@ public class DissScenarioLoad {
    * <li>#8: CSV metric file path</li>
    * <li>#9: ILP solver timeout value</li>
    * <li>#10: ILP solver random seed value</li>
+   * <li>#11: ILP solver optimality tolerance</li>
    * </ol>
    * 
    * @param args Arguments to parse.
@@ -225,6 +226,11 @@ public class DissScenarioLoad {
     final Option ilpRandomSeed = new Option("r", "ilprandomseed", true, "ILP solver random seed");
     ilpRandomSeed.setRequired(false);
     options.addOption(ilpRandomSeed);
+
+    // ILP solver optimality tolerance
+    final Option ilpOptTol = new Option("m", "ilpopttol", true, "ILP solver optimality tolerance");
+    ilpOptTol.setRequired(false);
+    options.addOption(ilpOptTol);
 
     final CommandLineParser parser = new DefaultParser();
     final HelpFormatter formatter = new HelpFormatter();
@@ -318,6 +324,11 @@ public class DissScenarioLoad {
     // #10: ILP solver random seed
     if (cmd.getOptionValue("ilprandomseed") != null) {
       IlpSolverConfig.RANDOM_SEED = Integer.valueOf(cmd.getOptionValue("ilprandomseed"));
+    }
+
+    // #11: ILP solver optimality tolerance
+    if (cmd.getOptionValue("ilpopttol") != null) {
+      IlpSolverConfig.OPT_TOL = Double.valueOf(cmd.getOptionValue("ilpopttol"));
     }
 
     // Print arguments into logs/system outputs
