@@ -581,16 +581,9 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
           vals[i] = -1;
         }
       }
-      // final long beforeUpdate = System.nanoTime();
       model.update();
-      // GenericMethodHelper.printToConsole("Start ILP Solving.");
       final long start = System.nanoTime();
       model.optimize();
-      // final long endOptimize = System.nanoTime();
-      // TempDataStore.getInstance()
-      // .setIlpModelUpdateRuntime((start - beforeUpdate) / Consts.NANO_TO_MILLI);
-      // TempDataStore.getInstance()
-      // .setIlpModelOptimizeRuntime((endOptimize - start) / Consts.NANO_TO_MILLI);
       synchronized (vals) {
         SolverStatus status;
         if (model.get(GRB.IntAttr.Status) == GRB.UNBOUNDED) {
@@ -602,15 +595,12 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
         } else if (model.get(GRB.IntAttr.Status) == GRB.OPTIMAL) {
           status = SolverStatus.OPTIMAL;
         } else if (model.get(GRB.IntAttr.Status) == GRB.TIME_LIMIT) {
-          // System.err.println("Warning: time limit (" + model.get(GRB.DoubleParam.TimeLimit)
-          // + "s) reached! " + model.get(GRB.IntAttr.SolCount) + " solutions were found so far.");
-          // GenericMethodHelper.printToConsole("Warning: time limit reached! "
-          // + model.get(GRB.IntAttr.SolCount) + " solutions were found so far.");
+          System.err.println("Warning: time limit (" + model.get(GRB.DoubleParam.TimeLimit)
+              + "s) reached! " + model.get(GRB.IntAttr.SolCount) + " solutions were found so far.");
           status = SolverStatus.TIME_OUT;
         } else {
           throw new RuntimeException("Unknown solver status.");
         }
-        // GenericMethodHelper.printToConsole("Finished ILP Solving.");
 
         return new Statistics(status, System.nanoTime() - start, (vals[2] - start), (int) vals[0],
             (int) vals[1]);
