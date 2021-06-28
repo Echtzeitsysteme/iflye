@@ -21,7 +21,8 @@ public class AlgorithmConfig {
     TOTAL_PATH_COST, // [1]
     TOTAL_COMMUNICATION_COST_A, // [2]
     TOTAL_COMMUNICATION_COST_B, // [3,4] (One hop = 1 cost, no node costs)
-    TOTAL_COMMUNICATION_COST_C; // [5] (One hop = 1 cost, with node costs)
+    TOTAL_COMMUNICATION_COST_C, // [5] (One hop = 1 cost, with node costs)
+    TOTAL_COMMUNICATION_COST_D; // [6] (One hop = 1 cost, with node costs)
 
     /*
      * [1] Tomaszek S., Leblebici E., Wang L., Schürr A. (2018) Virtual Network Embedding: Reducing
@@ -41,6 +42,8 @@ public class AlgorithmConfig {
      * Integrated Network Management (IM 2013), 2013, pp. 177-184.
      * 
      * [5] As in [3,4] but with node cost that decreases if a substrate server gets filled up.
+     * 
+     * [6] As in [5] but with inverted node cost.
      */
   }
 
