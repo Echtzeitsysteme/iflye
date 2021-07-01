@@ -14,6 +14,7 @@ import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Embedding;
 import algorithms.AlgorithmConfig.Objective;
+import algorithms.heuristics.TafAlgorithm;
 import algorithms.ilp.VneIlpPathAlgorithm;
 import algorithms.ilp.VneIlpPathAlgorithmBatch;
 import algorithms.pm.VnePmMdvneAlgorithm;
@@ -28,6 +29,7 @@ import metrics.TotalCommunicationCostMetricB;
 import metrics.TotalCommunicationCostMetricC;
 import metrics.TotalCommunicationCostMetricD;
 import metrics.TotalPathCostMetric;
+import metrics.TotalTafCommunicationCostMetric;
 import metrics.manager.GlobalMetricsManager;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
@@ -116,6 +118,10 @@ public class DissScenarioLoad {
         case "ilp-batch":
           algo = new VneIlpPathAlgorithmBatch(sNet, Set.of(vNet));
           break;
+        case "taf":
+          ModelFacadeConfig.IGNORE_BW = true;
+          algo = new TafAlgorithm(sNet, Set.of(vNet));
+          break;
         default:
           throw new IllegalArgumentException("Configured algorithm not known.");
       }
@@ -150,7 +156,7 @@ public class DissScenarioLoad {
   /**
    * Parses the given arguments to configure the scenario.
    * <ol>
-   * <li>#0: Algorithm "pm", "pm-update", "ilp" or "ilp-batch"</li>
+   * <li>#0: Algorithm "pm", "pm-update", "ilp", "ilp-batch" or "taf"</li>
    * <li>#1: Objective "total-path", "total-comm-a", "total-comm-b", "total-comm-c"</li>
    * <li>#2: Embedding "emoflon", "emoflon_wo_update" or "manual" [only relevant for VNE PM
    * algorithm]
@@ -367,6 +373,8 @@ public class DissScenarioLoad {
         "=> Total communication cost C: " + new TotalCommunicationCostMetricC(sNet).getValue());
     System.out.println(
         "=> Total communication cost D: " + new TotalCommunicationCostMetricD(sNet).getValue());
+    System.out.println(
+        "=> Total TAF communication cost: " + new TotalTafCommunicationCostMetric(sNet).getValue());
   }
 
 }

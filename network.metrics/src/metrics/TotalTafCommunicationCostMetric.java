@@ -185,8 +185,13 @@ public class TotalTafCommunicationCostMetric implements IMetric {
    * @param net Network to check switch conditions.
    */
   private void checkOnlyOneLayerOfSwitches(final Network net) {
+    int oldVal = Integer.MAX_VALUE;
     for (final Node n : facade.getAllSwitchesOfNetwork(net.getName())) {
-      if (n.getDepth() != 0) {
+      if (oldVal == Integer.MAX_VALUE) {
+        oldVal = n.getDepth();
+      }
+
+      if (n.getDepth() != oldVal) {
         throw new UnsupportedOperationException(
             "There is a switch thats depth is not equal to zero.");
       }
