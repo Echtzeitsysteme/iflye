@@ -54,7 +54,7 @@ public class TotalCommunicationCostMetricC implements IMetric {
       // Iterate over all virtual links
       for (final Link l : guestLinks) {
         final VirtualLink vl = (VirtualLink) l;
-        cost += CostUtility.getTotalCommunicationCostLinkBC(vl, vl.getHost());
+        cost += CostUtility.getTotalCommunicationCostLinkBCD(vl, vl.getHost());
       }
 
       final List<Node> guestServers = facade.getAllServersOfNetwork(vNet.getName());

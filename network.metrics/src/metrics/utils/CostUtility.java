@@ -148,6 +148,23 @@ public class CostUtility {
   }
 
   /**
+   * Returns the adapted total communication cost for a node to node embedding. This one prefers
+   * empty substrate servers over non-empty ones.
+   * 
+   * @param virtualElement Virtual node to embed.
+   * @param substrateElement Substrate node to embed.
+   * @return Cost for this particular mapping.
+   */
+  public static double getTotalCommunicationCostNodeD(final VirtualElement virtualElement,
+      final SubstrateElement substrateElement) {
+    if (virtualElement instanceof VirtualServer && substrateElement instanceof SubstrateServer) {
+      return 1.0 / getTotalCommunicationCostNodeC(virtualElement, substrateElement);
+    }
+
+    return 0;
+  }
+
+  /**
    * Returns the total communication cost for a link to element embedding as defined in [1].
    * 
    * [1] Tomaszek, S., Modellbasierte Einbettung von virtuellen Netzwerken in Rechenzentren,
@@ -228,7 +245,7 @@ public class CostUtility {
    * @param host Substrate element hosting the virtual link.
    * @return Total communication cost for a link to element embedding.
    */
-  public static double getTotalCommunicationCostLinkBC(final VirtualLink virt,
+  public static double getTotalCommunicationCostLinkBCD(final VirtualLink virt,
       final SubstrateElement host) {
     if (host instanceof Server) {
       // Server -> 0 hops
@@ -270,11 +287,11 @@ public class CostUtility {
    * @param hosts List of substrate elements hosting the virtual link.
    * @return Total communication cost for a link to element embedding.
    */
-  public static double getTotalCommunicationCostLinkBC(final VirtualLink virt,
+  public static double getTotalCommunicationCostLinkBCD(final VirtualLink virt,
       final List<SubstrateElement> hosts) {
     if (hosts.size() == 1) {
       // One host object -> call other cost method for calculation
-      return getTotalCommunicationCostLinkBC(virt, hosts.get(0));
+      return getTotalCommunicationCostLinkBCD(virt, hosts.get(0));
     } else if (hosts.size() > 1) {
       // More than one host object -> n hops * virtual bandwidth
       return virt.getBandwidth() * hosts.size();

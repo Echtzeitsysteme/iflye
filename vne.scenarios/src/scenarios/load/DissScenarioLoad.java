@@ -26,6 +26,7 @@ import metrics.AveragePathLengthMetric;
 import metrics.TotalCommunicationCostMetricA;
 import metrics.TotalCommunicationCostMetricB;
 import metrics.TotalCommunicationCostMetricC;
+import metrics.TotalCommunicationCostMetricD;
 import metrics.TotalPathCostMetric;
 import metrics.manager.GlobalMetricsManager;
 import model.SubstrateNetwork;
@@ -263,6 +264,9 @@ public class DissScenarioLoad {
       case "total-comm-c":
         AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_C;
         break;
+      case "total-comm-d":
+        AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_D;
+        break;
     }
 
     // #2 Embedding
@@ -361,6 +365,8 @@ public class DissScenarioLoad {
         "=> Total communication cost B: " + new TotalCommunicationCostMetricB(sNet).getValue());
     System.out.println(
         "=> Total communication cost C: " + new TotalCommunicationCostMetricC(sNet).getValue());
+    System.out.println(
+        "=> Total communication cost D: " + new TotalCommunicationCostMetricD(sNet).getValue());
   }
 
 }
