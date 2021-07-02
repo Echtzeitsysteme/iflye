@@ -18,7 +18,7 @@ import algorithms.heuristics.TafAlgorithm;
 import algorithms.ilp.VneIlpPathAlgorithm;
 import algorithms.ilp.VneIlpPathAlgorithmBatch;
 import algorithms.pm.VnePmMdvneAlgorithm;
-import algorithms.pm.VnePmMdvneAlgorithmUpdate;
+import algorithms.pm.VnePmMdvneAlgorithmMigration;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import ilp.wrapper.config.IlpSolverConfig;
@@ -136,7 +136,7 @@ public class DissScenarioLoad {
   /**
    * Parses the given arguments to configure the scenario.
    * <ol>
-   * <li>#0: Algorithm "pm", "pm-update", "ilp", "ilp-batch" or "taf"</li>
+   * <li>#0: Algorithm "pm", "pm-migration", "ilp", "ilp-batch" or "taf"</li>
    * <li>#1: Objective "total-path", "total-comm-a", "total-comm-b", "total-comm-c", "total-comm-d",
    * "total-taf-comm"</li>
    * <li>#2: Embedding "emoflon", "emoflon_wo_update" or "manual" [only relevant for VNE PM
@@ -144,7 +144,7 @@ public class DissScenarioLoad {
    * <li>#3: Maximum path length: int or "auto"</li>
    * <li>#4: Substrate network file to load, e.g. "resources/two-tier-4-pods/snet.json"</li>
    * <li>#5: Virtual network(s) file to load, e.g. "resources/two-tier-4-pods/vnets.json"</li>
-   * <li>#6: Number of update tries [only relevant for VNE PM algorithm]</li>
+   * <li>#6: Number of migration tries [only relevant for VNE PM algorithm]</li>
    * <li>#7: K fastest paths between two nodes</li>
    * <li>#8: CSV metric file path</li>
    * <li>#9: ILP solver timeout value</li>
@@ -189,7 +189,7 @@ public class DissScenarioLoad {
 
     // Number of tries for the updating functionality of the PM algorithm
     final Option tries =
-        new Option("t", "tries", true, "number of update tries for the PM algorithm");
+        new Option("t", "tries", true, "number of migration tries for the PM algorithm");
     tries.setRequired(false);
     options.addOption(tries);
 
@@ -291,9 +291,9 @@ public class DissScenarioLoad {
     // #5 Virtual network file path
     virtNetsPath = cmd.getOptionValue("vnetfile");
 
-    // #6 Number of update tries
+    // #6 Number of migration tries
     if (cmd.getOptionValue("tries") != null) {
-      AlgorithmConfig.pmNoUpdates = Integer.valueOf(cmd.getOptionValue("tries"));
+      AlgorithmConfig.pmNoMigrations = Integer.valueOf(cmd.getOptionValue("tries"));
     }
 
     // #7: K fastest paths
@@ -338,8 +338,8 @@ public class DissScenarioLoad {
     switch (algoConfig) {
       case "pm":
         return VnePmMdvneAlgorithm.prepare(sNet, vNets);
-      case "pm-update":
-        return VnePmMdvneAlgorithmUpdate.prepare(sNet, vNets);
+      case "pm-migration":
+        return VnePmMdvneAlgorithmMigration.prepare(sNet, vNets);
       case "ilp":
         return new VneIlpPathAlgorithm(sNet, vNets);
       case "ilp-batch":

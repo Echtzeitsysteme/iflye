@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
 import algorithms.pm.VnePmMdvneAlgorithm;
-import algorithms.pm.VnePmMdvneAlgorithmUpdate;
+import algorithms.pm.VnePmMdvneAlgorithmMigration;
 import facade.ModelFacade;
 import generators.OneTierNetworkGenerator;
 import generators.config.OneTierConfig;
@@ -19,12 +19,12 @@ import model.VirtualNetwork;
 import test.algorithms.generic.AAlgorithmTest;
 
 /**
- * Test class for the VNE pattern matching algorithm update implementation for testing the update
- * functionality itself.
+ * Test class for the VNE pattern matching algorithm migration implementation for testing the
+ * migration functionality itself.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class VnePmMdvneAlgorithmUpdateTest extends AAlgorithmTest {
+public class VnePmMdvneAlgorithmMigrationTest extends AAlgorithmTest {
 
   /**
    * Old value of algorithm configuration number of tries.
@@ -34,12 +34,12 @@ public class VnePmMdvneAlgorithmUpdateTest extends AAlgorithmTest {
   @Override
   public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
     AlgorithmConfig.obj = Objective.TOTAL_PATH_COST;
-    algo = VnePmMdvneAlgorithmUpdate.prepare(sNet, vNets);
+    algo = VnePmMdvneAlgorithmMigration.prepare(sNet, vNets);
   }
 
   @BeforeEach
   public void saveOldValue() {
-    oldNumberOftries = AlgorithmConfig.pmNoUpdates;
+    oldNumberOftries = AlgorithmConfig.pmNoMigrations;
   }
 
   @AfterEach
@@ -47,7 +47,7 @@ public class VnePmMdvneAlgorithmUpdateTest extends AAlgorithmTest {
     if (algo != null) {
       ((VnePmMdvneAlgorithm) algo).dispose();
     }
-    AlgorithmConfig.pmNoUpdates = oldNumberOftries;
+    AlgorithmConfig.pmNoMigrations = oldNumberOftries;
   }
 
   /*
@@ -112,7 +112,7 @@ public class VnePmMdvneAlgorithmUpdateTest extends AAlgorithmTest {
     createSmallVirtualNetworkAndEmbedItOn("vnet5", "sub_srv_2");
     createSmallVirtualNetworkAndEmbedItOn("vnet6", "sub_srv_2");
 
-    AlgorithmConfig.pmNoUpdates = 2;
+    AlgorithmConfig.pmNoMigrations = 2;
 
     /*
      * Last virtual network (that must trigger the updates)
