@@ -150,6 +150,7 @@ public class DissScenarioLoad {
    * <li>#9: ILP solver timeout value</li>
    * <li>#10: ILP solver random seed value</li>
    * <li>#11: ILP solver optimality tolerance</li>
+   * <li>#12: ILP solver objective scaling</li>
    * </ol>
    * 
    * @param args Arguments to parse.
@@ -219,6 +220,12 @@ public class DissScenarioLoad {
     final Option ilpOptTol = new Option("m", "ilpopttol", true, "ILP solver optimality tolerance");
     ilpOptTol.setRequired(false);
     options.addOption(ilpOptTol);
+
+    // ILP solver objective scaling
+    final Option ilpObjScaling =
+        new Option("y", "ilpobjscaling", true, "ILP solver objective scaling");
+    ilpObjScaling.setRequired(false);
+    options.addOption(ilpObjScaling);
 
     final CommandLineParser parser = new DefaultParser();
     final HelpFormatter formatter = new HelpFormatter();
@@ -323,6 +330,11 @@ public class DissScenarioLoad {
     // #11: ILP solver optimality tolerance
     if (cmd.getOptionValue("ilpopttol") != null) {
       IlpSolverConfig.OPT_TOL = Double.valueOf(cmd.getOptionValue("ilpopttol"));
+    }
+
+    // #12: ILP solver objective scaling
+    if (cmd.getOptionValue("ilpobjscaling") != null) {
+      IlpSolverConfig.OBJ_SCALE = Double.valueOf(cmd.getOptionValue("ilpobjscaling"));
     }
 
     // Print arguments into logs/system outputs

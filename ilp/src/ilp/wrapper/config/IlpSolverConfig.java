@@ -41,7 +41,7 @@ public class IlpSolverConfig {
   /**
    * Factor to scale the objective functions for the ILP solver.
    */
-  public static double OBJ_SCALE = 0.001;
+  public static double OBJ_SCALE = 1;
 
   /**
    * Returns a new instance of the configured solver.
