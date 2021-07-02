@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import algorithms.AlgorithmConfig;
+import algorithms.AlgorithmConfig.Objective;
 import algorithms.heuristics.TafAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
@@ -39,6 +41,7 @@ public class TafAlgorithmFatTreeTest extends AAlgorithmTest {
     // Normal model setup
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
     ModelFacadeConfig.IGNORE_BW = true;
+    AlgorithmConfig.obj = Objective.TOTAL_TAF_COMMUNICATION_COST;
   }
 
   /*

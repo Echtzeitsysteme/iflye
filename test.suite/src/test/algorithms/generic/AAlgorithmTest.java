@@ -8,6 +8,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
+import algorithms.AlgorithmConfig.Objective;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import model.Link;
@@ -61,6 +62,11 @@ public abstract class AAlgorithmTest {
    */
   protected boolean oldNetRejCost;
 
+  /**
+   * Old objective value.
+   */
+  protected Objective oldObjective;
+
   @BeforeEach
   public void resetModel() {
     facade.resetAll();
@@ -77,6 +83,9 @@ public abstract class AAlgorithmTest {
 
     // Normal model setup
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
+
+    // Algorithm objective
+    oldObjective = AlgorithmConfig.obj;
   }
 
   @AfterEach
@@ -86,6 +95,7 @@ public abstract class AAlgorithmTest {
     ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
     ModelFacadeConfig.IGNORE_BW = oldIgnoreBw;
     AlgorithmConfig.netRejCostDynamic = oldNetRejCost;
+    AlgorithmConfig.obj = oldObjective;
   }
 
   /**
