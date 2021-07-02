@@ -3,9 +3,12 @@ package test.model;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Set;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import algorithms.AbstractAlgorithm;
+import algorithms.AlgorithmConfig;
+import algorithms.AlgorithmConfig.Objective;
 import algorithms.ilp.VneIlpPathAlgorithm;
 import facade.ModelFacade;
 import generators.OneTierNetworkGenerator;
@@ -26,9 +29,21 @@ import model.VirtualSwitch;
  */
 public class ModelFacadeValidationTest {
 
+  /**
+   * Old objective value.
+   */
+  private Objective oldObjective;
+
   @BeforeEach
   public void resetModel() {
+    oldObjective = AlgorithmConfig.obj;
+    AlgorithmConfig.obj = Objective.TOTAL_PATH_COST;
     ModelFacade.getInstance().resetAll();
+  }
+
+  @AfterEach
+  public void restoreConig() {
+    AlgorithmConfig.obj = oldObjective;
   }
 
   @Test
