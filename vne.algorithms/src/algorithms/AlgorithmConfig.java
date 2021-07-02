@@ -2,7 +2,7 @@ package algorithms;
 
 import algorithms.ilp.VneIlpPathAlgorithm;
 import algorithms.pm.VnePmMdvneAlgorithm;
-import algorithms.pm.VnePmMdvneAlgorithmUpdate;
+import algorithms.pm.VnePmMdvneAlgorithmMigration;
 
 /**
  * Configuration of the algorithms {@link VneIlpPathAlgorithm} and {@link VnePmMdvneAlgorithm}.
@@ -87,10 +87,10 @@ public class AlgorithmConfig {
   public static boolean pmSosEnabled = true;
 
   /**
-   * Number of how often the {@link VnePmMdvneAlgorithmUpdate} should try to achieve a valid
-   * embedding while using the update functionality. Must at least be set to 1.
+   * Number of how often the {@link VnePmMdvneAlgorithmMigration} should try to achieve a valid
+   * embedding while using the migration functionality. Must at least be set to 1.
    */
-  public static int pmNoUpdates = 6;
+  public static int pmNoMigrations = 6;
 
   /**
    * If true, the network rejection cost will be calculated based on the size of the virtual network

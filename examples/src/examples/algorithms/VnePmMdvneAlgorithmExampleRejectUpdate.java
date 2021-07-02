@@ -2,7 +2,7 @@ package examples.algorithms;
 
 import java.util.Set;
 import algorithms.AbstractAlgorithm;
-import algorithms.pm.VnePmMdvneAlgorithmUpdate;
+import algorithms.pm.VnePmMdvneAlgorithmMigration;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.OneTierNetworkGenerator;
@@ -46,7 +46,7 @@ public class VnePmMdvneAlgorithmExampleRejectUpdate {
 
     SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
     VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
-    AbstractAlgorithm algo = VnePmMdvneAlgorithmUpdate.prepare(sNet, Set.of(vNet));
+    AbstractAlgorithm algo = VnePmMdvneAlgorithmMigration.prepare(sNet, Set.of(vNet));
     algo.execute();
 
     /*
@@ -55,7 +55,7 @@ public class VnePmMdvneAlgorithmExampleRejectUpdate {
     virtGen.createNetwork("virt2", true);
     sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
     vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt2");
-    algo = VnePmMdvneAlgorithmUpdate.prepare(sNet, Set.of(vNet));
+    algo = VnePmMdvneAlgorithmMigration.prepare(sNet, Set.of(vNet));
     algo.execute();
 
     /*
@@ -64,7 +64,7 @@ public class VnePmMdvneAlgorithmExampleRejectUpdate {
     virtGen.createNetwork("virt3", true);
     sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
     vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt3");
-    algo = VnePmMdvneAlgorithmUpdate.prepare(sNet, Set.of(vNet));
+    algo = VnePmMdvneAlgorithmMigration.prepare(sNet, Set.of(vNet));
     algo.execute();
 
     // Remove second virtual network to get a scenario in which two substrate servers are half
@@ -81,7 +81,7 @@ public class VnePmMdvneAlgorithmExampleRejectUpdate {
     virtGen.createNetwork("virt4", true);
     sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
     vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt4");
-    algo = VnePmMdvneAlgorithmUpdate.prepare(sNet, Set.of(vNet));
+    algo = VnePmMdvneAlgorithmMigration.prepare(sNet, Set.of(vNet));
     algo.execute();
 
     GlobalMetricsManager.stopRuntime();

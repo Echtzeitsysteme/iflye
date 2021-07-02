@@ -15,8 +15,9 @@ import patternmatching.emoflon.EmoflonPatternMatcherFactory;
 
 /**
  * Implementation of the model-driven virtual network algorithm that uses pattern matching as a way
- * to reduce the search space of the ILP solver. This implementation also uses update functionality
- * in case a virtual network does not fit on the current state of the substrate network.
+ * to reduce the search space of the ILP solver. This implementation also uses migration
+ * functionality in case a virtual network does not fit on the current state of the substrate
+ * network.
  * 
  * Parts of this implementation are heavily inspired, taken or adapted from the idyve project [1].
  * 
@@ -26,13 +27,13 @@ import patternmatching.emoflon.EmoflonPatternMatcherFactory;
  * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class VnePmMdvneAlgorithmUpdate extends VnePmMdvneAlgorithm {
+public class VnePmMdvneAlgorithmMigration extends VnePmMdvneAlgorithm {
 
   /**
    * Set of virtual networks that are rejected despite they could not have been embedded through the
-   * update mechanism.
+   * migration mechanism.
    */
-  final Set<VirtualNetwork> rejectedDespiteUpdate = new HashSet<VirtualNetwork>();
+  final Set<VirtualNetwork> rejectedDespiteMigration = new HashSet<VirtualNetwork>();
 
   /**
    * Constructor that gets the substrate as well as the virtual network.
@@ -40,12 +41,13 @@ public class VnePmMdvneAlgorithmUpdate extends VnePmMdvneAlgorithm {
    * @param sNet Substrate network to work with.
    * @param vNets Set of virtual networks to work with.
    */
-  private VnePmMdvneAlgorithmUpdate(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
+  private VnePmMdvneAlgorithmMigration(final SubstrateNetwork sNet,
+      final Set<VirtualNetwork> vNets) {
     super(sNet, vNets);
   }
 
   /**
-   * Initializes a new instance of the VNE pattern matching algorithm with update functionality.
+   * Initializes a new instance of the VNE pattern matching algorithm with migration functionality.
    * 
    * @param sNet Substrate network to work with.
    * @param vNets Set of virtual networks to work with.
@@ -62,7 +64,7 @@ public class VnePmMdvneAlgorithmUpdate extends VnePmMdvneAlgorithm {
     }
 
     if (instance == null) {
-      instance = new VnePmMdvneAlgorithmUpdate(sNet, vNets);
+      instance = new VnePmMdvneAlgorithmMigration(sNet, vNets);
     }
     setSnet(sNet);
     final Set<VirtualNetwork> vNetsInt = new HashSet<VirtualNetwork>();
@@ -96,19 +98,19 @@ public class VnePmMdvneAlgorithmUpdate extends VnePmMdvneAlgorithm {
 
     delta2Ilp(delta);
     Set<VirtualNetwork> rejectedNetworks = solveIlp();
-    rejectedDespiteUpdate.addAll(rejectedNetworks);
+    rejectedDespiteMigration.addAll(rejectedNetworks);
 
-    // Check if embedding update routing must be started
+    // Check if embedding migration routing must be started
     if (!rejectedNetworks.isEmpty()) {
-      System.out.println("=> Started embedding update.");
+      System.out.println("=> Started embedding migration.");
       embedNetworks(rejectedNetworks);
-      rejectedNetworks = tryUpdateEmbedding();
+      rejectedNetworks = tryMigrationEmbedding();
     }
 
-    rejectedDespiteUpdate.addAll(ignoredVnets);
-    embedNetworks(rejectedDespiteUpdate);
+    rejectedDespiteMigration.addAll(ignoredVnets);
+    embedNetworks(rejectedDespiteMigration);
     GlobalMetricsManager.endDeployTime();
-    return rejectedDespiteUpdate.isEmpty();
+    return rejectedDespiteMigration.isEmpty();
   }
 
   /**
@@ -119,7 +121,7 @@ public class VnePmMdvneAlgorithmUpdate extends VnePmMdvneAlgorithm {
    * 
    * @return Set of virtual networks that could not be embedded onto the substrate one.
    */
-  private Set<VirtualNetwork> tryUpdateEmbedding() {
+  private Set<VirtualNetwork> tryMigrationEmbedding() {
     Set<VirtualNetwork> rejectedNetworks = new HashSet<VirtualNetwork>();
     VirtualNetwork removalCandidate = findAndUnembedSmallestNetwork();
     int tries = 0;
@@ -139,8 +141,8 @@ public class VnePmMdvneAlgorithmUpdate extends VnePmMdvneAlgorithm {
       rejectedNetworks.clear();
       rejectedNetworks.addAll(solveIlp());
 
-      rejectedDespiteUpdate.addAll(rejectedNetworks);
-      rejectedDespiteUpdate.retainAll(rejectedNetworks);
+      rejectedDespiteMigration.addAll(rejectedNetworks);
+      rejectedDespiteMigration.retainAll(rejectedNetworks);
 
       if (rejectedNetworks.isEmpty()) {
         break;
@@ -148,8 +150,8 @@ public class VnePmMdvneAlgorithmUpdate extends VnePmMdvneAlgorithm {
 
       tries++;
 
-      // Check number of already tried updates; if threshold reached, stop trying.
-      if (tries >= AlgorithmConfig.pmNoUpdates) {
+      // Check number of already tried migrations; if threshold reached, stop trying.
+      if (tries >= AlgorithmConfig.pmNoMigrations) {
         break;
       }
 
