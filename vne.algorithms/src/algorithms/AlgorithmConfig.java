@@ -22,7 +22,8 @@ public class AlgorithmConfig {
     TOTAL_COMMUNICATION_COST_A, // [2]
     TOTAL_COMMUNICATION_COST_B, // [3,4] (One hop = 1 cost, no node costs)
     TOTAL_COMMUNICATION_COST_C, // [5] (One hop = 1 cost, with node costs)
-    TOTAL_COMMUNICATION_COST_D; // [6] (One hop = 1 cost, with node costs)
+    TOTAL_COMMUNICATION_COST_D, // [6] (One hop = 1 cost, with node costs)
+    TOTAL_TAF_COMMUNICATION_COST; // [7]
 
     /*
      * [1] Tomaszek S., Leblebici E., Wang L., Schürr A. (2018) Virtual Network Embedding: Reducing
@@ -44,6 +45,10 @@ public class AlgorithmConfig {
      * [5] As in [3,4] but with node cost that decreases if a substrate server gets filled up.
      * 
      * [6] As in [5] but with inverted node cost.
+     * 
+     * [7] Zeng, D., Guo, S., Huang, H., Yu, S., and Leung, V. C.M., “Optimal VM Placement in Data
+     * Centers with Architectural and Resource Constraints,” International Journal of Autonomous and
+     * Adaptive Communications Systems, vol. 8, no. 4, pp. 392–406, 2015.
      */
   }
 
@@ -68,7 +73,7 @@ public class AlgorithmConfig {
   /**
    * Objective goal for the algorithms {@link VneIlpPathAlgorithm} and {@link VnePmMdvneAlgorithm}.
    */
-  public static Objective obj = Objective.TOTAL_PATH_COST;
+  public static Objective obj = Objective.TOTAL_COMMUNICATION_COST_C;
 
   /**
    * Embedding mechanism for the {@link VnePmMdvneAlgorithm}

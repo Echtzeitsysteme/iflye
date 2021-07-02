@@ -14,7 +14,10 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import algorithms.AbstractAlgorithm;
+import algorithms.AlgorithmConfig;
+import algorithms.AlgorithmConfig.Objective;
 import facade.config.ModelFacadeConfig;
+import metrics.manager.GlobalMetricsManager;
 import metrics.utils.CostUtility;
 import model.Link;
 import model.Node;
@@ -238,6 +241,11 @@ public class TafAlgorithm extends AbstractAlgorithm {
       throw new UnsupportedOperationException("Bandwidth ignore flag must be set.");
     }
 
+    // Objective
+    if (AlgorithmConfig.obj != Objective.TOTAL_TAF_COMMUNICATION_COST) {
+      throw new IllegalArgumentException("The TAF algorithm can only optimize its own metric.");
+    }
+
     // There must be generated substrate paths
     if (sNet.getPaths().isEmpty()) {
       throw new UnsupportedOperationException("Generated paths are missing in substrate network.");
@@ -255,7 +263,9 @@ public class TafAlgorithm extends AbstractAlgorithm {
   public boolean execute() {
     final boolean success = algorithm1();
     if (success) {
+      GlobalMetricsManager.startDeployTime();
       embed();
+      GlobalMetricsManager.endDeployTime();
     }
 
     return success;

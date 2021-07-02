@@ -4,9 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import algorithms.AbstractAlgorithm;
-import algorithms.ilp.VneIlpPathAlgorithm;
-import algorithms.pm.VnePmMdvneAlgorithm;
-import algorithms.pm.VnePmMdvneAlgorithmUpdate;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import metrics.manager.GlobalMetricsManager;
@@ -55,20 +52,7 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
     vNetIds.forEach(i -> vNets.add((VirtualNetwork) ModelFacade.getInstance().getNetworkById(i)));
 
     // Create and execute algorithm
-    final AbstractAlgorithm algo;
-    switch (algoConfig) {
-      case "pm":
-        algo = VnePmMdvneAlgorithm.prepare(sNet, vNets);
-        break;
-      case "pm-update":
-        algo = VnePmMdvneAlgorithmUpdate.prepare(sNet, vNets);
-        break;
-      case "ilp":
-        algo = new VneIlpPathAlgorithm(sNet, vNets);
-        break;
-      default:
-        throw new IllegalArgumentException("Configured algorithm not known.");
-    }
+    final AbstractAlgorithm algo = newAlgo(vNets);
 
     GlobalMetricsManager.startRuntime();
     algo.execute();
