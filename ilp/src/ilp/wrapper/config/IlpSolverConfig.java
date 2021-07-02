@@ -39,6 +39,11 @@ public class IlpSolverConfig {
   public static double OPT_TOL = 0.000_001;
 
   /**
+   * Factor to scale the objective functions for the ILP solver.
+   */
+  public static double OBJ_SCALE = 1;
+
+  /**
    * Returns a new instance of the configured solver.
    * 
    * @return New instance of the configured solver.

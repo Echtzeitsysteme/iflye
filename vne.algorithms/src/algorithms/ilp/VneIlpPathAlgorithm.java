@@ -350,15 +350,15 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
   private double getNodeCost(final VirtualElement virt, final SubstrateElement sub) {
     switch (AlgorithmConfig.obj) {
       case TOTAL_PATH_COST:
-        return CostUtility.getTotalPathCostNode(virt, sub);
+        return CostUtility.getTotalPathCostNode(virt, sub) * IlpSolverConfig.OBJ_SCALE;
       case TOTAL_COMMUNICATION_COST_A:
-        return CostUtility.getTotalCommunicationCostNodeAB();
+        return CostUtility.getTotalCommunicationCostNodeAB() * IlpSolverConfig.OBJ_SCALE;
       case TOTAL_COMMUNICATION_COST_B:
-        return CostUtility.getTotalCommunicationCostNodeAB();
+        return CostUtility.getTotalCommunicationCostNodeAB() * IlpSolverConfig.OBJ_SCALE;
       case TOTAL_COMMUNICATION_COST_C:
-        return CostUtility.getTotalCommunicationCostNodeC(virt, sub);
+        return CostUtility.getTotalCommunicationCostNodeC(virt, sub) * IlpSolverConfig.OBJ_SCALE;
       case TOTAL_COMMUNICATION_COST_D:
-        return CostUtility.getTotalCommunicationCostNodeD(virt, sub);
+        return CostUtility.getTotalCommunicationCostNodeD(virt, sub) * IlpSolverConfig.OBJ_SCALE;
       default:
         throw new UnsupportedOperationException();
     }
@@ -367,15 +367,18 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
   private double getLinkCost(final VirtualLink virt, final List<SubstrateElement> hosts) {
     switch (AlgorithmConfig.obj) {
       case TOTAL_PATH_COST:
-        return CostUtility.getTotalPathCostLink(hosts);
+        return CostUtility.getTotalPathCostLink(hosts) * IlpSolverConfig.OBJ_SCALE;
       case TOTAL_COMMUNICATION_COST_A:
-        return CostUtility.getTotalCommunicationCostLinkA(virt, hosts);
+        return CostUtility.getTotalCommunicationCostLinkA(virt, hosts) * IlpSolverConfig.OBJ_SCALE;
       case TOTAL_COMMUNICATION_COST_B:
-        return CostUtility.getTotalCommunicationCostLinkBCD(virt, hosts);
+        return CostUtility.getTotalCommunicationCostLinkBCD(virt, hosts)
+            * IlpSolverConfig.OBJ_SCALE;
       case TOTAL_COMMUNICATION_COST_C:
-        return CostUtility.getTotalCommunicationCostLinkBCD(virt, hosts);
+        return CostUtility.getTotalCommunicationCostLinkBCD(virt, hosts)
+            * IlpSolverConfig.OBJ_SCALE;
       case TOTAL_COMMUNICATION_COST_D:
-        return CostUtility.getTotalCommunicationCostLinkBCD(virt, hosts);
+        return CostUtility.getTotalCommunicationCostLinkBCD(virt, hosts)
+            * IlpSolverConfig.OBJ_SCALE;
       default:
         throw new UnsupportedOperationException();
     }
