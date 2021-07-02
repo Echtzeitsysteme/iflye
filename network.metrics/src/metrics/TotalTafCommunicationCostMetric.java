@@ -113,6 +113,12 @@ public class TotalTafCommunicationCostMetric implements IMetric {
     // Iterate through all virtual switches
     for (final Node n : facade.getAllSwitchesOfNetwork(vNet.getName())) {
       final VirtualSwitch vSwitch = (VirtualSwitch) n;
+
+      // Check if switch is hosted on a substrate server
+      if (vSwitch.getHost() instanceof SubstrateServer) {
+        return false;
+      }
+
       final SubstrateSwitch sSwitch = (SubstrateSwitch) vSwitch.getHost();
 
       // Check that the substrate switch has a direct connection to all substrate servers that host
