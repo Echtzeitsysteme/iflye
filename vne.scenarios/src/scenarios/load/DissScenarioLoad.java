@@ -14,6 +14,7 @@ import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Embedding;
 import algorithms.AlgorithmConfig.Objective;
+import algorithms.heuristics.TafAlgorithm;
 import algorithms.ilp.VneIlpPathAlgorithm;
 import algorithms.ilp.VneIlpPathAlgorithmBatch;
 import algorithms.pm.VnePmMdvneAlgorithm;
@@ -28,6 +29,7 @@ import metrics.TotalCommunicationCostMetricB;
 import metrics.TotalCommunicationCostMetricC;
 import metrics.TotalCommunicationCostMetricD;
 import metrics.TotalPathCostMetric;
+import metrics.TotalTafCommunicationCostMetric;
 import metrics.manager.GlobalMetricsManager;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
@@ -102,23 +104,7 @@ public class DissScenarioLoad {
       System.out.println("=> Embedding virtual network " + vNetId);
 
       // Create and execute algorithm
-      final AbstractAlgorithm algo;
-      switch (algoConfig) {
-        case "pm":
-          algo = VnePmMdvneAlgorithm.prepare(sNet, Set.of(vNet));
-          break;
-        case "pm-update":
-          algo = VnePmMdvneAlgorithmUpdate.prepare(sNet, Set.of(vNet));
-          break;
-        case "ilp":
-          algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
-          break;
-        case "ilp-batch":
-          algo = new VneIlpPathAlgorithmBatch(sNet, Set.of(vNet));
-          break;
-        default:
-          throw new IllegalArgumentException("Configured algorithm not known.");
-      }
+      final AbstractAlgorithm algo = newAlgo(Set.of(vNet));
       GlobalMetricsManager.startRuntime();
       algo.execute();
       GlobalMetricsManager.stopRuntime();
@@ -150,8 +136,9 @@ public class DissScenarioLoad {
   /**
    * Parses the given arguments to configure the scenario.
    * <ol>
-   * <li>#0: Algorithm "pm", "pm-update", "ilp" or "ilp-batch"</li>
-   * <li>#1: Objective "total-path", "total-comm-a", "total-comm-b", "total-comm-c"</li>
+   * <li>#0: Algorithm "pm", "pm-update", "ilp", "ilp-batch" or "taf"</li>
+   * <li>#1: Objective "total-path", "total-comm-a", "total-comm-b", "total-comm-c", "total-comm-d",
+   * "total-taf-comm"</li>
    * <li>#2: Embedding "emoflon", "emoflon_wo_update" or "manual" [only relevant for VNE PM
    * algorithm]
    * <li>#3: Maximum path length: int or "auto"</li>
@@ -267,6 +254,9 @@ public class DissScenarioLoad {
       case "total-comm-d":
         AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_D;
         break;
+      case "total-taf-comm":
+        AlgorithmConfig.obj = Objective.TOTAL_TAF_COMMUNICATION_COST;
+        break;
     }
 
     // #2 Embedding
@@ -340,6 +330,29 @@ public class DissScenarioLoad {
   }
 
   /**
+   * Creates and returns a new instance of the configured embedding algorithm.
+   * 
+   * @param vNets Virtual network(s) to embed.
+   */
+  protected static AbstractAlgorithm newAlgo(final Set<VirtualNetwork> vNets) {
+    switch (algoConfig) {
+      case "pm":
+        return VnePmMdvneAlgorithm.prepare(sNet, vNets);
+      case "pm-update":
+        return VnePmMdvneAlgorithmUpdate.prepare(sNet, vNets);
+      case "ilp":
+        return new VneIlpPathAlgorithm(sNet, vNets);
+      case "ilp-batch":
+        return new VneIlpPathAlgorithmBatch(sNet, vNets);
+      case "taf":
+        ModelFacadeConfig.IGNORE_BW = true;
+        return new TafAlgorithm(sNet, vNets);
+      default:
+        throw new IllegalArgumentException("Configured algorithm not known.");
+    }
+  }
+
+  /**
    * Prints out all captured metrics that are relevant.
    */
   protected static void printMetrics() {
@@ -367,6 +380,8 @@ public class DissScenarioLoad {
         "=> Total communication cost C: " + new TotalCommunicationCostMetricC(sNet).getValue());
     System.out.println(
         "=> Total communication cost D: " + new TotalCommunicationCostMetricD(sNet).getValue());
+    System.out.println(
+        "=> Total TAF communication cost: " + new TotalTafCommunicationCostMetric(sNet).getValue());
   }
 
 }

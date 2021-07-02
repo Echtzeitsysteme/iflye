@@ -15,6 +15,7 @@ import metrics.TotalCommunicationCostMetricB;
 import metrics.TotalCommunicationCostMetricC;
 import metrics.TotalCommunicationCostMetricD;
 import metrics.TotalPathCostMetric;
+import metrics.TotalTafCommunicationCostMetric;
 import metrics.manager.GlobalMetricsManager;
 import model.SubstrateNetwork;
 
@@ -59,7 +60,8 @@ public class CsvUtil {
             CSVFormat.DEFAULT.withHeader("counter", "timestamp", "lastVNR", "time_pm", "time_ilp",
                 "time_deploy", "time_rest", "accepted_vnrs", "total_path_cost",
                 "average_path_length", "total_communication_cost_a", "total_communication_cost_b",
-                "total_communication_cost_c", "total_communication_cost_d"))) {
+                "total_communication_cost_c", "total_communication_cost_d",
+                "total_taf_communication_cost"))) {
           printer.close();
         }
       }
@@ -81,7 +83,8 @@ public class CsvUtil {
             new TotalCommunicationCostMetricA(sNet).getValue(), //
             new TotalCommunicationCostMetricB(sNet).getValue(), //
             new TotalCommunicationCostMetricC(sNet).getValue(), //
-            new TotalCommunicationCostMetricD(sNet).getValue() //
+            new TotalCommunicationCostMetricD(sNet).getValue(), //
+            new TotalTafCommunicationCostMetric(sNet).getValue() //
         );
         printer.close();
       }
