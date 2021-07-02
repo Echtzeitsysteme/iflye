@@ -145,4 +145,22 @@ public class PatternMatchingDelta {
     return newLinkServerMatchPositives;
   }
 
+  /*
+   * Add other delta to this one
+   */
+
+  public void addOther(final PatternMatchingDelta other) {
+    this.newServerMatchPositives.addAll(other.newServerMatchPositives);
+    this.newSwitchMatchPositives.addAll(other.newSwitchMatchPositives);
+    this.newLinkPathMatchPositives.addAll(other.newLinkPathMatchPositives);
+    this.newLinkServerMatchPositives.addAll(other.newLinkServerMatchPositives);
+  }
+
+  public void clear() {
+    newServerMatchPositives.clear();
+    newSwitchMatchPositives.clear();
+    newLinkPathMatchPositives.clear();
+    newLinkServerMatchPositives.clear();
+  }
+
 }

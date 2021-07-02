@@ -36,6 +36,12 @@ public class VnePmMdvneAlgorithmMigration extends VnePmMdvneAlgorithm {
   final Set<VirtualNetwork> rejectedDespiteMigration = new HashSet<VirtualNetwork>();
 
   /**
+   * Global pattern matching delta. This one holds all occurred matches from all algorithm runs and
+   * is needed by the embedding migration calculations.
+   */
+  final PatternMatchingDelta globalDelta = new PatternMatchingDelta();
+
+  /**
    * Constructor that gets the substrate as well as the virtual network.
    * 
    * @param sNet Substrate network to work with.
@@ -96,6 +102,9 @@ public class VnePmMdvneAlgorithmMigration extends VnePmMdvneAlgorithm {
     final PatternMatchingDelta delta = patternMatcher.run();
     GlobalMetricsManager.endPmTime();
 
+    // Add current delta to the global one
+    globalDelta.addOther(delta);
+
     delta2Ilp(delta);
     Set<VirtualNetwork> rejectedNetworks = solveIlp();
     rejectedDespiteMigration.addAll(rejectedNetworks);
@@ -126,16 +135,22 @@ public class VnePmMdvneAlgorithmMigration extends VnePmMdvneAlgorithm {
     VirtualNetwork removalCandidate = findAndUnembedSmallestNetwork();
     int tries = 0;
 
+    // Pattern matching delta for this run's migration tries
+    final PatternMatchingDelta delta = new PatternMatchingDelta();
+    delta.addOther(globalDelta);
+
     while (removalCandidate != null) {
       unembedAll(vNets);
       vNets.add(removalCandidate);
       unembedAll(vNets);
       init();
-      this.patternMatcher = new EmoflonPatternMatcherFactory().create();
 
       GlobalMetricsManager.startPmTime();
-      final PatternMatchingDelta delta = patternMatcher.run();
+      final PatternMatchingDelta deltaIncr = patternMatcher.run();
       GlobalMetricsManager.endPmTime();
+
+      // add deltaIncr to delta
+      delta.addOther(deltaIncr);
 
       delta2Ilp(delta);
       rejectedNetworks.clear();
@@ -226,6 +241,16 @@ public class VnePmMdvneAlgorithmMigration extends VnePmMdvneAlgorithm {
     }
 
     return smallest;
+  }
+
+  /**
+   * Resets the components of the super algorithm and the ones of this class.
+   */
+  @Override
+  public void dispose() {
+    super.dispose();
+    rejectedDespiteMigration.clear();
+    this.globalDelta.clear();
   }
 
 }
