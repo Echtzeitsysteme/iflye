@@ -28,7 +28,24 @@ public class MemoryDetailedMetric extends MemoryMetric {
   }
 
   public double getValue(final int index) {
+    if (values == null || values.isEmpty() || index >= getSize()) {
+      return -1;
+    }
+
     return values.get(index).getValue();
+  }
+
+  public int getSize() {
+    return values.size();
+  }
+
+  @Override
+  public double getValue() {
+    if (values == null || values.isEmpty()) {
+      return -1;
+    }
+
+    return getValue(getSize() - 1);
   }
 
 }

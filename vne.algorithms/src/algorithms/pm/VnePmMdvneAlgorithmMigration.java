@@ -83,6 +83,7 @@ public class VnePmMdvneAlgorithmMigration extends VnePmMdvneAlgorithm {
 
   @Override
   public boolean execute() {
+    GlobalMetricsManager.measureMemory();
     init();
 
     // Check overall embedding possibility
@@ -106,6 +107,7 @@ public class VnePmMdvneAlgorithmMigration extends VnePmMdvneAlgorithm {
     globalDelta.addOther(delta);
 
     delta2Ilp(delta);
+    GlobalMetricsManager.measureMemory();
     Set<VirtualNetwork> rejectedNetworks = solveIlp();
     rejectedDespiteMigration.addAll(rejectedNetworks);
 
@@ -119,6 +121,7 @@ public class VnePmMdvneAlgorithmMigration extends VnePmMdvneAlgorithm {
     rejectedDespiteMigration.addAll(ignoredVnets);
     embedNetworks(rejectedDespiteMigration);
     GlobalMetricsManager.endDeployTime();
+    GlobalMetricsManager.measureMemory();
     return rejectedDespiteMigration.isEmpty();
   }
 

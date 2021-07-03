@@ -366,6 +366,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 
   @Override
   public boolean execute() {
+    GlobalMetricsManager.measureMemory();
     init();
 
     // Check overall embedding possibility
@@ -386,11 +387,13 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     GlobalMetricsManager.endPmTime();
 
     delta2Ilp(delta);
+    GlobalMetricsManager.measureMemory();
     final Set<VirtualNetwork> rejectedNetworks = solveIlp();
 
     rejectedNetworks.addAll(ignoredVnets);
     embedNetworks(rejectedNetworks);
     GlobalMetricsManager.endDeployTime();
+    GlobalMetricsManager.measureMemory();
     return rejectedNetworks.isEmpty();
   }
 

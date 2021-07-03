@@ -21,7 +21,7 @@ public class MemoryMetric implements IMetric {
 
   @Override
   public double getValue() {
-    return memory / MEGABYTE;
+    return 1.0 * memory / MEGABYTE;
   }
 
 }

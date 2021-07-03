@@ -217,6 +217,7 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
 
   @Override
   public boolean execute() {
+    GlobalMetricsManager.measureMemory();
     model = new Model();
     createNetworkInformation();
     createAllVariables();
@@ -234,6 +235,7 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
     createMinOveralCostsObjective();
 
     GlobalMetricsManager.startIlpTime();
+    GlobalMetricsManager.measureMemory();
     ilpResult = model.solve(IlpSolverConfig.getSolver());
     GlobalMetricsManager.endIlpTime();
 
@@ -267,6 +269,7 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
     GlobalMetricsManager.startDeployTime();
     createEmbeddings();
     GlobalMetricsManager.endDeployTime();
+    GlobalMetricsManager.measureMemory();
 
     return isFeasible(ilpResult.getStatistics());
   }

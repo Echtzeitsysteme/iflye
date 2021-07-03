@@ -153,4 +153,13 @@ public class GlobalMetricsManager {
     mm = null;
   }
 
+  /**
+   * Returns the captured memory detailed metric.
+   * 
+   * @return Captured memory detailed metric.
+   */
+  public static MemoryDetailedMetric getMemory() {
+    return mm;
+  }
+
 }

@@ -24,6 +24,7 @@ import facade.config.ModelFacadeConfig;
 import ilp.wrapper.config.IlpSolverConfig;
 import metrics.AcceptedVnrMetric;
 import metrics.AveragePathLengthMetric;
+import metrics.MemoryMetric;
 import metrics.TotalCommunicationCostMetricA;
 import metrics.TotalCommunicationCostMetricB;
 import metrics.TotalCommunicationCostMetricC;
@@ -112,6 +113,7 @@ public class DissScenarioLoad {
       // Save metrics to CSV file
       CsvUtil.appendCsvLine(vNet.getName(), csvPath, sNet);
       GlobalMetricsManager.resetRuntime();
+      GlobalMetricsManager.resetMemory();
 
       // Get next virtual network ID to embed
       vNetId = IncrementalModelConverter.jsonToModelIncremental(virtNetsPath, true);
@@ -394,6 +396,9 @@ public class DissScenarioLoad {
         "=> Total communication cost D: " + new TotalCommunicationCostMetricD(sNet).getValue());
     System.out.println(
         "=> Total TAF communication cost: " + new TotalTafCommunicationCostMetric(sNet).getValue());
+
+    // Memory measurements
+    System.out.println("=> Memory metric (current): " + new MemoryMetric().getValue() + " MiB");
   }
 
 }
