@@ -233,7 +233,7 @@ public class DissScenarioLoad {
 
     // Memory measurement enabled
     final Option memEnabled =
-        new Option("h", "memmeasurement", false, "Memory measurement metric enabled");
+        new Option("g", "memmeasurement", false, "Memory measurement metric enabled");
     memEnabled.setRequired(false);
     options.addOption(memEnabled);
 
@@ -348,7 +348,7 @@ public class DissScenarioLoad {
     }
 
     // #13: Memory measurement enabled
-    if (cmd.getOptionValue("memmeasurement") != null) {
+    if (cmd.hasOption("memmeasurement")) {
       MetricConfig.ENABLE_MEMORY = true;
     }
 
