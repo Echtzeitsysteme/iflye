@@ -22,6 +22,7 @@ import algorithms.pm.VnePmMdvneAlgorithmMigration;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import ilp.wrapper.config.IlpSolverConfig;
+import metrics.MetricConfig;
 import metrics.embedding.AcceptedVnrMetric;
 import metrics.embedding.AveragePathLengthMetric;
 import metrics.embedding.TotalCommunicationCostMetricA;
@@ -153,6 +154,7 @@ public class DissScenarioLoad {
    * <li>#10: ILP solver random seed value</li>
    * <li>#11: ILP solver optimality tolerance</li>
    * <li>#12: ILP solver objective scaling</li>
+   * <li>#13: Memory measurement enabled</li>
    * </ol>
    * 
    * @param args Arguments to parse.
@@ -228,6 +230,12 @@ public class DissScenarioLoad {
         new Option("y", "ilpobjscaling", true, "ILP solver objective scaling");
     ilpObjScaling.setRequired(false);
     options.addOption(ilpObjScaling);
+
+    // Memory measurement enabled
+    final Option memEnabled =
+        new Option("h", "memmeasurement", false, "Memory measurement metric enabled");
+    memEnabled.setRequired(false);
+    options.addOption(memEnabled);
 
     final CommandLineParser parser = new DefaultParser();
     final HelpFormatter formatter = new HelpFormatter();
@@ -337,6 +345,11 @@ public class DissScenarioLoad {
     // #12: ILP solver objective scaling
     if (cmd.getOptionValue("ilpobjscaling") != null) {
       IlpSolverConfig.OBJ_SCALE = Double.valueOf(cmd.getOptionValue("ilpobjscaling"));
+    }
+
+    // #13: Memory measurement enabled
+    if (cmd.getOptionValue("memmeasurement") != null) {
+      MetricConfig.ENABLE_MEMORY = true;
     }
 
     // Print arguments into logs/system outputs
