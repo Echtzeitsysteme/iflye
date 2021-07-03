@@ -152,6 +152,18 @@ public class GlobalMetricsManager {
     return mm.capture();
   }
 
+  public static int dummyMemory() {
+    if (mm == null) {
+      mm = new MemoryDetailedMetric();
+    }
+
+    if (!MetricConfig.ENABLE_MEMORY) {
+      return -1;
+    }
+
+    return mm.dummy();
+  }
+
   /**
    * Resets the global memory measurement.
    */

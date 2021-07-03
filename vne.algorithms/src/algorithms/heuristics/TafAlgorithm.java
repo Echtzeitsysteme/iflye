@@ -261,13 +261,17 @@ public class TafAlgorithm extends AbstractAlgorithm {
    */
   @Override
   public boolean execute() {
+    GlobalMetricsManager.measureMemory();
+
     final boolean success = algorithm1();
+    GlobalMetricsManager.dummyMemory();
     if (success) {
       GlobalMetricsManager.startDeployTime();
       embed();
       GlobalMetricsManager.endDeployTime();
     }
 
+    GlobalMetricsManager.measureMemory();
     return success;
   }
 

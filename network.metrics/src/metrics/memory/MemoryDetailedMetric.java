@@ -22,13 +22,18 @@ public class MemoryDetailedMetric extends MemoryMetric {
     values = new LinkedList<MemoryMetric>();
   }
 
+  public int dummy() {
+    values.add(null);
+    return values.size() - 1;
+  }
+
   public int capture() {
     values.add(new MemoryMetric());
     return values.size() - 1;
   }
 
   public double getValue(final int index) {
-    if (values == null || values.isEmpty() || index >= getSize()) {
+    if (values == null || values.isEmpty() || index >= getSize() || values.get(index) == null) {
       return -1;
     }
 
