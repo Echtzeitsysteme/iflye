@@ -1,5 +1,6 @@
 package metrics.manager;
 
+import metrics.MemoryDetailedMetric;
 import metrics.RuntimeDetailedMetric;
 
 /**
@@ -18,6 +19,11 @@ public class GlobalMetricsManager {
    * Global runtime detailed metric.
    */
   static RuntimeDetailedMetric rt;
+
+  /**
+   * Global memory detailed metric.
+   */
+  static MemoryDetailedMetric mm;
 
   /**
    * Private constructor ensures no instantiation of this class.
@@ -126,6 +132,25 @@ public class GlobalMetricsManager {
    */
   public static double[] getGlobalTimeArray() {
     return globalTimeMeasurement;
+  }
+
+  /**
+   * Triggers a memory measurement.
+   * 
+   * @return Index of the new measurement.
+   */
+  public static int measureMemory() {
+    if (mm == null) {
+      mm = new MemoryDetailedMetric();
+    }
+    return mm.capture();
+  }
+
+  /**
+   * Resets the global memory measurement.
+   */
+  public static void resetMemory() {
+    mm = null;
   }
 
 }
