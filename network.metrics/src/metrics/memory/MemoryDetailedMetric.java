@@ -1,4 +1,4 @@
-package metrics;
+package metrics.memory;
 
 import java.util.LinkedList;
 import java.util.List;

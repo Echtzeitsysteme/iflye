@@ -3,8 +3,8 @@ package test.metrics;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import metrics.TotalTafCommunicationCostMetric;
-import metrics.utils.CostUtility;
+import metrics.CostUtility;
+import metrics.embedding.TotalTafCommunicationCostMetric;
 import model.Path;
 import model.SubstrateNetwork;
 

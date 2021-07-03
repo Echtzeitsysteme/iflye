@@ -1,4 +1,4 @@
-package metrics.utils;
+package metrics;
 
 import java.util.List;
 import model.Link;

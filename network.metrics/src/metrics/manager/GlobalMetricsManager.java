@@ -1,7 +1,8 @@
 package metrics.manager;
 
-import metrics.MemoryDetailedMetric;
-import metrics.RuntimeDetailedMetric;
+import metrics.MetricConfig;
+import metrics.memory.MemoryDetailedMetric;
+import metrics.time.RuntimeDetailedMetric;
 
 /**
  * Global metrics manager. This class can be used to check in metrics and get them back later on.
@@ -143,6 +144,11 @@ public class GlobalMetricsManager {
     if (mm == null) {
       mm = new MemoryDetailedMetric();
     }
+
+    if (!MetricConfig.ENABLE_MEMORY) {
+      return -1;
+    }
+
     return mm.capture();
   }
 

@@ -2,7 +2,7 @@ package test.metrics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
-import metrics.TotalCommunicationCostMetricD;
+import metrics.embedding.TotalCommunicationCostMetricD;
 import model.SubstrateNetwork;
 
 /**

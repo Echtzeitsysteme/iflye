@@ -11,7 +11,7 @@ import algorithms.ilp.VneIlpPathAlgorithmBatch;
 import facade.ModelFacade;
 import generators.OneTierNetworkGenerator;
 import generators.config.OneTierConfig;
-import metrics.TotalCommunicationCostMetricA;
+import metrics.embedding.TotalCommunicationCostMetricA;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 import model.VirtualSwitch;

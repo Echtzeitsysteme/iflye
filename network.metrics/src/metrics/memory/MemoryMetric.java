@@ -1,4 +1,6 @@
-package metrics;
+package metrics.memory;
+
+import metrics.IMetric;
 
 /**
  * Memory metric implementation.

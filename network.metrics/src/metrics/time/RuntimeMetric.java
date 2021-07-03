@@ -1,4 +1,6 @@
-package metrics;
+package metrics.time;
+
+import metrics.IMetric;
 
 /**
  * Runtime metric implementation. This one has a start and an end time stamp and calculates the

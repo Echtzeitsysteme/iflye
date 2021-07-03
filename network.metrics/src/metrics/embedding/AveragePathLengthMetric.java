@@ -1,5 +1,6 @@
-package metrics;
+package metrics.embedding;
 
+import metrics.IMetric;
 import model.Element;
 import model.Link;
 import model.SubstrateNetwork;

@@ -1,7 +1,8 @@
-package metrics;
+package metrics.embedding;
 
 import java.util.List;
-import metrics.utils.CostUtility;
+import metrics.CostUtility;
+import metrics.IMetric;
 import model.Link;
 import model.SubstrateNetwork;
 import model.VirtualLink;
