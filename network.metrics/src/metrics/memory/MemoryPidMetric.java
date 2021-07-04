@@ -4,42 +4,31 @@ import java.io.File;
 import java.util.List;
 import org.unix4j.Unix4j;
 import metrics.IMetric;
+import metrics.MetricConsts;
 
 /**
  * Memory PID metric implementation. This metric will call the system to get the Java process PID
  * and query proc for the highest used RAM value by this process.
  * 
+ * Please keep in mind that this metric will slow down your program, as it has to query for proc
+ * files on the system.
+ * 
+ * Important: Currently, this metric is only able to run on GNU/Linux and/or macOS.
+ * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 public class MemoryPidMetric implements IMetric {
 
+  /**
+   * Measured value of maximum used RAM in kiB.
+   */
   private final long memory;
-  private static final long KILOBYTE = 1024L;
 
+  /**
+   * Creates a new instance of this memory PID metric and saves the value. Creation time is equal to
+   * measurement time.
+   */
   public MemoryPidMetric() {
-    // final Runtime rt = Runtime.getRuntime();
-    // try {
-    // // final Process proc = rt.exec("/bin/bash -c grep VmHWM /proc/" + getPid() + "/status");
-    // // final String[] cmd = {"/bin/bash", "-c", "'grep VmHWM /proc/" + getPid() + "/status'"};
-    // final String[] cmd = {"/bin/bash", "-c", "cat /etc/hosts"};
-    // // final Process proc = rt.exec("/bin/bash -c 'grep VmHWM /proc/" + getPid() + "/status'");
-    // final Process proc = rt.exec(cmd);
-    // // final Process proc = rt.exec("/bin/echo hello");
-    // // value = rt.exec("grep VmHWM /proc/" + getPid() + "/status").getInputStream().toString();
-    //
-    // final BufferedReader stdOutStream =
-    // new BufferedReader(new InputStreamReader(proc.getInputStream()));
-    // value = stdOutStream.readLine();
-    // // value = proc.getInputStream().toString();
-    //
-    // stdOutStream.close();
-    // } catch (final IOException e) {
-    // // e.printStackTrace();
-    // value = "";
-    // }
-    //
-    // System.out.println("===> DEBUG: " + value);
-
     final File file = new File("/proc/" + getPid() + "/status");
     final List<String> lines = Unix4j.grep("VmHWM", file).toStringList();
     final String memComplex = lines.get(0);
@@ -50,11 +39,14 @@ public class MemoryPidMetric implements IMetric {
 
   @Override
   public double getValue() {
-    // return 1.0 * memory / MEGABYTE;
-    // return -1;
-    return 1.0 * memory / KILOBYTE;
+    return 1.0 * memory / MetricConsts.KIBIBYTE;
   }
 
+  /**
+   * Returns the process ID (PID) of the current java process.
+   * 
+   * @return Process ID (PID) of the current java process.
+   */
   private long getPid() {
     return ProcessHandle.current().pid();
   }

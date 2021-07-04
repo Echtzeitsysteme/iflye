@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import metrics.MetricConsts;
 import metrics.embedding.AcceptedVnrMetric;
 import metrics.embedding.AveragePathLengthMetric;
 import metrics.embedding.TotalCommunicationCostMetricA;
@@ -74,10 +75,10 @@ public class CsvUtil {
             csvCounter++, // line counter
             java.time.LocalDateTime.now(), // time stamp
             lastVnr, // name of the last embedded virtual network
-            GlobalMetricsManager.getRuntime().getPmValue() / 1_000_000_000, // PM time
-            GlobalMetricsManager.getRuntime().getIlpValue() / 1_000_000_000, // ILP time
-            GlobalMetricsManager.getRuntime().getDeployValue() / 1_000_000_000, // Deploy time
-            GlobalMetricsManager.getRuntime().getRestValue() / 1_000_000_000, // Rest time
+            GlobalMetricsManager.getRuntime().getPmValue() / MetricConsts.NANO_TO_MILLI, // PM
+            GlobalMetricsManager.getRuntime().getIlpValue() / MetricConsts.NANO_TO_MILLI, // ILP
+            GlobalMetricsManager.getRuntime().getDeployValue() / MetricConsts.NANO_TO_MILLI, // Deploy
+            GlobalMetricsManager.getRuntime().getRestValue() / MetricConsts.NANO_TO_MILLI, // Rest
             (int) new AcceptedVnrMetric(sNet).getValue(), //
             new TotalPathCostMetric(sNet).getValue(), //
             new AveragePathLengthMetric(sNet).getValue(), //

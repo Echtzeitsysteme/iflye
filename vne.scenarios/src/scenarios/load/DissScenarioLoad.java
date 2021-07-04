@@ -23,6 +23,7 @@ import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import ilp.wrapper.config.IlpSolverConfig;
 import metrics.MetricConfig;
+import metrics.MetricConsts;
 import metrics.embedding.AcceptedVnrMetric;
 import metrics.embedding.AveragePathLengthMetric;
 import metrics.embedding.TotalCommunicationCostMetricA;
@@ -386,15 +387,15 @@ public class DissScenarioLoad {
   protected static void printMetrics() {
     // Time measurements
     System.out.println("=> Elapsed time (total): "
-        + GlobalMetricsManager.getGlobalTimeArray()[0] / 1_000_000_000 + " seconds");
+        + GlobalMetricsManager.getGlobalTimeArray()[0] / MetricConsts.NANO_TO_MILLI + " seconds");
     System.out.println("=> Elapsed time (PM): "
-        + GlobalMetricsManager.getGlobalTimeArray()[1] / 1_000_000_000 + " seconds");
+        + GlobalMetricsManager.getGlobalTimeArray()[1] / MetricConsts.NANO_TO_MILLI + " seconds");
     System.out.println("=> Elapsed time (ILP): "
-        + GlobalMetricsManager.getGlobalTimeArray()[2] / 1_000_000_000 + " seconds");
+        + GlobalMetricsManager.getGlobalTimeArray()[2] / MetricConsts.NANO_TO_MILLI + " seconds");
     System.out.println("=> Elapsed time (deploy): "
-        + GlobalMetricsManager.getGlobalTimeArray()[3] / 1_000_000_000 + " seconds");
+        + GlobalMetricsManager.getGlobalTimeArray()[3] / MetricConsts.NANO_TO_MILLI + " seconds");
     System.out.println("=> Elapsed time (rest): "
-        + GlobalMetricsManager.getGlobalTimeArray()[4] / 1_000_000_000 + " seconds");
+        + GlobalMetricsManager.getGlobalTimeArray()[4] / MetricConsts.NANO_TO_MILLI + " seconds");
 
     // Embedding quality metrics
     System.out.println("=> Accepted VNRs: " + (int) new AcceptedVnrMetric(sNet).getValue());

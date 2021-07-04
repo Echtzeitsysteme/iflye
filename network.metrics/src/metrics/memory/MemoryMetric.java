@@ -1,6 +1,7 @@
 package metrics.memory;
 
 import metrics.IMetric;
+import metrics.MetricConsts;
 
 /**
  * Memory metric implementation.
@@ -12,9 +13,14 @@ import metrics.IMetric;
  */
 public class MemoryMetric implements IMetric {
 
+  /**
+   * Measured value of maximum used RAM in kiB.
+   */
   private final long memory;
-  private static final long MEGABYTE = 1024L * 1024L;
 
+  /**
+   * Creates a new instance of this memory metric and measures the value of used RAM.
+   */
   public MemoryMetric() {
     final Runtime rt = Runtime.getRuntime();
     rt.gc();
@@ -23,7 +29,7 @@ public class MemoryMetric implements IMetric {
 
   @Override
   public double getValue() {
-    return 1.0 * memory / MEGABYTE;
+    return 1.0 * memory / MetricConsts.MEBIBYTE;
   }
 
 }
