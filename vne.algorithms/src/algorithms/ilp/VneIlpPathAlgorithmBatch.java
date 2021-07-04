@@ -99,6 +99,7 @@ public class VneIlpPathAlgorithmBatch extends VneIlpPathAlgorithm {
     }
 
     GlobalMetricsManager.startDeployTime();
+    createEmbeddings();
     GlobalMetricsManager.endDeployTime();
     GlobalMetricsManager.measureMemory();
 
