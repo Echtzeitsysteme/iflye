@@ -17,8 +17,8 @@ import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
 import facade.config.ModelFacadeConfig;
+import metrics.CostUtility;
 import metrics.manager.GlobalMetricsManager;
-import metrics.utils.CostUtility;
 import model.Link;
 import model.Node;
 import model.Path;
@@ -261,13 +261,17 @@ public class TafAlgorithm extends AbstractAlgorithm {
    */
   @Override
   public boolean execute() {
+    GlobalMetricsManager.measureMemory();
+
     final boolean success = algorithm1();
+    GlobalMetricsManager.dummyMemory();
     if (success) {
       GlobalMetricsManager.startDeployTime();
       embed();
       GlobalMetricsManager.endDeployTime();
     }
 
+    GlobalMetricsManager.measureMemory();
     return success;
   }
 

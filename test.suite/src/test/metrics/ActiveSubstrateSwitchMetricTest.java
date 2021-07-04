@@ -2,7 +2,7 @@ package test.metrics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
-import metrics.ActiveSubstrateSwitchMetric;
+import metrics.embedding.ActiveSubstrateSwitchMetric;
 import model.SubstrateNetwork;
 
 /**

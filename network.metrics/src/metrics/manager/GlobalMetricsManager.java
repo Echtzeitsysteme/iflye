@@ -1,6 +1,9 @@
 package metrics.manager;
 
-import metrics.RuntimeDetailedMetric;
+import metrics.MetricConfig;
+import metrics.memory.MemoryDetailedMetric;
+import metrics.memory.MemoryPidMetric;
+import metrics.time.RuntimeDetailedMetric;
 
 /**
  * Global metrics manager. This class can be used to check in metrics and get them back later on.
@@ -18,6 +21,11 @@ public class GlobalMetricsManager {
    * Global runtime detailed metric.
    */
   static RuntimeDetailedMetric rt;
+
+  /**
+   * Global memory detailed metric.
+   */
+  static MemoryDetailedMetric mm;
 
   /**
    * Private constructor ensures no instantiation of this class.
@@ -126,6 +134,64 @@ public class GlobalMetricsManager {
    */
   public static double[] getGlobalTimeArray() {
     return globalTimeMeasurement;
+  }
+
+  /**
+   * Triggers a memory measurement.
+   * 
+   * @return Index of the new measurement.
+   */
+  public static int measureMemory() {
+    if (mm == null) {
+      mm = new MemoryDetailedMetric();
+    }
+
+    if (!MetricConfig.ENABLE_MEMORY) {
+      return -1;
+    }
+
+    return mm.capture();
+  }
+
+  public static int dummyMemory() {
+    if (mm == null) {
+      mm = new MemoryDetailedMetric();
+    }
+
+    if (!MetricConfig.ENABLE_MEMORY) {
+      return -1;
+    }
+
+    return mm.dummy();
+  }
+
+  /**
+   * Resets the global memory measurement.
+   */
+  public static void resetMemory() {
+    mm = null;
+  }
+
+  /**
+   * Returns the captured memory detailed metric.
+   * 
+   * @return Captured memory detailed metric.
+   */
+  public static MemoryDetailedMetric getMemory() {
+    return mm;
+  }
+
+  /**
+   * Returns the maximum amount of memory (RAM) used by the running Java process in MiB.
+   * 
+   * @return Maximum amount of memory (RAM) used by the running Java process in MiB.
+   */
+  public static double getMemoryPid() {
+    if (MetricConfig.ENABLE_MEMORY) {
+      return new MemoryPidMetric().getValue();
+    } else {
+      return -1;
+    }
   }
 
 }

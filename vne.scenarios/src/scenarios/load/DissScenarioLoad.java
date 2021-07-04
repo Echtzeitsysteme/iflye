@@ -22,15 +22,19 @@ import algorithms.pm.VnePmMdvneAlgorithmMigration;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import ilp.wrapper.config.IlpSolverConfig;
-import metrics.AcceptedVnrMetric;
-import metrics.AveragePathLengthMetric;
-import metrics.TotalCommunicationCostMetricA;
-import metrics.TotalCommunicationCostMetricB;
-import metrics.TotalCommunicationCostMetricC;
-import metrics.TotalCommunicationCostMetricD;
-import metrics.TotalPathCostMetric;
-import metrics.TotalTafCommunicationCostMetric;
+import metrics.MetricConfig;
+import metrics.MetricConsts;
+import metrics.embedding.AcceptedVnrMetric;
+import metrics.embedding.AveragePathLengthMetric;
+import metrics.embedding.TotalCommunicationCostMetricA;
+import metrics.embedding.TotalCommunicationCostMetricB;
+import metrics.embedding.TotalCommunicationCostMetricC;
+import metrics.embedding.TotalCommunicationCostMetricD;
+import metrics.embedding.TotalPathCostMetric;
+import metrics.embedding.TotalTafCommunicationCostMetric;
 import metrics.manager.GlobalMetricsManager;
+import metrics.memory.MemoryMetric;
+import metrics.memory.MemoryPidMetric;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 import model.converter.IncrementalModelConverter;
@@ -112,6 +116,7 @@ public class DissScenarioLoad {
       // Save metrics to CSV file
       CsvUtil.appendCsvLine(vNet.getName(), csvPath, sNet);
       GlobalMetricsManager.resetRuntime();
+      GlobalMetricsManager.resetMemory();
 
       // Get next virtual network ID to embed
       vNetId = IncrementalModelConverter.jsonToModelIncremental(virtNetsPath, true);
@@ -151,6 +156,7 @@ public class DissScenarioLoad {
    * <li>#10: ILP solver random seed value</li>
    * <li>#11: ILP solver optimality tolerance</li>
    * <li>#12: ILP solver objective scaling</li>
+   * <li>#13: Memory measurement enabled</li>
    * </ol>
    * 
    * @param args Arguments to parse.
@@ -226,6 +232,12 @@ public class DissScenarioLoad {
         new Option("y", "ilpobjscaling", true, "ILP solver objective scaling");
     ilpObjScaling.setRequired(false);
     options.addOption(ilpObjScaling);
+
+    // Memory measurement enabled
+    final Option memEnabled =
+        new Option("g", "memmeasurement", false, "Memory measurement metric enabled");
+    memEnabled.setRequired(false);
+    options.addOption(memEnabled);
 
     final CommandLineParser parser = new DefaultParser();
     final HelpFormatter formatter = new HelpFormatter();
@@ -337,6 +349,11 @@ public class DissScenarioLoad {
       IlpSolverConfig.OBJ_SCALE = Double.valueOf(cmd.getOptionValue("ilpobjscaling"));
     }
 
+    // #13: Memory measurement enabled
+    if (cmd.hasOption("memmeasurement")) {
+      MetricConfig.ENABLE_MEMORY = true;
+    }
+
     // Print arguments into logs/system outputs
     System.out.println("=> Arguments: " + Arrays.toString(args));
   }
@@ -370,15 +387,15 @@ public class DissScenarioLoad {
   protected static void printMetrics() {
     // Time measurements
     System.out.println("=> Elapsed time (total): "
-        + GlobalMetricsManager.getGlobalTimeArray()[0] / 1_000_000_000 + " seconds");
+        + GlobalMetricsManager.getGlobalTimeArray()[0] / MetricConsts.NANO_TO_MILLI + " seconds");
     System.out.println("=> Elapsed time (PM): "
-        + GlobalMetricsManager.getGlobalTimeArray()[1] / 1_000_000_000 + " seconds");
+        + GlobalMetricsManager.getGlobalTimeArray()[1] / MetricConsts.NANO_TO_MILLI + " seconds");
     System.out.println("=> Elapsed time (ILP): "
-        + GlobalMetricsManager.getGlobalTimeArray()[2] / 1_000_000_000 + " seconds");
+        + GlobalMetricsManager.getGlobalTimeArray()[2] / MetricConsts.NANO_TO_MILLI + " seconds");
     System.out.println("=> Elapsed time (deploy): "
-        + GlobalMetricsManager.getGlobalTimeArray()[3] / 1_000_000_000 + " seconds");
+        + GlobalMetricsManager.getGlobalTimeArray()[3] / MetricConsts.NANO_TO_MILLI + " seconds");
     System.out.println("=> Elapsed time (rest): "
-        + GlobalMetricsManager.getGlobalTimeArray()[4] / 1_000_000_000 + " seconds");
+        + GlobalMetricsManager.getGlobalTimeArray()[4] / MetricConsts.NANO_TO_MILLI + " seconds");
 
     // Embedding quality metrics
     System.out.println("=> Accepted VNRs: " + (int) new AcceptedVnrMetric(sNet).getValue());
@@ -394,6 +411,11 @@ public class DissScenarioLoad {
         "=> Total communication cost D: " + new TotalCommunicationCostMetricD(sNet).getValue());
     System.out.println(
         "=> Total TAF communication cost: " + new TotalTafCommunicationCostMetric(sNet).getValue());
+
+    // Memory measurements
+    System.out.println("=> Memory metric (current): " + new MemoryMetric().getValue() + " MiB");
+    System.out
+        .println("=> Memory PID metric (maximum): " + new MemoryPidMetric().getValue() + " MiB");
   }
 
 }

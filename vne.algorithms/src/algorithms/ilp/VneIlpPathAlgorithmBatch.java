@@ -37,6 +37,8 @@ public class VneIlpPathAlgorithmBatch extends VneIlpPathAlgorithm {
 
   @Override
   public boolean execute() {
+    GlobalMetricsManager.measureMemory();
+
     // Add all currently embedded networks to job list
     sNet.getGuests().forEach(guest -> {
       vNets.add(guest);
@@ -65,6 +67,7 @@ public class VneIlpPathAlgorithmBatch extends VneIlpPathAlgorithm {
     createMinOveralCostsObjective();
 
     GlobalMetricsManager.startIlpTime();
+    GlobalMetricsManager.measureMemory();
     ilpResult = model.solve(IlpSolverConfig.getSolver());
     GlobalMetricsManager.endIlpTime();
 
@@ -98,6 +101,7 @@ public class VneIlpPathAlgorithmBatch extends VneIlpPathAlgorithm {
     GlobalMetricsManager.startDeployTime();
     createEmbeddings();
     GlobalMetricsManager.endDeployTime();
+    GlobalMetricsManager.measureMemory();
 
     return isFeasible(ilpResult.getStatistics());
   }

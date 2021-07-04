@@ -7,7 +7,7 @@ import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.OneTierNetworkGenerator;
 import generators.config.OneTierConfig;
-import metrics.AcceptedVnrMetric;
+import metrics.embedding.AcceptedVnrMetric;
 import metrics.manager.GlobalMetricsManager;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;

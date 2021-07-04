@@ -1,19 +1,16 @@
-package metrics;
+package metrics.embedding;
 
 import java.util.List;
-import metrics.utils.CostUtility;
+import metrics.CostUtility;
+import metrics.IMetric;
 import model.Link;
-import model.Node;
 import model.SubstrateNetwork;
 import model.VirtualLink;
 import model.VirtualNetwork;
-import model.VirtualServer;
 
 /**
  * Implementation of the cost function of paper [1] and [2]. In comparison to the paper [1], we
- * define the cost of one hop as 1 as stated in [2]. Node embedding of servers is defined as
- * decreasing function for substrate server filling. This means, that an almost full substrate
- * server is "cheaper" than an empty one.
+ * define the cost of one hop as 1 as stated in [2].
  * 
  * [1] Meng, Xiaoqiao, Vasileios Pappas, and Li Zhang. "Improving the scalability of data center
  * networks with traffic-aware virtual machine placement." 2010 Proceedings IEEE INFOCOM. IEEE,
@@ -32,7 +29,7 @@ import model.VirtualServer;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class TotalCommunicationCostMetricC implements IMetric {
+public class TotalCommunicationCostMetricB implements IMetric {
 
   /**
    * Calculated cost.
@@ -44,7 +41,7 @@ public class TotalCommunicationCostMetricC implements IMetric {
    * 
    * @param sNet Substrate network to calculate the metric for.
    */
-  public TotalCommunicationCostMetricC(final SubstrateNetwork sNet) {
+  public TotalCommunicationCostMetricB(final SubstrateNetwork sNet) {
     double cost = 0;
 
     // Iterate over all virtual networks that are embedded on the substrate network
@@ -55,14 +52,6 @@ public class TotalCommunicationCostMetricC implements IMetric {
       for (final Link l : guestLinks) {
         final VirtualLink vl = (VirtualLink) l;
         cost += CostUtility.getTotalCommunicationCostLinkBCD(vl, vl.getHost());
-      }
-
-      final List<Node> guestServers = facade.getAllServersOfNetwork(vNet.getName());
-
-      // Iterate over all virtual servers
-      for (final Node s : guestServers) {
-        final VirtualServer vs = (VirtualServer) s;
-        cost += CostUtility.getTotalCommunicationCostNodeC(vs, vs.getHost());
       }
     }
 

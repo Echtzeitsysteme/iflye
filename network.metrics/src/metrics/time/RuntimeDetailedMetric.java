@@ -1,4 +1,4 @@
-package metrics;
+package metrics.time;
 
 /**
  * Runtime metric implementation. This one extends the normal runtime metric and calculates three

@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Test;
-import metrics.RuntimeMetric;
+import metrics.time.RuntimeMetric;
 
 /**
  * Test class for the metric of runtime.

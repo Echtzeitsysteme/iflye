@@ -26,8 +26,8 @@ import org.cardygan.ilp.api.model.Param;
 import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
 import ilp.wrapper.config.IlpSolverConfig;
+import metrics.CostUtility;
 import metrics.manager.GlobalMetricsManager;
-import metrics.utils.CostUtility;
 import model.Link;
 import model.Node;
 import model.Path;
@@ -217,6 +217,7 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
 
   @Override
   public boolean execute() {
+    GlobalMetricsManager.measureMemory();
     model = new Model();
     createNetworkInformation();
     createAllVariables();
@@ -234,6 +235,7 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
     createMinOveralCostsObjective();
 
     GlobalMetricsManager.startIlpTime();
+    GlobalMetricsManager.measureMemory();
     ilpResult = model.solve(IlpSolverConfig.getSolver());
     GlobalMetricsManager.endIlpTime();
 
@@ -267,6 +269,7 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
     GlobalMetricsManager.startDeployTime();
     createEmbeddings();
     GlobalMetricsManager.endDeployTime();
+    GlobalMetricsManager.measureMemory();
 
     return isFeasible(ilpResult.getStatistics());
   }

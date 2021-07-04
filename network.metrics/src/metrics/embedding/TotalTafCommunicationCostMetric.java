@@ -1,9 +1,10 @@
-package metrics;
+package metrics.embedding;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import metrics.utils.CostUtility;
+import metrics.CostUtility;
+import metrics.IMetric;
 import model.Network;
 import model.Node;
 import model.Server;
