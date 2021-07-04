@@ -33,6 +33,7 @@ import metrics.embedding.TotalPathCostMetric;
 import metrics.embedding.TotalTafCommunicationCostMetric;
 import metrics.manager.GlobalMetricsManager;
 import metrics.memory.MemoryMetric;
+import metrics.memory.MemoryPidMetric;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 import model.converter.IncrementalModelConverter;
@@ -412,6 +413,8 @@ public class DissScenarioLoad {
 
     // Memory measurements
     System.out.println("=> Memory metric (current): " + new MemoryMetric().getValue() + " MiB");
+    System.out
+        .println("=> Memory PID metric (maximum): " + new MemoryPidMetric().getValue() + " MiB");
   }
 
 }

@@ -2,6 +2,7 @@ package metrics.manager;
 
 import metrics.MetricConfig;
 import metrics.memory.MemoryDetailedMetric;
+import metrics.memory.MemoryPidMetric;
 import metrics.time.RuntimeDetailedMetric;
 
 /**
@@ -178,6 +179,19 @@ public class GlobalMetricsManager {
    */
   public static MemoryDetailedMetric getMemory() {
     return mm;
+  }
+
+  /**
+   * Returns the maximum amount of memory (RAM) used by the running Java process in MiB.
+   * 
+   * @return Maximum amount of memory (RAM) used by the running Java process in MiB.
+   */
+  public static double getMemoryPid() {
+    if (MetricConfig.ENABLE_MEMORY) {
+      return new MemoryPidMetric().getValue();
+    } else {
+      return -1;
+    }
   }
 
 }
