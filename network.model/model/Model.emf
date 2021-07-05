@@ -27,15 +27,6 @@ abstract class Node extends Element {
 	
 	@GenModel(documentation="Set of incoming links (links that end at this node).")
 	ref Link [*]#target incomingLinks;
-	
-	@GenModel(documentation="Paths that use this node.")
-	ref Path [*]#nodes paths;
-	
-	@GenModel(documentation="Set of outgoing paths (paths that start at this node).")
-	ref Path [*]#source outgoingPaths;
-	
-	@GenModel(documentation="Set of incoming paths (paths that end at this node).")
-	ref Path [*]#target incomingPaths;
 }
 
 @GenModel(documentation="Abstract class for all servers.")
@@ -63,38 +54,11 @@ abstract class Link extends Element {
 	@GenModel(documentation="Network this link belongs to.")
 	ref Network [1]#links network;
 	
-	@GenModel(documentation="Paths that use this link.")
-	ref Path [*]#links paths;
-	
 	@GenModel(documentation="Source node at which this link starts.")
 	ref Node [1]#outgoingLinks source;
 	
 	@GenModel(documentation="Target node at which this link ends.")
 	ref Node [1]#incomingLinks target;
-}
-
-@GenModel(documentation="Abstract class for all paths.")
-abstract class Path extends Element {
-	@GenModel(documentation="Network this path belongs to.")
-	ref Network [1]#paths network;
-	
-	@GenModel(documentation="Source node at which this path starts.")
-	ref Node [1]#outgoingPaths source;
-	
-	@GenModel(documentation="Target node at which this path ends.")
-	ref Node [1]#incomingPaths target;
-	
-	@GenModel(documentation="All nodes that are part of this path.")
-	ref Node [*]#paths nodes;
-	
-	@GenModel(documentation="All links that are part of this path.")
-	ref Link [*]#paths links;
-	
-	@GenModel(documentation="Bandwidth amount of this path.")
-	attr EInt [1] bandwidth;
-	
-	@GenModel(documentation="Number of hops of this path.")
-	attr EInt [1] hops;
 }
 
 @GenModel(documentation="Abstract class for all networks.")
@@ -107,9 +71,6 @@ abstract class Network extends Element {
 	
 	@GenModel(documentation="Set of links that are part of this network.")
 	val Link [*]#network links;
-	
-	@GenModel(documentation="Set of paths that are part of this network.")
-	val Path [*]#network paths;
 }
 
 @GenModel(documentation="Abstract class that represents a substrate element.")
@@ -123,6 +84,15 @@ abstract class SubstrateElement extends Element {
 abstract class SubstrateNode extends Node, SubstrateElement {
 	@GenModel(documentation="Virtual guest switches.")
 	ref VirtualSwitch [*]#host guestSwitches;
+	
+	@GenModel(documentation="Paths that use this node.")
+	ref SubstratePath [*]#nodes paths;
+	
+	@GenModel(documentation="Set of outgoing paths (paths that start at this node).")
+	ref SubstratePath [*]#source outgoingPaths;
+	
+	@GenModel(documentation="Set of incoming paths (paths that end at this node).")
+	ref SubstratePath [*]#target incomingPaths;
 }
 
 @GenModel(documentation="Class that represents a substrate server.")
@@ -149,10 +119,34 @@ class SubstrateSwitch extends Switch, SubstrateNode {
 class SubstrateLink extends Link, SubstrateElement {
 	@GenModel(documentation="Residual bandwidth amount of this link.")
 	attr EInt [1] residualBandwidth;
+	
+	@GenModel(documentation="Paths that use this link.")
+	ref SubstratePath [*]#links paths;
 }
 
 @GenModel(documentation="Class that represents a substrate path.")
-class SubstratePath extends Path, SubstrateElement {
+class SubstratePath extends SubstrateElement {
+	@GenModel(documentation="Network this path belongs to.") 
+	ref SubstrateNetwork [1]#paths network;
+	
+	@GenModel(documentation="Source node at which this path starts.")
+	ref SubstrateNode [1]#outgoingPaths source;
+	
+	@GenModel(documentation="Target node at which this path ends.")
+	ref SubstrateNode [1]#incomingPaths target;
+	
+	@GenModel(documentation="All nodes that are part of this path.")
+	ref SubstrateNode [*]#paths nodes;
+	
+	@GenModel(documentation="All links that are part of this path.")
+	ref SubstrateLink [*]#paths links;
+	
+	@GenModel(documentation="Bandwidth amount of this path.")
+	attr EInt [1] bandwidth;
+	
+	@GenModel(documentation="Number of hops of this path.")
+	attr EInt [1] hops;
+
 	@GenModel(documentation="Residual bandwidth amount of this path.")
 	attr EInt [1] residualBandwidth;
 }
@@ -161,6 +155,9 @@ class SubstratePath extends Path, SubstrateElement {
 class SubstrateNetwork extends Network, SubstrateElement {
 	@GenModel(documentation="Virtual guest networks that are running on this host network.")
 	ref VirtualNetwork [*]#host guests;
+	
+	@GenModel(documentation="Set of paths that are part of this network.")
+	val SubstratePath [*]#network paths;
 }
 
 @GenModel(documentation="Abstract class that represents a virtual element.")
