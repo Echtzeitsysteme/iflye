@@ -14,10 +14,10 @@ import generators.config.OneTierConfig;
 import model.Link;
 import model.Network;
 import model.Node;
-import model.Path;
 import model.Server;
 import model.SubstrateLink;
 import model.SubstrateNetwork;
+import model.SubstratePath;
 import model.SubstrateServer;
 import model.Switch;
 import model.VirtualNetwork;
@@ -46,7 +46,7 @@ public class OneTierNetworkGeneratorTest extends IGeneratorTest {
     final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(config);
     gen.createNetwork("test", false);
 
-    final Network net = facade.getNetworkById("test");
+    final SubstrateNetwork net = (SubstrateNetwork) facade.getNetworkById("test");
 
     // Number of nodes
     assertEquals(3, net.getNodes().size());
@@ -83,9 +83,6 @@ public class OneTierNetworkGeneratorTest extends IGeneratorTest {
 
     // Links
     assertEquals(4, net.getLinks().size());
-
-    // Paths, no paths for virtual networks
-    assertEquals(0, net.getPaths().size());
   }
 
   @Test
@@ -94,7 +91,7 @@ public class OneTierNetworkGeneratorTest extends IGeneratorTest {
     final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(config);
     gen.createNetwork("test", false);
 
-    final Network net = facade.getNetworkById("test");
+    final SubstrateNetwork net = (SubstrateNetwork) facade.getNetworkById("test");
 
     // Number of nodes
     assertEquals(105, net.getNodes().size());
@@ -222,7 +219,7 @@ public class OneTierNetworkGeneratorTest extends IGeneratorTest {
     final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(config);
     gen.createNetwork("sub", false);
 
-    for (final Path p : facade.getNetworkById("sub").getPaths()) {
+    for (final SubstratePath p : ((SubstrateNetwork) facade.getNetworkById("sub")).getPaths()) {
       assertNotNull(p.getSource());
       assertNotNull(p.getTarget());
     }
@@ -244,7 +241,7 @@ public class OneTierNetworkGeneratorTest extends IGeneratorTest {
 
     assertFalse(facade.getNetworkById("a").getNodes().isEmpty());
     assertFalse(facade.getNetworkById("a").getLinks().isEmpty());
-    assertFalse(facade.getNetworkById("a").getPaths().isEmpty());
+    assertFalse(((SubstrateNetwork) facade.getNetworkById("a")).getPaths().isEmpty());
   }
 
   /*

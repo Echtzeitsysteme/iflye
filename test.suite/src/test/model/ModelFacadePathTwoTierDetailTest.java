@@ -13,9 +13,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
-import model.Link;
 import model.Node;
-import model.Path;
+import model.SubstrateLink;
+import model.SubstrateNode;
+import model.SubstratePath;
 
 /**
  * Test class for the ModelFacade that tests two tier path related creations.
@@ -60,10 +61,10 @@ public class ModelFacadePathTwoTierDetailTest {
     ModelFacadePathBasicTest.twoTierSetupFourServers();
     ModelFacade.getInstance().createAllPathsForNetwork("net");
 
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
-    for (final Path p : allPaths) {
+    for (final SubstratePath p : allPaths) {
       checkPathLinksAgainstNodes(p);
     }
   }
@@ -75,7 +76,7 @@ public class ModelFacadePathTwoTierDetailTest {
     ModelFacadePathBasicTest.twoTierSetupFourServers();
     ModelFacade.getInstance().createAllPathsForNetwork("net");
 
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Test if every path is present
@@ -110,7 +111,7 @@ public class ModelFacadePathTwoTierDetailTest {
     ModelFacadePathBasicTest.twoTierSetupFourServers();
     ModelFacade.getInstance().createAllPathsForNetwork("net");
 
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Test if every path is present
@@ -152,13 +153,13 @@ public class ModelFacadePathTwoTierDetailTest {
    * @param paths List of paths to check.
    * @param references Set of lists of node names to check against.
    */
-  private void checkPathNodesAgainstRef(final List<Path> paths,
+  private void checkPathNodesAgainstRef(final List<SubstratePath> paths,
       final Set<List<String>> references) {
     assertEquals(references.size(), paths.size());
 
     final Set<List<String>> referencesCopy = new HashSet<List<String>>(references);
 
-    for (final Path p : paths) {
+    for (final SubstratePath p : paths) {
       List<String> pNodes = new LinkedList<String>();
       for (final Node n : p.getNodes()) {
         pNodes.add(n.getName());
@@ -177,9 +178,9 @@ public class ModelFacadePathTwoTierDetailTest {
    * 
    * @param p Path to check link and nodes against each other.
    */
-  private void checkPathLinksAgainstNodes(final Path p) {
-    final List<Node> nodes = p.getNodes();
-    final List<Link> links = p.getLinks();
+  private void checkPathLinksAgainstNodes(final SubstratePath p) {
+    final List<SubstrateNode> nodes = p.getNodes();
+    final List<SubstrateLink> links = p.getLinks();
 
     assertEquals(links.size() + 1, nodes.size());
 

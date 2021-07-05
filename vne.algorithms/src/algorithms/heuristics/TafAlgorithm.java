@@ -21,11 +21,11 @@ import metrics.CostUtility;
 import metrics.manager.GlobalMetricsManager;
 import model.Link;
 import model.Node;
-import model.Path;
 import model.Server;
 import model.SubstrateLink;
 import model.SubstrateNetwork;
 import model.SubstrateNode;
+import model.SubstratePath;
 import model.SubstrateServer;
 import model.SubstrateSwitch;
 import model.Switch;
@@ -334,7 +334,8 @@ public class TafAlgorithm extends AbstractAlgorithm {
         }
 
         // Forward only, because all backward links are part of the collection virtualLinks
-        final Path sPath = facade.getPathFromSourceToTarget(source, target);
+        final SubstratePath sPath =
+            facade.getPathFromSourceToTarget((SubstrateNode) source, (SubstrateNode) target);
         // final Set<Link> sLinks = facade.getAllLinksFromPath(sPath);
         facade.embedLinkToPath(sPath.getName(), l.getName());
       }
@@ -385,7 +386,7 @@ public class TafAlgorithm extends AbstractAlgorithm {
 
     // Search for all switches that are part of the new embedding
     for (final SubstrateServer s : servers) {
-      for (final Path p : s.getOutgoingPaths()) {
+      for (final SubstratePath p : s.getOutgoingPaths()) {
         switches.addAll(p.getNodes().stream().filter(Switch.class::isInstance)
             .map(Switch.class::cast).collect(Collectors.toSet()));
       }

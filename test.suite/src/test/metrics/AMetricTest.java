@@ -2,7 +2,8 @@ package test.metrics;
 
 import org.junit.jupiter.api.BeforeEach;
 import facade.ModelFacade;
-import model.Path;
+import model.SubstrateNode;
+import model.SubstratePath;
 
 /**
  * Abstract metric test class.
@@ -78,10 +79,10 @@ public abstract class AMetricTest {
     facade.embedSwitchToNode("ssw", "vsw");
     facade.embedServerToServer("ssrv1", "vsrv1");
     facade.embedServerToServer("ssrv2", "vsrv2");
-    final Path p1 = facade.getPathFromSourceToTarget("ssw", "ssrv1");
-    final Path p2 = facade.getPathFromSourceToTarget("ssw", "ssrv2");
-    final Path p3 = facade.getPathFromSourceToTarget("ssrv1", "ssw");
-    final Path p4 = facade.getPathFromSourceToTarget("ssrv2", "ssw");
+    final SubstratePath p1 = facade.getPathFromSourceToTarget("ssw", "ssrv1");
+    final SubstratePath p2 = facade.getPathFromSourceToTarget("ssw", "ssrv2");
+    final SubstratePath p3 = facade.getPathFromSourceToTarget("ssrv1", "ssw");
+    final SubstratePath p4 = facade.getPathFromSourceToTarget("ssrv2", "ssw");
     facade.embedLinkToPath(p1.getName(), "vln1");
     facade.embedLinkToPath(p2.getName(), "vln2");
     facade.embedLinkToPath(p3.getName(), "vln3");
@@ -99,10 +100,12 @@ public abstract class AMetricTest {
     facade.embedServerToServer("ssrv1", "vsrv1");
     facade.embedServerToServer("ssrv1", "vsrv2");
 
-    final Path pa = facade.getPathFromSourceToTarget(facade.getServerById("ssrv1"),
-        facade.getServerById("ssrv2"));
-    final Path pb = facade.getPathFromSourceToTarget(facade.getServerById("ssrv2"),
-        facade.getServerById("ssrv1"));
+    final SubstratePath pa =
+        facade.getPathFromSourceToTarget((SubstrateNode) facade.getServerById("ssrv1"),
+            (SubstrateNode) facade.getServerById("ssrv2"));
+    final SubstratePath pb =
+        facade.getPathFromSourceToTarget((SubstrateNode) facade.getServerById("ssrv2"),
+            (SubstrateNode) facade.getServerById("ssrv1"));
 
     facade.embedLinkToPath(pa.getName(), "vln1");
     facade.embedLinkToPath(pa.getName(), "vln2");

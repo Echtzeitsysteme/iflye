@@ -17,9 +17,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
+import generators.OneTierNetworkGenerator;
+import generators.config.OneTierConfig;
 import model.Link;
 import model.Node;
-import model.Path;
+import model.SubstrateNode;
 import model.SubstratePath;
 import model.Switch;
 
@@ -72,7 +74,7 @@ public class ModelFacadePathBasicTest {
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
@@ -97,7 +99,7 @@ public class ModelFacadePathBasicTest {
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
@@ -136,7 +138,7 @@ public class ModelFacadePathBasicTest {
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
@@ -197,7 +199,7 @@ public class ModelFacadePathBasicTest {
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
@@ -266,9 +268,9 @@ public class ModelFacadePathBasicTest {
     oneTierSetupTwoServers();
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
 
-    for (final Path p : allPaths) {
+    for (final SubstratePath p : allPaths) {
       if (p.getSource() instanceof Switch || p.getTarget() instanceof Switch) {
         assertEquals(1, p.getHops());
       } else {
@@ -284,14 +286,14 @@ public class ModelFacadePathBasicTest {
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
 
     int counterOneHop = 0;
     int counterTwoHops = 0;
     int counterThreeHops = 0;
     int counterFourHops = 0;
 
-    for (final Path p : allPaths) {
+    for (final SubstratePath p : allPaths) {
       // Number of links must be number of hops
       assertEquals(p.getLinks().size(), p.getHops());
 
@@ -318,9 +320,9 @@ public class ModelFacadePathBasicTest {
     oneTierSetupTwoServers();
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
 
-    for (final Path p : allPaths) {
+    for (final SubstratePath p : allPaths) {
       if ((p.getSource().getName().equals("srv2") && p.getTarget().getName().equals("sw"))
           || (p.getSource().getName().equals("sw") && p.getTarget().getName().equals("srv2"))) {
         assertEquals(2, p.getBandwidth());
@@ -335,9 +337,9 @@ public class ModelFacadePathBasicTest {
     oneTierSetupTwoServers();
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
 
-    for (final Path p : allPaths) {
+    for (final SubstratePath p : allPaths) {
       if (p.getSource() instanceof Switch || p.getTarget() instanceof Switch) {
         assertEquals(1, p.getLinks().size());
       } else {
@@ -353,7 +355,7 @@ public class ModelFacadePathBasicTest {
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
 
     List<Set<String>> linkNames = new LinkedList<Set<String>>();
     linkNames.add(Set.of("ln1"));
@@ -371,9 +373,9 @@ public class ModelFacadePathBasicTest {
     oneTierSetupTwoServers();
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
 
-    for (final Path p : allPaths) {
+    for (final SubstratePath p : allPaths) {
       if (p.getSource() instanceof Switch || p.getTarget() instanceof Switch) {
         assertEquals(2, p.getNodes().size());
       } else {
@@ -389,7 +391,7 @@ public class ModelFacadePathBasicTest {
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
 
     // The reference nodes only have to be added one time
     List<Set<String>> nodeNames = new LinkedList<Set<String>>();
@@ -408,9 +410,9 @@ public class ModelFacadePathBasicTest {
     twoTierSetupFourServers();
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
 
-    for (final Path p : allPaths) {
+    for (final SubstratePath p : allPaths) {
       assertNotNull(p.getName());
     }
   }
@@ -422,7 +424,8 @@ public class ModelFacadePathBasicTest {
     oneTierSetupFourServers();
     ModelFacade.getInstance().createAllPathsForNetwork("net");
 
-    final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> generatedPaths =
+        ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertTrue(generatedPaths.isEmpty());
   }
 
@@ -433,7 +436,8 @@ public class ModelFacadePathBasicTest {
     oneTierSetupFourServers();
     ModelFacade.getInstance().createAllPathsForNetwork("net");
 
-    final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> generatedPaths =
+        ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertTrue(generatedPaths.isEmpty());
   }
 
@@ -445,10 +449,11 @@ public class ModelFacadePathBasicTest {
     twoTierSetupFourServers();
     ModelFacade.getInstance().createAllPathsForNetwork("net");
 
-    final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> generatedPaths =
+        ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(generatedPaths.isEmpty());
 
-    for (final Path p : generatedPaths) {
+    for (final SubstratePath p : generatedPaths) {
       assertEquals(2, p.getHops());
       assertEquals(2, p.getLinks().size());
       assertEquals(3, p.getNodes().size());
@@ -463,7 +468,8 @@ public class ModelFacadePathBasicTest {
     twoTierSetupFourServers();
     ModelFacade.getInstance().createAllPathsForNetwork("net");
 
-    final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> generatedPaths =
+        ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertTrue(generatedPaths.isEmpty());
   }
 
@@ -474,11 +480,11 @@ public class ModelFacadePathBasicTest {
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
-    for (final Path p : allPaths) {
-      final SubstratePath sp = (SubstratePath) p;
+    for (final SubstratePath p : allPaths) {
+      final SubstratePath sp = p;
       assertEquals(sp.getBandwidth(), sp.getResidualBandwidth());
     }
   }
@@ -490,11 +496,11 @@ public class ModelFacadePathBasicTest {
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
-    for (final Path p : allPaths) {
-      final SubstratePath sp = (SubstratePath) p;
+    for (final SubstratePath p : allPaths) {
+      final SubstratePath sp = p;
       assertEquals(sp,
           ModelFacade.getInstance().getPathFromSourceToTarget(sp.getSource(), sp.getTarget()));
     }
@@ -507,11 +513,11 @@ public class ModelFacadePathBasicTest {
     ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
-    for (final Path p : allPaths) {
-      final SubstratePath sp = (SubstratePath) p;
+    for (final SubstratePath p : allPaths) {
+      final SubstratePath sp = p;
       assertEquals(sp, ModelFacade.getInstance().getPathFromSourceToTarget(sp.getSource().getName(),
           sp.getTarget().getName()));
     }
@@ -536,8 +542,8 @@ public class ModelFacadePathBasicTest {
     ModelFacadeConfig.MAX_PATH_LENGTH = 1;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final Node source = ModelFacade.getInstance().getServerById("srv1");
-    final Node target = ModelFacade.getInstance().getServerById("srv2");
+    final SubstrateNode source = (SubstrateNode) ModelFacade.getInstance().getServerById("srv1");
+    final SubstrateNode target = (SubstrateNode) ModelFacade.getInstance().getServerById("srv2");
     assertNull(ModelFacade.getInstance().getPathFromSourceToTarget(source, target));
   }
 
@@ -547,8 +553,8 @@ public class ModelFacadePathBasicTest {
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
     ModelFacadeConfig.MAX_PATH_LENGTH = 1;
 
-    final Node source = ModelFacade.getInstance().getServerById("srv1");
-    final Node target = ModelFacade.getInstance().getServerById("srv2");
+    final SubstrateNode source = (SubstrateNode) ModelFacade.getInstance().getServerById("srv1");
+    final SubstrateNode target = (SubstrateNode) ModelFacade.getInstance().getServerById("srv2");
     assertNull(ModelFacade.getInstance().getPathFromSourceToTarget(source, target));
   }
 
@@ -568,12 +574,23 @@ public class ModelFacadePathBasicTest {
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
 
-    final List<Path> paths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> paths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
 
     assertEquals(4, paths.size());
     paths.forEach(p -> {
       assertEquals(1, p.getHops());
       assertEquals(2, p.getNodes().size());
+    });
+  }
+
+  @Test
+  public void throwExceptionVirtualNetwork() {
+    final OneTierConfig conf = new OneTierConfig(1, 1, false, 1, 1, 1, 1);
+    final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(conf);
+    gen.createNetwork("virt", true);
+
+    assertThrows(IllegalArgumentException.class, () -> {
+      ModelFacade.getInstance().getAllPathsOfNetwork("virt");
     });
   }
 
@@ -588,9 +605,10 @@ public class ModelFacadePathBasicTest {
    * @param linkNames List of sets of strings with link names for each path.
    * @param pathsToCheck List of paths to check.
    */
-  static void checkPathLinkNames(final List<Set<String>> linkNames, final List<Path> pathsToCheck) {
+  static void checkPathLinkNames(final List<Set<String>> linkNames,
+      final List<SubstratePath> pathsToCheck) {
     List<Set<String>> pathLinks = new LinkedList<Set<String>>();
-    for (final Path p : pathsToCheck) {
+    for (final SubstratePath p : pathsToCheck) {
       final Set<String> fromPath = new HashSet<String>();
       for (Link l : p.getLinks()) {
         fromPath.add(l.getName());
@@ -609,9 +627,10 @@ public class ModelFacadePathBasicTest {
    * @param nodeNames List of sets of strings with node names for each path.
    * @param pathsToCheck List of paths to check.
    */
-  static void checkPathNodeNames(final List<Set<String>> nodeNames, final List<Path> pathsToCheck) {
+  static void checkPathNodeNames(final List<Set<String>> nodeNames,
+      final List<SubstratePath> pathsToCheck) {
     List<Set<String>> pathNodes = new LinkedList<Set<String>>();
-    for (final Path p : pathsToCheck) {
+    for (final SubstratePath p : pathsToCheck) {
       final Set<String> fromPath = new HashSet<String>();
       for (Node n : p.getNodes()) {
         fromPath.add(n.getName());
@@ -632,7 +651,7 @@ public class ModelFacadePathBasicTest {
    * @param pathsToCheck List of paths to check.
    */
   static void checkPathSourcesAndTargets(final Set<Tuple<String, String>> mapping,
-      final List<Path> pathsToCheck) {
+      final List<SubstratePath> pathsToCheck) {
     assertEquals(mapping.size(), pathsToCheck.size());
     final Iterator<Tuple<String, String>> it = mapping.iterator();
     while (it.hasNext()) {
@@ -650,8 +669,8 @@ public class ModelFacadePathBasicTest {
    * @param pathsToCheck List of paths to search in.
    */
   static private void checkPathSourceAndTarget(final String sourceId, final String targetId,
-      final List<Path> pathsToCheck) {
-    for (final Path p : pathsToCheck) {
+      final List<SubstratePath> pathsToCheck) {
+    for (final SubstratePath p : pathsToCheck) {
       if (p.getSource().getName().equals(sourceId) && p.getTarget().getName().equals(targetId)) {
         return;
       }

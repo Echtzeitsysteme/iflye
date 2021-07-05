@@ -66,7 +66,6 @@ public class FatTreeNetworkGeneratorTest extends IGeneratorTest {
 
     assertNotNull(facade.getNetworkById("virt"));
     assertTrue(facade.getNetworkById("virt") instanceof VirtualNetwork);
-    assertTrue(facade.getAllPathsOfNetwork("virt").isEmpty());
   }
 
   @Test

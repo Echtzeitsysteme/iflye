@@ -146,8 +146,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
      */
     public void addLinkPathMatch(final Match match) {
       final VirtualLink vLink = (VirtualLink) facade.getLinkById(match.getVirtual().getName());
-      final SubstratePath sPath =
-          (SubstratePath) facade.getPathById(match.getSubstrate().getName());
+      final SubstratePath sPath = facade.getPathById(match.getSubstrate().getName());
 
       // If the source node (target node) of the virtual link may not be embedded to the substrate
       // paths source node (target node), it's mapping variable is missing in the solver's model.
@@ -645,12 +644,10 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
         case EMOFLON:
           // Create embedding via matches and graph transformation
           engine.apply((VirtualElement) m.getVirtual(), (SubstrateElement) m.getSubstrate(), true);
-          updatePathLinks(m);
           break;
         case EMOFLON_WO_UPDATE:
           // Create embedding via matches and graph transformation
           engine.apply((VirtualElement) m.getVirtual(), (SubstrateElement) m.getSubstrate(), false);
-          updatePathLinks(m);
           break;
         case MANUAL:
           final VirtualElement ve = (VirtualElement) m.getVirtual();
@@ -671,28 +668,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     }
 
     return rejectedNetworks;
-  }
-
-  /**
-   * FIXME!
-   * 
-   * If substrate element is a path, we have to update the residual bandwidths of all links, because
-   * eMoflon does not support 'for-each' like operations yet. (Please also see 'embeddingRules.gt').
-   * If eMoflon supports this feature and the rule in 'embeddingRules.gt' got updated, this method
-   * and all of its calls must be removed.
-   * 
-   * @param match Match to check and update.
-   */
-  private void updatePathLinks(final Match match) {
-    if (match.getSubstrate() instanceof SubstratePath) {
-      final SubstratePath subPath = (SubstratePath) match.getSubstrate();
-      final VirtualLink virtLink = (VirtualLink) match.getVirtual();
-
-      subPath.getLinks().stream().forEach(l -> {
-        final SubstrateLink sl = (SubstrateLink) l;
-        sl.setResidualBandwidth(sl.getResidualBandwidth() - virtLink.getBandwidth());
-      });
-    }
   }
 
   /**

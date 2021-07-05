@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
-import model.Path;
+import model.SubstratePath;
 
 /**
  * Test class for the ModelFacade that tests all Yen path related creations.
@@ -94,7 +94,7 @@ public class ModelFacadePathYenTest {
     ModelFacadeConfig.YEN_K = 10;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // allPaths.stream().map(e -> e.getName()).sorted().forEach(e -> System.out.println(e));
@@ -157,7 +157,7 @@ public class ModelFacadePathYenTest {
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
 
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
@@ -179,7 +179,7 @@ public class ModelFacadePathYenTest {
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
 
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
@@ -206,7 +206,7 @@ public class ModelFacadePathYenTest {
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
 
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
@@ -220,7 +220,7 @@ public class ModelFacadePathYenTest {
     ModelFacadeConfig.MAX_PATH_LENGTH = 1;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
@@ -235,7 +235,7 @@ public class ModelFacadePathYenTest {
     ModelFacadeConfig.YEN_K = 20;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
@@ -253,7 +253,7 @@ public class ModelFacadePathYenTest {
     ModelFacadeConfig.YEN_K = 10;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
@@ -268,7 +268,7 @@ public class ModelFacadePathYenTest {
     ModelFacadeConfig.YEN_K = 10;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
@@ -315,7 +315,7 @@ public class ModelFacadePathYenTest {
 
     // Create paths and check values
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
@@ -335,14 +335,14 @@ public class ModelFacadePathYenTest {
     ModelFacadeConfig.YEN_K = 10;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
 
     int counterOneHop = 0;
     int counterTwoHops = 0;
     int counterThreeHops = 0;
     int counterFourHops = 0;
 
-    for (final Path p : allPaths) {
+    for (final SubstratePath p : allPaths) {
       // Number of links must be number of hops
       assertEquals(p.getLinks().size(), p.getHops());
 
@@ -417,7 +417,8 @@ public class ModelFacadePathYenTest {
     ModelFacadePathBasicTest.twoTierSetupFourServers();
     ModelFacade.getInstance().createAllPathsForNetwork("net");
 
-    final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> generatedPaths =
+        ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(generatedPaths.isEmpty());
 
     assertEquals(16, generatedPaths.size());

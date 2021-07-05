@@ -119,7 +119,8 @@ public class ModelFacadeValidationTest {
     createSubstrateNetwork();
 
     final SubstratePath sp =
-        (SubstratePath) ModelFacade.getInstance().getRoot().getNetworks().get(0).getPaths().get(0);
+        ((SubstrateNetwork) ModelFacade.getInstance().getRoot().getNetworks().get(0)).getPaths()
+            .get(0);
     sp.setResidualBandwidth(0);
 
     assertThrows(InternalError.class, () -> {
@@ -166,8 +167,9 @@ public class ModelFacadeValidationTest {
     ModelFacade.getInstance().getRoot();
 
     for (int i = 0; i < 6; i++) {
-      final SubstratePath sp = (SubstratePath) ModelFacade.getInstance().getRoot().getNetworks()
-          .get(0).getPaths().get(i);
+      final SubstratePath sp =
+          ((SubstrateNetwork) ModelFacade.getInstance().getRoot().getNetworks().get(0)).getPaths()
+              .get(i);
       sp.getGuestLinks().clear();
     }
 
