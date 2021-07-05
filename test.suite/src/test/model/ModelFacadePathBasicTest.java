@@ -17,8 +17,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
+import generators.OneTierNetworkGenerator;
+import generators.config.OneTierConfig;
 import model.Link;
 import model.Node;
+import model.SubstrateNode;
 import model.SubstratePath;
 import model.Switch;
 
@@ -539,8 +542,8 @@ public class ModelFacadePathBasicTest {
     ModelFacadeConfig.MAX_PATH_LENGTH = 1;
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final Node source = ModelFacade.getInstance().getServerById("srv1");
-    final Node target = ModelFacade.getInstance().getServerById("srv2");
+    final SubstrateNode source = (SubstrateNode) ModelFacade.getInstance().getServerById("srv1");
+    final SubstrateNode target = (SubstrateNode) ModelFacade.getInstance().getServerById("srv2");
     assertNull(ModelFacade.getInstance().getPathFromSourceToTarget(source, target));
   }
 
@@ -550,8 +553,8 @@ public class ModelFacadePathBasicTest {
     ModelFacadeConfig.MIN_PATH_LENGTH = 1;
     ModelFacadeConfig.MAX_PATH_LENGTH = 1;
 
-    final Node source = ModelFacade.getInstance().getServerById("srv1");
-    final Node target = ModelFacade.getInstance().getServerById("srv2");
+    final SubstrateNode source = (SubstrateNode) ModelFacade.getInstance().getServerById("srv1");
+    final SubstrateNode target = (SubstrateNode) ModelFacade.getInstance().getServerById("srv2");
     assertNull(ModelFacade.getInstance().getPathFromSourceToTarget(source, target));
   }
 
@@ -577,6 +580,17 @@ public class ModelFacadePathBasicTest {
     paths.forEach(p -> {
       assertEquals(1, p.getHops());
       assertEquals(2, p.getNodes().size());
+    });
+  }
+
+  @Test
+  public void throwExceptionVirtualNetwork() {
+    final OneTierConfig conf = new OneTierConfig(1, 1, false, 1, 1, 1, 1);
+    final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(conf);
+    gen.createNetwork("virt", true);
+
+    assertThrows(IllegalArgumentException.class, () -> {
+      ModelFacade.getInstance().getAllPathsOfNetwork("virt");
     });
   }
 

@@ -304,15 +304,17 @@ public class VneIlpPathAlgorithm extends AbstractAlgorithm {
           links.add((SubstrateLink) e);
         }
 
-        final SubstratePath p = facade.getPathFromSourceToTarget(links.get(0).getSource(),
-            links.get(links.size() - 1).getTarget());
+        final SubstratePath p =
+            facade.getPathFromSourceToTarget((SubstrateNode) links.get(0).getSource(),
+                (SubstrateNode) links.get(links.size() - 1).getTarget());
         facade.embedLinkToPath(p.getName(), vl.getName());
       } else {
         if (hosts.get(0) instanceof SubstrateServer) {
           facade.embedLinkToServer(hosts.get(0).getName(), vl.getName());
         } else {
           final Link l = (Link) hosts.get(0);
-          final SubstratePath p = facade.getPathFromSourceToTarget(l.getSource(), l.getTarget());
+          final SubstratePath p = facade.getPathFromSourceToTarget((SubstrateNode) l.getSource(),
+              (SubstrateNode) l.getTarget());
           facade.embedLinkToPath(p.getName(), vl.getName());
         }
       }

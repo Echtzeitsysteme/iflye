@@ -2,6 +2,7 @@ package test.metrics;
 
 import org.junit.jupiter.api.BeforeEach;
 import facade.ModelFacade;
+import model.SubstrateNode;
 import model.SubstratePath;
 
 /**
@@ -99,10 +100,12 @@ public abstract class AMetricTest {
     facade.embedServerToServer("ssrv1", "vsrv1");
     facade.embedServerToServer("ssrv1", "vsrv2");
 
-    final SubstratePath pa = facade.getPathFromSourceToTarget(facade.getServerById("ssrv1"),
-        facade.getServerById("ssrv2"));
-    final SubstratePath pb = facade.getPathFromSourceToTarget(facade.getServerById("ssrv2"),
-        facade.getServerById("ssrv1"));
+    final SubstratePath pa =
+        facade.getPathFromSourceToTarget((SubstrateNode) facade.getServerById("ssrv1"),
+            (SubstrateNode) facade.getServerById("ssrv2"));
+    final SubstratePath pb =
+        facade.getPathFromSourceToTarget((SubstrateNode) facade.getServerById("ssrv2"),
+            (SubstrateNode) facade.getServerById("ssrv1"));
 
     facade.embedLinkToPath(pa.getName(), "vln1");
     facade.embedLinkToPath(pa.getName(), "vln2");

@@ -334,7 +334,8 @@ public class TafAlgorithm extends AbstractAlgorithm {
         }
 
         // Forward only, because all backward links are part of the collection virtualLinks
-        final SubstratePath sPath = facade.getPathFromSourceToTarget(source, target);
+        final SubstratePath sPath =
+            facade.getPathFromSourceToTarget((SubstrateNode) source, (SubstrateNode) target);
         // final Set<Link> sLinks = facade.getAllLinksFromPath(sPath);
         facade.embedLinkToPath(sPath.getName(), l.getName());
       }

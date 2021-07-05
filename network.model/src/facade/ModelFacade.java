@@ -92,6 +92,9 @@ public class ModelFacade {
    */
   private Root root = ModelFactory.eINSTANCE.createRoot();
 
+  /*
+   * Look-up data structures.
+   */
   private Map<String, SubstratePath> paths = new HashMap<String, SubstratePath>();
   private Map<String, Link> links = new HashMap<String, Link>();
 
@@ -162,7 +165,7 @@ public class ModelFacade {
 
     final Network net = getNetworkById(networkId);
     if (net instanceof VirtualNetwork) {
-      throw new IllegalArgumentException("Virtual networks do not have paths!");
+      throw new IllegalArgumentException("Virtual networks do not have paths.");
     }
 
     return ((SubstrateNetwork) getNetworkById(networkId)).getPaths();
@@ -417,7 +420,6 @@ public class ModelFacade {
       subLink.setResidualBandwidth(bandwidth);
     }
 
-    // TODO: Check successful adding to model before adding it to look up data structure
     links.put(id, link);
     return net.getLinks().add(link);
   }
@@ -564,17 +566,17 @@ public class ModelFacade {
     }
 
     // Get all nodes from links
-    final List<Node> nodes = new LinkedList<Node>();
+    final List<SubstrateNode> nodes = new LinkedList<SubstrateNode>();
 
     for (final SubstrateLink l : links) {
-      nodes.add(l.getSource());
+      nodes.add((SubstrateNode) l.getSource());
       // nodes.add(l.getTarget());
     }
-    nodes.add(links.get(links.size() - 1).getTarget());
+    nodes.add((SubstrateNode) links.get(links.size() - 1).getTarget());
 
     final int lastIndex = links.size() - 1;
-    final Node source = links.get(0).getSource();
-    final Node target = links.get(lastIndex).getTarget();
+    final SubstrateNode source = (SubstrateNode) links.get(0).getSource();
+    final SubstrateNode target = (SubstrateNode) links.get(lastIndex).getTarget();
 
     // Create forward path
     if (!doesSpecificPathWithSourceAndTargetExist(source, target, nodes, links)) {
@@ -584,8 +586,7 @@ public class ModelFacade {
       final String name = concatNodeNames(nodes);
       forward.setName(name);
 
-      // TODO: Fix warning
-      forward.getNodes().addAll((Collection<? extends SubstrateNode>) nodes);
+      forward.getNodes().addAll(nodes);
       forward.getLinks().addAll(links);
 
       // Determine bandwidth
@@ -597,13 +598,13 @@ public class ModelFacade {
 
       // Add path to lookup map
       if (!pathSourceMap.containsKey(source)) {
-        pathSourceMap.put((SubstrateNode) source, new HashSet<SubstratePath>());
+        pathSourceMap.put(source, new HashSet<SubstratePath>());
       }
       pathSourceMap.get(source).add(forward);
     }
 
     // Create reverse path
-    final List<Node> reversedNodes = Lists.reverse(nodes);
+    final List<SubstrateNode> reversedNodes = Lists.reverse(nodes);
     // Get all opposite links
     final List<SubstrateLink> oppositeLinks = getOppositeLinks(links);
 
@@ -616,9 +617,7 @@ public class ModelFacade {
       reverse.setNetwork((SubstrateNetwork) links.get(0).getNetwork());
       final String name = concatNodeNames(reversedNodes);
       reverse.setName(name);
-
-      // TODO: Fix warning
-      reverse.getNodes().addAll((Collection<? extends SubstrateNode>) reversedNodes);
+      reverse.getNodes().addAll(reversedNodes);
 
       final int revBw = getMinimumBandwidthFromSubstrateLinks(oppositeLinks);
       reverse.setBandwidth(revBw);
@@ -628,7 +627,7 @@ public class ModelFacade {
 
       // Add path to lookup map
       if (!pathSourceMap.containsKey(target)) {
-        pathSourceMap.put((SubstrateNode) target, new HashSet<SubstratePath>());
+        pathSourceMap.put(target, new HashSet<SubstratePath>());
       }
       pathSourceMap.get(target).add(reverse);
     }
@@ -640,7 +639,7 @@ public class ModelFacade {
    * @param nodes Input list of nodes.
    * @return String with all names of given node list.
    */
-  private String concatNodeNames(final List<Node> nodes) {
+  private String concatNodeNames(final List<SubstrateNode> nodes) {
     String name = "path";
 
     for (final Node n : nodes) {
@@ -726,18 +725,6 @@ public class ModelFacade {
   }
 
   /**
-   * This method checks the availability of a path with given source and target node.
-   * 
-   * @param source Source to search path for.
-   * @param target Target to search path for.
-   * @return True if a path with given parameters already exists.
-   */
-  @Deprecated
-  public boolean doesPathWithSourceAndTargetExist(final Node source, final Node target) {
-    return getPathFromSourceToTarget(source, target) != null;
-  }
-
-  /**
    * This method checks the availability of a specific path with given source and target node.
    * 
    * @param source Source to search path for.
@@ -746,8 +733,9 @@ public class ModelFacade {
    * @param links List of links that must be contained in the found path.
    * @return True if a path with given parameters already exists.
    */
-  private boolean doesSpecificPathWithSourceAndTargetExist(final Node source, final Node target,
-      final List<Node> nodes, final List<SubstrateLink> links) {
+  private boolean doesSpecificPathWithSourceAndTargetExist(final SubstrateNode source,
+      final SubstrateNode target, final List<SubstrateNode> nodes,
+      final List<SubstrateLink> links) {
     final Set<SubstratePath> foundPaths = getPathsFromSourceToTarget(source, target);
 
     for (final SubstratePath p : foundPaths) {
@@ -813,7 +801,8 @@ public class ModelFacade {
    * @param target Target node.
    * @return Path if a path between source and target does exist.
    */
-  public SubstratePath getPathFromSourceToTarget(final Node source, final Node target) {
+  public SubstratePath getPathFromSourceToTarget(final SubstrateNode source,
+      final SubstrateNode target) {
     final Set<SubstratePath> allPaths = pathSourceMap.get(source);
 
     // Check if there are any paths from source node to any other node
@@ -841,7 +830,13 @@ public class ModelFacade {
   public SubstratePath getPathFromSourceToTarget(final String sourceId, final String targetId) {
     final Node source = getNodeById(sourceId);
     final Node target = getNodeById(targetId);
-    return getPathFromSourceToTarget(source, target);
+
+    if (!(source instanceof SubstrateNode) || !(target instanceof SubstrateNode)) {
+      throw new IllegalArgumentException(
+          "One or both of the provided node IDs do not belong to a substrate network.");
+    }
+
+    return getPathFromSourceToTarget((SubstrateNode) source, (SubstrateNode) target);
   }
 
   /**
@@ -851,7 +846,8 @@ public class ModelFacade {
    * @param target Target node.
    * @return Set of paths if any exists or else an empty set.
    */
-  public Set<SubstratePath> getPathsFromSourceToTarget(final Node source, final Node target) {
+  public Set<SubstratePath> getPathsFromSourceToTarget(final SubstrateNode source,
+      final SubstrateNode target) {
     final Set<SubstratePath> allPaths = pathSourceMap.get(source);
 
     // Check if there are any paths from source node to any other node

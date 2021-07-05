@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import metrics.IMetric;
 import model.SubstrateNetwork;
+import model.SubstrateNode;
 import model.SubstratePath;
 
 /**
@@ -93,14 +94,18 @@ public abstract class ATotalCommunicationCostMetricTest extends AMetricTest {
     facade.embedServerToServer("ssrv1", "vsrv1");
     facade.embedServerToServer("ssrv2", "vsrv2");
 
-    final SubstratePath pa = facade.getPathFromSourceToTarget(facade.getServerById("ssrv1"),
-        facade.getSwitchById("cssw"));
-    final SubstratePath pb = facade.getPathFromSourceToTarget(facade.getServerById("ssrv2"),
-        facade.getSwitchById("cssw"));
-    final SubstratePath pc = facade.getPathFromSourceToTarget(facade.getSwitchById("cssw"),
-        facade.getServerById("ssrv1"));
-    final SubstratePath pd = facade.getPathFromSourceToTarget(facade.getSwitchById("cssw"),
-        facade.getServerById("ssrv2"));
+    final SubstratePath pa =
+        facade.getPathFromSourceToTarget((SubstrateNode) facade.getServerById("ssrv1"),
+            (SubstrateNode) facade.getSwitchById("cssw"));
+    final SubstratePath pb =
+        facade.getPathFromSourceToTarget((SubstrateNode) facade.getServerById("ssrv2"),
+            (SubstrateNode) facade.getSwitchById("cssw"));
+    final SubstratePath pc =
+        facade.getPathFromSourceToTarget((SubstrateNode) facade.getSwitchById("cssw"),
+            (SubstrateNode) facade.getServerById("ssrv1"));
+    final SubstratePath pd =
+        facade.getPathFromSourceToTarget((SubstrateNode) facade.getSwitchById("cssw"),
+            (SubstrateNode) facade.getServerById("ssrv2"));
 
     if (pa != null && pb != null && pc != null && pd != null) {
       facade.embedLinkToPath(pa.getName(), "vln1");
