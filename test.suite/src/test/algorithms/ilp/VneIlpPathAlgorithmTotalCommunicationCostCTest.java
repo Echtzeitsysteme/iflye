@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Test;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
 import algorithms.ilp.VneIlpPathAlgorithm;
-import model.Path;
 import model.Server;
 import model.SubstrateElement;
 import model.SubstrateNetwork;
+import model.SubstratePath;
 import model.VirtualLink;
 import model.VirtualNetwork;
 import model.VirtualServer;
@@ -76,8 +76,8 @@ public class VneIlpPathAlgorithmTotalCommunicationCostCTest extends AAlgorithmMu
     String targetName = "";
 
     // Link 1
-    if (vLn1.getHost() instanceof Path) {
-      final Path pLn1 = (Path) vLn1.getHost();
+    if (vLn1.getHost() instanceof SubstratePath) {
+      final SubstratePath pLn1 = (SubstratePath) vLn1.getHost();
       sourceName = pLn1.getSource().getName();
       targetName = pLn1.getTarget().getName();
     } else {
@@ -96,8 +96,8 @@ public class VneIlpPathAlgorithmTotalCommunicationCostCTest extends AAlgorithmMu
     assertEquals("sub_srv2", targetName);
 
     // Link 3
-    if (vLn3.getHost() instanceof Path) {
-      final Path pLn3 = (Path) vLn3.getHost();
+    if (vLn3.getHost() instanceof SubstratePath) {
+      final SubstratePath pLn3 = (SubstratePath) vLn3.getHost();
       sourceName = pLn3.getSource().getName();
       targetName = pLn3.getTarget().getName();
     } else {
@@ -160,32 +160,32 @@ public class VneIlpPathAlgorithmTotalCommunicationCostCTest extends AAlgorithmMu
     final VirtualLink vLn6 = (VirtualLink) facade.getLinkById("virt_ln6");
 
     // Link 1
-    final Path pLn1 = (Path) vLn1.getHost();
+    final SubstratePath pLn1 = (SubstratePath) vLn1.getHost();
     assertEquals(serverHost1, pLn1.getSource().getName());
     assertEquals(refSwHostName, pLn1.getTarget().getName());
 
     // Link 2
-    final Path pLn2 = (Path) vLn2.getHost();
+    final SubstratePath pLn2 = (SubstratePath) vLn2.getHost();
     assertEquals(serverHost2, pLn2.getSource().getName());
     assertEquals(refSwHostName, pLn2.getTarget().getName());
 
     // Link 3
-    final Path pLn3 = (Path) vLn3.getHost();
+    final SubstratePath pLn3 = (SubstratePath) vLn3.getHost();
     assertEquals(serverHost3, pLn3.getSource().getName());
     assertEquals(refSwHostName, pLn3.getTarget().getName());
 
     // Link 4
-    final Path pLn4 = (Path) vLn4.getHost();
+    final SubstratePath pLn4 = (SubstratePath) vLn4.getHost();
     assertEquals(refSwHostName, pLn4.getSource().getName());
     assertEquals(serverHost1, pLn4.getTarget().getName());
 
     // Link 5
-    final Path pLn5 = (Path) vLn5.getHost();
+    final SubstratePath pLn5 = (SubstratePath) vLn5.getHost();
     assertEquals(refSwHostName, pLn5.getSource().getName());
     assertEquals(serverHost2, pLn5.getTarget().getName());
 
     // Link 6
-    final Path pLn6 = (Path) vLn6.getHost();
+    final SubstratePath pLn6 = (SubstratePath) vLn6.getHost();
     assertEquals(refSwHostName, pLn6.getSource().getName());
     assertEquals(serverHost3, pLn6.getTarget().getName());
   }

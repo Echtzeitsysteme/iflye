@@ -11,7 +11,7 @@ import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.FatTreeNetworkGenerator;
 import generators.config.FatTreeConfig;
-import model.Path;
+import model.SubstratePath;
 
 /**
  * Test class for the ModelFacade that tests all Yen path related creations for Fat Tree networks.
@@ -70,7 +70,7 @@ public class ModelFacadePathYenFatTreeTest {
   @Test
   public void testFatTreeAggrPlanePathLength1() {
     setExactPathLength(1);
-    final List<Path> allPaths = createPlaneNetworkAndGetPaths();
+    final List<SubstratePath> allPaths = createPlaneNetworkAndGetPaths();
 
     assertFalse(allPaths.isEmpty());
     assertEquals(8, allPaths.size());
@@ -80,7 +80,7 @@ public class ModelFacadePathYenFatTreeTest {
   public void testFatTreeAggrPlanePathLength2() {
     setExactPathLength(2);
     ModelFacadeConfig.YEN_K = 3;
-    final List<Path> allPaths = createPlaneNetworkAndGetPaths();
+    final List<SubstratePath> allPaths = createPlaneNetworkAndGetPaths();
 
     assertFalse(allPaths.isEmpty());
     assertEquals(5 * 4, allPaths.size());
@@ -90,7 +90,7 @@ public class ModelFacadePathYenFatTreeTest {
   public void testFatTreeAggrPlanePathLength3() {
     setExactPathLength(3);
     ModelFacadeConfig.YEN_K = 3;
-    final List<Path> allPaths = createPlaneNetworkAndGetPaths();
+    final List<SubstratePath> allPaths = createPlaneNetworkAndGetPaths();
 
     assertFalse(allPaths.isEmpty());
     assertEquals(2 * 4 * 2, allPaths.size());
@@ -100,7 +100,7 @@ public class ModelFacadePathYenFatTreeTest {
   public void testFatTreeAggrPlanePathLength4() {
     setExactPathLength(4);
     ModelFacadeConfig.YEN_K = 3;
-    final List<Path> allPaths = createPlaneNetworkAndGetPaths();
+    final List<SubstratePath> allPaths = createPlaneNetworkAndGetPaths();
 
     assertFalse(allPaths.isEmpty());
 
@@ -112,7 +112,7 @@ public class ModelFacadePathYenFatTreeTest {
   public void testK4FatTreePathLength1() {
     ModelFacadeConfig.YEN_K = 1;
     setExactPathLength(1);
-    final List<Path> allPaths = createNetworkAndGetPaths(4);
+    final List<SubstratePath> allPaths = createNetworkAndGetPaths(4);
 
     assertFalse(allPaths.isEmpty());
 
@@ -124,7 +124,7 @@ public class ModelFacadePathYenFatTreeTest {
   public void testK4FatTreePathLength2() {
     ModelFacadeConfig.YEN_K = 1;
     setExactPathLength(2);
-    final List<Path> allPaths = createNetworkAndGetPaths(4);
+    final List<SubstratePath> allPaths = createNetworkAndGetPaths(4);
 
     assertFalse(allPaths.isEmpty());
 
@@ -136,7 +136,7 @@ public class ModelFacadePathYenFatTreeTest {
   public void testK4FatTreePathLength3() {
     ModelFacadeConfig.YEN_K = 10;
     setExactPathLength(3);
-    final List<Path> allPaths = createNetworkAndGetPaths(4);
+    final List<SubstratePath> allPaths = createNetworkAndGetPaths(4);
 
     assertFalse(allPaths.isEmpty());
 
@@ -148,7 +148,7 @@ public class ModelFacadePathYenFatTreeTest {
   public void testK4FatTreePathLength4() {
     ModelFacadeConfig.YEN_K = 3;
     setExactPathLength(4);
-    final List<Path> allPaths = createNetworkAndGetPaths(4);
+    final List<SubstratePath> allPaths = createNetworkAndGetPaths(4);
 
     assertFalse(allPaths.isEmpty());
 
@@ -160,7 +160,7 @@ public class ModelFacadePathYenFatTreeTest {
   public void testK6FatTreePathLength1() {
     ModelFacadeConfig.YEN_K = 1;
     setExactPathLength(1);
-    final List<Path> allPaths = createNetworkAndGetPaths(6);
+    final List<SubstratePath> allPaths = createNetworkAndGetPaths(6);
 
     assertFalse(allPaths.isEmpty());
 
@@ -172,7 +172,7 @@ public class ModelFacadePathYenFatTreeTest {
   public void testK6FatTreePathLength2() {
     ModelFacadeConfig.YEN_K = 1;
     setExactPathLength(2);
-    final List<Path> allPaths = createNetworkAndGetPaths(6);
+    final List<SubstratePath> allPaths = createNetworkAndGetPaths(6);
 
     assertFalse(allPaths.isEmpty());
 
@@ -185,7 +185,7 @@ public class ModelFacadePathYenFatTreeTest {
   public void testK6FatTreePathLength3() {
     ModelFacadeConfig.YEN_K = 4;
     setExactPathLength(3);
-    final List<Path> allPaths = createNetworkAndGetPaths(6);
+    final List<SubstratePath> allPaths = createNetworkAndGetPaths(6);
 
     assertFalse(allPaths.isEmpty());
 
@@ -198,7 +198,7 @@ public class ModelFacadePathYenFatTreeTest {
   public void testK6FatTreePathLength4() {
     ModelFacadeConfig.YEN_K = 3;
     setExactPathLength(4);
-    final List<Path> allPaths = createNetworkAndGetPaths(6);
+    final List<SubstratePath> allPaths = createNetworkAndGetPaths(6);
 
     assertFalse(allPaths.isEmpty());
 
@@ -216,7 +216,7 @@ public class ModelFacadePathYenFatTreeTest {
    * @param k Parameter.
    * @return All paths of the created network.
    */
-  private List<Path> createNetworkAndGetPaths(final int k) {
+  private List<SubstratePath> createNetworkAndGetPaths(final int k) {
     final FatTreeConfig subConfig = new FatTreeConfig(k);
     final FatTreeNetworkGenerator gen = new FatTreeNetworkGenerator(subConfig);
     gen.createNetwork("sub", false);
@@ -231,7 +231,7 @@ public class ModelFacadePathYenFatTreeTest {
    * 
    * @return All paths of the plane.
    */
-  private List<Path> createPlaneNetworkAndGetPaths() {
+  private List<SubstratePath> createPlaneNetworkAndGetPaths() {
     ModelFacade.getInstance().addNetworkToRoot("net", false);
     ModelFacade.getInstance().addSwitchToNetwork("csw1", "net", 0);
     ModelFacade.getInstance().addSwitchToNetwork("csw2", "net", 0);

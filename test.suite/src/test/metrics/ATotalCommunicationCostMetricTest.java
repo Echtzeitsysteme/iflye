@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import metrics.IMetric;
-import model.Path;
 import model.SubstrateNetwork;
+import model.SubstratePath;
 
 /**
  * Abstract test class for the metric(s) of total communication cost.
@@ -93,13 +93,13 @@ public abstract class ATotalCommunicationCostMetricTest extends AMetricTest {
     facade.embedServerToServer("ssrv1", "vsrv1");
     facade.embedServerToServer("ssrv2", "vsrv2");
 
-    final Path pa = facade.getPathFromSourceToTarget(facade.getServerById("ssrv1"),
+    final SubstratePath pa = facade.getPathFromSourceToTarget(facade.getServerById("ssrv1"),
         facade.getSwitchById("cssw"));
-    final Path pb = facade.getPathFromSourceToTarget(facade.getServerById("ssrv2"),
+    final SubstratePath pb = facade.getPathFromSourceToTarget(facade.getServerById("ssrv2"),
         facade.getSwitchById("cssw"));
-    final Path pc = facade.getPathFromSourceToTarget(facade.getSwitchById("cssw"),
+    final SubstratePath pc = facade.getPathFromSourceToTarget(facade.getSwitchById("cssw"),
         facade.getServerById("ssrv1"));
-    final Path pd = facade.getPathFromSourceToTarget(facade.getSwitchById("cssw"),
+    final SubstratePath pd = facade.getPathFromSourceToTarget(facade.getSwitchById("cssw"),
         facade.getServerById("ssrv2"));
 
     if (pa != null && pb != null && pc != null && pd != null) {

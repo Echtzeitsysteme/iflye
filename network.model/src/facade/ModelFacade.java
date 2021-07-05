@@ -23,7 +23,6 @@ import model.Link;
 import model.ModelFactory;
 import model.Network;
 import model.Node;
-import model.Path;
 import model.Root;
 import model.Server;
 import model.SubstrateElement;
@@ -93,7 +92,7 @@ public class ModelFacade {
    */
   private Root root = ModelFactory.eINSTANCE.createRoot();
 
-  private Map<String, Path> paths = new HashMap<String, Path>();
+  private Map<String, SubstratePath> paths = new HashMap<String, SubstratePath>();
   private Map<String, Link> links = new HashMap<String, Link>();
 
   /**
@@ -158,10 +157,12 @@ public class ModelFacade {
    * @param networkId Network ID.
    * @return List of all paths of the given network ID.
    */
-  public List<Path> getAllPathsOfNetwork(final String networkId) {
+  public List<SubstratePath> getAllPathsOfNetwork(final String networkId) {
     checkStringValid(networkId);
 
-    return getNetworkById(networkId).getPaths();
+    // TODO: Check for virtual network type.
+
+    return ((SubstrateNetwork) getNetworkById(networkId)).getPaths();
   }
 
   /**
@@ -254,7 +255,7 @@ public class ModelFacade {
    * @param id ID to return path object for.
    * @return Path object for given ID.
    */
-  public Path getPathById(final String id) {
+  public SubstratePath getPathById(final String id) {
     checkStringValid(id);
 
     // List<Network> nets = root.getNetworks();
@@ -576,10 +577,12 @@ public class ModelFacade {
     if (!doesSpecificPathWithSourceAndTargetExist(source, target, nodes, links)) {
       final SubstratePath forward = genMetaPath(source, target);
       forward.setHops(links.size());
-      forward.setNetwork(links.get(0).getNetwork());
+      forward.setNetwork((SubstrateNetwork) links.get(0).getNetwork());
       final String name = concatNodeNames(nodes);
       forward.setName(name);
-      forward.getNodes().addAll(nodes);
+
+      // TODO: Fix warning
+      forward.getNodes().addAll((Collection<? extends SubstrateNode>) nodes);
       forward.getLinks().addAll(links);
 
       // Determine bandwidth
@@ -607,10 +610,12 @@ public class ModelFacade {
       reverse.getLinks().addAll(Lists.reverse(oppositeLinks));
 
       reverse.setHops(links.size());
-      reverse.setNetwork(links.get(0).getNetwork());
+      reverse.setNetwork((SubstrateNetwork) links.get(0).getNetwork());
       final String name = concatNodeNames(reversedNodes);
       reverse.setName(name);
-      reverse.getNodes().addAll(reversedNodes);
+
+      // TODO: Fix warning
+      reverse.getNodes().addAll((Collection<? extends SubstrateNode>) reversedNodes);
 
       final int revBw = getMinimumBandwidthFromSubstrateLinks(oppositeLinks);
       reverse.setBandwidth(revBw);
@@ -712,8 +717,8 @@ public class ModelFacade {
    */
   private SubstratePath genMetaPath(final Node source, final Node target) {
     SubstratePath path = ModelFactory.eINSTANCE.createSubstratePath();
-    path.setSource(source);
-    path.setTarget(target);
+    path.setSource((SubstrateNode) source);
+    path.setTarget((SubstrateNode) target);
     return path;
   }
 
@@ -740,9 +745,9 @@ public class ModelFacade {
    */
   private boolean doesSpecificPathWithSourceAndTargetExist(final Node source, final Node target,
       final List<Node> nodes, final List<SubstrateLink> links) {
-    final Set<Path> foundPaths = getPathsFromSourceToTarget(source, target);
+    final Set<SubstratePath> foundPaths = getPathsFromSourceToTarget(source, target);
 
-    for (final Path p : foundPaths) {
+    for (final SubstratePath p : foundPaths) {
       // Check that both "sets" of nodes and links are equal
       if (nodes.containsAll(p.getNodes()) && p.getNodes().containsAll(nodes)
           && links.containsAll(p.getLinks()) && p.getLinks().containsAll(links)) {
@@ -805,7 +810,7 @@ public class ModelFacade {
    * @param target Target node.
    * @return Path if a path between source and target does exist.
    */
-  public Path getPathFromSourceToTarget(final Node source, final Node target) {
+  public SubstratePath getPathFromSourceToTarget(final Node source, final Node target) {
     final Set<SubstratePath> allPaths = pathSourceMap.get(source);
 
     // Check if there are any paths from source node to any other node
@@ -813,7 +818,7 @@ public class ModelFacade {
       return null;
     }
 
-    for (final Path p : allPaths) {
+    for (final SubstratePath p : allPaths) {
       if (p.getSource().equals(source) && p.getTarget().equals(target)) {
         return p;
       }
@@ -830,7 +835,7 @@ public class ModelFacade {
    * @param targetId Target node ID.
    * @return Path if a path between source and target does exist.
    */
-  public Path getPathFromSourceToTarget(final String sourceId, final String targetId) {
+  public SubstratePath getPathFromSourceToTarget(final String sourceId, final String targetId) {
     final Node source = getNodeById(sourceId);
     final Node target = getNodeById(targetId);
     return getPathFromSourceToTarget(source, target);
@@ -843,15 +848,15 @@ public class ModelFacade {
    * @param target Target node.
    * @return Set of paths if any exists or else an empty set.
    */
-  public Set<Path> getPathsFromSourceToTarget(final Node source, final Node target) {
+  public Set<SubstratePath> getPathsFromSourceToTarget(final Node source, final Node target) {
     final Set<SubstratePath> allPaths = pathSourceMap.get(source);
 
     // Check if there are any paths from source node to any other node
     if (allPaths == null) {
-      return new HashSet<Path>();
+      return new HashSet<SubstratePath>();
     }
 
-    final Set<Path> foundPaths = Collections.synchronizedSet(new HashSet<Path>());
+    final Set<SubstratePath> foundPaths = Collections.synchronizedSet(new HashSet<SubstratePath>());
 
     allPaths.stream().forEach(p -> {
       if (p.getSource().equals(source) && p.getTarget().equals(target)) {
@@ -1101,7 +1106,7 @@ public class ModelFacade {
    * @return True if embedding was successful.
    */
   public boolean embedLinkToPath(final String substrateId, final String virtualId) {
-    final SubstratePath subPath = (SubstratePath) getPathById(substrateId);
+    final SubstratePath subPath = getPathById(substrateId);
     final VirtualLink virtLink = (VirtualLink) getLinkById(virtualId);
     boolean success = true;
 
@@ -1347,7 +1352,7 @@ public class ModelFacade {
     }
 
     // Remove all paths
-    final Set<Path> pathsToRemove = new HashSet<Path>();
+    final Set<SubstratePath> pathsToRemove = new HashSet<SubstratePath>();
     pathsToRemove.addAll(ssrv.getIncomingPaths());
     pathsToRemove.addAll(ssrv.getOutgoingPaths());
     pathsToRemove.forEach(p -> {
@@ -1393,7 +1398,7 @@ public class ModelFacade {
       final Set<SubstratePath> pathsToRemove = new HashSet<SubstratePath>();
       sl.getPaths().forEach(p -> {
         removeSubstratePath(p, removeEmbeddings);
-        pathsToRemove.add((SubstratePath) p);
+        pathsToRemove.add(p);
       });
       sl.getPaths().removeAll(pathsToRemove);
     }
@@ -1410,11 +1415,11 @@ public class ModelFacade {
    * @param removeEmbeddings True if embeddings must be removed. Otherwise, the substrate path will
    *        only be removed from the network.
    */
-  private void removeSubstratePath(final Path path, final boolean removeEmbeddings) {
+  private void removeSubstratePath(final SubstratePath path, final boolean removeEmbeddings) {
     if (!(path instanceof SubstratePath)) {
       throw new IllegalArgumentException("Given path is not a substrate path.");
     }
-    final SubstratePath sp = (SubstratePath) path;
+    final SubstratePath sp = path;
 
     // Remove path from look-up data structures
     paths.remove(sp.getName());
@@ -1437,15 +1442,15 @@ public class ModelFacade {
 
     // Remove path from links
     final Set<SubstrateLink> linksToRemove = new HashSet<SubstrateLink>();
-    sp.getLinks().forEach(l -> linksToRemove.add((SubstrateLink) l));
+    sp.getLinks().forEach(l -> linksToRemove.add(l));
     linksToRemove.forEach(l -> l.getPaths().remove(sp));
 
     // Remove path from nodes
     final Set<SubstrateNode> nodesToRemove = new HashSet<SubstrateNode>();
-    sp.getNodes().forEach(n -> nodesToRemove.add((SubstrateNode) n));
+    sp.getNodes().forEach(n -> nodesToRemove.add(n));
     nodesToRemove.forEach(n -> n.getPaths().remove(sp));
 
-    getNetworkById(sp.getNetwork().getName()).getPaths().remove(sp);
+    sp.getNetwork().getPaths().remove(sp);
     EcoreUtil.delete(sp);
   }
 
@@ -1521,17 +1526,17 @@ public class ModelFacade {
       }
 
       // Check paths
-      if (!sNet.getPaths().containsAll(n.getIncomingPaths())) {
+      if (!sNet.getPaths().containsAll(((SubstrateNode) n).getIncomingPaths())) {
         throw new InternalError(
             "Incoming paths of node " + n.getName() + " are missing in network.");
       }
 
-      if (!sNet.getPaths().containsAll(n.getOutgoingPaths())) {
+      if (!sNet.getPaths().containsAll(((SubstrateNode) n).getOutgoingPaths())) {
         throw new InternalError(
             "Outgoing paths of node " + n.getName() + " are missing in network.");
       }
 
-      if (!sNet.getPaths().containsAll(n.getPaths())) {
+      if (!sNet.getPaths().containsAll(((SubstrateLink) n).getPaths())) {
         throw new InternalError(
             "Contained paths of node " + n.getName() + " are missing in network.");
       }
@@ -1559,8 +1564,8 @@ public class ModelFacade {
       }
     }
 
-    for (final Path p : sNet.getPaths()) {
-      final SubstratePath sp = (SubstratePath) p;
+    for (final SubstratePath p : sNet.getPaths()) {
+      final SubstratePath sp = p;
       int sumGuestBw = 0;
 
       for (final VirtualLink gl : sp.getGuestLinks()) {
@@ -1582,8 +1587,8 @@ public class ModelFacade {
     }
 
     // Check if paths are contained in links
-    for (final Path p : sNet.getPaths()) {
-      final SubstratePath sp = (SubstratePath) p;
+    for (final SubstratePath p : sNet.getPaths()) {
+      final SubstratePath sp = p;
       if (!sNet.getLinks().containsAll(sp.getLinks())) {
         throw new InternalError();
       }

@@ -3,7 +3,6 @@ package metrics;
 import java.util.List;
 import model.Link;
 import model.Node;
-import model.Path;
 import model.Server;
 import model.SubstrateElement;
 import model.SubstrateLink;
@@ -66,8 +65,8 @@ public class CostUtility {
   public static double getTotalPathCostLink(final SubstrateElement host) {
     if (host instanceof Server) {
       return 1;
-    } else if (host instanceof Path) {
-      final Path p = (Path) host;
+    } else if (host instanceof SubstratePath) {
+      final SubstratePath p = (SubstratePath) host;
       if (p.getHops() == 1) {
         return 2;
       } else if (p.getHops() > 1) {

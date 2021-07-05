@@ -5,8 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import metrics.CostUtility;
 import metrics.embedding.TotalTafCommunicationCostMetric;
-import model.Path;
 import model.SubstrateNetwork;
+import model.SubstratePath;
 
 /**
  * Test class for the metric of total TAF (traffic amount first) communication cost.
@@ -104,13 +104,13 @@ public class TotalTafCommunicationCostMetricTest extends AMetricTest {
     facade.embedServerToServer("ssrv1", "vsrv1");
     facade.embedServerToServer("ssrv2", "vsrv2");
 
-    final Path pSrv1ToCsw = facade.getPathFromSourceToTarget(facade.getServerById("ssrv1"),
+    final SubstratePath pSrv1ToCsw = facade.getPathFromSourceToTarget(facade.getServerById("ssrv1"),
         facade.getSwitchById("scsw"));
-    final Path pCswToSrv1 = facade.getPathFromSourceToTarget(facade.getSwitchById("scsw"),
+    final SubstratePath pCswToSrv1 = facade.getPathFromSourceToTarget(facade.getSwitchById("scsw"),
         facade.getServerById("ssrv1"));
-    final Path pSrv2ToCsw = facade.getPathFromSourceToTarget(facade.getServerById("ssrv2"),
+    final SubstratePath pSrv2ToCsw = facade.getPathFromSourceToTarget(facade.getServerById("ssrv2"),
         facade.getSwitchById("scsw"));
-    final Path pCswToSrv2 = facade.getPathFromSourceToTarget(facade.getSwitchById("scsw"),
+    final SubstratePath pCswToSrv2 = facade.getPathFromSourceToTarget(facade.getSwitchById("scsw"),
         facade.getServerById("ssrv2"));
 
     facade.embedLinkToPath(pSrv1ToCsw.getName(), "vln1");

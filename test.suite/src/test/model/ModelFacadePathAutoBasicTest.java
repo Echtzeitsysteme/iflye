@@ -15,7 +15,7 @@ import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.FatTreeNetworkGenerator;
 import generators.config.FatTreeConfig;
-import model.Path;
+import model.SubstratePath;
 import model.Switch;
 
 /**
@@ -79,7 +79,7 @@ public class ModelFacadePathAutoBasicTest {
     ModelFacade.getInstance().createAllPathsForNetwork("net");
     assertEquals(1, ModelFacadeConfig.MAX_PATH_LENGTH);
 
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
@@ -105,7 +105,7 @@ public class ModelFacadePathAutoBasicTest {
     ModelFacade.getInstance().createAllPathsForNetwork("net");
     assertEquals(1, ModelFacadeConfig.MAX_PATH_LENGTH);
 
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
@@ -135,7 +135,7 @@ public class ModelFacadePathAutoBasicTest {
     ModelFacade.getInstance().createAllPathsForNetwork("net");
     assertEquals(2, ModelFacadeConfig.MAX_PATH_LENGTH);
 
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
@@ -199,7 +199,7 @@ public class ModelFacadePathAutoBasicTest {
     ModelFacade.getInstance().createAllPathsForNetwork("net");
     assertEquals(2, ModelFacadeConfig.MAX_PATH_LENGTH);
 
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(allPaths.isEmpty());
 
     // Check total number of paths
@@ -268,9 +268,9 @@ public class ModelFacadePathAutoBasicTest {
     ModelFacadePathBasicTest.oneTierSetupTwoServers();
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
 
-    for (final Path p : allPaths) {
+    for (final SubstratePath p : allPaths) {
       if (p.getSource() instanceof Switch || p.getTarget() instanceof Switch) {
         assertEquals(1, p.getHops());
       } else {
@@ -289,14 +289,14 @@ public class ModelFacadePathAutoBasicTest {
     ModelFacade.getInstance().createAllPathsForNetwork("net");
     assertEquals(2, ModelFacadeConfig.MAX_PATH_LENGTH);
 
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
 
     int counterOneHop = 0;
     int counterTwoHops = 0;
     int counterThreeHops = 0;
     int counterFourHops = 0;
 
-    for (final Path p : allPaths) {
+    for (final SubstratePath p : allPaths) {
       // Number of links must be number of hops
       assertEquals(p.getLinks().size(), p.getHops());
 
@@ -327,7 +327,7 @@ public class ModelFacadePathAutoBasicTest {
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
     assertEquals(1, ModelFacadeConfig.MAX_PATH_LENGTH);
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
 
     List<Set<String>> linkNames = new LinkedList<Set<String>>();
     linkNames.add(Set.of("ln1"));
@@ -347,7 +347,7 @@ public class ModelFacadePathAutoBasicTest {
 
     ModelFacade.getInstance().createAllPathsForNetwork("net");
     assertEquals(1, ModelFacadeConfig.MAX_PATH_LENGTH);
-    final List<Path> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> allPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
 
     // The reference nodes only have to be added one time
     List<Set<String>> nodeNames = new LinkedList<Set<String>>();
@@ -367,7 +367,8 @@ public class ModelFacadePathAutoBasicTest {
     ModelFacadePathBasicTest.oneTierSetupFourServers();
     ModelFacade.getInstance().createAllPathsForNetwork("net");
 
-    final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> generatedPaths =
+        ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertTrue(generatedPaths.isEmpty());
   }
 
@@ -381,7 +382,8 @@ public class ModelFacadePathAutoBasicTest {
     ModelFacade.getInstance().createAllPathsForNetwork("net");
     assertEquals(1, ModelFacadeConfig.MAX_PATH_LENGTH);
 
-    final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> generatedPaths =
+        ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(generatedPaths.isEmpty());
   }
 
@@ -396,10 +398,11 @@ public class ModelFacadePathAutoBasicTest {
     ModelFacade.getInstance().createAllPathsForNetwork("net");
     assertEquals(2, ModelFacadeConfig.MAX_PATH_LENGTH);
 
-    final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> generatedPaths =
+        ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(generatedPaths.isEmpty());
 
-    for (final Path p : generatedPaths) {
+    for (final SubstratePath p : generatedPaths) {
       assertEquals(2, p.getHops());
       assertEquals(2, p.getLinks().size());
       assertEquals(3, p.getNodes().size());
@@ -417,7 +420,8 @@ public class ModelFacadePathAutoBasicTest {
     ModelFacade.getInstance().createAllPathsForNetwork("net");
     assertEquals(2, ModelFacadeConfig.MAX_PATH_LENGTH);
 
-    final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> generatedPaths =
+        ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertTrue(generatedPaths.isEmpty());
   }
 
@@ -434,11 +438,12 @@ public class ModelFacadePathAutoBasicTest {
 
     assertEquals(3, ModelFacadeConfig.MAX_PATH_LENGTH);
 
-    final List<Path> generatedPaths = ModelFacade.getInstance().getAllPathsOfNetwork("net");
+    final List<SubstratePath> generatedPaths =
+        ModelFacade.getInstance().getAllPathsOfNetwork("net");
     assertFalse(generatedPaths.isEmpty());
 
     // Check that every path has <= 3 hops
-    for (final Path p : generatedPaths) {
+    for (final SubstratePath p : generatedPaths) {
       assertTrue(p.getHops() <= 3);
     }
   }

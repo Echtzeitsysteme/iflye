@@ -15,8 +15,8 @@ import generators.OneTierNetworkGenerator;
 import generators.config.FatTreeConfig;
 import generators.config.OneTierConfig;
 import model.Link;
-import model.Path;
 import model.Server;
+import model.SubstratePath;
 import model.SubstrateServer;
 import model.VirtualLink;
 import model.VirtualServer;
@@ -81,12 +81,12 @@ public class ModelFacadeServerRemovalTest {
     assertEquals(2, facade.getAllServersOfNetwork(netId).size());
     assertEquals(6, facade.getAllPathsOfNetwork(netId).size());
     final String removeId = netId + "_srv_0";
-    final Server removeServer = facade.getServerById(removeId);
+    final SubstrateServer removeServer = (SubstrateServer) facade.getServerById(removeId);
     facade.removeSubstrateServerFromNetwork(removeId);
     assertEquals(2, facade.getAllPathsOfNetwork(netId).size());
 
     // Check left over paths
-    for (final Path p : facade.getAllPathsOfNetwork(netId)) {
+    for (final SubstratePath p : facade.getAllPathsOfNetwork(netId)) {
       assertFalse(p.getSource().getName().equals(removeId));
       assertFalse(p.getTarget().getName().equals(removeId));
       assertFalse(p.getNodes().contains(removeServer));
@@ -145,15 +145,15 @@ public class ModelFacadeServerRemovalTest {
     final int totalNumberOfPaths = 20 * (20 - 1 + 2);
     assertEquals(totalNumberOfPaths, facade.getAllPathsOfNetwork(netId).size());
 
-    final Set<Server> removedServers = new HashSet<Server>();
+    final Set<SubstrateServer> removedServers = new HashSet<SubstrateServer>();
 
     for (int i = 0; i < 19; i++) {
       final String id = netId + "_srv_" + i;
-      removedServers.add(facade.getServerById(id));
+      removedServers.add((SubstrateServer) facade.getServerById(id));
       facade.removeSubstrateServerFromNetwork(id);
 
       // Check left over paths
-      for (final Path p : facade.getAllPathsOfNetwork(netId)) {
+      for (final SubstratePath p : facade.getAllPathsOfNetwork(netId)) {
         removedServers.forEach(s -> {
           assertFalse(p.getSource().equals(s));
           assertFalse(p.getTarget().equals(s));
@@ -200,12 +200,12 @@ public class ModelFacadeServerRemovalTest {
     assertEquals(16, facade.getAllServersOfNetwork(netId).size());
     assertEquals(496, facade.getAllPathsOfNetwork(netId).size());
     final String removeId = netId + "_srv_0";
-    final Server removeServer = facade.getServerById(removeId);
+    final SubstrateServer removeServer = (SubstrateServer) facade.getServerById(removeId);
     facade.removeSubstrateServerFromNetwork(removeId);
     assertEquals(462, facade.getAllPathsOfNetwork(netId).size());
 
     // Check left over paths
-    for (final Path p : facade.getAllPathsOfNetwork(netId)) {
+    for (final SubstratePath p : facade.getAllPathsOfNetwork(netId)) {
       assertFalse(p.getSource().getName().equals(removeId));
       assertFalse(p.getTarget().getName().equals(removeId));
       assertFalse(p.getNodes().contains(removeServer));

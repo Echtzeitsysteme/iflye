@@ -13,7 +13,7 @@ import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.FatTreeNetworkGenerator;
 import generators.config.FatTreeConfig;
-import model.Path;
+import model.SubstratePath;
 
 /**
  * Test class for the ModelFacade that tests all basic path related creations.
@@ -63,7 +63,7 @@ public class ModelFacadePathBasicFatTreeTest {
   @Test
   public void testK4GoogleFatTreePathLength1() {
     setExactPathLength(1);
-    final List<Path> allPaths = createNetworkAndGetPaths(4);
+    final List<SubstratePath> allPaths = createNetworkAndGetPaths(4);
 
     assertFalse(allPaths.isEmpty());
 
@@ -86,7 +86,7 @@ public class ModelFacadePathBasicFatTreeTest {
   @Test
   public void testK4GoogleFatTreePathLength2() {
     setExactPathLength(2);
-    final List<Path> allPaths = createNetworkAndGetPaths(4);
+    final List<SubstratePath> allPaths = createNetworkAndGetPaths(4);
 
     assertFalse(allPaths.isEmpty());
 
@@ -97,7 +97,7 @@ public class ModelFacadePathBasicFatTreeTest {
   @Test
   public void testK4GoogleFatTreePathLength3() {
     setExactPathLength(3);
-    final List<Path> allPaths = createNetworkAndGetPaths(4);
+    final List<SubstratePath> allPaths = createNetworkAndGetPaths(4);
 
     assertFalse(allPaths.isEmpty());
 
@@ -108,7 +108,7 @@ public class ModelFacadePathBasicFatTreeTest {
   @Test
   public void testK4GoogleFatTreePathLength4() {
     setExactPathLength(4);
-    final List<Path> allPaths = createNetworkAndGetPaths(4);
+    final List<SubstratePath> allPaths = createNetworkAndGetPaths(4);
 
     assertFalse(allPaths.isEmpty());
 
@@ -120,7 +120,7 @@ public class ModelFacadePathBasicFatTreeTest {
    * Utility methods
    */
 
-  private List<Path> createNetworkAndGetPaths(final int k) {
+  private List<SubstratePath> createNetworkAndGetPaths(final int k) {
     final FatTreeConfig subConfig = new FatTreeConfig(k);
     final FatTreeNetworkGenerator gen = new FatTreeNetworkGenerator(subConfig);
     gen.createNetwork("sub", false);

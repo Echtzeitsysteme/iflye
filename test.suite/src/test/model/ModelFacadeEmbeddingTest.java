@@ -14,7 +14,6 @@ import generators.OneTierNetworkGenerator;
 import generators.config.OneTierConfig;
 import model.Link;
 import model.Node;
-import model.Path;
 import model.SubstrateLink;
 import model.SubstrateNetwork;
 import model.SubstratePath;
@@ -167,7 +166,7 @@ public class ModelFacadeEmbeddingTest {
 
     ModelFacade.getInstance().embedLinkToPath(pathName, "l7");
 
-    final SubstratePath subPath = (SubstratePath) ModelFacade.getInstance().getPathById(pathName);
+    final SubstratePath subPath = ModelFacade.getInstance().getPathById(pathName);
     assertEquals(1, subPath.getGuestLinks().size());
     assertEquals("l7", subPath.getGuestLinks().get(0).getName());
 
@@ -209,8 +208,8 @@ public class ModelFacadeEmbeddingTest {
     ModelFacade.getInstance().addSwitchToNetwork("vsw", "v", 0);
     ModelFacade.getInstance().addLinkToNetwork("vl", "v", 1, "vsrv", "vsw");
 
-    final SubstratePath sp = (SubstratePath) ModelFacade.getInstance()
-        .getPathFromSourceToTarget("net_srv_0", "net_sw_0");
+    final SubstratePath sp =
+        ModelFacade.getInstance().getPathFromSourceToTarget("net_srv_0", "net_sw_0");
     assertTrue(ModelFacade.getInstance().embedLinkToPath(sp.getName(), "vl"));
     final VirtualLink guest = (VirtualLink) ModelFacade.getInstance().getLinkById("vl");
     assertEquals(sp, guest.getHost());
@@ -218,7 +217,7 @@ public class ModelFacadeEmbeddingTest {
 
     // Sub links must not have an embedding
     sp.getLinks().forEach(l -> {
-      final SubstrateLink sl = (SubstrateLink) l;
+      final SubstrateLink sl = l;
       assertTrue(sl.getGuestLinks().isEmpty());
     });
   }
@@ -240,13 +239,13 @@ public class ModelFacadeEmbeddingTest {
     ModelFacade.getInstance().addSwitchToNetwork("vsw", "v", 0);
     ModelFacade.getInstance().addLinkToNetwork("vl", "v", 1, "vsrv", "vsw");
 
-    final SubstratePath sp = (SubstratePath) ModelFacade.getInstance()
-        .getPathFromSourceToTarget("net_srv_0", "net_sw_0");
+    final SubstratePath sp =
+        ModelFacade.getInstance().getPathFromSourceToTarget("net_srv_0", "net_sw_0");
     assertTrue(ModelFacade.getInstance().embedLinkToPath(sp.getName(), "vl"));
 
     // Sub links must have an embedding
     sp.getLinks().forEach(l -> {
-      final SubstrateLink sl = (SubstrateLink) l;
+      final SubstrateLink sl = l;
       assertFalse(sl.getGuestLinks().isEmpty());
       assertEquals(1, sl.getGuestLinks().size());
     });
@@ -270,8 +269,8 @@ public class ModelFacadeEmbeddingTest {
     ModelFacade.getInstance().addSwitchToNetwork("vsw", "v", 0);
     ModelFacade.getInstance().addLinkToNetwork("vl", "v", 10, "vsrv", "vsw");
 
-    final SubstratePath sp = (SubstratePath) ModelFacade.getInstance()
-        .getPathFromSourceToTarget("net_srv_0", "net_sw_0");
+    final SubstratePath sp =
+        ModelFacade.getInstance().getPathFromSourceToTarget("net_srv_0", "net_sw_0");
     assertTrue(ModelFacade.getInstance().embedLinkToPath(sp.getName(), "vl"));
     final VirtualLink guest = (VirtualLink) ModelFacade.getInstance().getLinkById("vl");
     assertEquals(sp, guest.getHost());
@@ -302,14 +301,14 @@ public class ModelFacadeEmbeddingTest {
     ModelFacade.getInstance().embedSwitchToNode("net_sw_0", "vsw");
     ModelFacade.getInstance().embedServerToServer("net_srv_0", "vsrv1");
     ModelFacade.getInstance().embedServerToServer("net_srv_1", "vsrv2");
-    final SubstratePath path1 = (SubstratePath) ModelFacade.getInstance()
-        .getPathFromSourceToTarget("net_srv_0", "net_sw_0");
-    final SubstratePath path2 = (SubstratePath) ModelFacade.getInstance()
-        .getPathFromSourceToTarget("net_sw_0", "net_srv_0");
-    final SubstratePath path3 = (SubstratePath) ModelFacade.getInstance()
-        .getPathFromSourceToTarget("net_srv_1", "net_sw_0");
-    final SubstratePath path4 = (SubstratePath) ModelFacade.getInstance()
-        .getPathFromSourceToTarget("net_sw_0", "net_srv_1");
+    final SubstratePath path1 =
+        ModelFacade.getInstance().getPathFromSourceToTarget("net_srv_0", "net_sw_0");
+    final SubstratePath path2 =
+        ModelFacade.getInstance().getPathFromSourceToTarget("net_sw_0", "net_srv_0");
+    final SubstratePath path3 =
+        ModelFacade.getInstance().getPathFromSourceToTarget("net_srv_1", "net_sw_0");
+    final SubstratePath path4 =
+        ModelFacade.getInstance().getPathFromSourceToTarget("net_sw_0", "net_srv_1");
     ModelFacade.getInstance().embedLinkToPath(path1.getName(), "vl1");
     ModelFacade.getInstance().embedLinkToPath(path2.getName(), "vl2");
     ModelFacade.getInstance().embedLinkToPath(path3.getName(), "vl3");
@@ -354,8 +353,8 @@ public class ModelFacadeEmbeddingTest {
       assertEquals(sl.getBandwidth(), sl.getResidualBandwidth());
     }
 
-    for (final Path p : ModelFacade.getInstance().getAllPathsOfNetwork("net")) {
-      final SubstratePath sp = (SubstratePath) p;
+    for (final SubstratePath p : ModelFacade.getInstance().getAllPathsOfNetwork("net")) {
+      final SubstratePath sp = p;
       assertTrue(sp.getGuestLinks().isEmpty());
       assertEquals(sp.getBandwidth(), sp.getResidualBandwidth());
     }
@@ -381,8 +380,8 @@ public class ModelFacadeEmbeddingTest {
     ModelFacade.getInstance().addSwitchToNetwork("vsw", "v", 0);
     ModelFacade.getInstance().addLinkToNetwork("vl", "v", 10, "vsrv", "vsw");
 
-    final SubstratePath sp = (SubstratePath) ModelFacade.getInstance()
-        .getPathFromSourceToTarget("net_srv_0", "net_sw_0");
+    final SubstratePath sp =
+        ModelFacade.getInstance().getPathFromSourceToTarget("net_srv_0", "net_sw_0");
 
     assertThrows(UnsupportedOperationException.class, () -> {
       ModelFacade.getInstance().embedLinkToPath(sp.getName(), "vl");
