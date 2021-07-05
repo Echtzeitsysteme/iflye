@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import generators.OneTierNetworkGenerator;
 import generators.config.OneTierConfig;
 import model.Link;
+import model.Network;
 import model.Node;
 import model.Server;
 import model.SubstrateLink;
@@ -69,7 +70,7 @@ public class OneTierNetworkGeneratorTest extends IGeneratorTest {
     final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(config);
     gen.createNetwork("test", true);
 
-    final SubstrateNetwork net = (SubstrateNetwork) facade.getNetworkById("test");
+    final Network net = facade.getNetworkById("test");
 
     // Number of nodes
     assertEquals(3, net.getNodes().size());
@@ -82,9 +83,6 @@ public class OneTierNetworkGeneratorTest extends IGeneratorTest {
 
     // Links
     assertEquals(4, net.getLinks().size());
-
-    // Paths, no paths for virtual networks
-    assertEquals(0, net.getPaths().size());
   }
 
   @Test

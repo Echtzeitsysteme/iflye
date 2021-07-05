@@ -160,7 +160,10 @@ public class ModelFacade {
   public List<SubstratePath> getAllPathsOfNetwork(final String networkId) {
     checkStringValid(networkId);
 
-    // TODO: Check for virtual network type.
+    final Network net = getNetworkById(networkId);
+    if (net instanceof VirtualNetwork) {
+      throw new IllegalArgumentException("Virtual networks do not have paths!");
+    }
 
     return ((SubstrateNetwork) getNetworkById(networkId)).getPaths();
   }
@@ -1536,7 +1539,7 @@ public class ModelFacade {
             "Outgoing paths of node " + n.getName() + " are missing in network.");
       }
 
-      if (!sNet.getPaths().containsAll(((SubstrateLink) n).getPaths())) {
+      if (!sNet.getPaths().containsAll(((SubstrateNode) n).getPaths())) {
         throw new InternalError(
             "Contained paths of node " + n.getName() + " are missing in network.");
       }

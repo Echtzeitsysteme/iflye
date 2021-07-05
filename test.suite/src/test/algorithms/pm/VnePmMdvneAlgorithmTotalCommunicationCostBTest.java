@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import java.nio.file.Path;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -157,7 +156,7 @@ public class VnePmMdvneAlgorithmTotalCommunicationCostBTest extends AAlgorithmMu
     String targetName = "";
 
     // Link 1
-    if (vLn1.getHost() instanceof Path) {
+    if (vLn1.getHost() instanceof SubstratePath) {
       final SubstratePath pLn1 = (SubstratePath) vLn1.getHost();
       sourceName = pLn1.getSource().getName();
       targetName = pLn1.getTarget().getName();

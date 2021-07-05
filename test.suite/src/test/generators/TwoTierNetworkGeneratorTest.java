@@ -13,6 +13,7 @@ import generators.TwoTierNetworkGenerator;
 import generators.config.OneTierConfig;
 import generators.config.TwoTierConfig;
 import model.Link;
+import model.Network;
 import model.Node;
 import model.Server;
 import model.SubstrateLink;
@@ -83,7 +84,7 @@ public class TwoTierNetworkGeneratorTest extends IGeneratorTest {
     final TwoTierNetworkGenerator gen = new TwoTierNetworkGenerator(config);
     gen.createNetwork("test", true);
 
-    final SubstrateNetwork net = (SubstrateNetwork) facade.getNetworkById("test");
+    final Network net = facade.getNetworkById("test");
 
     // Number of nodes
     assertEquals(8, net.getNodes().size());
@@ -96,9 +97,6 @@ public class TwoTierNetworkGeneratorTest extends IGeneratorTest {
 
     // Links
     assertEquals(16, net.getLinks().size());
-
-    // Paths
-    assertEquals(0, net.getPaths().size());
   }
 
   @Test
