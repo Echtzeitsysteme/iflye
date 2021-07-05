@@ -77,10 +77,13 @@ rule linkPathMatchPositive() {
 	substratePath: SubstratePath {
 		++ -guestLinks -> virtualLink
 		.residualBandwidth := substratePath.residualBandwidth - virtualLink.bandwidth
-		// TODO: There is no 'for-each' like functionality. Therefore, we have to update 
-		// the bandwidth of all substrate links contained in the substrate path "by hand".
 		
+		// Update all substrate links
+		forEach links->l {
+			iterator::l.residualBandwidth := iterator::l.residualBandwidth - virtualLink.bandwidth
+		}
 	}
+	
 	virtualLink: VirtualLink {
 		++ -host -> substratePath
 	}
