@@ -157,6 +157,7 @@ public class DissScenarioLoad {
    * <li>#11: ILP solver optimality tolerance</li>
    * <li>#12: ILP solver objective scaling</li>
    * <li>#13: Memory measurement enabled</li>
+   * <li>#14: ILP solver objective logarithm</li>
    * </ol>
    * 
    * @param args Arguments to parse.
@@ -238,6 +239,10 @@ public class DissScenarioLoad {
         new Option("g", "memmeasurement", false, "Memory measurement metric enabled");
     memEnabled.setRequired(false);
     options.addOption(memEnabled);
+
+    final Option ilpObjLog = new Option("x", "ilpobjlog", false, "ILP solver objective logarithm");
+    ilpObjLog.setRequired(false);
+    options.addOption(ilpObjLog);
 
     final CommandLineParser parser = new DefaultParser();
     final HelpFormatter formatter = new HelpFormatter();
@@ -350,9 +355,10 @@ public class DissScenarioLoad {
     }
 
     // #13: Memory measurement enabled
-    if (cmd.hasOption("memmeasurement")) {
-      MetricConfig.ENABLE_MEMORY = true;
-    }
+    MetricConfig.ENABLE_MEMORY = cmd.hasOption("memmeasurement");
+
+    // #14: ILP solver objective logarithm
+    IlpSolverConfig.OBJ_LOG = cmd.hasOption("ilpobjlog");
 
     // Print arguments into logs/system outputs
     System.out.println("=> Arguments: " + Arrays.toString(args));
