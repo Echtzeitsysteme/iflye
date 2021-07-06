@@ -40,7 +40,7 @@ public class MemoryPidMetric implements IMetric {
     } catch (final NumberFormatException ex) {
       System.err.println("Catched an exception while parsing the string: " + memComplex);
       System.err.println("Attaching the complete proc status of my PID:");
-      lines.addAll(Unix4j.grep("", file).toStringList());
+      lines.addAll(Unix4j.cat(file).toStringList());
       lines.forEach(l -> System.err.println(l));
     } finally {
       this.memory = memory;
