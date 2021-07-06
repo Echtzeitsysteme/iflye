@@ -34,7 +34,17 @@ public class MemoryPidMetric implements IMetric {
     final String memComplex = lines.get(0);
     final String mem =
         memComplex.substring(memComplex.indexOf(" ")).replace(" ", "").replace("kB", "");
-    memory = Long.valueOf(mem);
+    long memory = -1L;
+    try {
+      memory = Long.valueOf(mem);
+    } catch (final NumberFormatException ex) {
+      System.err.println("Catched an exception while parsing the string: " + memComplex);
+      System.err.println("Attaching the complete proc status of my PID:");
+      lines.addAll(Unix4j.grep("", file).toStringList());
+      lines.forEach(l -> System.err.println(l));
+    } finally {
+      this.memory = memory;
+    }
   }
 
   @Override
