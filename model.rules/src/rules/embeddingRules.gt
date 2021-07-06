@@ -18,9 +18,34 @@ rule serverMatchPositive() {
 		.residualStorage := substrateNode.residualStorage - virtualNode.storage
 		++ -guestServers -> virtualNode
 	}
+	
 	virtualNode: VirtualServer {
 		++ -host -> substrateNode
 	}
+	
+	substrateNetwork: SubstrateNetwork {
+		-nodes -> substrateNode
+	}
+	
+	virtualNetwork: VirtualNetwork {
+		-nodes -> virtualNode
+	}
+	
+	# virtualNode.cpu <= substrateNode.residualCpu
+	# virtualNode.memory <= substrateNode.residualMemory
+	# virtualNode.storage <= substrateNode.residualStorage
+}
+
+// For gfx reasons left
+pattern serverMatch() {
+	root: Root {
+		-networks -> substrateNetwork
+		-networks -> virtualNetwork
+	}
+	
+	substrateNode: SubstrateServer
+	
+	virtualNode: VirtualServer
 	
 	substrateNetwork: SubstrateNetwork {
 		-nodes -> substrateNode
@@ -50,9 +75,30 @@ rule switchNodeMatchPositive() {
 	substrateNode: SubstrateNode {
 		++ -guestSwitches -> virtualSwitch
 	}
+	
 	virtualSwitch : VirtualSwitch {
 		++ -host -> substrateNode
 	}
+	
+	substrateNetwork: SubstrateNetwork {
+		-nodes -> substrateNode
+	}
+	
+	virtualNetwork: VirtualNetwork {
+		-nodes -> virtualSwitch
+	}
+}
+
+// For gfx reasons left
+pattern switchNodeMatch() {
+	root: Root {
+		-networks -> substrateNetwork
+		-networks -> virtualNetwork
+	}
+	
+	substrateNode: SubstrateNode
+	
+	virtualSwitch : VirtualSwitch
 	
 	substrateNetwork: SubstrateNetwork {
 		-nodes -> substrateNode
@@ -99,6 +145,28 @@ rule linkPathMatchPositive() {
 	# virtualLink.bandwidth <= substratePath.residualBandwidth
 }
 
+// For gfx reasons left
+pattern linkPathMatch() {
+	root: Root {
+		-networks -> substrateNetwork
+		-networks -> virtualNetwork
+	}
+	
+	substratePath: SubstratePath
+	
+	virtualLink: VirtualLink
+	
+	substrateNetwork: SubstrateNetwork {
+		-paths -> substratePath
+	}
+	
+	virtualNetwork: VirtualNetwork {
+		-links -> virtualLink
+	}
+	
+	# virtualLink.bandwidth <= substratePath.residualBandwidth
+}
+
 // Match from virtual link to substrate server
 // This one does not have any constraints.
 rule linkServerMatchPositive() {
@@ -110,9 +178,30 @@ rule linkServerMatchPositive() {
 	substrateServer: SubstrateServer {
 		++ -guestLinks -> virtualLink
 	}
+	
 	virtualLink: VirtualLink {
 		++ -host -> substrateServer
 	}
+	
+	substrateNetwork: SubstrateNetwork {
+		-nodes -> substrateServer
+	}
+	
+	virtualNetwork: VirtualNetwork {
+		-links -> virtualLink
+	}
+}
+
+// For gfx reasons left
+pattern linkServerMatch() {
+	root: Root {
+		-networks -> substrateNetwork
+		-networks -> virtualNetwork
+	}
+	
+	substrateServer: SubstrateServer
+	
+	virtualLink: VirtualLink
 	
 	substrateNetwork: SubstrateNetwork {
 		-nodes -> substrateServer
