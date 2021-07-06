@@ -74,7 +74,7 @@ public class IlpSolverConfig {
    */
   public static double transformObj(final double input) {
     if (OBJ_LOG) {
-      return Math.log10(input * OBJ_SCALE);
+      return Math.log10(input * OBJ_SCALE + 1);
     } else {
       return input * OBJ_SCALE;
     }
