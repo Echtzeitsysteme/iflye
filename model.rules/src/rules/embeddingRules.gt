@@ -63,6 +63,9 @@ pattern serverMatch() {
 	# virtualNode.cpu <= substrateNode.residualCpu
 	# virtualNode.memory <= substrateNode.residualMemory
 	# virtualNode.storage <= substrateNode.residualStorage
+	# substrateNode.residualCpu > 0
+	# substrateNode.residualMemory > 0
+	# substrateNode.residualStorage > 0
 }
 
 //
@@ -173,6 +176,7 @@ pattern linkPathMatch() {
 	}
 	
 	# virtualLink.bandwidth <= substratePath.residualBandwidth
+	# substratePath.residualBandwidth > 0
 }
 
 // Match from virtual link to substrate server
