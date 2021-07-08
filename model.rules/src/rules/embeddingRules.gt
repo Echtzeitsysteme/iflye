@@ -18,6 +18,7 @@ rule serverMatchPositive() {
 		.residualStorage := substrateNode.residualStorage - virtualNode.storage
 		++ -guestServers -> virtualNode
 	}
+	
 	virtualNode: VirtualServer {
 		++ -host -> substrateNode
 	}
@@ -33,6 +34,11 @@ rule serverMatchPositive() {
 	# virtualNode.cpu <= substrateNode.residualCpu
 	# virtualNode.memory <= substrateNode.residualMemory
 	# virtualNode.storage <= substrateNode.residualStorage
+	
+	// Explicitly exclude substrate servers with any residual resource equals to 0
+	# substrateNode.residualCpu > 0
+	# substrateNode.residualMemory > 0
+	# substrateNode.residualStorage > 0
 }
 
 //
@@ -50,6 +56,7 @@ rule switchNodeMatchPositive() {
 	substrateNode: SubstrateNode {
 		++ -guestSwitches -> virtualSwitch
 	}
+	
 	virtualSwitch : VirtualSwitch {
 		++ -host -> substrateNode
 	}
@@ -97,6 +104,9 @@ rule linkPathMatchPositive() {
 	}
 	
 	# virtualLink.bandwidth <= substratePath.residualBandwidth
+	
+	// Explicitly exclude substrate paths with a residual bandwidth equals to 0
+	# substratePath.residualBandwidth > 0
 }
 
 // Match from virtual link to substrate server
@@ -110,6 +120,7 @@ rule linkServerMatchPositive() {
 	substrateServer: SubstrateServer {
 		++ -guestLinks -> virtualLink
 	}
+	
 	virtualLink: VirtualLink {
 		++ -host -> substrateServer
 	}
