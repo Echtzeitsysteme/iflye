@@ -11,6 +11,7 @@ import org.apache.commons.csv.CSVPrinter;
 import metrics.MetricConsts;
 import metrics.embedding.AcceptedVnrMetric;
 import metrics.embedding.AveragePathLengthMetric;
+import metrics.embedding.OperatingCostMetric;
 import metrics.embedding.TotalCommunicationCostMetricA;
 import metrics.embedding.TotalCommunicationCostMetricB;
 import metrics.embedding.TotalCommunicationCostMetricC;
@@ -62,8 +63,8 @@ public class CsvUtil {
                 "time_deploy", "time_rest", "accepted_vnrs", "total_path_cost",
                 "average_path_length", "total_communication_cost_a", "total_communication_cost_b",
                 "total_communication_cost_c", "total_communication_cost_d",
-                "total_taf_communication_cost", "memory_start", "memory_ilp", "memory_end",
-                "memory_pid_max"))) {
+                "total_taf_communication_cost", "operation_cost", "memory_start", "memory_ilp",
+                "memory_end", "memory_pid_max"))) {
           printer.close();
         }
       }
@@ -87,6 +88,7 @@ public class CsvUtil {
             new TotalCommunicationCostMetricC(sNet).getValue(), //
             new TotalCommunicationCostMetricD(sNet).getValue(), //
             new TotalTafCommunicationCostMetric(sNet).getValue(), //
+            new OperatingCostMetric(sNet).getValue(), //
             GlobalMetricsManager.getMemory().getValue(0), // Memory start execute
             GlobalMetricsManager.getMemory().getValue(1), // Memory before ILP
             GlobalMetricsManager.getMemory().getValue(2), // Memory end execute
