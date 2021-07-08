@@ -44,6 +44,11 @@ public class IlpSolverConfig {
   public static double OBJ_SCALE = 1;
 
   /**
+   * If true, the objective function will introduce a logarithm.
+   */
+  public static boolean OBJ_LOG = false;
+
+  /**
    * Returns a new instance of the configured solver.
    * 
    * @return New instance of the configured solver.
@@ -58,6 +63,21 @@ public class IlpSolverConfig {
         return new CplexSolver();
     }
     throw new UnsupportedOperationException();
+  }
+
+  /**
+   * Transforms the input value of the former objective function according to the settings for the
+   * ILP solver.
+   * 
+   * @param input Input value of the former objective function.
+   * @return Transformed value according to the set parameters.
+   */
+  public static double transformObj(final double input) {
+    if (OBJ_LOG) {
+      return Math.log10(input + 1) * OBJ_SCALE;
+    } else {
+      return input * OBJ_SCALE;
+    }
   }
 
 }

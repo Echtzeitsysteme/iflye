@@ -713,9 +713,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 
   public double getCost(final VirtualElement virt, final SubstrateElement host) {
     if (virt instanceof Link) {
-      return getLinkCost((VirtualLink) virt, host) * IlpSolverConfig.OBJ_SCALE;
+      return IlpSolverConfig.transformObj(getLinkCost((VirtualLink) virt, host));
     } else if (virt instanceof Node && host instanceof Node) {
-      return getNodeCost((VirtualNode) virt, (SubstrateNode) host) * IlpSolverConfig.OBJ_SCALE;
+      return IlpSolverConfig.transformObj(getNodeCost((VirtualNode) virt, (SubstrateNode) host));
     }
 
     throw new IllegalArgumentException();
@@ -757,9 +757,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 
   public double getNetRejCost(final VirtualNetwork vNet) {
     if (AlgorithmConfig.netRejCostDynamic) {
-      return CostUtility.getNetworkRejectionCost(vNet) * IlpSolverConfig.OBJ_SCALE;
+      return IlpSolverConfig.transformObj(CostUtility.getNetworkRejectionCost(vNet));
     } else {
-      return CostUtility.getNetworkRejectionCost() * IlpSolverConfig.OBJ_SCALE;
+      return IlpSolverConfig.transformObj(CostUtility.getNetworkRejectionCost());
     }
   }
 
