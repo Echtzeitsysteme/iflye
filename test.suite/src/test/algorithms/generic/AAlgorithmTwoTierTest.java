@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import model.Link;
+import model.Network;
 import model.Node;
 import model.SubstrateNetwork;
 import model.SubstratePath;
@@ -268,6 +269,8 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
         networkId + "_srv1");
     facade.addLinkToNetwork(networkId + "_ln4", networkId, 1, networkId + "_sw",
         networkId + "_srv2");
+
+    setMetamodelExtensionVnet(networkId, slotsPerServer * 2);
   }
 
   /**
@@ -296,6 +299,8 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
         networkId + "_srv2");
     facade.addLinkToNetwork(networkId + "_ln6", networkId, 1, networkId + "_sw",
         networkId + "_srv3");
+
+    setMetamodelExtensionVnet(networkId, slotsPerServer * 3);
   }
 
   /**
@@ -343,6 +348,24 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
         networkId + "_rsw1");
     facade.addLinkToNetwork(networkId + "_ln12", networkId, 10, networkId + "_csw1",
         networkId + "_rsw2");
+
+    setMetamodelExtensionVnet(networkId, slotsPerServer * 4);
+  }
+
+  /**
+   * Sets the new values for the extended metamodel in virtual network.
+   * 
+   * @param networkId Network ID.
+   * @param slotsTotal Total slots of the virtual network.
+   */
+  protected void setMetamodelExtensionVnet(final String networkId, final int slotsTotal) {
+    final Network net = facade.getNetworkById(networkId);
+    if (net instanceof VirtualNetwork) {
+      final VirtualNetwork vnet = (VirtualNetwork) net;
+      vnet.setCpu(slotsTotal);
+      vnet.setMemory(slotsTotal);
+      vnet.setStorage(slotsTotal);
+    }
   }
 
 

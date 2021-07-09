@@ -146,6 +146,7 @@ public class VnePmMdvneAlgorithmPipeline extends VnePmMdvneAlgorithm {
     if (this.patternMatcherVnet != null) {
       this.patternMatcherVnet.dispose();
     }
+    super.dispose();
     instance = null;
   }
 
@@ -304,7 +305,7 @@ public class VnePmMdvneAlgorithmPipeline extends VnePmMdvneAlgorithm {
         continue;
       }
 
-      // Embed element: Either use emoflon/GT or use manual mode.
+      // Embed element: Use emoflon/GT.
       switch (AlgorithmConfig.emb) {
         case EMOFLON:
           // Create embedding via matches and graph transformation
