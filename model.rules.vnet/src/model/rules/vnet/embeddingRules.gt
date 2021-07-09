@@ -1,0 +1,41 @@
+import "http://www.eclipse.org/emf/2002/Ecore"
+import "platform:/resource/network.model/model/Model.ecore"
+
+//
+// Virtual networks
+//
+
+// Match from complete virtual network to a substrate server
+rule vnetToServer() {
+	root: Root {
+		-networks -> substrateNetwork
+		-networks -> virtualNetwork
+	}
+	
+	substrateNode: SubstrateServer {
+		.residualCpu := substrateNode.residualCpu - virtualNetwork.cpu
+		.residualMemory := substrateNode.residualMemory - virtualNetwork.memory
+		.residualStorage := substrateNode.residualStorage - virtualNetwork.storage
+		++ -guestNetworks -> virtualNetwork
+		// TODO: All embedding of all virtual elements onto the substrate server
+	}
+	
+	substrateNetwork: SubstrateNetwork {
+		-nodes -> substrateNode
+	}
+	
+	virtualNetwork: VirtualNetwork {
+		++ -hostServer -> substrateNode
+		// TODO: Embed all virtual elements onto the substrate server
+	}
+	
+	# virtualNetwork.cpu <= substrateNode.residualCpu
+	# virtualNetwork.memory <= substrateNode.residualMemory
+	# virtualNetwork.storage <= substrateNode.residualStorage
+	
+	// Explicitly exclude substrate servers with any residual resource equals to 0
+	# substrateNode.residualCpu > 0
+	# substrateNode.residualMemory > 0
+	# substrateNode.residualStorage > 0
+}
+

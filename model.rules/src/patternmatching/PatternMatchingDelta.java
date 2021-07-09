@@ -93,6 +93,7 @@ public class PatternMatchingDelta {
   private final Set<Match> newSwitchMatchPositives = new HashSet<>();
   private final Set<Match> newLinkPathMatchPositives = new HashSet<>();
   private final Set<Match> newLinkServerMatchPositives = new HashSet<>();
+  private final Set<Match> newNetworkServerMatchPositives = new HashSet<>();
 
   /**
    * Adds a given value of type T to a given set of matches.
@@ -125,6 +126,10 @@ public class PatternMatchingDelta {
     addValue(new Match(virtual, substrate), newLinkServerMatchPositives);
   }
 
+  public void addNetworkServerMatchPositive(final Element virtual, final Element substrate) {
+    addValue(new Match(virtual, substrate), newNetworkServerMatchPositives);
+  }
+
   /*
    * Getters
    */
@@ -145,6 +150,10 @@ public class PatternMatchingDelta {
     return newLinkServerMatchPositives;
   }
 
+  public Set<Match> getNewNetworkServerMatchPositives() {
+    return newNetworkServerMatchPositives;
+  }
+
   /*
    * Add other delta to this one
    */
@@ -154,6 +163,7 @@ public class PatternMatchingDelta {
     this.newSwitchMatchPositives.addAll(other.newSwitchMatchPositives);
     this.newLinkPathMatchPositives.addAll(other.newLinkPathMatchPositives);
     this.newLinkServerMatchPositives.addAll(other.newLinkServerMatchPositives);
+    this.newNetworkServerMatchPositives.addAll(other.newNetworkServerMatchPositives);
   }
 
   public void clear() {
@@ -161,6 +171,7 @@ public class PatternMatchingDelta {
     newSwitchMatchPositives.clear();
     newLinkPathMatchPositives.clear();
     newLinkServerMatchPositives.clear();
+    newNetworkServerMatchPositives.clear();
   }
 
 }
