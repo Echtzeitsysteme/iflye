@@ -154,6 +154,9 @@ public class VnePmMdvneAlgorithmPipeline extends VnePmMdvneAlgorithm {
     GlobalMetricsManager.measureMemory();
     init();
 
+    // Check prerequisites
+    checkPrerequisites();
+
     // Check overall embedding possibility
     checkOverallResources();
 
@@ -196,6 +199,18 @@ public class VnePmMdvneAlgorithmPipeline extends VnePmMdvneAlgorithm {
     dispose();
     final AbstractAlgorithm algo = VnePmMdvneAlgorithm.prepare(sNet, vNets);
     return algo.execute();
+  }
+
+  /**
+   * Checks the prerequisites of the virtual networks to embed.
+   */
+  private void checkPrerequisites() {
+    for (final VirtualNetwork vnet : vNets) {
+      if (vnet.getCpu() <= 0 || vnet.getMemory() <= 0 || vnet.getStorage() <= 0) {
+        throw new UnsupportedOperationException("The provided network " + vnet.getName()
+            + " does not have total server resources set up.");
+      }
+    }
   }
 
   /**
