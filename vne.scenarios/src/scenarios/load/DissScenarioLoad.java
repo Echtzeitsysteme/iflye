@@ -418,7 +418,7 @@ public class DissScenarioLoad {
         "=> Total communication cost D: " + new TotalCommunicationCostMetricD(sNet).getValue());
     System.out.println(
         "=> Total TAF communication cost: " + new TotalTafCommunicationCostMetric(sNet).getValue());
-    System.out.println("=> Oberation cost: " + new OperatingCostMetric(sNet).getValue());
+    System.out.println("=> Operation cost: " + new OperatingCostMetric(sNet).getValue());
 
     // Memory measurements
     System.out.println("=> Memory metric (current): " + new MemoryMetric().getValue() + " MiB");
