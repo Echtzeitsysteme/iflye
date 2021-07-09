@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
 import facade.config.ModelFacadeConfig;
+import gt.emoflon.EmoflonPatternMatcherVnet;
 import gt.emoflon.EmoflonPatternMatcherVnetFactory;
 import ilp.wrapper.IlpDelta;
 import ilp.wrapper.IlpSolverException;
@@ -39,7 +40,6 @@ import model.VirtualSwitch;
 import patternmatching.IncrementalPatternMatcher;
 import patternmatching.PatternMatchingDelta;
 import patternmatching.PatternMatchingDelta.Match;
-import patternmatching.emoflon.EmoflonPatternMatcher;
 import patternmatching.emoflon.EmoflonPatternMatcherFactory;
 
 /**
@@ -225,29 +225,44 @@ public class VnePmMdvneAlgorithmPipeline extends AbstractAlgorithm {
      */
     public void addNetworkToServerMatch(final Match match) {
       final VirtualNetwork vnet = (VirtualNetwork) match.getVirtual();
-      final SubstrateServer ssrv = (SubstrateServer) match.getSubstrate();
+      // final SubstrateServer ssrv = (SubstrateServer) match.getSubstrate();
 
-      // Virtual nodes
-      for (final Node n : vnet.getNodes()) {
-        if (n instanceof VirtualServer) {
-          final VirtualServer vsrv = (VirtualServer) n;
-          final Match srvMatch = new Match(vsrv, ssrv);
-          addServerMatch(srvMatch);
-        } else if (n instanceof VirtualSwitch) {
-          final VirtualSwitch vsw = (VirtualSwitch) n;
-          final Match swMatch = new Match(vsw, ssrv);
-          addSwitchMatch(swMatch);
-        }
-      }
+      // // Virtual nodes
+      // for (final Node n : vnet.getNodes()) {
+      // if (n instanceof VirtualServer) {
+      // final VirtualServer vsrv = (VirtualServer) n;
+      // final Match srvMatch = new Match(vsrv, ssrv);
+      // addServerMatch(srvMatch);
+      // } else if (n instanceof VirtualSwitch) {
+      // final VirtualSwitch vsw = (VirtualSwitch) n;
+      // final Match swMatch = new Match(vsw, ssrv);
+      // addSwitchMatch(swMatch);
+      // }
+      // }
+      //
+      // // Virtual links
+      // for (final Link l : vnet.getLinks()) {
+      // if (l instanceof VirtualLink) {
+      // final VirtualLink vl = (VirtualLink) l;
+      // final Match lMatch = new Match(vl, ssrv);
+      // addLinkServerMatch(lMatch);
+      // }
+      // }
 
-      // Virtual links
-      for (final Link l : vnet.getLinks()) {
-        if (l instanceof VirtualLink) {
-          final VirtualLink vl = (VirtualLink) l;
-          final Match lMatch = new Match(vl, ssrv);
-          addLinkServerMatch(lMatch);
-        }
-      }
+      final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
+      delta.addVariable(varName, getCost(vnet, (SubstrateServer) match.getSubstrate()));
+      delta.setVariableWeightForConstraint("vsnet" + match.getVirtual().getName(), 1, varName);
+
+      delta.setVariableWeightForConstraint("cpu" + match.getSubstrate().getName(), vnet.getCpu(),
+          varName);
+      delta.setVariableWeightForConstraint("mem" + match.getSubstrate().getName(), vnet.getMemory(),
+          varName);
+      delta.setVariableWeightForConstraint("sto" + match.getSubstrate().getName(),
+          vnet.getStorage(), varName);
+      variablesToMatch.put(varName, match);
+
+      // SOS match
+      addSosMappings(match.getVirtual().getName(), varName);
     }
 
     /**
@@ -301,6 +316,16 @@ public class VnePmMdvneAlgorithmPipeline extends AbstractAlgorithm {
       delta.addEqualsConstraint("vl" + link.getName(), 1);
       delta.setVariableWeightForConstraint("vl" + link.getName(), 1,
           "rej" + link.getNetwork().getName());
+    }
+
+    /**
+     * Adds a new virtual network.
+     * 
+     * @param vnet VirtualNetwork to get information from.
+     */
+    public void addNewVirtualNetwork(final VirtualNetwork vnet) {
+      delta.addEqualsConstraint("vsnet" + vnet.getName(), 1);
+      delta.setVariableWeightForConstraint("vsnet" + vnet.getName(), 1, "rej" + vnet.getName());
     }
 
     /**
@@ -501,7 +526,7 @@ public class VnePmMdvneAlgorithmPipeline extends AbstractAlgorithm {
     delta.getNewNetworkServerMatchPositives().stream() //
         .filter(m -> !ignoredVnets.contains(m.getVirtual())) //
         .filter(m -> vNets.contains(m.getVirtual())) //
-        .forEach(gen::addNewNetworkMatch);
+        .forEach(gen::addNetworkToServerMatch);
 
     // apply delta in ILP generator
     gen.apply();
@@ -648,22 +673,25 @@ public class VnePmMdvneAlgorithmPipeline extends AbstractAlgorithm {
         continue;
       }
 
-      for (final Node n : vNet.getNodes()) {
-        if (n instanceof VirtualServer) {
-          gen.addNewVirtualServer((VirtualServer) n);
-        } else if (n instanceof VirtualSwitch) {
-          gen.addNewVirtualSwitch((VirtualSwitch) n);
-        }
-      }
-
-      for (final Link l : vNet.getLinks()) {
-        if (l instanceof VirtualLink) {
-          gen.addNewVirtualLink((VirtualLink) l);
-        }
-      }
+      // for (final Node n : vNet.getNodes()) {
+      // if (n instanceof VirtualServer) {
+      // gen.addNewVirtualServer((VirtualServer) n);
+      // } else if (n instanceof VirtualSwitch) {
+      // gen.addNewVirtualSwitch((VirtualSwitch) n);
+      // }
+      // }
+      //
+      // for (final Link l : vNet.getLinks()) {
+      // if (l instanceof VirtualLink) {
+      // gen.addNewVirtualLink((VirtualLink) l);
+      // }
+      // }
 
       // Network match
       gen.addNewNetworkMatch(new Match(vNet, sNet));
+
+      // Network itself for hyperedge
+      gen.addNewVirtualNetwork(vNet);
     }
   }
 
@@ -677,9 +705,8 @@ public class VnePmMdvneAlgorithmPipeline extends AbstractAlgorithm {
   protected Set<VirtualNetwork> updateMappingsAndEmbed(final Map<String, Boolean> mappings) {
     // Embed elements
     final Set<VirtualNetwork> rejectedNetworks = new HashSet<VirtualNetwork>();
-    final EmoflonPatternMatcher engine = (EmoflonPatternMatcher) patternMatcher;
+    final EmoflonPatternMatcherVnet engine = (EmoflonPatternMatcherVnet) patternMatcherVnet;
 
-    // for (final String s : newMappings) {
     for (final String s : mappings.keySet()) {
       if (!mappings.get(s)) {
         continue;
@@ -688,7 +715,8 @@ public class VnePmMdvneAlgorithmPipeline extends AbstractAlgorithm {
       final Match m = variablesToMatch.get(s);
 
       // Network -> Network (rejected)
-      if (m.getVirtual() instanceof VirtualNetwork) {
+      if (m.getVirtual() instanceof VirtualNetwork
+          && m.getSubstrate() instanceof SubstrateNetwork) {
         rejectedNetworks.add((VirtualNetwork) m.getVirtual());
         continue;
       }
@@ -703,21 +731,23 @@ public class VnePmMdvneAlgorithmPipeline extends AbstractAlgorithm {
           // Create embedding via matches and graph transformation
           engine.apply((VirtualElement) m.getVirtual(), (SubstrateElement) m.getSubstrate(), false);
           break;
-        case MANUAL:
-          final VirtualElement ve = (VirtualElement) m.getVirtual();
-          final SubstrateElement se = (SubstrateElement) m.getSubstrate();
-          if (ve instanceof VirtualServer) {
-            facade.embedServerToServer(se.getName(), ve.getName());
-          } else if (ve instanceof VirtualSwitch) {
-            facade.embedSwitchToNode(se.getName(), ve.getName());
-          } else if (ve instanceof VirtualLink) {
-            if (se instanceof SubstrateServer) {
-              facade.embedLinkToServer(se.getName(), ve.getName());
-            } else if (se instanceof SubstratePath) {
-              facade.embedLinkToPath(se.getName(), ve.getName());
-            }
-          }
-          break;
+        // case MANUAL:
+        // final VirtualElement ve = (VirtualElement) m.getVirtual();
+        // final SubstrateElement se = (SubstrateElement) m.getSubstrate();
+        // if (ve instanceof VirtualServer) {
+        // facade.embedServerToServer(se.getName(), ve.getName());
+        // } else if (ve instanceof VirtualSwitch) {
+        // facade.embedSwitchToNode(se.getName(), ve.getName());
+        // } else if (ve instanceof VirtualLink) {
+        // if (se instanceof SubstrateServer) {
+        // facade.embedLinkToServer(se.getName(), ve.getName());
+        // } else if (se instanceof SubstratePath) {
+        // facade.embedLinkToPath(se.getName(), ve.getName());
+        // }
+        // }
+        // break;
+        default:
+          throw new UnsupportedOperationException();
       }
     }
 
@@ -774,6 +804,8 @@ public class VnePmMdvneAlgorithmPipeline extends AbstractAlgorithm {
       return IlpSolverConfig.transformObj(getLinkCost((VirtualLink) virt, host));
     } else if (virt instanceof Node && host instanceof Node) {
       return IlpSolverConfig.transformObj(getNodeCost((VirtualNode) virt, (SubstrateNode) host));
+    } else if (virt instanceof VirtualNetwork) {
+      return IlpSolverConfig.transformObj(getNetCost((VirtualNetwork) virt, (SubstrateNode) host));
     }
 
     throw new IllegalArgumentException();
@@ -819,6 +851,20 @@ public class VnePmMdvneAlgorithmPipeline extends AbstractAlgorithm {
     } else {
       return IlpSolverConfig.transformObj(CostUtility.getNetworkRejectionCost());
     }
+  }
+
+  public double getNetCost(final VirtualNetwork net, final SubstrateNode sub) {
+    double cost = 0;
+
+    for (final Node n : net.getNodes()) {
+      cost += getNodeCost((VirtualNode) n, sub);
+    }
+
+    for (final Link l : net.getLinks()) {
+      cost += getLinkCost((VirtualLink) l, sub);
+    }
+
+    return cost;
   }
 
 }
