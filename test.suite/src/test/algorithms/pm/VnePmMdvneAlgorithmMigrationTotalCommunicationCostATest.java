@@ -13,7 +13,7 @@ import model.VirtualNetwork;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class VnePmMdvneAlgorithmMigratonTotalCommunicationCostATest
+public class VnePmMdvneAlgorithmMigrationTotalCommunicationCostATest
     extends VnePmMdvneAlgorithmTotalCommunicationCostATest {
 
   @Override
