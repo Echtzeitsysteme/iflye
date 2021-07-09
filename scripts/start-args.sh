@@ -24,7 +24,7 @@ function setup {
 
 function run {
     # Execute the program itself and save its output to logfile
-    java -Xmx32g -jar $JAR $ARGS 2>&1 | tee "./logs/$RUN_NAME.log"
+    java -Xmx120g -jar $JAR $ARGS 2>&1 | tee "./logs/$RUN_NAME.log"
 }
 
 # Set env vars
@@ -36,21 +36,34 @@ export JAR="iflye.jar"
 setup
 
 # Example arguments:
-# pm two-tier-4-pods 4 1
-# $1 $2              $3 $4
-# pm two-tier-4-pods auto 1
+# pm two-tier-4-pods 4 1 3
+# $1 $2              $3 $4 $5
+# pm two-tier-4-pods auto 1 3
 
-export a=$1
-export s=$2
-export l=$3
-export k=$4
+export a=$1 # algorithm
+export s=$2 # scenario
+export l=$3 # maximum path length
+export k=$4 # k fastest paths to generate
+export r=$5 # number of runs
 
-export RUN_NAME="${a}_${s}_l${l}_k${k}"
-export ARGS="-a $a -o total-comm-c -e emoflon_wo_update -l $l -k $k -s resources/$s/snet.json -v resources/$s/vnets.json -c ./metrics/$RUN_NAME.csv -i 600"
-echo "#"
-echo "# => Using ARGS: $ARGS"
-echo "#"
-run
+for ((i=1;i<=$r;i++));
+do
+    # Without memory measurement
+    export RUN_NAME="${a}_${s}_l${l}_k${k}_run${i}"
+    export ARGS="-a $a -o total-comm-c -e emoflon_wo_update -l $l -k $k -s resources/$s/snet.json -v resources/$s/vnets.json -c ./metrics/$RUN_NAME.csv -i 600"
+    echo "#"
+    echo "# => Using ARGS: $ARGS"
+    echo "#"
+    run
+
+    # With memory measurement
+    export RUN_NAME="${a}_${s}_l${l}_k${k}_run${i}_mem"
+    export ARGS="-a $a -o total-comm-c -e emoflon_wo_update -l $l -k $k -s resources/$s/snet.json -v resources/$s/vnets.json -c ./metrics/$RUN_NAME.csv -i 600 --memmeasurement"
+    echo "#"
+    echo "# => Using ARGS: $ARGS"
+    echo "#"
+    run
+done
 
 echo "#"
 echo "# => Arg script done."
