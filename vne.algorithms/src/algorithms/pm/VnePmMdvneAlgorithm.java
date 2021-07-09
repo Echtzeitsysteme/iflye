@@ -62,7 +62,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
    * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
    * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
    */
-  class IlpDeltaGenerator {
+  protected class IlpDeltaGenerator {
     /**
      * ILP delta object that holds all information.
      */
@@ -301,7 +301,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
   /**
    * Mapping of string (name) to matches.
    */
-  private final Map<String, Match> variablesToMatch = new HashMap<>();
+  final Map<String, Match> variablesToMatch = new HashMap<>();
 
   /**
    * Set of ignored virtual networks. Ignored virtual networks are requests, that can not fit on the
