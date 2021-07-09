@@ -196,6 +196,9 @@ public class VnePmMdvneAlgorithmPipeline extends VnePmMdvneAlgorithm {
     // Stage 2: Normal PM-based embedding
     //
 
+    // Remove embedding of all already embedded networks
+    PmAlgorithmUtils.unembedAll(sNet, vNets);
+
     System.out.println("=> Starting pipeline stage #2");
     dispose();
     final AbstractAlgorithm algo = VnePmMdvneAlgorithm.prepare(sNet, vNets);
