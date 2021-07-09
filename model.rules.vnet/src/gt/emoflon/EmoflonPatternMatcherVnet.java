@@ -109,7 +109,6 @@ public class EmoflonPatternMatcherVnet implements IncrementalPatternMatcher {
    * @param sub Substrate server to embed virtual network on.
    */
   private void embedElements(final VirtualNetwork vnet, final SubstrateServer sub) {
-    System.out.println("=> Debug");
     for (final Node n : vnet.getNodes()) {
       if (n instanceof VirtualServer) {
         ModelFacade.getInstance().embedServerToServer(sub.getName(), n.getName());

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
 import gt.emoflon.EmoflonPatternMatcherVnet;
 import gt.emoflon.EmoflonPatternMatcherVnetFactory;
@@ -163,6 +164,7 @@ public class VnePmMdvneAlgorithmPipeline extends VnePmMdvneAlgorithm {
     final Set<VirtualNetwork> repairedVnets = repairVirtualNetworks();
     if (!repairedVnets.isEmpty()) {
       this.patternMatcher = new EmoflonPatternMatcherFactory().create();
+      this.patternMatcherVnet = new EmoflonPatternMatcherVnetFactory().create();
     }
     vNets.addAll(repairedVnets);
 
@@ -178,11 +180,22 @@ public class VnePmMdvneAlgorithmPipeline extends VnePmMdvneAlgorithm {
     GlobalMetricsManager.measureMemory();
     final Set<VirtualNetwork> rejectedNetworks = solveIlp();
 
-    rejectedNetworks.addAll(ignoredVnets);
-    embedNetworks(rejectedNetworks);
-    GlobalMetricsManager.endDeployTime();
-    GlobalMetricsManager.measureMemory();
-    return rejectedNetworks.isEmpty();
+    if (rejectedNetworks.isEmpty()) {
+      rejectedNetworks.addAll(ignoredVnets);
+      embedNetworks(rejectedNetworks);
+      GlobalMetricsManager.endDeployTime();
+      GlobalMetricsManager.measureMemory();
+      return rejectedNetworks.isEmpty();
+    }
+
+    //
+    // Stage 2: Normal PM-based embedding
+    //
+
+    System.out.println("=> Starting pipeline stage #2");
+    dispose();
+    final AbstractAlgorithm algo = VnePmMdvneAlgorithm.prepare(sNet, vNets);
+    return algo.execute();
   }
 
   /**
