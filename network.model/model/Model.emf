@@ -108,6 +108,10 @@ class SubstrateServer extends Server, SubstrateNode {
 	
 	@GenModel(documentation="Residual storage amount of this server.")
 	attr EInt [1] residualStorage;
+	
+	// Extension for directly hosting a complete virtual network
+	@GenModel(documentation="Virtual guest networks.")
+	ref VirtualNetwork [*]#hostServer guestNetworks;
 }
 
 @GenModel(documentation="Class that represents a substrate switch.")
@@ -193,4 +197,17 @@ class VirtualLink extends Link, VirtualElement {
 class VirtualNetwork extends Network, VirtualElement {
 	@GenModel(documentation="Host network that runs this virtual network.")
 	ref SubstrateNetwork [1]#guests host;
+	
+	// Extension for the total amount of server resources
+	@GenModel(documentation="Total CPU amount of this virtual network.")
+	attr EInt [1] cpu;
+	
+	@GenModel(documentation="Total memory amount of this virtual network.")
+	attr EInt [1] memory;
+	
+	@GenModel(documentation="Total storage amount of this virtual network.")
+	attr EInt [1] storage;
+	
+	@GenModel(documentation="Host server that runs this virtual network.")
+	ref SubstrateServer [1]#guestNetworks hostServer;
 }
