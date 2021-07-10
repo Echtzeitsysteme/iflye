@@ -139,7 +139,9 @@ public class BasicModelConverter {
     for (final JsonElement actSrv : servers) {
       final JsonObject srv = (JsonObject) actSrv;
       ModelFacade.getInstance().addServerToNetwork(srv.get("id").getAsString(), networkId,
-          srv.get("cpu").getAsInt(), srv.get("memory").getAsInt(), srv.get("storage").getAsInt(),
+          srv.get("cpu").getAsInt(), //
+          (int) (1.0 * srv.get("memory").getAsLong() * ModelConverterConfig.MEMORY_SCALING), //
+          (int) (1.0 * srv.get("storage").getAsLong() * ModelConverterConfig.MEMORY_SCALING), //
           srv.get("depth").getAsInt());
     }
 
