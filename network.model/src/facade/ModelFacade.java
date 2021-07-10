@@ -1016,9 +1016,9 @@ public class ModelFacade {
       virtServ.setHost(subServ);
 
       // Update residual values of the host
-      final int oldResCpu = subServ.getResidualCpu();
-      final int oldResMem = subServ.getResidualMemory();
-      final int oldResStor = subServ.getResidualStorage();
+      final long oldResCpu = subServ.getResidualCpu();
+      final long oldResMem = subServ.getResidualMemory();
+      final long oldResStor = subServ.getResidualStorage();
       subServ.setResidualCpu(oldResCpu - virtServ.getCpu());
       subServ.setResidualMemory(oldResMem - virtServ.getMemory());
       subServ.setResidualStorage(oldResStor - virtServ.getStorage());
