@@ -11,9 +11,6 @@ import model.Node;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 import model.VirtualServer;
-import patternmatching.PatternMatchingDelta;
-import patternmatching.emoflon.EmoflonPatternMatcherFactory;
-import model.VirtualSwitch;
 
 /**
  * Implementation of the model-driven virtual network algorithm that uses pattern matching as a way

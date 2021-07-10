@@ -7,7 +7,10 @@ import java.util.function.BiConsumer;
 import org.eclipse.collections.impl.map.mutable.UnifiedMap;
 import org.emoflon.ibex.gt.api.GraphTransformationMatch;
 import facade.ModelFacade;
-import gt.emoflon.apps.EmoflonPatternMatcherVnetHiPEApp;
+import gt.IncrementalPatternMatcher;
+import gt.PatternMatchingConfig;
+import gt.PatternMatchingDelta;
+import gt.emoflon.apps.EmoflonGtVnetHiPEApp;
 import model.Element;
 import model.Link;
 import model.Node;
@@ -21,17 +24,13 @@ import model.VirtualSwitch;
 import model.rules.vnet.api.VnetAPI;
 import model.rules.vnet.api.VnetApp;
 import model.rules.vnet.api.matches.VnetToServerMatch;
-import patternmatching.IncrementalPatternMatcher;
-import patternmatching.PatternMatchingConfig;
-import patternmatching.PatternMatchingDelta;
-import patternmatching.emoflon.Tuple;
 
 /**
  * Implementation of the {@link IncrementalPatternMatcher} for eMoflon.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class EmoflonPatternMatcherVnet implements IncrementalPatternMatcher {
+public class EmoflonGtVnet implements IncrementalPatternMatcher {
 
   /**
    * Vnet Rules API object generated from graph transformation patterns.
@@ -63,10 +62,10 @@ public class EmoflonPatternMatcherVnet implements IncrementalPatternMatcher {
    * 
    * @param root Root node to work with.
    */
-  public EmoflonPatternMatcherVnet(final Root root) {
+  public EmoflonGtVnet(final Root root) {
     switch (PatternMatchingConfig.pm) {
       case HIPE:
-        emoflonPatternMatcherApp = new EmoflonPatternMatcherVnetHiPEApp(root);
+        emoflonPatternMatcherApp = new EmoflonGtVnetHiPEApp(root);
         break;
       default:
         throw new UnsupportedOperationException();

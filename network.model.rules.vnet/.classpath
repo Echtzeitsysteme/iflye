@@ -9,6 +9,6 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/network.model"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/model.rules"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/network.model.rules"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

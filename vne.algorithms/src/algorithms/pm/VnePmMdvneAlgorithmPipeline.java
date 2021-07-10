@@ -6,8 +6,12 @@ import java.util.Map;
 import java.util.Set;
 import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
-import gt.emoflon.EmoflonPatternMatcherVnet;
-import gt.emoflon.EmoflonPatternMatcherVnetFactory;
+import gt.IncrementalPatternMatcher;
+import gt.PatternMatchingDelta;
+import gt.PatternMatchingDelta.Match;
+import gt.emoflon.EmoflonGtFactory;
+import gt.emoflon.EmoflonGtVnet;
+import gt.emoflon.EmoflonGtVnetFactory;
 import ilp.wrapper.config.IlpSolverConfig;
 import ilp.wrapper.impl.IncrementalGurobiSolver;
 import metrics.manager.GlobalMetricsManager;
@@ -23,10 +27,6 @@ import model.VirtualElement;
 import model.VirtualLink;
 import model.VirtualNetwork;
 import model.VirtualNode;
-import patternmatching.IncrementalPatternMatcher;
-import patternmatching.PatternMatchingDelta;
-import patternmatching.PatternMatchingDelta.Match;
-import patternmatching.emoflon.EmoflonPatternMatcherFactory;
 
 /**
  * Implementation of the model-driven virtual network algorithm that uses pattern matching as a way
@@ -167,8 +167,8 @@ public class VnePmMdvneAlgorithmPipeline extends VnePmMdvneAlgorithm {
     // Repair model consistency: Virtual network(s)
     final Set<VirtualNetwork> repairedVnets = repairVirtualNetworks();
     if (!repairedVnets.isEmpty()) {
-      this.patternMatcher = new EmoflonPatternMatcherFactory().create();
-      this.patternMatcherVnet = new EmoflonPatternMatcherVnetFactory().create();
+      this.patternMatcher = new EmoflonGtFactory().create();
+      this.patternMatcherVnet = new EmoflonGtVnetFactory().create();
     }
     vNets.addAll(repairedVnets);
 
@@ -292,7 +292,7 @@ public class VnePmMdvneAlgorithmPipeline extends VnePmMdvneAlgorithm {
   protected Set<VirtualNetwork> updateMappingsAndEmbed(final Map<String, Boolean> mappings) {
     // Embed elements
     final Set<VirtualNetwork> rejectedNetworks = new HashSet<VirtualNetwork>();
-    final EmoflonPatternMatcherVnet engine = (EmoflonPatternMatcherVnet) patternMatcherVnet;
+    final EmoflonGtVnet engine = (EmoflonGtVnet) patternMatcherVnet;
 
     for (final String s : mappings.keySet()) {
       if (!mappings.get(s)) {
@@ -336,11 +336,11 @@ public class VnePmMdvneAlgorithmPipeline extends VnePmMdvneAlgorithm {
     ilpSolver = new IncrementalGurobiSolver(IlpSolverConfig.TIME_OUT, IlpSolverConfig.RANDOM_SEED);
 
     if (patternMatcher == null) {
-      patternMatcher = new EmoflonPatternMatcherFactory().create();
+      patternMatcher = new EmoflonGtFactory().create();
     }
 
     if (patternMatcherVnet == null) {
-      patternMatcherVnet = new EmoflonPatternMatcherVnetFactory().create();
+      patternMatcherVnet = new EmoflonGtVnetFactory().create();
     }
   }
 
