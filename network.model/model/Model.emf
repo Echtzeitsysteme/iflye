@@ -199,14 +199,16 @@ class VirtualNetwork extends Network, VirtualElement {
 	ref SubstrateNetwork [1]#guests host;
 	
 	// Extension for the total amount of server resources
+	// This resources have to be of type long, as the summed up storages may
+	// exceed the maximum possible value of type integer.
 	@GenModel(documentation="Total CPU amount of this virtual network.")
-	attr EInt [1] cpu;
+	attr ELong [1] cpu;
 	
 	@GenModel(documentation="Total memory amount of this virtual network.")
-	attr EInt [1] memory;
+	attr ELong [1] memory;
 	
 	@GenModel(documentation="Total storage amount of this virtual network.")
-	attr EInt [1] storage;
+	attr ELong [1] storage;
 	
 	@GenModel(documentation="Host server that runs this virtual network.")
 	ref SubstrateServer [1]#guestNetworks hostServer;
