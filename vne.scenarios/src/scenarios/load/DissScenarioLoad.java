@@ -20,6 +20,7 @@ import algorithms.ilp.VneIlpPathAlgorithmBatch;
 import algorithms.pm.VnePmMdvneAlgorithm;
 import algorithms.pm.VnePmMdvneAlgorithmMigration;
 import algorithms.pm.VnePmMdvneAlgorithmPipeline;
+import algorithms.pm.VnePmMdvneAlgorithmPipelineThreeStage;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import ilp.wrapper.config.IlpSolverConfig;
@@ -146,7 +147,8 @@ public class DissScenarioLoad {
   /**
    * Parses the given arguments to configure the scenario.
    * <ol>
-   * <li>#0: Algorithm "pm", "pm-migration", "pm-pipeline", "ilp", "ilp-batch" or "taf"</li>
+   * <li>#0: Algorithm "pm", "pm-migration", "pm-pipeline", "pm-pipeline3", "ilp", "ilp-batch" or
+   * "taf"</li>
    * <li>#1: Objective "total-path", "total-comm-a", "total-comm-b", "total-comm-c", "total-comm-d",
    * "total-taf-comm"</li>
    * <li>#2: Embedding "emoflon", "emoflon_wo_update" or "manual" [only relevant for VNE PM
@@ -382,6 +384,8 @@ public class DissScenarioLoad {
         return VnePmMdvneAlgorithmMigration.prepare(sNet, vNets);
       case "pm-pipeline":
         return VnePmMdvneAlgorithmPipeline.prepare(sNet, vNets);
+      case "pm-pipeline3":
+        return VnePmMdvneAlgorithmPipelineThreeStage.prepare(sNet, vNets);
       case "ilp":
         return new VneIlpPathAlgorithm(sNet, vNets);
       case "ilp-batch":

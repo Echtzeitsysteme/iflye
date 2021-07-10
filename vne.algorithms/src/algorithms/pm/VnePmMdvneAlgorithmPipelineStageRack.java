@@ -1,15 +1,21 @@
 package algorithms.pm;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import algorithms.AlgorithmConfig;
 import gt.IncrementalPatternMatcher;
 import gt.PatternMatchingDelta;
+import gt.PatternMatchingDelta.Match;
 import gt.emoflon.EmoflonGtFactory;
+import gt.emoflon.EmoflonGtRack;
 import gt.emoflon.EmoflonGtRackFactory;
 import ilp.wrapper.config.IlpSolverConfig;
 import ilp.wrapper.impl.IncrementalGurobiSolver;
 import metrics.manager.GlobalMetricsManager;
+import model.SubstrateElement;
 import model.SubstrateNetwork;
+import model.VirtualElement;
 import model.VirtualNetwork;
 
 /**
@@ -154,6 +160,51 @@ public class VnePmMdvneAlgorithmPipelineStageRack extends VnePmMdvneAlgorithm {
     if (patternMatcherRack == null) {
       patternMatcherRack = new EmoflonGtRackFactory().create();
     }
+  }
+
+  /**
+   * Updates and embeds the actual mappings for a given map of names (strings) and booleans.
+   * 
+   * @param mappings Map of strings and booleans. The keys are mapping names and the values define
+   *        if the mapping was chosen.
+   * @return Returns a set of all virtual networks that could not be embedded.
+   */
+  @Override
+  protected Set<VirtualNetwork> updateMappingsAndEmbed(final Map<String, Boolean> mappings) {
+    // Embed elements
+    final Set<VirtualNetwork> rejectedNetworks = new HashSet<VirtualNetwork>();
+    final EmoflonGtRack engine = (EmoflonGtRack) patternMatcherRack;
+
+    // for (final String s : newMappings) {
+    for (final String s : mappings.keySet()) {
+      if (!mappings.get(s)) {
+        continue;
+      }
+
+      final Match m = variablesToMatch.get(s);
+
+      // Network -> Network (rejected)
+      if (m.getVirtual() instanceof VirtualNetwork) {
+        rejectedNetworks.add((VirtualNetwork) m.getVirtual());
+        continue;
+      }
+
+      // Embed element: Either use emoflon/GT or use manual mode.
+      switch (AlgorithmConfig.emb) {
+        case EMOFLON:
+          // Create embedding via matches and graph transformation
+          engine.apply((VirtualElement) m.getVirtual(), (SubstrateElement) m.getSubstrate(), true);
+          break;
+        case EMOFLON_WO_UPDATE:
+          // Create embedding via matches and graph transformation
+          engine.apply((VirtualElement) m.getVirtual(), (SubstrateElement) m.getSubstrate(), false);
+          break;
+        default:
+          throw new UnsupportedOperationException();
+      }
+    }
+
+    return rejectedNetworks;
   }
 
 }
