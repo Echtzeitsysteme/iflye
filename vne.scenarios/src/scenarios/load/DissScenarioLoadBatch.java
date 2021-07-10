@@ -66,6 +66,9 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
     CsvUtil.appendCsvLine("batch-all", csvPath, sNet);
     GlobalMetricsManager.resetRuntime();
 
+    // Validate model
+    ModelFacade.getInstance().validateModel();
+
     /*
      * Evaluation.
      */
