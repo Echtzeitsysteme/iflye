@@ -1,4 +1,4 @@
-package patternmatching;
+package gt;
 
 /**
  * Configuration of the emoflon pattern matcher.

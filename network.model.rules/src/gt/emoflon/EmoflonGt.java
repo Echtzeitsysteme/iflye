@@ -1,4 +1,4 @@
-package patternmatching.emoflon;
+package gt.emoflon;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -6,16 +6,16 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import org.eclipse.collections.impl.map.mutable.UnifiedMap;
 import org.emoflon.ibex.gt.api.GraphTransformationMatch;
+import gt.IncrementalPatternMatcher;
+import gt.PatternMatchingConfig;
+import gt.PatternMatchingDelta;
+import gt.emoflon.apps.EmoflonGtDemoclesApp;
+import gt.emoflon.apps.EmoflonGtHiPEApp;
+import gt.emoflon.apps.EmoflonGtViatraApp;
 import model.Element;
 import model.Root;
 import model.SubstrateElement;
 import model.VirtualElement;
-import patternmatching.IncrementalPatternMatcher;
-import patternmatching.PatternMatchingConfig;
-import patternmatching.PatternMatchingDelta;
-import patternmatching.emoflon.apps.EmoflonPatternMatcherDemoclesApp;
-import patternmatching.emoflon.apps.EmoflonPatternMatcherHiPEApp;
-import patternmatching.emoflon.apps.EmoflonPatternMatcherViatraApp;
 import rules.api.RulesAPI;
 import rules.api.RulesApp;
 import rules.api.matches.LinkPathMatchPositiveMatch;
@@ -28,7 +28,7 @@ import rules.api.matches.SwitchNodeMatchPositiveMatch;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
+public class EmoflonGt implements IncrementalPatternMatcher {
 
   /**
    * Rules API object generated from graph transformation patterns.
@@ -62,16 +62,16 @@ public class EmoflonPatternMatcher implements IncrementalPatternMatcher {
    * 
    * @param root Root node to work with.
    */
-  public EmoflonPatternMatcher(final Root root) {
+  public EmoflonGt(final Root root) {
     switch (PatternMatchingConfig.pm) {
       case HIPE:
-        emoflonPatternMatcherApp = new EmoflonPatternMatcherHiPEApp(root);
+        emoflonPatternMatcherApp = new EmoflonGtHiPEApp(root);
         break;
       case DEMOCLES:
-        emoflonPatternMatcherApp = new EmoflonPatternMatcherDemoclesApp(root);
+        emoflonPatternMatcherApp = new EmoflonGtDemoclesApp(root);
         break;
       case VIATRA:
-        emoflonPatternMatcherApp = new EmoflonPatternMatcherViatraApp(root);
+        emoflonPatternMatcherApp = new EmoflonGtViatraApp(root);
         break;
       default:
         throw new UnsupportedOperationException();

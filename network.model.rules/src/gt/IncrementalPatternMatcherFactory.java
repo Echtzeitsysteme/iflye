@@ -1,4 +1,4 @@
-package patternmatching;
+package gt;
 
 public abstract class IncrementalPatternMatcherFactory {
 
