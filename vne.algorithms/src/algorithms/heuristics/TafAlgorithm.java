@@ -605,15 +605,15 @@ public class TafAlgorithm extends AbstractAlgorithm {
     final List<SubstrateServer> candidates = new LinkedList<>();
 
     // Sum required resources
-    final int sumCpu = listServerV.stream().mapToInt(e -> e.getCpu()).sum();
-    final int sumMem = listServerV.stream().mapToInt(e -> e.getMemory()).sum();
-    final int sumSto = listServerV.stream().mapToInt(e -> e.getStorage()).sum();
+    final long sumCpu = listServerV.stream().mapToLong(e -> e.getCpu()).sum();
+    final long sumMem = listServerV.stream().mapToLong(e -> e.getMemory()).sum();
+    final long sumSto = listServerV.stream().mapToLong(e -> e.getStorage()).sum();
 
     for (final SubstrateServer s : substrateServers) {
       // Get residual resources of substrate server from model
-      int resCpu = s.getResidualCpu();
-      int resMem = s.getResidualMemory();
-      int resSto = s.getResidualStorage();
+      long resCpu = s.getResidualCpu();
+      long resMem = s.getResidualMemory();
+      long resSto = s.getResidualStorage();
 
       // Update residual resources of substrate server according to already created mappings
       // (The mappings are not made in the model itself, yet!)

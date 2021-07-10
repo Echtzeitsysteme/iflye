@@ -222,9 +222,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
      * @param server SubstrateServer to get information from.
      */
     public void addNewSubstrateServer(final SubstrateServer server) {
-      delta.addLessOrEqualsConstraint("cpu" + server.getName(), server.getResidualCpu());
-      delta.addLessOrEqualsConstraint("mem" + server.getName(), server.getResidualMemory());
-      delta.addLessOrEqualsConstraint("sto" + server.getName(), server.getResidualStorage());
+      delta.addLessOrEqualsConstraint("cpu" + server.getName(), (int) server.getResidualCpu());
+      delta.addLessOrEqualsConstraint("mem" + server.getName(), (int) server.getResidualMemory());
+      delta.addLessOrEqualsConstraint("sto" + server.getName(), (int) server.getResidualStorage());
     }
 
     /**
