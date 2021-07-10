@@ -62,11 +62,11 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
    * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
    * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
    */
-  protected class IlpDeltaGenerator {
+  public class IlpDeltaGenerator {
     /**
      * ILP delta object that holds all information.
      */
-    final IlpDelta delta = new IlpDelta();
+    protected final IlpDelta delta = new IlpDelta();
 
     /**
      * Mappings for the SOS1 constraints. Each virtual element IDs is a key and the corresponding
@@ -301,7 +301,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
   /**
    * Mapping of string (name) to matches.
    */
-  final Map<String, Match> variablesToMatch = new HashMap<>();
+  protected final Map<String, Match> variablesToMatch = new HashMap<>();
 
   /**
    * Set of ignored virtual networks. Ignored virtual networks are requests, that can not fit on the

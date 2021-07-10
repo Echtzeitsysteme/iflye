@@ -3,7 +3,7 @@ package test.algorithms.pm;
 import java.util.Set;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
-import algorithms.pm.VnePmMdvneAlgorithmPipeline;
+import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesVnet;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
@@ -19,7 +19,7 @@ public class VnePmMdvneAlgorithmPipelineTotalCommunicationCostBTest
   @Override
   public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
     AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_B;
-    algo = VnePmMdvneAlgorithmPipeline.prepare(sNet, vNets);
+    algo = VnePmMdvneAlgorithmPipelineTwoStagesVnet.prepare(sNet, vNets);
   }
 
 }

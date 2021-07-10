@@ -1,10 +1,11 @@
-package algorithms.pm;
+package algorithms.pm.stages;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import algorithms.AlgorithmConfig;
+import algorithms.pm.VnePmMdvneAlgorithm;
 import gt.IncrementalPatternMatcher;
 import gt.PatternMatchingDelta;
 import gt.PatternMatchingDelta.Match;

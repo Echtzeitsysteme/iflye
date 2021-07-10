@@ -1,7 +1,7 @@
 package test.algorithms.pm;
 
 import java.util.Set;
-import algorithms.pm.VnePmMdvneAlgorithmPipeline;
+import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesVnet;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
@@ -17,7 +17,7 @@ public class VnePmMdvneAlgorithmPipelineRepairModelNetworkTest
 
   @Override
   public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-    algo = VnePmMdvneAlgorithmPipeline.prepare(sNet, vNets);
+    algo = VnePmMdvneAlgorithmPipelineTwoStagesVnet.prepare(sNet, vNets);
   }
 
 }
