@@ -59,9 +59,9 @@ public class IncrementalModelConverter extends BasicModelConverter {
     } else {
       final VirtualNetwork vnet =
           (VirtualNetwork) ModelFacade.getInstance().getNetworkById(name.getAsString());
-      int sumCpu = 0;
-      int sumMem = 0;
-      int sumSto = 0;
+      long sumCpu = 0;
+      long sumMem = 0;
+      long sumSto = 0;
       for (final Node n : vnet.getNodes()) {
         if (n instanceof VirtualServer) {
           final VirtualServer vsrv = (VirtualServer) n;

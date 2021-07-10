@@ -128,6 +128,9 @@ public class DissScenarioLoad {
      * End of every embedding.
      */
 
+    // Validate model
+    ModelFacade.getInstance().validateModel();
+
     /*
      * Evaluation.
      */

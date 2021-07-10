@@ -1016,9 +1016,9 @@ public class ModelFacade {
       virtServ.setHost(subServ);
 
       // Update residual values of the host
-      final int oldResCpu = subServ.getResidualCpu();
-      final int oldResMem = subServ.getResidualMemory();
-      final int oldResStor = subServ.getResidualStorage();
+      final long oldResCpu = subServ.getResidualCpu();
+      final long oldResMem = subServ.getResidualMemory();
+      final long oldResStor = subServ.getResidualStorage();
       subServ.setResidualCpu(oldResCpu - virtServ.getCpu());
       subServ.setResidualMemory(oldResMem - virtServ.getMemory());
       subServ.setResidualStorage(oldResStor - virtServ.getStorage());
@@ -1485,6 +1485,18 @@ public class ModelFacade {
     for (final Node n : sNet.getNodes()) {
       if (n instanceof SubstrateServer) {
         final SubstrateServer srv = (SubstrateServer) n;
+
+        if (srv.getCpu() < 0 || srv.getMemory() < 0 || srv.getStorage() < 0) {
+          throw new InternalError("At least one of the normal resources of server " + srv.getName()
+              + " was less than zero.");
+        }
+
+        if (srv.getResidualCpu() < 0 || srv.getResidualMemory() < 0
+            || srv.getResidualStorage() < 0) {
+          throw new InternalError("At least one of the residual resources of server "
+              + srv.getName() + " was less than zero.");
+        }
+
         int sumGuestCpu = 0;
         int sumGuestMem = 0;
         int sumGuestSto = 0;
@@ -1546,6 +1558,21 @@ public class ModelFacade {
       return;
     }
 
+    // Check that no link bandwidth value is below zero
+    for (final Link l : sNet.getLinks()) {
+      final SubstrateLink sl = (SubstrateLink) l;
+
+      if (sl.getBandwidth() < 0) {
+        throw new InternalError(
+            "Normal bandwidth of link " + sl.getName() + " was smaller than zero.");
+      }
+
+      if (sl.getResidualBandwidth() < 0) {
+        throw new InternalError(
+            "Residual bandwidth of link " + sl.getName() + " was smaller than zero.");
+      }
+    }
+
     // Check if virtual links are also embedded to substrate ones (additional to substrate paths).
     if (ModelFacadeConfig.LINK_HOST_EMBED_PATH) {
       for (final Link l : sNet.getLinks()) {
@@ -1566,6 +1593,16 @@ public class ModelFacade {
     for (final SubstratePath p : sNet.getPaths()) {
       final SubstratePath sp = p;
       int sumGuestBw = 0;
+
+      if (sp.getBandwidth() < 0) {
+        throw new InternalError(
+            "Normal bandwidth of path " + sp.getName() + " was smaller than zero.");
+      }
+
+      if (sp.getResidualBandwidth() < 0) {
+        throw new InternalError(
+            "Residual bandwidth of path " + sp.getName() + " was smaller than zero.");
+      }
 
       for (final VirtualLink gl : sp.getGuestLinks()) {
         sumGuestBw += gl.getBandwidth();
@@ -1612,6 +1649,12 @@ public class ModelFacade {
     for (final Node n : vNet.getNodes()) {
       if (n instanceof VirtualServer) {
         final VirtualServer vsrv = (VirtualServer) n;
+
+        if (vsrv.getCpu() < 0 || vsrv.getMemory() < 0 || vsrv.getStorage() < 0) {
+          throw new InternalError("At least one of the resources of virtual server "
+              + vsrv.getName() + " was less than zero.");
+        }
+
         if (host == null && vsrv.getHost() == null) {
           continue;
         } else if (host == null || vsrv.getHost() == null) {
@@ -1639,6 +1682,12 @@ public class ModelFacade {
 
     for (final Link l : vNet.getLinks()) {
       final VirtualLink vl = (VirtualLink) l;
+
+      if (vl.getBandwidth() < 0) {
+        throw new InternalError(
+            "Normal bandwidth of link " + vl.getName() + " was smaller than zero.");
+      }
+
       if (host == null && vl.getHost() == null) {
         continue;
       } else {
