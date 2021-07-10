@@ -1,11 +1,12 @@
-package test.algorithms.pm;
+package test.algorithms.pm.pipeline;
 
 import java.util.Set;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
-import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesVnet;
+import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesRack;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
+import test.algorithms.pm.VnePmMdvneAlgorithmTotalCommunicationCostBTest;
 
 /**
  * Test class for the VNE PM MdVNE algorithm implementation for minimizing the total communication
@@ -13,13 +14,13 @@ import model.VirtualNetwork;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class VnePmMdvneAlgorithmPipelineTotalCommunicationCostBTest
+public class VnePmMdvneAlgorithmPipelineTwoStagesRackTotalCommunicationCostBTest
     extends VnePmMdvneAlgorithmTotalCommunicationCostBTest {
 
   @Override
   public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
     AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_B;
-    algo = VnePmMdvneAlgorithmPipelineTwoStagesVnet.prepare(sNet, vNets);
+    algo = VnePmMdvneAlgorithmPipelineTwoStagesRack.prepare(sNet, vNets);
   }
 
 }

@@ -1,9 +1,10 @@
-package test.algorithms.pm;
+package test.algorithms.pm.pipeline;
 
 import java.util.Set;
-import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesVnet;
+import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesRack;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
+import test.algorithms.pm.VnePmMdvneAlgorithmRepairModelServerTest;
 
 /**
  * Test class for the VNE pattern matching algorithm pipeline implementation for repairing a removed
@@ -12,12 +13,12 @@ import model.VirtualNetwork;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class VnePmMdvneAlgorithmPipelineRepairModelServerTest
+public class VnePmMdvneAlgorithmPipelineTwoStagesRackRepairModelServerTest
     extends VnePmMdvneAlgorithmRepairModelServerTest {
 
   @Override
   public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-    algo = VnePmMdvneAlgorithmPipelineTwoStagesVnet.prepare(sNet, vNets);
+    algo = VnePmMdvneAlgorithmPipelineTwoStagesRack.prepare(sNet, vNets);
   }
 
 }

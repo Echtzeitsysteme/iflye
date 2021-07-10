@@ -16,12 +16,12 @@ import model.VirtualNetwork;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class VnePmMdvneAlgorithmPipelineThreeStage extends VnePmMdvneAlgorithm {
+public class VnePmMdvneAlgorithmPipelineThreeStages extends VnePmMdvneAlgorithm {
 
   /**
    * Algorithm instance (singleton).
    */
-  protected static VnePmMdvneAlgorithmPipelineThreeStage instance;
+  protected static VnePmMdvneAlgorithmPipelineThreeStages instance;
 
   /**
    * Constructor that gets the substrate as well as the virtual network.
@@ -29,7 +29,7 @@ public class VnePmMdvneAlgorithmPipelineThreeStage extends VnePmMdvneAlgorithm {
    * @param sNet Substrate network to work with.
    * @param vNets Set of virtual networks to work with.
    */
-  protected VnePmMdvneAlgorithmPipelineThreeStage(final SubstrateNetwork sNet,
+  protected VnePmMdvneAlgorithmPipelineThreeStages(final SubstrateNetwork sNet,
       final Set<VirtualNetwork> vNets) {
     super(sNet, vNets);
   }
@@ -41,7 +41,7 @@ public class VnePmMdvneAlgorithmPipelineThreeStage extends VnePmMdvneAlgorithm {
    * @param vNets Set of virtual networks to work with.
    * @return Instance of this algorithm implementation.
    */
-  public static VnePmMdvneAlgorithmPipelineThreeStage prepare(final SubstrateNetwork sNet,
+  public static VnePmMdvneAlgorithmPipelineThreeStages prepare(final SubstrateNetwork sNet,
       final Set<VirtualNetwork> vNets) {
     if (sNet == null || vNets == null) {
       throw new IllegalArgumentException("One of the provided network objects was null.");
@@ -52,7 +52,7 @@ public class VnePmMdvneAlgorithmPipelineThreeStage extends VnePmMdvneAlgorithm {
     }
 
     if (instance == null) {
-      instance = new VnePmMdvneAlgorithmPipelineThreeStage(sNet, vNets);
+      instance = new VnePmMdvneAlgorithmPipelineThreeStages(sNet, vNets);
     }
     instance.sNet = sNet;
     instance.vNets = new HashSet<VirtualNetwork>();
