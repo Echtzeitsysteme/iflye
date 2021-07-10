@@ -19,7 +19,7 @@ import network.model.rules.rack.api.RackApp;
 import network.model.rules.rack.api.matches.LinkPathMatchPositiveMatch;
 import network.model.rules.rack.api.matches.LinkServerMatchPositiveMatch;
 import network.model.rules.rack.api.matches.ServerMatchPositiveMatch;
-import network.model.rules.rack.api.matches.SwitchMatchPositiveMatch;
+import network.model.rules.rack.api.matches.SwitchNodeMatchPositiveMatch;
 
 /**
  * Implementation of the {@link IncrementalPatternMatcher} for eMoflon.
@@ -78,9 +78,9 @@ public class EmoflonGtRack implements IncrementalPatternMatcher {
       tupleToGtMatch.put(new Tuple(m.getVirtualNode(), m.getSubstrateNode()), m);
     });
 
-    api.switchMatchPositive().subscribeAppearing(m -> {
-      addMatch(currentDelta::addSwitchMatchPositive, m.getVirtualSwitch(), m.getSubstrateSwitch());
-      tupleToGtMatch.put(new Tuple(m.getVirtualSwitch(), m.getSubstrateSwitch()), m);
+    api.switchNodeMatchPositive().subscribeAppearing(m -> {
+      addMatch(currentDelta::addSwitchMatchPositive, m.getVirtualSwitch(), m.getSubstrateNode());
+      tupleToGtMatch.put(new Tuple(m.getVirtualSwitch(), m.getSubstrateNode()), m);
     });
 
     api.linkPathMatchPositive().subscribeAppearing(m -> {
@@ -106,8 +106,8 @@ public class EmoflonGtRack implements IncrementalPatternMatcher {
     final GraphTransformationMatch<?, ?> match = tupleToGtMatch.get(new Tuple(virt, sub));
     if (match instanceof ServerMatchPositiveMatch) {
       api.serverMatchPositive().apply((ServerMatchPositiveMatch) match, doUpdate);
-    } else if (match instanceof SwitchMatchPositiveMatch) {
-      api.switchMatchPositive().apply((SwitchMatchPositiveMatch) match, doUpdate);
+    } else if (match instanceof SwitchNodeMatchPositiveMatch) {
+      api.switchNodeMatchPositive().apply((SwitchNodeMatchPositiveMatch) match, doUpdate);
     } else if (match instanceof LinkServerMatchPositiveMatch) {
       api.linkServerMatchPositive().apply((LinkServerMatchPositiveMatch) match, doUpdate);
     } else if (match instanceof LinkPathMatchPositiveMatch) {

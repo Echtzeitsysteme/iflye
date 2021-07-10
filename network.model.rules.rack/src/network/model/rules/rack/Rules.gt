@@ -47,22 +47,22 @@ rule serverMatchPositive() {
 //
 
 // Match from virtual switch to substrate switch
-rule switchMatchPositive() {
+rule switchNodeMatchPositive() {
 	root: Root {
 		-networks -> substrateNetwork
 		-networks -> virtualNetwork
 	}
 	
-	substrateSwitch: SubstrateSwitch {
+	substrateNode: SubstrateNode {
 		++ -guestSwitches -> virtualSwitch
 	}
 	
 	virtualSwitch : VirtualSwitch {
-		++ -host -> substrateSwitch
+		++ -host -> substrateNode
 	}
 	
 	substrateNetwork: SubstrateNetwork {
-		-nodes -> substrateSwitch
+		-nodes -> substrateNode
 	}
 	
 	virtualNetwork: VirtualNetwork {
