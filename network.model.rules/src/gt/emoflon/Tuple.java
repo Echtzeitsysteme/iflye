@@ -1,4 +1,4 @@
-package patternmatching.emoflon;
+package gt.emoflon;
 
 import model.SubstrateElement;
 import model.VirtualElement;

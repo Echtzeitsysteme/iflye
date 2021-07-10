@@ -1,12 +1,12 @@
-package patternmatching.emoflon.apps;
+package gt.emoflon.apps;
 
 import org.eclipse.emf.common.util.URI;
+import gt.emoflon.EmoflonGtAppUtils;
 import model.Root;
-import patternmatching.emoflon.EmoflonPatternMatcherAppUtils;
-import rules.api.RulesViatraApp;
+import rules.api.RulesDemoclesApp;
 
 /**
- * Wrapper class for initializing the Rules Viatra App pattern matcher.
+ * Wrapper class for initializing the Rules Democles App pattern matcher.
  * 
  * Parts of this implementation are heavily inspired, taken or adapted from the idyve project [1].
  * 
@@ -16,16 +16,16 @@ import rules.api.RulesViatraApp;
  * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class EmoflonPatternMatcherViatraApp extends RulesViatraApp {
+public class EmoflonGtDemoclesApp extends RulesDemoclesApp {
 
   /**
    * Constructor that initializes the model resources for a given root node.
    * 
    * @param root Root node to initialize model for.
    */
-  public EmoflonPatternMatcherViatraApp(final Root root) {
-    super(EmoflonPatternMatcherAppUtils.createTempDir().normalize().toString() + "/");
-    EmoflonPatternMatcherAppUtils.extractFiles(workspacePath);
+  public EmoflonGtDemoclesApp(final Root root) {
+    super(EmoflonGtAppUtils.createTempDir().normalize().toString() + "/");
+    EmoflonGtAppUtils.extractFiles(workspacePath);
     if (root.eResource() == null) {
       createModel(URI.createURI("model.xmi"));
       resourceSet.getResources().get(0).getContents().add(root);

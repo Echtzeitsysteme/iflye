@@ -4,14 +4,14 @@ import java.util.HashSet;
 import java.util.Set;
 import algorithms.AlgorithmConfig;
 import facade.ModelFacade;
+import gt.PatternMatchingDelta;
+import gt.emoflon.EmoflonGtFactory;
 import metrics.manager.GlobalMetricsManager;
 import model.Node;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 import model.VirtualServer;
 import model.VirtualSwitch;
-import patternmatching.PatternMatchingDelta;
-import patternmatching.emoflon.EmoflonPatternMatcherFactory;
 
 /**
  * Implementation of the model-driven virtual network algorithm that uses pattern matching as a way
@@ -95,7 +95,7 @@ public class VnePmMdvneAlgorithmMigration extends VnePmMdvneAlgorithm {
     // Repair model consistency: Virtual network(s)
     final Set<VirtualNetwork> repairedVnets = repairVirtualNetworks();
     if (!repairedVnets.isEmpty()) {
-      this.patternMatcher = new EmoflonPatternMatcherFactory().create();
+      this.patternMatcher = new EmoflonGtFactory().create();
     }
     vNets.addAll(repairedVnets);
 

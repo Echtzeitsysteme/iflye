@@ -1,11 +1,11 @@
-package patternmatching.emoflon;
+package gt.emoflon;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import patternmatching.emoflon.apps.EmoflonPatternMatcherHiPEApp;
+import gt.emoflon.apps.EmoflonGtHiPEApp;
 import rules.api.RulesAPI;
 
 /**
@@ -19,12 +19,12 @@ import rules.api.RulesAPI;
  * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class EmoflonPatternMatcherAppUtils {
+public class EmoflonGtAppUtils {
 
   /**
    * Private constructor forbids instantiation of objects.
    */
-  private EmoflonPatternMatcherAppUtils() {}
+  private EmoflonGtAppUtils() {}
 
   /**
    * Temporary directory (path).
@@ -58,7 +58,7 @@ public class EmoflonPatternMatcherAppUtils {
       return;
     }
     try (final InputStream is =
-        EmoflonPatternMatcherHiPEApp.class.getResourceAsStream("/rules/api/ibex-patterns.xmi")) {
+        EmoflonGtHiPEApp.class.getResourceAsStream("/rules/api/ibex-patterns.xmi")) {
       target.getParentFile().mkdirs();
       if (is == null) {
         throw new IllegalStateException("ibex-patterns are missing from the resources");

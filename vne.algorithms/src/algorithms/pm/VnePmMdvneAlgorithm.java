@@ -12,6 +12,11 @@ import java.util.stream.Collectors;
 import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
 import facade.config.ModelFacadeConfig;
+import gt.IncrementalPatternMatcher;
+import gt.PatternMatchingDelta;
+import gt.PatternMatchingDelta.Match;
+import gt.emoflon.EmoflonGt;
+import gt.emoflon.EmoflonGtFactory;
 import ilp.wrapper.IlpDelta;
 import ilp.wrapper.IlpSolverException;
 import ilp.wrapper.IncrementalIlpSolver;
@@ -35,11 +40,6 @@ import model.VirtualNetwork;
 import model.VirtualNode;
 import model.VirtualServer;
 import model.VirtualSwitch;
-import patternmatching.IncrementalPatternMatcher;
-import patternmatching.PatternMatchingDelta;
-import patternmatching.PatternMatchingDelta.Match;
-import patternmatching.emoflon.EmoflonPatternMatcher;
-import patternmatching.emoflon.EmoflonPatternMatcherFactory;
 
 /**
  * Implementation of the model-driven virtual network algorithm that uses pattern matching as a way
@@ -377,7 +377,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     // Repair model consistency: Virtual network(s)
     final Set<VirtualNetwork> repairedVnets = repairVirtualNetworks();
     if (!repairedVnets.isEmpty()) {
-      this.patternMatcher = new EmoflonPatternMatcherFactory().create();
+      this.patternMatcher = new EmoflonGtFactory().create();
     }
     vNets.addAll(repairedVnets);
 
@@ -623,7 +623,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
   protected Set<VirtualNetwork> updateMappingsAndEmbed(final Map<String, Boolean> mappings) {
     // Embed elements
     final Set<VirtualNetwork> rejectedNetworks = new HashSet<VirtualNetwork>();
-    final EmoflonPatternMatcher engine = (EmoflonPatternMatcher) patternMatcher;
+    final EmoflonGt engine = (EmoflonGt) patternMatcher;
 
     // for (final String s : newMappings) {
     for (final String s : mappings.keySet()) {
@@ -679,7 +679,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
     ilpSolver = new IncrementalGurobiSolver(IlpSolverConfig.TIME_OUT, IlpSolverConfig.RANDOM_SEED);
 
     if (patternMatcher == null) {
-      patternMatcher = new EmoflonPatternMatcherFactory().create();
+      patternMatcher = new EmoflonGtFactory().create();
     }
   }
 
