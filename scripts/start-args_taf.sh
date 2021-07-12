@@ -55,14 +55,6 @@ do
     echo "# => Using ARGS: $ARGS"
     echo "#"
     run
-
-    # With memory measurement
-    export RUN_NAME="${a}_${s}_l${l}_k${k}_run${i}_mem_taf"
-    export ARGS="-a $a -o total-taf-comm -e emoflon_wo_update -l $l -k $k -s resources/$s/snet.json -v resources/$s/vnets.json -c ./metrics/$RUN_NAME.csv -i 600 --memmeasurement"
-    echo "#"
-    echo "# => Using ARGS: $ARGS"
-    echo "#"
-    run
 done
 
 echo "#"
