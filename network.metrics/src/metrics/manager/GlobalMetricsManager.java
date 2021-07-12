@@ -187,11 +187,13 @@ public class GlobalMetricsManager {
    * @return Maximum amount of memory (RAM) used by the running Java process in MiB.
    */
   public static double getMemoryPid() {
-    if (MetricConfig.ENABLE_MEMORY) {
-      return new MemoryPidMetric().getValue();
-    } else {
-      return -1;
-    }
+    // TODO: Remove this temporary fix
+    // if (MetricConfig.ENABLE_MEMORY) {
+    // return new MemoryPidMetric().getValue();
+    // } else {
+    // return -1;
+    // }
+    return new MemoryPidMetric().getValue();
   }
 
 }

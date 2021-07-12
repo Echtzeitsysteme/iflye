@@ -45,15 +45,6 @@ do
     echo "# => Using ARGS: $ARGS"
     echo "#"
     run
-
-    # With memory measurement
-    export RUN_NAME="${a}_${s}-${p}-pods_l${l}_k1_run${i}_mem"
-    mkdir -p $OUTPUT$RUN_NAME
-    export ARGS="$a $p $s $l $OUTPUT$RUN_NAME/ 600 0 NEVER 40 memmeasurement"
-    echo "#"
-    echo "# => Using ARGS: $ARGS"
-    echo "#"
-    run
 done
 
 echo "#"

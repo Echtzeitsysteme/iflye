@@ -32,16 +32,12 @@ public class MemoryPidMetric implements IMetric {
     final File file = new File("/proc/" + getPid() + "/status");
     final List<String> lines = Unix4j.grep("VmHWM", file).toStringList();
     final String memComplex = lines.get(0);
-    final String mem =
-        memComplex.substring(memComplex.indexOf(" ")).replace(" ", "").replace("kB", "");
+    final String mem = memComplex.replaceAll("\\D+", "");
     long memory = -1L;
     try {
       memory = Long.valueOf(mem);
     } catch (final NumberFormatException ex) {
       System.err.println("Catched an exception while parsing the string: " + memComplex);
-      System.err.println("Attaching the complete proc status of my PID:");
-      lines.addAll(Unix4j.cat(file).toStringList());
-      lines.forEach(l -> System.err.println(l));
     } finally {
       this.memory = memory;
     }
