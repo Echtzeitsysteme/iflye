@@ -9,34 +9,35 @@ import org.emoflon.ibex.gt.api.GraphTransformationMatch;
 import gt.IncrementalPatternMatcher;
 import gt.PatternMatchingConfig;
 import gt.PatternMatchingDelta;
-import gt.emoflon.apps.EmoflonGtRackAHiPEApp;
+import gt.emoflon.apps.EmoflonGtRackBHiPEApp;
 import model.Element;
 import model.Root;
 import model.SubstrateElement;
 import model.VirtualElement;
-import network.model.rules.rack.api.RackAPI;
-import network.model.rules.rack.api.RackApp;
-import network.model.rules.rack.api.matches.LinkPathMatchPositiveMatch;
-import network.model.rules.rack.api.matches.LinkServerMatchPositiveMatch;
-import network.model.rules.rack.api.matches.ServerMatchPositiveMatch;
-import network.model.rules.rack.api.matches.SwitchMatchPositiveMatch;
+import network.model.rules.rackb.api.RackbAPI;
+import network.model.rules.rackb.api.RackbApp;
+import network.model.rules.rackb.api.matches.LinkPathMatchPositiveMatch;
+import network.model.rules.rackb.api.matches.LinkPathMatchServerServerMatch;
+import network.model.rules.rackb.api.matches.LinkServerMatchPositiveMatch;
+import network.model.rules.rackb.api.matches.ServerMatchPositiveMatch;
+import network.model.rules.rackb.api.matches.SwitchMatchPositiveMatch;
 
 /**
  * Implementation of the {@link IncrementalPatternMatcher} for eMoflon.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class EmoflonGtRackA implements IncrementalPatternMatcher {
+public class EmoflonGtRackB implements IncrementalPatternMatcher {
 
   /**
    * Rack Rules API object generated from graph transformation patterns.
    */
-  private final RackAPI api;
+  private final RackbAPI api;
 
   /**
    * Wrapper that initializes the API object.
    */
-  private final RackApp emoflonPatternMatcherApp;
+  private final RackbApp emoflonPatternMatcherApp;
 
   /**
    * Current state of the delta. Must be updated in every iteration.
@@ -58,10 +59,10 @@ public class EmoflonGtRackA implements IncrementalPatternMatcher {
    * 
    * @param root Root node to work with.
    */
-  public EmoflonGtRackA(final Root root) {
+  public EmoflonGtRackB(final Root root) {
     switch (PatternMatchingConfig.pm) {
       case HIPE:
-        emoflonPatternMatcherApp = new EmoflonGtRackAHiPEApp(root);
+        emoflonPatternMatcherApp = new EmoflonGtRackBHiPEApp(root);
         break;
       default:
         throw new UnsupportedOperationException();
@@ -79,11 +80,16 @@ public class EmoflonGtRackA implements IncrementalPatternMatcher {
     });
 
     api.switchMatchPositive().subscribeAppearing(m -> {
-      addMatch(currentDelta::addSwitchMatchPositive, m.getVirtualSwitch(), m.getSubstrateSwitch());
-      tupleToGtMatch.put(new Tuple(m.getVirtualSwitch(), m.getSubstrateSwitch()), m);
+      addMatch(currentDelta::addSwitchMatchPositive, m.getVirtualSwitch(), m.getSubstrateNode());
+      tupleToGtMatch.put(new Tuple(m.getVirtualSwitch(), m.getSubstrateNode()), m);
     });
 
     api.linkPathMatchPositive().subscribeAppearing(m -> {
+      addMatch(currentDelta::addLinkPathMatchPositive, m.getVirtualLink(), m.getSubstratePath());
+      tupleToGtMatch.put(new Tuple(m.getVirtualLink(), m.getSubstratePath()), m);
+    });
+
+    api.linkPathMatchServerServer().subscribeAppearing(m -> {
       addMatch(currentDelta::addLinkPathMatchPositive, m.getVirtualLink(), m.getSubstratePath());
       tupleToGtMatch.put(new Tuple(m.getVirtualLink(), m.getSubstratePath()), m);
     });
@@ -112,6 +118,8 @@ public class EmoflonGtRackA implements IncrementalPatternMatcher {
       api.linkServerMatchPositive().apply((LinkServerMatchPositiveMatch) match, doUpdate);
     } else if (match instanceof LinkPathMatchPositiveMatch) {
       api.linkPathMatchPositive().apply((LinkPathMatchPositiveMatch) match, doUpdate);
+    } else if (match instanceof LinkPathMatchServerServerMatch) {
+      api.linkPathMatchServerServer().apply((LinkPathMatchServerServerMatch) match, doUpdate);
     }
   }
 

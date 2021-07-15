@@ -1,21 +1,21 @@
 package gt.emoflon.apps;
 
 import model.Root;
-import network.model.rules.rack.api.RackHiPEApp;
+import network.model.rules.racka.api.RackaHiPEApp;
 
 /**
- * Wrapper class for initializing the rack B rules HiPe App pattern matcher.
+ * Wrapper class for initializing the rack A rules HiPe App pattern matcher.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class EmoflonGtRackBHiPEApp extends RackHiPEApp {
+public class EmoflonGtRackAHiPEApp extends RackaHiPEApp {
 
   /**
    * Constructor that initializes the model resources for a given root node.
    * 
    * @param root Root node to initialize model for.
    */
-  public EmoflonGtRackBHiPEApp(final Root root) {
+  public EmoflonGtRackAHiPEApp(final Root root) {
     resourceSet = root.eResource().getResourceSet();
   }
 

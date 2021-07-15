@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
-Automatic-Module-Name: network.model.rules.rack
+Automatic-Module-Name: network.model.rules.rackb
 Bundle-ManifestVersion: 2
-Bundle-Name: network.model.rules.rack
+Bundle-Name: network.model.rules.rackb
 Bundle-Vendor: My Company
 Bundle-Version: 1.0.0.qualifier
-Bundle-SymbolicName: network.model.rules.rack; singleton:=true
+Bundle-SymbolicName: network.model.rules.rackb;singleton:=true
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.log4j,
  org.apache.commons.logging
@@ -15,6 +15,6 @@ Require-Bundle: org.emoflon.ibex.common,
  org.emoflon.ibex.gt.democles,
  org.emoflon.ibex.gt.hipe,
  org.emoflon.ibex.gt.viatra
-Export-Package: network.model.rules.rack.api,
- network.model.rules.rack.api.matches,
- network.model.rules.rack.api.rules
+Export-Package: network.model.rules.rackb.api,
+ network.model.rules.rackb.api.matches,
+ network.model.rules.rackb.api.rules
