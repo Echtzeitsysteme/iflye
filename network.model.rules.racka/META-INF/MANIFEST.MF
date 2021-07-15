@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Automatic-Module-Name: network.model.rules.rack
+Bundle-ManifestVersion: 2
+Bundle-Name: network.model.rules.racka
+Bundle-Vendor: My Company
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: network.model.rules.racka;singleton:=true
+Bundle-ActivationPolicy: lazy
+Import-Package: org.apache.log4j,
+ org.apache.commons.logging
+Bundle-RequiredExecutionEnvironment: JavaSE-13
+Require-Bundle: org.emoflon.ibex.common,
+ org.emoflon.ibex.gt,
+ org.emoflon.ibex.patternmodel,
+ org.emoflon.ibex.gt.democles,
+ org.emoflon.ibex.gt.hipe,
+ org.emoflon.ibex.gt.viatra
+Export-Package: network.model.rules.racka.api,
+ network.model.rules.racka.api.matches,
+ network.model.rules.racka.api.rules

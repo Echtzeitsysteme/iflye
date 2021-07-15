@@ -3,7 +3,7 @@ package gt.emoflon.apps;
 import org.eclipse.emf.common.util.URI;
 import gt.emoflon.EmoflonGtAppUtils;
 import model.Root;
-import rules.api.RulesHiPEApp;
+import network.model.rules.api.RulesHiPEApp;
 
 /**
  * Wrapper class for initializing the Rules HiPe App pattern matcher.

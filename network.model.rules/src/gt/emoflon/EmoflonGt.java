@@ -16,12 +16,12 @@ import model.Element;
 import model.Root;
 import model.SubstrateElement;
 import model.VirtualElement;
-import rules.api.RulesAPI;
-import rules.api.RulesApp;
-import rules.api.matches.LinkPathMatchPositiveMatch;
-import rules.api.matches.LinkServerMatchPositiveMatch;
-import rules.api.matches.ServerMatchPositiveMatch;
-import rules.api.matches.SwitchNodeMatchPositiveMatch;
+import network.model.rules.api.RulesAPI;
+import network.model.rules.api.RulesApp;
+import network.model.rules.api.matches.LinkPathMatchPositiveMatch;
+import network.model.rules.api.matches.LinkServerMatchPositiveMatch;
+import network.model.rules.api.matches.ServerMatchPositiveMatch;
+import network.model.rules.api.matches.SwitchNodeMatchPositiveMatch;
 
 /**
  * Implementation of the {@link IncrementalPatternMatcher} for eMoflon.

@@ -1,7 +1,9 @@
 package gt.emoflon.apps;
 
+import org.eclipse.emf.common.util.URI;
+import gt.emoflon.EmoflonGtVnetAppUtils;
 import model.Root;
-import model.rules.vnet.api.VnetHiPEApp;
+import network.model.rules.vnet.api.VnetHiPEApp;
 
 /**
  * Wrapper class for initializing the Vnet rules HiPe App pattern matcher.
@@ -16,7 +18,13 @@ public class EmoflonGtVnetHiPEApp extends VnetHiPEApp {
    * @param root Root node to initialize model for.
    */
   public EmoflonGtVnetHiPEApp(final Root root) {
-    resourceSet = root.eResource().getResourceSet();
+    EmoflonGtVnetAppUtils.extractFiles(workspacePath);
+    if (root.eResource() == null) {
+      createModel(URI.createURI("model.xmi"));
+      resourceSet.getResources().get(0).getContents().add(root);
+    } else {
+      resourceSet = root.eResource().getResourceSet();
+    }
   }
 
 }
