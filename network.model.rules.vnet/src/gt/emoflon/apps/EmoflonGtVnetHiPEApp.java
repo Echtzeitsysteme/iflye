@@ -1,7 +1,7 @@
 package gt.emoflon.apps;
 
 import model.Root;
-import model.rules.vnet.api.VnetHiPEApp;
+import network.model.rules.vnet.api.VnetHiPEApp;
 
 /**
  * Wrapper class for initializing the Vnet rules HiPe App pattern matcher.

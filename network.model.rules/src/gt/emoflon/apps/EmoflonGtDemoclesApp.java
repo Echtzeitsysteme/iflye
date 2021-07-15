@@ -3,7 +3,7 @@ package gt.emoflon.apps;
 import org.eclipse.emf.common.util.URI;
 import gt.emoflon.EmoflonGtAppUtils;
 import model.Root;
-import rules.api.RulesDemoclesApp;
+import network.model.rules.api.RulesDemoclesApp;
 
 /**
  * Wrapper class for initializing the Rules Democles App pattern matcher.
