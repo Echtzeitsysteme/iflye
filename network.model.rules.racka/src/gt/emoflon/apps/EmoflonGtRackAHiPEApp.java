@@ -1,5 +1,7 @@
 package gt.emoflon.apps;
 
+import org.eclipse.emf.common.util.URI;
+import gt.emoflon.EmoflonGtRackAAppUtils;
 import model.Root;
 import network.model.rules.racka.api.RackaHiPEApp;
 
@@ -16,7 +18,13 @@ public class EmoflonGtRackAHiPEApp extends RackaHiPEApp {
    * @param root Root node to initialize model for.
    */
   public EmoflonGtRackAHiPEApp(final Root root) {
-    resourceSet = root.eResource().getResourceSet();
+    EmoflonGtRackAAppUtils.extractFiles(workspacePath);
+    if (root.eResource() == null) {
+      createModel(URI.createURI("model.xmi"));
+      resourceSet.getResources().get(0).getContents().add(root);
+    } else {
+      resourceSet = root.eResource().getResourceSet();
+    }
   }
 
 }
