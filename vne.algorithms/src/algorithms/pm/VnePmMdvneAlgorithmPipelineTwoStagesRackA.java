@@ -3,7 +3,7 @@ package algorithms.pm;
 import java.util.HashSet;
 import java.util.Set;
 import algorithms.AbstractAlgorithm;
-import algorithms.pm.stages.VnePmMdvneAlgorithmPipelineStageRack;
+import algorithms.pm.stages.VnePmMdvneAlgorithmPipelineStageRackA;
 import metrics.manager.GlobalMetricsManager;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
@@ -11,16 +11,16 @@ import model.VirtualNetwork;
 /**
  * Implementation of the model-driven virtual network algorithm that uses pattern matching as a way
  * to reduce the search space of the ILP solver. This implementation uses a two-stage pipeline
- * approach that first tries to embed a whole virtual network onto a substrate server.
+ * approach that first tries to embed a whole virtual network onto a substrate rack A.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class VnePmMdvneAlgorithmPipelineTwoStagesRack extends VnePmMdvneAlgorithm {
+public class VnePmMdvneAlgorithmPipelineTwoStagesRackA extends VnePmMdvneAlgorithm {
 
   /**
    * Algorithm instance (singleton).
    */
-  protected static VnePmMdvneAlgorithmPipelineTwoStagesRack instance;
+  protected static VnePmMdvneAlgorithmPipelineTwoStagesRackA instance;
 
   /**
    * Constructor that gets the substrate as well as the virtual network.
@@ -28,7 +28,7 @@ public class VnePmMdvneAlgorithmPipelineTwoStagesRack extends VnePmMdvneAlgorith
    * @param sNet Substrate network to work with.
    * @param vNets Set of virtual networks to work with.
    */
-  protected VnePmMdvneAlgorithmPipelineTwoStagesRack(final SubstrateNetwork sNet,
+  protected VnePmMdvneAlgorithmPipelineTwoStagesRackA(final SubstrateNetwork sNet,
       final Set<VirtualNetwork> vNets) {
     super(sNet, vNets);
   }
@@ -40,7 +40,7 @@ public class VnePmMdvneAlgorithmPipelineTwoStagesRack extends VnePmMdvneAlgorith
    * @param vNets Set of virtual networks to work with.
    * @return Instance of this algorithm implementation.
    */
-  public static VnePmMdvneAlgorithmPipelineTwoStagesRack prepare(final SubstrateNetwork sNet,
+  public static VnePmMdvneAlgorithmPipelineTwoStagesRackA prepare(final SubstrateNetwork sNet,
       final Set<VirtualNetwork> vNets) {
     if (sNet == null || vNets == null) {
       throw new IllegalArgumentException("One of the provided network objects was null.");
@@ -51,7 +51,7 @@ public class VnePmMdvneAlgorithmPipelineTwoStagesRack extends VnePmMdvneAlgorith
     }
 
     if (instance == null) {
-      instance = new VnePmMdvneAlgorithmPipelineTwoStagesRack(sNet, vNets);
+      instance = new VnePmMdvneAlgorithmPipelineTwoStagesRackA(sNet, vNets);
     }
     instance.sNet = sNet;
     instance.vNets = new HashSet<VirtualNetwork>();
@@ -97,7 +97,7 @@ public class VnePmMdvneAlgorithmPipelineTwoStagesRack extends VnePmMdvneAlgorith
     //
 
     System.out.println("=> Starting pipeline stage #1");
-    AbstractAlgorithm algo = VnePmMdvneAlgorithmPipelineStageRack.prepare(sNet, vNets);
+    AbstractAlgorithm algo = VnePmMdvneAlgorithmPipelineStageRackA.prepare(sNet, vNets);
     if (algo.execute()) {
       return true;
     }

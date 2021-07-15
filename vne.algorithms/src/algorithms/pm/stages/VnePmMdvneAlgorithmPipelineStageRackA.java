@@ -9,8 +9,8 @@ import gt.IncrementalPatternMatcher;
 import gt.PatternMatchingDelta;
 import gt.PatternMatchingDelta.Match;
 import gt.emoflon.EmoflonGtFactory;
-import gt.emoflon.EmoflonGtRack;
-import gt.emoflon.EmoflonGtRackFactory;
+import gt.emoflon.EmoflonGtRackA;
+import gt.emoflon.EmoflonGtRackAFactory;
 import ilp.wrapper.config.IlpSolverConfig;
 import ilp.wrapper.impl.IncrementalGurobiSolver;
 import metrics.manager.GlobalMetricsManager;
@@ -22,16 +22,16 @@ import model.VirtualNetwork;
 /**
  * Implementation of the model-driven virtual network algorithm that uses pattern matching as a way
  * to reduce the search space of the ILP solver. This implementation embeds virtual networks onto
- * racks.
+ * racks A.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class VnePmMdvneAlgorithmPipelineStageRack extends VnePmMdvneAlgorithm {
+public class VnePmMdvneAlgorithmPipelineStageRackA extends VnePmMdvneAlgorithm {
 
   /**
    * Algorithm instance (singleton).
    */
-  protected static VnePmMdvneAlgorithmPipelineStageRack instance;
+  protected static VnePmMdvneAlgorithmPipelineStageRackA instance;
 
   /**
    * Incremental pattern matcher to use for the second pipeline stage.
@@ -44,7 +44,7 @@ public class VnePmMdvneAlgorithmPipelineStageRack extends VnePmMdvneAlgorithm {
    * @param sNet Substrate network to work with.
    * @param vNets Set of virtual networks to work with.
    */
-  protected VnePmMdvneAlgorithmPipelineStageRack(final SubstrateNetwork sNet,
+  protected VnePmMdvneAlgorithmPipelineStageRackA(final SubstrateNetwork sNet,
       final Set<VirtualNetwork> vNets) {
     super(sNet, vNets);
   }
@@ -56,7 +56,7 @@ public class VnePmMdvneAlgorithmPipelineStageRack extends VnePmMdvneAlgorithm {
    * @param vNets Set of virtual networks to work with.
    * @return Instance of this algorithm implementation.
    */
-  public static VnePmMdvneAlgorithmPipelineStageRack prepare(final SubstrateNetwork sNet,
+  public static VnePmMdvneAlgorithmPipelineStageRackA prepare(final SubstrateNetwork sNet,
       final Set<VirtualNetwork> vNets) {
     if (sNet == null || vNets == null) {
       throw new IllegalArgumentException("One of the provided network objects was null.");
@@ -67,7 +67,7 @@ public class VnePmMdvneAlgorithmPipelineStageRack extends VnePmMdvneAlgorithm {
     }
 
     if (instance == null) {
-      instance = new VnePmMdvneAlgorithmPipelineStageRack(sNet, vNets);
+      instance = new VnePmMdvneAlgorithmPipelineStageRackA(sNet, vNets);
     }
     instance.sNet = sNet;
     instance.vNets = new HashSet<VirtualNetwork>();
@@ -159,7 +159,7 @@ public class VnePmMdvneAlgorithmPipelineStageRack extends VnePmMdvneAlgorithm {
     }
 
     if (patternMatcherRack == null) {
-      patternMatcherRack = new EmoflonGtRackFactory().create();
+      patternMatcherRack = new EmoflonGtRackAFactory().create();
     }
   }
 
@@ -174,7 +174,7 @@ public class VnePmMdvneAlgorithmPipelineStageRack extends VnePmMdvneAlgorithm {
   protected Set<VirtualNetwork> updateMappingsAndEmbed(final Map<String, Boolean> mappings) {
     // Embed elements
     final Set<VirtualNetwork> rejectedNetworks = new HashSet<VirtualNetwork>();
-    final EmoflonGtRack engine = (EmoflonGtRack) patternMatcherRack;
+    final EmoflonGtRackA engine = (EmoflonGtRackA) patternMatcherRack;
 
     // for (final String s : newMappings) {
     for (final String s : mappings.keySet()) {

@@ -4,7 +4,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: network.model.rules.rack
 Bundle-Vendor: My Company
 Bundle-Version: 1.0.0.qualifier
-Bundle-SymbolicName: network.model.rules.rack; singleton:=true
+Bundle-SymbolicName: network.model.rules.rack.a;singleton:=true
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.log4j,
  org.apache.commons.logging

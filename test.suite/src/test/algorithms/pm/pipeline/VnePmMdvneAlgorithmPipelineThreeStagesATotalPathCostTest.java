@@ -3,7 +3,7 @@ package test.algorithms.pm.pipeline;
 import java.util.Set;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
-import algorithms.pm.VnePmMdvneAlgorithmPipelineThreeStages;
+import algorithms.pm.VnePmMdvneAlgorithmPipelineThreeStagesA;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 import test.algorithms.pm.VnePmMdvneAlgorithmTotalPathCostTest;
@@ -14,13 +14,13 @@ import test.algorithms.pm.VnePmMdvneAlgorithmTotalPathCostTest;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class VnePmMdvneAlgorithmPipelineThreeStagesTotalPathCostTest
+public class VnePmMdvneAlgorithmPipelineThreeStagesATotalPathCostTest
     extends VnePmMdvneAlgorithmTotalPathCostTest {
 
   @Override
   public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
     AlgorithmConfig.obj = Objective.TOTAL_PATH_COST;
-    algo = VnePmMdvneAlgorithmPipelineThreeStages.prepare(sNet, vNets);
+    algo = VnePmMdvneAlgorithmPipelineThreeStagesA.prepare(sNet, vNets);
   }
 
 }

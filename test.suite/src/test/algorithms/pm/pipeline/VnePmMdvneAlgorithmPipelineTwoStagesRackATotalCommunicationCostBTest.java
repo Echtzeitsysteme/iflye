@@ -3,7 +3,7 @@ package test.algorithms.pm.pipeline;
 import java.util.Set;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
-import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesRack;
+import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesRackA;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 import test.algorithms.pm.VnePmMdvneAlgorithmTotalCommunicationCostBTest;
@@ -14,13 +14,13 @@ import test.algorithms.pm.VnePmMdvneAlgorithmTotalCommunicationCostBTest;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class VnePmMdvneAlgorithmPipelineTwoStagesRackTotalCommunicationCostBTest
+public class VnePmMdvneAlgorithmPipelineTwoStagesRackATotalCommunicationCostBTest
     extends VnePmMdvneAlgorithmTotalCommunicationCostBTest {
 
   @Override
   public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
     AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_B;
-    algo = VnePmMdvneAlgorithmPipelineTwoStagesRack.prepare(sNet, vNets);
+    algo = VnePmMdvneAlgorithmPipelineTwoStagesRackA.prepare(sNet, vNets);
   }
 
 }

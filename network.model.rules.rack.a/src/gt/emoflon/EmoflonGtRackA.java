@@ -9,7 +9,7 @@ import org.emoflon.ibex.gt.api.GraphTransformationMatch;
 import gt.IncrementalPatternMatcher;
 import gt.PatternMatchingConfig;
 import gt.PatternMatchingDelta;
-import gt.emoflon.apps.EmoflonGtRackHiPEApp;
+import gt.emoflon.apps.EmoflonGtRackAHiPEApp;
 import model.Element;
 import model.Root;
 import model.SubstrateElement;
@@ -26,7 +26,7 @@ import network.model.rules.rack.api.matches.SwitchMatchPositiveMatch;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class EmoflonGtRack implements IncrementalPatternMatcher {
+public class EmoflonGtRackA implements IncrementalPatternMatcher {
 
   /**
    * Rack Rules API object generated from graph transformation patterns.
@@ -58,10 +58,10 @@ public class EmoflonGtRack implements IncrementalPatternMatcher {
    * 
    * @param root Root node to work with.
    */
-  public EmoflonGtRack(final Root root) {
+  public EmoflonGtRackA(final Root root) {
     switch (PatternMatchingConfig.pm) {
       case HIPE:
-        emoflonPatternMatcherApp = new EmoflonGtRackHiPEApp(root);
+        emoflonPatternMatcherApp = new EmoflonGtRackAHiPEApp(root);
         break;
       default:
         throw new UnsupportedOperationException();

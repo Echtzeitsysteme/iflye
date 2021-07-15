@@ -1,7 +1,7 @@
 package test.algorithms.pm.pipeline;
 
 import java.util.Set;
-import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesRack;
+import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesRackA;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 import test.algorithms.pm.VnePmMdvneAlgorithmRepairModelServerTest;
@@ -13,12 +13,12 @@ import test.algorithms.pm.VnePmMdvneAlgorithmRepairModelServerTest;
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class VnePmMdvneAlgorithmPipelineTwoStagesRackRepairModelServerTest
+public class VnePmMdvneAlgorithmPipelineTwoStagesRackARepairModelServerTest
     extends VnePmMdvneAlgorithmRepairModelServerTest {
 
   @Override
   public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-    algo = VnePmMdvneAlgorithmPipelineTwoStagesRack.prepare(sNet, vNets);
+    algo = VnePmMdvneAlgorithmPipelineTwoStagesRackA.prepare(sNet, vNets);
   }
 
 }

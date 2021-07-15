@@ -19,8 +19,8 @@ import algorithms.ilp.VneIlpPathAlgorithm;
 import algorithms.ilp.VneIlpPathAlgorithmBatch;
 import algorithms.pm.VnePmMdvneAlgorithm;
 import algorithms.pm.VnePmMdvneAlgorithmMigration;
-import algorithms.pm.VnePmMdvneAlgorithmPipelineThreeStages;
-import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesRack;
+import algorithms.pm.VnePmMdvneAlgorithmPipelineThreeStagesA;
+import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesRackA;
 import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesVnet;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
@@ -386,9 +386,9 @@ public class DissScenarioLoad {
       case "pm-pipeline2-vnet":
         return VnePmMdvneAlgorithmPipelineTwoStagesVnet.prepare(sNet, vNets);
       case "pm-pipeline2-rack":
-        return VnePmMdvneAlgorithmPipelineTwoStagesRack.prepare(sNet, vNets);
+        return VnePmMdvneAlgorithmPipelineTwoStagesRackA.prepare(sNet, vNets);
       case "pm-pipeline3":
-        return VnePmMdvneAlgorithmPipelineThreeStages.prepare(sNet, vNets);
+        return VnePmMdvneAlgorithmPipelineThreeStagesA.prepare(sNet, vNets);
       case "ilp":
         return new VneIlpPathAlgorithm(sNet, vNets);
       case "ilp-batch":
