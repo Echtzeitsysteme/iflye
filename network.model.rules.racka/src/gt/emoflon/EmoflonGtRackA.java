@@ -9,36 +9,34 @@ import org.emoflon.ibex.gt.api.GraphTransformationMatch;
 import gt.IncrementalPatternMatcher;
 import gt.PatternMatchingConfig;
 import gt.PatternMatchingDelta;
-import gt.emoflon.apps.EmoflonGtDemoclesApp;
-import gt.emoflon.apps.EmoflonGtHiPEApp;
-import gt.emoflon.apps.EmoflonGtViatraApp;
+import gt.emoflon.apps.EmoflonGtRackAHiPEApp;
 import model.Element;
 import model.Root;
 import model.SubstrateElement;
 import model.VirtualElement;
-import network.model.rules.api.RulesAPI;
-import network.model.rules.api.RulesApp;
-import network.model.rules.api.matches.LinkPathMatchPositiveMatch;
-import network.model.rules.api.matches.LinkServerMatchPositiveMatch;
-import network.model.rules.api.matches.ServerMatchPositiveMatch;
-import network.model.rules.api.matches.SwitchNodeMatchPositiveMatch;
+import network.model.rules.racka.api.RackaAPI;
+import network.model.rules.racka.api.RackaApp;
+import network.model.rules.racka.api.matches.LinkPathMatchPositiveMatch;
+import network.model.rules.racka.api.matches.LinkServerMatchPositiveMatch;
+import network.model.rules.racka.api.matches.ServerMatchPositiveMatch;
+import network.model.rules.racka.api.matches.SwitchMatchPositiveMatch;
 
 /**
  * Implementation of the {@link IncrementalPatternMatcher} for eMoflon.
  * 
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
-public class EmoflonGt implements IncrementalPatternMatcher {
+public class EmoflonGtRackA implements IncrementalPatternMatcher {
 
   /**
-   * Rules API object generated from graph transformation patterns.
+   * Rack Rules API object generated from graph transformation patterns.
    */
-  private final RulesAPI api;
+  private final RackaAPI api;
 
   /**
    * Wrapper that initializes the API object.
    */
-  private final RulesApp emoflonPatternMatcherApp;
+  private final RackaApp emoflonPatternMatcherApp;
 
   /**
    * Current state of the delta. Must be updated in every iteration.
@@ -55,23 +53,15 @@ public class EmoflonGt implements IncrementalPatternMatcher {
    */
   private final Map<Tuple, GraphTransformationMatch<?, ?>> tupleToGtMatch = new UnifiedMap<>();
 
-  // TODO: Currently all update and removal functionality is missing!
-
   /**
    * Constructor that initializes the object for a given root node.
    * 
    * @param root Root node to work with.
    */
-  public EmoflonGt(final Root root) {
+  public EmoflonGtRackA(final Root root) {
     switch (PatternMatchingConfig.pm) {
       case HIPE:
-        emoflonPatternMatcherApp = new EmoflonGtHiPEApp(root);
-        break;
-      case DEMOCLES:
-        emoflonPatternMatcherApp = new EmoflonGtDemoclesApp(root);
-        break;
-      case VIATRA:
-        emoflonPatternMatcherApp = new EmoflonGtViatraApp(root);
+        emoflonPatternMatcherApp = new EmoflonGtRackAHiPEApp(root);
         break;
       default:
         throw new UnsupportedOperationException();
@@ -88,9 +78,9 @@ public class EmoflonGt implements IncrementalPatternMatcher {
       tupleToGtMatch.put(new Tuple(m.getVirtualNode(), m.getSubstrateNode()), m);
     });
 
-    api.switchNodeMatchPositive().subscribeAppearing(m -> {
-      addMatch(currentDelta::addSwitchMatchPositive, m.getVirtualSwitch(), m.getSubstrateNode());
-      tupleToGtMatch.put(new Tuple(m.getVirtualSwitch(), m.getSubstrateNode()), m);
+    api.switchMatchPositive().subscribeAppearing(m -> {
+      addMatch(currentDelta::addSwitchMatchPositive, m.getVirtualSwitch(), m.getSubstrateSwitch());
+      tupleToGtMatch.put(new Tuple(m.getVirtualSwitch(), m.getSubstrateSwitch()), m);
     });
 
     api.linkPathMatchPositive().subscribeAppearing(m -> {
@@ -103,7 +93,6 @@ public class EmoflonGt implements IncrementalPatternMatcher {
           m.getSubstrateServer());
       tupleToGtMatch.put(new Tuple(m.getVirtualLink(), m.getSubstrateServer()), m);
     });
-
   }
 
   /**
@@ -117,12 +106,12 @@ public class EmoflonGt implements IncrementalPatternMatcher {
     final GraphTransformationMatch<?, ?> match = tupleToGtMatch.get(new Tuple(virt, sub));
     if (match instanceof ServerMatchPositiveMatch) {
       api.serverMatchPositive().apply((ServerMatchPositiveMatch) match, doUpdate);
-    } else if (match instanceof SwitchNodeMatchPositiveMatch) {
-      api.switchNodeMatchPositive().apply((SwitchNodeMatchPositiveMatch) match, doUpdate);
-    } else if (match instanceof LinkPathMatchPositiveMatch) {
-      api.linkPathMatchPositive().apply((LinkPathMatchPositiveMatch) match, doUpdate);
+    } else if (match instanceof SwitchMatchPositiveMatch) {
+      api.switchMatchPositive().apply((SwitchMatchPositiveMatch) match, doUpdate);
     } else if (match instanceof LinkServerMatchPositiveMatch) {
       api.linkServerMatchPositive().apply((LinkServerMatchPositiveMatch) match, doUpdate);
+    } else if (match instanceof LinkPathMatchPositiveMatch) {
+      api.linkPathMatchPositive().apply((LinkPathMatchPositiveMatch) match, doUpdate);
     }
   }
 

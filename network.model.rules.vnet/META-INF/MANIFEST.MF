@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Automatic-Module-Name: model.rules.vnet
+Automatic-Module-Name: network.model.rules.vnet
 Bundle-ManifestVersion: 2
-Bundle-Name: model.rules.vnet
+Bundle-Name: network.model.rules.vnet
 Bundle-Vendor: My Company
 Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: network.model.rules.vnet;singleton:=true
@@ -15,6 +15,6 @@ Require-Bundle: org.emoflon.ibex.common,
  org.emoflon.ibex.gt.democles,
  org.emoflon.ibex.gt.hipe,
  org.emoflon.ibex.gt.viatra
-Export-Package: model.rules.vnet.api,
- model.rules.vnet.api.matches,
- model.rules.vnet.api.rules
+Export-Package: network.model.rules.vnet.api,
+ network.model.rules.vnet.api.matches,
+ network.model.rules.vnet.api.rules

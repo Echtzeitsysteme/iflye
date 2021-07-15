@@ -21,9 +21,9 @@ import model.VirtualElement;
 import model.VirtualNetwork;
 import model.VirtualServer;
 import model.VirtualSwitch;
-import model.rules.vnet.api.VnetAPI;
-import model.rules.vnet.api.VnetApp;
-import model.rules.vnet.api.matches.VnetToServerMatch;
+import network.model.rules.vnet.api.VnetAPI;
+import network.model.rules.vnet.api.VnetApp;
+import network.model.rules.vnet.api.matches.VnetToServerMatch;
 
 /**
  * Implementation of the {@link IncrementalPatternMatcher} for eMoflon.
