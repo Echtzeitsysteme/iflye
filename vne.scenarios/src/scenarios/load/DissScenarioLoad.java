@@ -22,6 +22,7 @@ import algorithms.pm.VnePmMdvneAlgorithmMigration;
 import algorithms.pm.VnePmMdvneAlgorithmPipelineThreeStagesA;
 import algorithms.pm.VnePmMdvneAlgorithmPipelineThreeStagesB;
 import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesRackA;
+import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesRackB;
 import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesVnet;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
@@ -149,8 +150,8 @@ public class DissScenarioLoad {
   /**
    * Parses the given arguments to configure the scenario.
    * <ol>
-   * <li>#0: Algorithm "pm", "pm-migration", "pm-pipeline2-vnet", "pm-pipeline2-rack",
-   * "pm-pipeline3a", "pm-pipeline3b", "ilp", "ilp-batch" or "taf"</li>
+   * <li>#0: Algorithm "pm", "pm-migration", "pm-pipeline2-vnet", "pm-pipeline2-racka",
+   * "pm-pipeline2-rackb", "pm-pipeline3a", "pm-pipeline3b", "ilp", "ilp-batch" or "taf"</li>
    * <li>#1: Objective "total-path", "total-comm-a", "total-comm-b", "total-comm-c", "total-comm-d",
    * "total-taf-comm"</li>
    * <li>#2: Embedding "emoflon", "emoflon_wo_update" or "manual" [only relevant for VNE PM
@@ -386,8 +387,10 @@ public class DissScenarioLoad {
         return VnePmMdvneAlgorithmMigration.prepare(sNet, vNets);
       case "pm-pipeline2-vnet":
         return VnePmMdvneAlgorithmPipelineTwoStagesVnet.prepare(sNet, vNets);
-      case "pm-pipeline2-rack":
+      case "pm-pipeline2-racka":
         return VnePmMdvneAlgorithmPipelineTwoStagesRackA.prepare(sNet, vNets);
+      case "pm-pipeline2-rackb":
+        return VnePmMdvneAlgorithmPipelineTwoStagesRackB.prepare(sNet, vNets);
       case "pm-pipeline3a":
         return VnePmMdvneAlgorithmPipelineThreeStagesA.prepare(sNet, vNets);
       case "pm-pipeline3b":
