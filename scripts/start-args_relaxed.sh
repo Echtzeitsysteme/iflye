@@ -15,9 +15,9 @@ function setup {
     fi
 
     # Extract hipe-network.xmi file
-    unzip -o $JAR "*/hipe-network.xmi"
-    rsync -a ./rules ./bin
-    rm -r ./rules
+    unzip -o $JAR "network/model/rules/*/hipe-network.xmi"
+    rsync -a ./network ./bin
+    rm -r ./network
 
     mkdir -p logs
 }
