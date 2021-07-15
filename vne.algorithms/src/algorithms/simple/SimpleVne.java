@@ -39,11 +39,11 @@ public class SimpleVne extends AbstractAlgorithm {
   public boolean execute() {
     final List<Node> subServers = facade.getAllServersOfNetwork(sNet.getName());
     String largestServerId = "";
-    int largestServerRes = Integer.MIN_VALUE;
+    long largestServerRes = Long.MAX_VALUE;
 
     for (Node actNode : subServers) {
       final SubstrateServer actServer = (SubstrateServer) actNode;
-      final int resSum = actServer.getResidualCpu() + actServer.getResidualMemory()
+      final long resSum = actServer.getResidualCpu() + actServer.getResidualMemory()
           + actServer.getResidualStorage();
       if (largestServerRes < resSum) {
         largestServerRes = resSum;

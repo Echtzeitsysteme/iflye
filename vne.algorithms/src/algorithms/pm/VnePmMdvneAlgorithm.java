@@ -62,11 +62,11 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
    * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
    * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
    */
-  class IlpDeltaGenerator {
+  public class IlpDeltaGenerator {
     /**
      * ILP delta object that holds all information.
      */
-    final IlpDelta delta = new IlpDelta();
+    protected final IlpDelta delta = new IlpDelta();
 
     /**
      * Mappings for the SOS1 constraints. Each virtual element IDs is a key and the corresponding
@@ -222,9 +222,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
      * @param server SubstrateServer to get information from.
      */
     public void addNewSubstrateServer(final SubstrateServer server) {
-      delta.addLessOrEqualsConstraint("cpu" + server.getName(), server.getResidualCpu());
-      delta.addLessOrEqualsConstraint("mem" + server.getName(), server.getResidualMemory());
-      delta.addLessOrEqualsConstraint("sto" + server.getName(), server.getResidualStorage());
+      delta.addLessOrEqualsConstraint("cpu" + server.getName(), (int) server.getResidualCpu());
+      delta.addLessOrEqualsConstraint("mem" + server.getName(), (int) server.getResidualMemory());
+      delta.addLessOrEqualsConstraint("sto" + server.getName(), (int) server.getResidualStorage());
     }
 
     /**
@@ -301,7 +301,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
   /**
    * Mapping of string (name) to matches.
    */
-  private final Map<String, Match> variablesToMatch = new HashMap<>();
+  protected final Map<String, Match> variablesToMatch = new HashMap<>();
 
   /**
    * Set of ignored virtual networks. Ignored virtual networks are requests, that can not fit on the

@@ -32,13 +32,13 @@ abstract class Node extends Element {
 @GenModel(documentation="Abstract class for all servers.")
 abstract class Server extends Node {
 	@GenModel(documentation="CPU amount of this server.")
-	attr EInt [1] cpu;
+	attr ELong [1] cpu;
 	
 	@GenModel(documentation="Memory (RAM) amout of this server.")
-	attr EInt [1] memory;
+	attr ELong [1] memory;
 	
 	@GenModel(documentation="Storage (HDD/SSD) amout of this server.")
-	attr EInt [1] storage;
+	attr ELong [1] storage;
 }
 
 @GenModel(documentation="Abstract class for all switches.")
@@ -101,13 +101,17 @@ class SubstrateServer extends Server, SubstrateNode {
 	ref VirtualServer [*]#host guestServers;
 	
 	@GenModel(documentation="Residual CPU amount of this server.")
-	attr EInt [1] residualCpu;
+	attr ELong [1] residualCpu;
 	
 	@GenModel(documentation="Residual memory amount of this server.")
-	attr EInt [1] residualMemory;
+	attr ELong [1] residualMemory;
 	
 	@GenModel(documentation="Residual storage amount of this server.")
-	attr EInt [1] residualStorage;
+	attr ELong [1] residualStorage;
+	
+	// Extension for directly hosting a complete virtual network
+	@GenModel(documentation="Virtual guest networks.")
+	ref VirtualNetwork [*]#hostServer guestNetworks;
 }
 
 @GenModel(documentation="Class that represents a substrate switch.")
@@ -193,4 +197,19 @@ class VirtualLink extends Link, VirtualElement {
 class VirtualNetwork extends Network, VirtualElement {
 	@GenModel(documentation="Host network that runs this virtual network.")
 	ref SubstrateNetwork [1]#guests host;
+	
+	// Extension for the total amount of server resources
+	// This resources have to be of type long, as the summed up storages may
+	// exceed the maximum possible value of type integer.
+	@GenModel(documentation="Total CPU amount of this virtual network.")
+	attr ELong [1] cpu;
+	
+	@GenModel(documentation="Total memory amount of this virtual network.")
+	attr ELong [1] memory;
+	
+	@GenModel(documentation="Total storage amount of this virtual network.")
+	attr ELong [1] storage;
+	
+	@GenModel(documentation="Host server that runs this virtual network.")
+	ref SubstrateServer [1]#guestNetworks hostServer;
 }

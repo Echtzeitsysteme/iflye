@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import gt.emoflon.apps.EmoflonGtHiPEApp;
-import rules.api.RulesAPI;
+import network.model.rules.api.RulesAPI;
 
 /**
  * Utility class for the Rules Apps.
@@ -58,7 +58,7 @@ public class EmoflonGtAppUtils {
       return;
     }
     try (final InputStream is =
-        EmoflonGtHiPEApp.class.getResourceAsStream("/rules/api/ibex-patterns.xmi")) {
+        EmoflonGtHiPEApp.class.getResourceAsStream("/network/model/rules/api/ibex-patterns.xmi")) {
       target.getParentFile().mkdirs();
       if (is == null) {
         throw new IllegalStateException("ibex-patterns are missing from the resources");

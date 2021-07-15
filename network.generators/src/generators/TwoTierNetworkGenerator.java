@@ -5,7 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 import generators.config.GlobalGeneratorConfig;
 import generators.config.IGeneratorConfig;
+import generators.config.OneTierConfig;
 import generators.config.TwoTierConfig;
+import model.VirtualNetwork;
 
 /**
  * Basic implementation of a two tier network topology generator.
@@ -148,6 +150,13 @@ public class TwoTierNetworkGenerator implements INetworkGenerator {
     // Generate paths
     if (!isVirtual) {
       facade.createAllPathsForNetwork(networkId);
+    } else {
+      final VirtualNetwork vnet = ((VirtualNetwork) facade.getNetworkById(networkId));
+      final OneTierConfig rack = config.getRack();
+      final int numberOfServers = config.getNumberOfRacks() * rack.getNumberOfServers();
+      vnet.setCpu(numberOfServers * rack.getCpuPerServer());
+      vnet.setMemory(numberOfServers * rack.getMemoryPerServer());
+      vnet.setStorage(numberOfServers * rack.getStoragePerServer());
     }
   }
 
