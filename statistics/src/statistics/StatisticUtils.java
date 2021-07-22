@@ -1,5 +1,7 @@
 package statistics;
 
+import java.util.Map;
+
 /**
  * Utility class for the statistics project.
  * 
@@ -13,7 +15,7 @@ public class StatisticUtils {
   private StatisticUtils() {}
 
   /**
-   * Assembled one line for the output CSV files with the statistics. Takes a counter (= line
+   * Assembles one line for the output CSV files with the statistics. Takes a counter (= line
    * number), the array of doubles for the mean, and an array of double for the standard derivation
    * and combines them to an array of strings in this form:
    * 
@@ -38,6 +40,27 @@ public class StatisticUtils {
     }
 
     return output;
+  }
+
+  /**
+   * Assembles one line for the output CSV file with time summing.
+   * 
+   * @param timeSums Mapping of time values to double array.
+   * @return String that represents the line of the output CSV file.
+   */
+  static String[] assembleTimeSumCsvLine(final Map<String, Double[]> timeSums) {
+    final String[] sums = new String[10];
+    sums[0] = String.valueOf(StatisticUtils.mean(timeSums.get("time_total")));
+    sums[1] = String.valueOf(StatisticUtils.stdDev(timeSums.get("time_total")));
+    sums[2] = String.valueOf(StatisticUtils.mean(timeSums.get("time_pm")));
+    sums[3] = String.valueOf(StatisticUtils.stdDev(timeSums.get("time_pm")));
+    sums[4] = String.valueOf(StatisticUtils.mean(timeSums.get("time_ilp")));
+    sums[5] = String.valueOf(StatisticUtils.stdDev(timeSums.get("time_ilp")));
+    sums[6] = String.valueOf(StatisticUtils.mean(timeSums.get("time_deploy")));
+    sums[7] = String.valueOf(StatisticUtils.stdDev(timeSums.get("time_deploy")));
+    sums[8] = String.valueOf(StatisticUtils.mean(timeSums.get("time_rest")));
+    sums[9] = String.valueOf(StatisticUtils.stdDev(timeSums.get("time_rest")));
+    return sums;
   }
 
   /**

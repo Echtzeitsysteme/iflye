@@ -129,7 +129,7 @@ public class CsvUtil {
 
   /**
    * Loads the CSV file for the given path and parses its metric values to a list (lines) of double
-   * arrays (columns). Please notice that this method has hardcoded values for the specific metric
+   * arrays (columns). Please notice that this method has hard-coded values for the specific metric
    * implementation.
    * 
    * @param csvPath Path for the metric CSV file to load.

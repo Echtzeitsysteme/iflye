@@ -14,14 +14,20 @@ import scenario.util.CsvUtil;
  */
 public class Runner {
 
+  // TODO: Find a way to dynamically determine upper limit (e.g., by using 'find')
+  /**
+   * Number of experiments (= runs).
+   */
+  private static final int NUM_OF_EXPS = 3;
+
   /**
    * Private constructor ensures no object instantiation.
    */
   private Runner() {}
 
   /**
-   * Main method to start the runner. Argument most contain the base name of the experiment to load
-   * files from, e.g., 'pm_fat-tree-4-pods_l3_k2'.
+   * Main method to start the runner. Argument must contain the base name of the experiment to load
+   * metric files from, e.g., 'pm_fat-tree-4-pods_l3_k2'.
    * 
    * @param args
    */
@@ -31,17 +37,21 @@ public class Runner {
     }
 
     final String expName = args[0];
+
+    //
+    // Statistics CSV file
+    //
+
     final List<List<Double[]>> data = new LinkedList<List<Double[]>>();
 
-    // TODO: Find a way to dynamically determine upper limit of i (e.g., by using 'find')
-    for (int i = 1; i <= 3; i++) {
+    for (int i = 1; i <= NUM_OF_EXPS; i++) {
       final List<Double[]> line = CsvUtil.loadCsvFile(expName + "_run" + i + ".csv");
       data.add(line);
     }
 
     final String outputName = expName + "_stats.csv";
 
-    // Currently, the number of metrics is hardcoded against CsvUtil.java
+    // Currently, the number of metrics is hard-coded against CsvUtil.java
     double[] outputMean = new double[17];
     double[] outputStdDev = new double[17];
 
@@ -67,7 +77,7 @@ public class Runner {
     }
 
     //
-    // Time summing
+    // Time summing CSV file
     //
 
     final Map<String, Double[]> timeSums = new HashMap<String, Double[]>();
@@ -83,7 +93,7 @@ public class Runner {
       }
     }
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < NUM_OF_EXPS; i++) {
       for (int line = 0; line < data.get(i).size(); line++) {
         timeSums.get("time_pm")[i] += data.get(i).get(line)[0];
         timeSums.get("time_ilp")[i] += data.get(i).get(line)[1];
@@ -97,19 +107,8 @@ public class Runner {
       }
     }
 
-    final String[] sums = new String[10];
-    sums[0] = String.valueOf(StatisticUtils.mean(timeSums.get("time_total")));
-    sums[1] = String.valueOf(StatisticUtils.stdDev(timeSums.get("time_total")));
-    sums[2] = String.valueOf(StatisticUtils.mean(timeSums.get("time_pm")));
-    sums[3] = String.valueOf(StatisticUtils.stdDev(timeSums.get("time_pm")));
-    sums[4] = String.valueOf(StatisticUtils.mean(timeSums.get("time_ilp")));
-    sums[5] = String.valueOf(StatisticUtils.stdDev(timeSums.get("time_ilp")));
-    sums[6] = String.valueOf(StatisticUtils.mean(timeSums.get("time_deploy")));
-    sums[7] = String.valueOf(StatisticUtils.stdDev(timeSums.get("time_deploy")));
-    sums[8] = String.valueOf(StatisticUtils.mean(timeSums.get("time_rest")));
-    sums[9] = String.valueOf(StatisticUtils.stdDev(timeSums.get("time_rest")));
-
-    CsvUtil.createCsvTimeSumFile(expName + "_timesums.csv", sums);
+    final String[] line = StatisticUtils.assembleTimeSumCsvLine(timeSums);
+    CsvUtil.createCsvTimeSumFile(expName + "_timesums.csv", line);
 
     System.out.println("=> Finished statistics file: " + outputName);
   }
