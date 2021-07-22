@@ -44,16 +44,17 @@ public class CsvUtil {
   protected static int csvCounter = 0;
 
   /**
-   * TODO
+   * CSV file header format for normal runs (simulation).
    */
-  private static CSVFormat format = CSVFormat.DEFAULT.withHeader("counter", "timestamp", "lastVNR",
-      "time_pm", "time_ilp", "time_deploy", "time_rest", "accepted_vnrs", "total_path_cost",
-      "average_path_length", "total_communication_cost_a", "total_communication_cost_b",
-      "total_communication_cost_c", "total_communication_cost_d", "total_taf_communication_cost",
-      "operation_cost", "memory_start", "memory_ilp", "memory_end", "memory_pid_max");
+  private static CSVFormat formatNormal =
+      CSVFormat.DEFAULT.withHeader("counter", "timestamp", "lastVNR", "time_pm", "time_ilp",
+          "time_deploy", "time_rest", "accepted_vnrs", "total_path_cost", "average_path_length",
+          "total_communication_cost_a", "total_communication_cost_b", "total_communication_cost_c",
+          "total_communication_cost_d", "total_taf_communication_cost", "operation_cost",
+          "memory_start", "memory_ilp", "memory_end", "memory_pid_max");
 
   /**
-   * TODO
+   * CSV file header format for mean and standard derivation (after simulation).
    */
   private static CSVFormat formatStats = CSVFormat.DEFAULT.withHeader("counter", //
       "time_pm", "time_pm_stddev", //
@@ -76,6 +77,17 @@ public class CsvUtil {
   );
 
   /**
+   * CSV file header format for summing up the time of an experiment (after simulation).
+   */
+  private static CSVFormat formatTimeSum = CSVFormat.DEFAULT.withHeader( //
+      "time_total", "time_total_stddev", //
+      "time_pm", "time_pm_stddev", //
+      "time_ilp", "time_ilp_stddev", //
+      "time_deploy", "time_deploy_stddev", //
+      "time_rest", "time_rest_stddev" //
+  );
+
+  /**
    * Appends the current state of the metrics to the CSV file.
    * 
    * @param lastVnr The Name of the last embedded virtual network (request).
@@ -84,67 +96,50 @@ public class CsvUtil {
    */
   public static void appendCsvLine(final String lastVnr, final String csvPath,
       final SubstrateNetwork sNet) {
-    // If file path is null, do not create a file at all
-    if (csvPath == null) {
-      return;
-    }
-
-    try {
-      BufferedWriter out;
-      // If file does not exist, write header to it
-      if (Files.notExists(Path.of(csvPath))) {
-        out = Files.newBufferedWriter(Paths.get(csvPath), StandardOpenOption.APPEND,
-            StandardOpenOption.CREATE);
-        try (final CSVPrinter printer = new CSVPrinter(out, format)) {
-          printer.close();
-        }
-      }
-
-      out = Files.newBufferedWriter(Paths.get(csvPath), StandardOpenOption.APPEND,
-          StandardOpenOption.CREATE);
-      try (final CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT)) {
-        printer.printRecord( //
-            csvCounter++, // line counter
-            java.time.LocalDateTime.now(), // time stamp
-            lastVnr, // name of the last embedded virtual network
-            GlobalMetricsManager.getRuntime().getPmValue() / MetricConsts.NANO_TO_MILLI, // PM
-            GlobalMetricsManager.getRuntime().getIlpValue() / MetricConsts.NANO_TO_MILLI, // ILP
-            GlobalMetricsManager.getRuntime().getDeployValue() / MetricConsts.NANO_TO_MILLI, // Deploy
-            GlobalMetricsManager.getRuntime().getRestValue() / MetricConsts.NANO_TO_MILLI, // Rest
-            (int) new AcceptedVnrMetric(sNet).getValue(), //
-            new TotalPathCostMetric(sNet).getValue(), //
-            new AveragePathLengthMetric(sNet).getValue(), //
-            new TotalCommunicationCostMetricA(sNet).getValue(), //
-            new TotalCommunicationCostMetricB(sNet).getValue(), //
-            new TotalCommunicationCostMetricC(sNet).getValue(), //
-            new TotalCommunicationCostMetricD(sNet).getValue(), //
-            new TotalTafCommunicationCostMetric(sNet).getValue(), //
-            new OperatingCostMetric(sNet).getValue(), //
-            GlobalMetricsManager.getMemory().getValue(0), // Memory start execute
-            GlobalMetricsManager.getMemory().getValue(1), // Memory before ILP
-            GlobalMetricsManager.getMemory().getValue(2), // Memory end execute
-            GlobalMetricsManager.getMemoryPid() // Maximum amount of memory (RAM) consumed
-        );
-        printer.close();
-      }
-      out.close();
-    } catch (final IOException e) {
-      // TODO: Error handling
-      e.printStackTrace();
-    }
+    final String[] content = new String[20];
+    content[0] = String.valueOf(csvCounter++); // line counter
+    content[1] = String.valueOf(java.time.LocalDateTime.now()); // time stamp
+    content[2] = String.valueOf(lastVnr); // name of the last embedded virtual network
+    content[3] =
+        String.valueOf(GlobalMetricsManager.getRuntime().getPmValue() / MetricConsts.NANO_TO_MILLI); // PM
+    content[4] = String
+        .valueOf(GlobalMetricsManager.getRuntime().getIlpValue() / MetricConsts.NANO_TO_MILLI); // ILP
+    content[5] = String
+        .valueOf(GlobalMetricsManager.getRuntime().getDeployValue() / MetricConsts.NANO_TO_MILLI); // Deploy
+    content[6] = String
+        .valueOf(GlobalMetricsManager.getRuntime().getRestValue() / MetricConsts.NANO_TO_MILLI); // Rest
+    content[7] = String.valueOf((int) new AcceptedVnrMetric(sNet).getValue());
+    content[8] = String.valueOf(new TotalPathCostMetric(sNet).getValue());
+    content[9] = String.valueOf(new AveragePathLengthMetric(sNet).getValue());
+    content[10] = String.valueOf(new TotalCommunicationCostMetricA(sNet).getValue());
+    content[11] = String.valueOf(new TotalCommunicationCostMetricB(sNet).getValue());
+    content[12] = String.valueOf(new TotalCommunicationCostMetricC(sNet).getValue());
+    content[13] = String.valueOf(new TotalCommunicationCostMetricD(sNet).getValue());
+    content[14] = String.valueOf(new TotalTafCommunicationCostMetric(sNet).getValue());
+    content[15] = String.valueOf(new OperatingCostMetric(sNet).getValue());
+    content[16] = String.valueOf(GlobalMetricsManager.getMemory().getValue(0)); // Memory start
+                                                                                // execute
+    content[17] = String.valueOf(GlobalMetricsManager.getMemory().getValue(1)); // Memory before ILP
+    content[18] = String.valueOf(GlobalMetricsManager.getMemory().getValue(2)); // Memory end
+                                                                                // execute
+    content[19] = String.valueOf(GlobalMetricsManager.getMemoryPid()); // Maximum amount of memory
+                                                                       // (RAM) consumed
+    writeCsvLine(csvPath, formatNormal, content);
   }
 
   /**
-   * TODO!
+   * Loads the CSV file for the given path and parses its metric values to a list (lines) of double
+   * arrays (columns). Please notice that this method has hardcoded values for the specific metric
+   * implementation.
    * 
-   * @param csvPath
-   * @return
+   * @param csvPath Path for the metric CSV file to load.
+   * @return List of double arrays with the metrics.
    */
   public static List<Double[]> loadCsvFile(final String csvPath) {
     final List<Double[]> metrics = new LinkedList<Double[]>();
 
     try {
-      final CSVParser parser = new CSVParser(new FileReader(csvPath), format);
+      final CSVParser parser = new CSVParser(new FileReader(csvPath), formatNormal);
       final List<CSVRecord> recs = parser.getRecords();
       for (int i = 1; i < recs.size(); i++) {
         final Double[] val = new Double[17];
@@ -168,6 +163,28 @@ public class CsvUtil {
    * @param statsLine Line to add to the statistics CSV file.
    */
   public static void appendCsvStatsLine(final String csvPath, final String[] statsLine) {
+    writeCsvLine(csvPath, formatStats, statsLine);
+  }
+
+  /**
+   * Creates a CSV file with the header and one line of the summed time values.
+   * 
+   * @param csvPath Path for the time sum CSV file.
+   * @param statsLine Line to add to the time sume CSV file.
+   */
+  public static void createCsvTimeSumFile(final String csvPath, final String[] statsLine) {
+    writeCsvLine(csvPath, formatTimeSum, statsLine);
+  }
+
+  /**
+   * Method that actually writes the CSV file.
+   * 
+   * @param csvPath Path for the CSV file to create or append line.
+   * @param format Chosen header format of the CSV file.
+   * @param content Content of the line to add as string array.
+   */
+  private static void writeCsvLine(final String csvPath, final CSVFormat format,
+      final String[] content) {
     // If file path is null, do not create a file at all
     if (csvPath == null) {
       return;
@@ -179,7 +196,7 @@ public class CsvUtil {
       if (Files.notExists(Path.of(csvPath))) {
         out = Files.newBufferedWriter(Paths.get(csvPath), StandardOpenOption.APPEND,
             StandardOpenOption.CREATE);
-        try (final CSVPrinter printer = new CSVPrinter(out, formatStats)) {
+        try (final CSVPrinter printer = new CSVPrinter(out, format)) {
           printer.close();
         }
       }
@@ -187,8 +204,7 @@ public class CsvUtil {
       out = Files.newBufferedWriter(Paths.get(csvPath), StandardOpenOption.APPEND,
           StandardOpenOption.CREATE);
       try (final CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT)) {
-        // TODO: Remove warning
-        printer.printRecord(statsLine);
+        printer.printRecord((Object[]) content);
         printer.close();
       }
       out.close();
