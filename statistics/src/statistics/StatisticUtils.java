@@ -46,7 +46,7 @@ public class StatisticUtils {
    * @param values Array of doubles.
    * @return Mean.
    */
-  static double mean(final double[] values) {
+  static double mean(final Double[] values) {
     if (values == null) {
       throw new IllegalArgumentException("Argument was null.");
     }
@@ -65,7 +65,7 @@ public class StatisticUtils {
    * @param values Array of doubles.
    * @return Standard derivation.
    */
-  static double stdDev(final double[] values) {
+  static double stdDev(final Double[] values) {
     final double mean = mean(values);
     double val = 0;
 
