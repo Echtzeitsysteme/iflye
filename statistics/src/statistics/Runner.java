@@ -29,7 +29,7 @@ public class Runner {
    * Main method to start the runner. Argument must contain the base name of the experiment to load
    * metric files from, e.g., 'pm_fat-tree-4-pods_l3_k2'.
    * 
-   * @param args
+   * @param args Arguments to parse, i.e., args[0] must hold the experiment's name to load.
    */
   public static void main(final String[] args) {
     if (args == null || args.length < 1) {

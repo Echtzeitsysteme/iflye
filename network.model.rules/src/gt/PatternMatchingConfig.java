@@ -22,7 +22,7 @@ public class PatternMatchingConfig {
   }
 
   /**
-   * Pattern matching mechanism for the {@link VnePmMdvneAlgorithm}.
+   * Pattern matching mechanism for the VnePmMdvneAlgorithm.
    */
   public static PatternMatcher pm = PatternMatcher.HIPE;
 
