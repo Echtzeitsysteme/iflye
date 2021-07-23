@@ -25,7 +25,7 @@ import model.Network;
 import model.Node;
 import model.Root;
 import model.Server;
-import model.SubstrateElement;
+import model.SubstrateHostLink;
 import model.SubstrateLink;
 import model.SubstrateNetwork;
 import model.SubstrateNode;
@@ -1269,7 +1269,7 @@ public class ModelFacade {
 
       for (final Link l : vNet.getLinks()) {
         final VirtualLink vl = (VirtualLink) l;
-        final SubstrateElement host = vl.getHost();
+        final SubstrateHostLink host = vl.getHost();
         if (host == null) {
           continue;
         }

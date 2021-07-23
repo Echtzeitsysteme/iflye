@@ -28,7 +28,7 @@ public class ActiveSubstrateSwitchMetric implements IMetric {
 
     for (final Node n : facade.getAllSwitchesOfNetwork(sNet.getName())) {
       final SubstrateSwitch sw = (SubstrateSwitch) n;
-      if (!sw.getGuestSwitches().isEmpty() || !sw.getGuestLinks().isEmpty()) {
+      if (!sw.getGuestSwitches().isEmpty()) {
         value++;
       }
     }
