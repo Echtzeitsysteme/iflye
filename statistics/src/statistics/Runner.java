@@ -52,13 +52,13 @@ public class Runner {
     final String outputName = expName + "_stats.csv";
 
     // Currently, the number of metrics is hard-coded against CsvUtil.java
-    double[] outputMean = new double[17];
-    double[] outputStdDev = new double[17];
+    double[] outputMean = new double[18];
+    double[] outputStdDev = new double[18];
 
     // Iterate over all lines of the files
     for (int v = 0; v < data.get(0).size(); v++) {
       // Iterate over all metrics
-      for (int i = 0; i < 17; i++) {
+      for (int i = 0; i < 18; i++) {
         final Double[] values = new Double[data.size()];
 
         // Iterate over the data sets (= files)

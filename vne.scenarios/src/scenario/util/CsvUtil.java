@@ -73,7 +73,8 @@ public class CsvUtil {
       "memory_start", "memory_start_stddev", //
       "memory_ilp", "memory_ilp_stddev", //
       "memory_end", "memory_end_stddev", //
-      "memory_pid_max", "memory_pid_max_stddev"//
+      "memory_pid_max", "memory_pid_max_stddev", //
+      "time_total", "time_total_stddev" //
   );
 
   /**
@@ -142,11 +143,18 @@ public class CsvUtil {
       final CSVParser parser = new CSVParser(new FileReader(csvPath), formatNormal);
       final List<CSVRecord> recs = parser.getRecords();
       for (int i = 1; i < recs.size(); i++) {
-        final Double[] val = new Double[17];
+        final Double[] val = new Double[18];
         final CSVRecord rec = recs.get(i);
         for (int j = 3; j <= 19; j++) {
           val[j - 3] = Double.valueOf(rec.get(j));
         }
+
+        // Sum time metrics up
+        val[17] = val[0] // time_pm
+            + val[1] // time_ilp
+            + val[2] // time_deploy
+            + val[3]; // time_rest
+
         metrics.add(val);
       }
     } catch (final IOException e) {
