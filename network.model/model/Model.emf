@@ -75,9 +75,6 @@ abstract class Network extends Element {
 
 @GenModel(documentation="Abstract class that represents a substrate element.")
 abstract class SubstrateElement extends Element {
-	// Keep in mind: The host element must not be a switch!
-	@GenModel(documentation="Virtual guest links.")
-	ref VirtualLink [*]#host guestLinks;
 }
 
 @GenModel(documentation="Abstract class that represents a substrate node.")
@@ -95,8 +92,14 @@ abstract class SubstrateNode extends Node, SubstrateElement {
 	ref SubstratePath [*]#target incomingPaths;
 }
 
+@GenModel(documentation="Abstract class that can host a virtual link.")
+abstract class SubstrateHostLink extends SubstrateElement {
+	@GenModel(documentation="Virtual guest links.")
+	ref VirtualLink [*]#host guestLinks;
+}
+
 @GenModel(documentation="Class that represents a substrate server.")
-class SubstrateServer extends Server, SubstrateNode {
+class SubstrateServer extends Server, SubstrateNode, SubstrateHostLink {
 	@GenModel(documentation="Virtual guest servers.")
 	ref VirtualServer [*]#host guestServers;
 	
@@ -120,7 +123,7 @@ class SubstrateSwitch extends Switch, SubstrateNode {
 }
 
 @GenModel(documentation="Class that represents a substrate link.")
-class SubstrateLink extends Link, SubstrateElement {
+class SubstrateLink extends Link, SubstrateElement, SubstrateHostLink {
 	@GenModel(documentation="Residual bandwidth amount of this link.")
 	attr EInt [1] residualBandwidth;
 	
@@ -129,7 +132,7 @@ class SubstrateLink extends Link, SubstrateElement {
 }
 
 @GenModel(documentation="Class that represents a substrate path.")
-class SubstratePath extends SubstrateElement {
+class SubstratePath extends SubstrateElement, SubstrateHostLink {
 	@GenModel(documentation="Network this path belongs to.") 
 	ref SubstrateNetwork [1]#paths network;
 	
@@ -188,9 +191,8 @@ class VirtualSwitch extends Switch, VirtualNode {
 
 @GenModel(documentation="Class that represents a virtual link.")
 class VirtualLink extends Link, VirtualElement {
-	// Keep in mind: The host element must not be a switch!
 	@GenModel(documentation="Substrate host element.")
-	ref SubstrateElement [1]#guestLinks host;
+	ref SubstrateHostLink [1]#guestLinks host;
 }
 
 @GenModel(documentation="Represents a virtual network.")
