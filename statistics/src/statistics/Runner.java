@@ -72,7 +72,8 @@ public class Runner {
       }
 
       // Write line to statistic CSV file
-      final String[] line = StatisticUtils.assembleCsvLine(v, outputMean, outputStdDev);
+      final String[] line = StatisticUtils
+          .assembleCsvLine(StatisticConfig.VN_NAME_OFFSET ? v + 1 : v, outputMean, outputStdDev);
       CsvUtil.appendCsvStatsLine(outputName, line);
     }
 
