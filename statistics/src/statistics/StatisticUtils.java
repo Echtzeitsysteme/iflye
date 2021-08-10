@@ -50,16 +50,16 @@ public class StatisticUtils {
    */
   static String[] assembleTimeSumCsvLine(final Map<String, Double[]> timeSums) {
     final String[] sums = new String[10];
-    sums[0] = String.valueOf(StatisticUtils.mean(timeSums.get("time_total")));
-    sums[1] = String.valueOf(StatisticUtils.stdDev(timeSums.get("time_total")));
-    sums[2] = String.valueOf(StatisticUtils.mean(timeSums.get("time_pm")));
-    sums[3] = String.valueOf(StatisticUtils.stdDev(timeSums.get("time_pm")));
-    sums[4] = String.valueOf(StatisticUtils.mean(timeSums.get("time_ilp")));
-    sums[5] = String.valueOf(StatisticUtils.stdDev(timeSums.get("time_ilp")));
-    sums[6] = String.valueOf(StatisticUtils.mean(timeSums.get("time_deploy")));
-    sums[7] = String.valueOf(StatisticUtils.stdDev(timeSums.get("time_deploy")));
-    sums[8] = String.valueOf(StatisticUtils.mean(timeSums.get("time_rest")));
-    sums[9] = String.valueOf(StatisticUtils.stdDev(timeSums.get("time_rest")));
+    sums[0] = String.valueOf(round(StatisticUtils.mean(timeSums.get("time_total"))));
+    sums[1] = String.valueOf(round(StatisticUtils.stdDev(timeSums.get("time_total"))));
+    sums[2] = String.valueOf(round(StatisticUtils.mean(timeSums.get("time_pm"))));
+    sums[3] = String.valueOf(round(StatisticUtils.stdDev(timeSums.get("time_pm"))));
+    sums[4] = String.valueOf(round(StatisticUtils.mean(timeSums.get("time_ilp"))));
+    sums[5] = String.valueOf(round(StatisticUtils.stdDev(timeSums.get("time_ilp"))));
+    sums[6] = String.valueOf(round(StatisticUtils.mean(timeSums.get("time_deploy"))));
+    sums[7] = String.valueOf(round(StatisticUtils.stdDev(timeSums.get("time_deploy"))));
+    sums[8] = String.valueOf(round(StatisticUtils.mean(timeSums.get("time_rest"))));
+    sums[9] = String.valueOf(round(StatisticUtils.stdDev(timeSums.get("time_rest"))));
     return sums;
   }
 
@@ -97,6 +97,18 @@ public class StatisticUtils {
     }
 
     return Math.sqrt(val);
+  }
+
+  /**
+   * Rounds the given double value according to the modules configuration.
+   * 
+   * @param value Input value.
+   * @return Output value (rounded if configured).
+   */
+  static double round(final double value) {
+    return StatisticConfig.ROUND_TIMESUMS //
+        ? Double.valueOf(StatisticConfig.ROUND_FORMAT.format(value)) //
+        : value;
   }
 
 }
