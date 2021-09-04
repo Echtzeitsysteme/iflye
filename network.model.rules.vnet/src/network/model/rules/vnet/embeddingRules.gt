@@ -43,9 +43,10 @@ rule vnetToServer() {
 	# virtualNetwork.storage <= substrateNode.residualStorage
 	
 	// Explicitly exclude substrate servers with any residual resource equals to 0
+	// TODO: Fix data type mismatch
+	// See: https://github.com/eMoflon/emoflon-ibex/issues/408
 //	# substrateNode.residualCpu > 0
 //	# substrateNode.residualMemory > 0
 //	# substrateNode.residualStorage > 0
-	// TODO: Fix data type mismatch
 }
 
