@@ -72,6 +72,10 @@ public class VnePmMdvneAlgorithmPipelineThreeStagesB extends VnePmMdvneAlgorithm
     }
     super.dispose();
     instance = null;
+
+    // Dispose also the first two stages
+    VnePmMdvneAlgorithmPipelineStageVnet.prepare(sNet, vNets).dispose();
+    VnePmMdvneAlgorithmPipelineStageRackB.prepare(sNet, vNets).dispose();
   }
 
   @Override

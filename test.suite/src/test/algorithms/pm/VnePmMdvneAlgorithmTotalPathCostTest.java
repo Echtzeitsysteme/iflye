@@ -93,12 +93,12 @@ public class VnePmMdvneAlgorithmTotalPathCostTest extends AAlgorithmMultipleVnsT
     sNet.getPaths().forEach(p -> {
       if (p.getHops() == 1) {
         // Path itself
-        final SubstratePath sp = (SubstratePath) p;
+        final SubstratePath sp = p;
         assertTrue(sp.getBandwidth() != sp.getResidualBandwidth());
 
         // Links
         sp.getLinks().forEach(l -> {
-          final SubstrateLink sl = (SubstrateLink) l;
+          final SubstrateLink sl = l;
           assertTrue(sl.getBandwidth() != sl.getResidualBandwidth());
         });
       }
