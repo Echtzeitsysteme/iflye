@@ -6,21 +6,14 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import org.eclipse.collections.impl.map.mutable.UnifiedMap;
 import org.emoflon.ibex.gt.api.GraphTransformationMatch;
-import facade.ModelFacade;
 import gt.IncrementalPatternMatcher;
 import gt.PatternMatchingConfig;
 import gt.PatternMatchingDelta;
 import gt.emoflon.apps.EmoflonGtVnetHiPEApp;
 import model.Element;
-import model.Link;
-import model.Node;
 import model.Root;
 import model.SubstrateElement;
-import model.SubstrateServer;
 import model.VirtualElement;
-import model.VirtualNetwork;
-import model.VirtualServer;
-import model.VirtualSwitch;
 import network.model.rules.vnet.api.VnetAPI;
 import network.model.rules.vnet.api.VnetApp;
 import network.model.rules.vnet.api.matches.VnetToServerMatch;
@@ -95,29 +88,6 @@ public class EmoflonGtVnet implements IncrementalPatternMatcher {
     final GraphTransformationMatch<?, ?> match = tupleToGtMatch.get(new Tuple(virt, sub));
     if (match instanceof VnetToServerMatch) {
       api.vnetToServer().apply((VnetToServerMatch) match, doUpdate);
-
-      // TODO: Currently, all virtual elements have to be embedded manually
-      embedElements((VirtualNetwork) virt, (SubstrateServer) sub);
-    }
-  }
-
-  /**
-   * FIXME: Remove this method after implementing whole embedding using GT.
-   * 
-   * @param vnet Virtual network to embed.
-   * @param sub Substrate server to embed virtual network on.
-   */
-  private void embedElements(final VirtualNetwork vnet, final SubstrateServer sub) {
-    for (final Node n : vnet.getNodes()) {
-      if (n instanceof VirtualServer) {
-        ModelFacade.getInstance().embedServerToServer(sub.getName(), n.getName());
-      } else if (n instanceof VirtualSwitch) {
-        ModelFacade.getInstance().embedSwitchToNode(sub.getName(), n.getName());
-      }
-    }
-
-    for (final Link l : vnet.getLinks()) {
-      ModelFacade.getInstance().embedLinkToServer(sub.getName(), l.getName());
     }
   }
 
