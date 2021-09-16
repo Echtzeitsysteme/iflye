@@ -1,5 +1,6 @@
 package statistics;
 
+import java.text.DecimalFormat;
 import java.util.Map;
 
 /**
@@ -50,16 +51,16 @@ public class StatisticUtils {
    */
   static String[] assembleTimeSumCsvLine(final Map<String, Double[]> timeSums) {
     final String[] sums = new String[10];
-    sums[0] = String.valueOf(round(StatisticUtils.mean(timeSums.get("time_total"))));
-    sums[1] = String.valueOf(round(StatisticUtils.stdDev(timeSums.get("time_total"))));
-    sums[2] = String.valueOf(round(StatisticUtils.mean(timeSums.get("time_pm"))));
-    sums[3] = String.valueOf(round(StatisticUtils.stdDev(timeSums.get("time_pm"))));
-    sums[4] = String.valueOf(round(StatisticUtils.mean(timeSums.get("time_ilp"))));
-    sums[5] = String.valueOf(round(StatisticUtils.stdDev(timeSums.get("time_ilp"))));
-    sums[6] = String.valueOf(round(StatisticUtils.mean(timeSums.get("time_deploy"))));
-    sums[7] = String.valueOf(round(StatisticUtils.stdDev(timeSums.get("time_deploy"))));
-    sums[8] = String.valueOf(round(StatisticUtils.mean(timeSums.get("time_rest"))));
-    sums[9] = String.valueOf(round(StatisticUtils.stdDev(timeSums.get("time_rest"))));
+    sums[0] = String.valueOf(roundTimesums(StatisticUtils.mean(timeSums.get("time_total"))));
+    sums[1] = String.valueOf(roundTimesums(StatisticUtils.stdDev(timeSums.get("time_total"))));
+    sums[2] = String.valueOf(roundTimesums(StatisticUtils.mean(timeSums.get("time_pm"))));
+    sums[3] = String.valueOf(roundTimesums(StatisticUtils.stdDev(timeSums.get("time_pm"))));
+    sums[4] = String.valueOf(roundTimesums(StatisticUtils.mean(timeSums.get("time_ilp"))));
+    sums[5] = String.valueOf(roundTimesums(StatisticUtils.stdDev(timeSums.get("time_ilp"))));
+    sums[6] = String.valueOf(roundTimesums(StatisticUtils.mean(timeSums.get("time_deploy"))));
+    sums[7] = String.valueOf(roundTimesums(StatisticUtils.stdDev(timeSums.get("time_deploy"))));
+    sums[8] = String.valueOf(roundTimesums(StatisticUtils.mean(timeSums.get("time_rest"))));
+    sums[9] = String.valueOf(roundTimesums(StatisticUtils.stdDev(timeSums.get("time_rest"))));
     return sums;
   }
 
@@ -100,14 +101,49 @@ public class StatisticUtils {
   }
 
   /**
-   * Rounds the given double value according to the modules configuration.
+   * Rounds the given double value (time sum) according to the modules configuration.
    * 
    * @param value Input value.
    * @return Output value (rounded if configured).
    */
-  static double round(final double value) {
-    return StatisticConfig.ROUND_TIMESUMS //
-        ? Double.valueOf(StatisticConfig.ROUND_FORMAT.format(value)) //
+  static double roundTimesums(final double value) {
+    return round(value, StatisticConfig.ROUND_TIMESUMS, StatisticConfig.ROUND_TIMESUMS_FORMAT);
+  }
+
+  /**
+   * Rounds the given double value (total time) according to the modules configuration.
+   * 
+   * @param value Input value.
+   * @return Output value (rounded if configured).
+   */
+  static double roundTimetotal(final double value) {
+    return round(value, StatisticConfig.ROUND_TIMETOTAL_STATS,
+        StatisticConfig.ROUND_TIMETOTAL_FORMAT);
+  }
+
+  /**
+   * Rounds the given double value (total time standard deviation) according to the modules
+   * configuration.
+   * 
+   * @param value Input value.
+   * @return Output value (rounded if configured).
+   */
+  static double roundTimetotalstddev(final double value) {
+    return round(value, StatisticConfig.ROUND_TIMETOTAL_STATS,
+        StatisticConfig.ROUND_TIMETOTALSTDDEV_FORMAT);
+  }
+
+  /**
+   * Actual rounding method.
+   * 
+   * @param value Input double value.
+   * @param round If true, value gets rounded.
+   * @param format DecimalFormat that configures the decimal places.
+   * @return Rounded value
+   */
+  private static double round(final double value, final boolean round, final DecimalFormat format) {
+    return round //
+        ? Double.valueOf(format.format(value)) //
         : value;
   }
 
