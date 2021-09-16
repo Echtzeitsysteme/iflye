@@ -69,6 +69,13 @@ public class Runner {
         // Calculate values
         outputMean[i] = StatisticUtils.mean(values);
         outputStdDev[i] = StatisticUtils.stdDev(values);
+
+        // If the metric is the last one -> Check if rounding of time_total and time_total_stddev is
+        // necessary
+        if (i == 17) {
+          outputMean[i] = StatisticUtils.roundTimetotal(outputMean[i]);
+          outputStdDev[i] = StatisticUtils.roundTimetotalstddev(outputStdDev[i]);
+        }
       }
 
       // Write line to statistic CSV file
