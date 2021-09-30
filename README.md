@@ -9,7 +9,7 @@
 * Install eMoflon::IBeX as described [here](https://github.com/eMoflon/emoflon-ibex#how-to-develop).
 * Install [Gurobi](https://www.gurobi.com/) in version `8.1.1` and activate a license for your computer.
 * Launch a runtime workspace (while using a runtime Eclipse) as stated in the eMoflon::IBeX installation steps.
-    * Additionally, the runtime workspace needs some environment variables to access the Gurobi solver (Do not forget to adapt them to your individual setup):
+    * Additionally, the runtime workspace needs some environment variables to access the Gurobi solver. Do not forget to adapt them to your individual setup:
 ```
 GRB_LICENSE_FILE=/home/maxkratz/gruobi.lic
 GUROBI_HOME=/opt/gurobi811/linux64/
@@ -18,22 +18,22 @@ LD_LIBRARY_PATH=/opt/gurobi811/linux64/lib/
 PATH=/opt/gurobi811/linux64/bin/:$PATH
 ```
 * Clone this Git repository to your local machine and import it: *File -> Import -> General -> Existing Projects into Workspace*. Import all projects.
-* Inside the runtime workspace, build all projects (Project -> Clean... -> Clean all projects) to trigger code generation.
+* Inside the runtime workspace, build all projects (*Project -> Clean... -> Clean all projects*) to trigger code generation.
     * Build the projects *network.model*, *network.model.rules*, *network.model.rules.racka*, *network.model.rules.rackb*, and *network.model.rules.vnet* with the black eMoflon hammer symbol.
 
-A good start point to verify your installation is to run the included unit tests, see [this section](#tests).
+A good start point to verify your installation is to run the included unit tests, refer to the [test section](#tests).
 
 
 ## Usage (running simulations)
 
-After finishing the installation steps, one may run simulations, e.g., from the *examples* project.
+After finishing the installation steps, you may run simulations, e.g., from the *examples* project.
 There are some examples for network generators as well as embedding algorithms.
-All examples contain a `public static void main(final String[] args)` method as entry point and can be run as *Java appication* from within the eclipse workspace.
+All examples contain a `public static void main(final String[] args)` method as entry point and can be run as *Java appication* from within the Eclipse workspace.
 
 
 ### CLI usage
 
-One may want to run the whole program as one exported file, e.g., on the CLI for measurement purposes.
+You may want to run the whole program as one exported file, e.g., on a server via the CLI for measurement purposes.
 To export the whole project as executable JAR file, follow this step:
 * *File -> Export... -> Java/Runnable JAR file -> Next -> (Chose your launch configuration) -> (Chose the export destination) -> Library handling: Package required libraries into generated JAR -> Finish*
 
@@ -41,16 +41,16 @@ Depending on your launch configuration, you can start the JAR file with addition
 Example:
 `$ java -jar iflye.jar --algorithm taf --objective total-taf-comm --snetfile resources/two-tier-12-pods/snet.json --vnetfile resources/two-tier-12-pods/vnets.json --csvpath metrics.csv`
 
-For larger simulations, you may want to increase the java heap space.
+For larger simulations, you may want to increase the Java heap space.
 Example with 32 GiB:
 `$ java -Xmx32g -jar iflye.jar $parameters`
 
-In the subfolder [scripts/](scripts/) are some basic bash scripts to run parameter sweeps as well as CLI argument parsing into the scenario.
+In the subfolder [scripts/](scripts/) are some basic Bash scripts to run parameter sweeps as well as CLI argument parsing into the scenario.
 
 
 ### Scenario loader
 
-As this project is the small sibling of the [iDyVE project](https://tubiblio.ulb.tu-darmstadt.de/124918/), one may want to run the same scenarios in both frameworks, e.g., to compare the performance.
+As this project is the small sibling of the [iDyVE project](https://tubiblio.ulb.tu-darmstadt.de/124918/), you may want to run the same scenarios in both frameworks, e.g., to compare the performance.
 For this purpose, **iflye** has a built in model converter which can read virtual and substrate networks from JSON export files (e.g., from iDyVE).
 
 The chosen JSON format is loosly coupled with the used metamodel.
