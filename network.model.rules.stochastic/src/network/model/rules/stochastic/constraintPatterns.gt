@@ -1,0 +1,28 @@
+import "http://www.eclipse.org/emf/2002/Ecore"
+import "platform:/resource/network.model/model/Model.ecore"
+
+pattern danglingEmbedding() {
+	subNet : SubstrateNetwork {
+		-guests->virtNet
+	}
+	virtNet : VirtualNetwork {
+		-nodes->virtSrv
+	}
+	virtSrv : VirtualServer
+} when notEmbeddedVirtSrv
+
+pattern incompleteEmbedding() {
+	virtNet : VirtualNetwork {
+		-nodes->virtSrv
+	}
+	virtSrv : VirtualServer
+} when notEmbeddedVirtSrv
+
+condition notEmbeddedVirtSrv = forbid embeddedVirtualServer
+
+pattern embeddedVirtualServer() {
+	subSrv : SubstrateServer {
+		-guestServers->virtSrv
+	}
+	virtSrv : VirtualServer
+}

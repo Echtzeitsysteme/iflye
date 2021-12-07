@@ -1,0 +1,14 @@
+import "http://www.eclipse.org/emf/2002/Ecore"
+import "platform:/resource/network.model/model/Model.ecore"
+
+rule serverFails() {
+	root : Root {
+		-networks->net
+	}
+	
+	net : SubstrateNetwork {
+		-- -nodes->srv
+	}
+	-- srv : SubstrateServer
+	
+} @ 1.0 - 2.71828^(-(root.time-srv.installationTime))
