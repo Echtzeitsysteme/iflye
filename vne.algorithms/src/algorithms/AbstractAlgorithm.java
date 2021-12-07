@@ -55,6 +55,10 @@ public abstract class AbstractAlgorithm {
     this.vNets = new HashSet<VirtualNetwork>();
     this.vNets.addAll(vNets);
   }
+  
+  public abstract double getCost(Object...args);
+  
+  public abstract double getRejectionCost(Object...args);
 
   /**
    * Returns the first virtual network from this super type.
