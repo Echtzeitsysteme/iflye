@@ -2,29 +2,29 @@ package generators.config;
 
 /**
  * Global configuration parameters for all network generators.
- * 
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ *
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public interface GlobalGeneratorConfig {
 
-  /**
-   * ID separator.
-   */
-  public static String SEPARATOR = "_";
+	/**
+	 * ID separator.
+	 */
+	public static String SEPARATOR = "_";
 
-  /**
-   * Server ID name.
-   */
-  public static String SERVER = "srv";
+	/**
+	 * Server ID name.
+	 */
+	public static String SERVER = "srv";
 
-  /**
-   * Switch ID name.
-   */
-  public static String SWITCH = "sw";
+	/**
+	 * Switch ID name.
+	 */
+	public static String SWITCH = "sw";
 
-  /**
-   * Link ID name.
-   */
-  public static String LINK = "ln";
+	/**
+	 * Link ID name.
+	 */
+	public static String LINK = "ln";
 
 }

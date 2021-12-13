@@ -23,6 +23,24 @@ PATH=/opt/gurobi811/linux64/bin/:$PATH
 
 A good start point to verify your installation is to run the included unit tests, refer to the [test section](#tests).
 
+### Code-Style
+
+This project uses the built-in code-style and code-formatter of Eclipse.
+Before contributing, please set-up your Eclipse code-style settings as follows:
+
+* _Window_ -> _Preferences_ -> _Java_ 
+    * -> _Code Style_ -> _Clean Up_ -> _Active profile:_ -> "Eclipse [built-in]" (default)
+    * -> _Code Style_ -> _Formatter_ -> _Active profile:_ -> "Eclipse [built-in]" (default)
+    * -> _Code Style_ -> _Organize Imports: -> "java, javax, org, com" (default)
+    * -> _Editor_ -> _Save Actions:
+        * Check "Perform the selected actions on save"
+        * Check "Format source code"
+        * Check "Format all lines"
+        * Check "Organize imports"
+        * Check "Additional actions"
+
+By using this settings, you should be unable to check in unformatted code.
+
 
 ## Usage (running simulations)
 

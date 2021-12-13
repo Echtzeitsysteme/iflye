@@ -6,9 +6,9 @@ import gt.IncrementalPatternMatcherFactory;
 
 public class EmoflonGtFactory extends IncrementalPatternMatcherFactory {
 
-  @Override
-  public IncrementalPatternMatcher create() {
-    return new EmoflonGt(ModelFacade.getInstance().getRoot());
-  }
+	@Override
+	public IncrementalPatternMatcher create() {
+		return new EmoflonGt(ModelFacade.getInstance().getRoot());
+	}
 
 }
