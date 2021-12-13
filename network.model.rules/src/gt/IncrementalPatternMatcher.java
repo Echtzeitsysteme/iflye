@@ -2,8 +2,8 @@ package gt;
 
 public interface IncrementalPatternMatcher {
 
-  void dispose();
+	void dispose();
 
-  PatternMatchingDelta run();
+	PatternMatchingDelta run();
 
 }

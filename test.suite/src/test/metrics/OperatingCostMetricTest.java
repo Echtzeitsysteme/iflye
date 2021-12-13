@@ -4,12 +4,12 @@ import org.junit.jupiter.api.Disabled;
 
 /**
  * Test class for the metric of operating costs.
- * 
+ *
  * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
  */
 @Disabled
 public class OperatingCostMetricTest extends AMetricTest {
 
-  // TODO
+	// TODO
 
 }
