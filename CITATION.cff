@@ -1,24 +1,25 @@
-cff-version: 1.1.0
+cff-version: 1.2.0
 message: "If you use iflye in your research, please cite it using these metadata."
-abstract: ifyle is an open-source framework for Incremental Fast Lightweight (y) virtual network Embedding.
+abstract: iflye is an open-source framework for Incremental Fast Lightweight (y) virtual network Embedding.
 authors:
   - family-names: Kratz
     given-names: Maximilian
+    orcid: https://orcid.org/0000-0001-7396-7763
 title: Incremental Fast Lightweight (y) virtual network Embedding
-version: 0.0.1
-date-released: 2021-07-29
-url: "https://github.com/maxkratz/iflye"
+version: 0.0.2
+date-released: 2021-10-04
+repository-code: "https://github.com/Echtzeitsysteme/iflye"
 keywords:
-  - virtual network embedding
+  - "virtual network embedding"
   - vne
-  - data center
+  - "data center"
   - network
-  - model-driven software engineering
+  - "model-driven software engineering"
   - simulation
-  - eclipse modeling framework
+  - "eclipse modeling framework"
   - pattern-matching
   - model
-  - integer linear programming
+  - "integer linear programming"
   - emoflon
-  - graph transformation
+  - "graph transformation"
 license: "GPL-3.0"
