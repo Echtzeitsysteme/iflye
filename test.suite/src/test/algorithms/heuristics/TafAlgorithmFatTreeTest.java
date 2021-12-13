@@ -25,7 +25,7 @@ import test.algorithms.generic.AAlgorithmTest;
  * Test class for the TAF algorithm implementation using GoogleFatTree based
  * substrate networks.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class TafAlgorithmFatTreeTest extends AAlgorithmTest {
 

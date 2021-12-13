@@ -11,7 +11,7 @@ import scenario.util.CsvUtil;
  * Runner class to combine multiple CSV files containing measurements to one
  * statistic CSV file containing the mean and the standard derivation.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class Runner {
 

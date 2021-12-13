@@ -5,7 +5,7 @@ import java.text.DecimalFormat;
 /**
  * Configuration of the statistic module.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public interface StatisticConfig {
 

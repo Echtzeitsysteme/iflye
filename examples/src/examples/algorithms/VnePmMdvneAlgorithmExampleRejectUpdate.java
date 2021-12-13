@@ -18,7 +18,7 @@ import model.VirtualNetwork;
  * that triggers the need for an updated embedding in order to embed all
  * requested virtual networks.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class VnePmMdvneAlgorithmExampleRejectUpdate {
 

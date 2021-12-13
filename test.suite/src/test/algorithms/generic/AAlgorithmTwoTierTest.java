@@ -26,7 +26,7 @@ import model.VirtualSwitch;
  * Abstract test class with one and two tier based networks for the algorithm
  * implementations.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 

@@ -21,7 +21,7 @@ import model.VirtualNetwork;
  * the repairing of the model consistency after removing an embedded virtual
  * network ungracefully.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class VnePmMdvneAlgorithmExampleRepairModelNetwork {
 

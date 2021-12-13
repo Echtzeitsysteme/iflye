@@ -12,7 +12,7 @@ import model.VirtualNetwork;
  * Test class for the VNE ILP algorithm (batch version) implementation for
  * minimizing the total communication cost metric A.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class VneIlpPathAlgorithmBatchTotalCommunicationCostATest
 		extends VneIlpPathAlgorithmTotalCommunicationCostATest {

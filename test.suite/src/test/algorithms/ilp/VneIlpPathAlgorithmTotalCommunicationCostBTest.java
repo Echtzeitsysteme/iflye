@@ -25,7 +25,7 @@ import test.algorithms.generic.AAlgorithmMultipleVnsTest;
  * Test class for the VNE ILP algorithm (incremental version) implementation for
  * minimizing the total communication cost metric B.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class VneIlpPathAlgorithmTotalCommunicationCostBTest extends AAlgorithmMultipleVnsTest {
 

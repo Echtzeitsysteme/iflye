@@ -5,7 +5,7 @@ import facade.ModelFacade;
 /**
  * A super type interface that acts as a common type for network generators.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public interface INetworkGenerator {
 

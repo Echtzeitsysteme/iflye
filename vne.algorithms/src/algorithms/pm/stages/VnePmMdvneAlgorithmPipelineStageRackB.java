@@ -25,7 +25,7 @@ import model.VirtualNetwork;
  * pattern matching as a way to reduce the search space of the ILP solver. This
  * implementation embeds virtual networks onto racks B.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class VnePmMdvneAlgorithmPipelineStageRackB extends VnePmMdvneAlgorithm {
 

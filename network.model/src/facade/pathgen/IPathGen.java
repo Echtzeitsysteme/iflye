@@ -10,7 +10,7 @@ import model.SubstrateNode;
 /**
  * Interface for all path generators.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public interface IPathGen {
 

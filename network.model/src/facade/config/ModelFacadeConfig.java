@@ -5,7 +5,7 @@ import facade.ModelFacade;
 /**
  * Configuration parameters for the {@link ModelFacade}.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class ModelFacadeConfig {
 

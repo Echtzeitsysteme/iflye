@@ -21,7 +21,7 @@ import model.SubstratePath;
  * Fat Tree networks. This test class only tests the number of created paths
  * against a reference function.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class ModelFacadePathYenFatTreeTest {
 	/*

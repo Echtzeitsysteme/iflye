@@ -13,7 +13,7 @@ import model.VirtualServer;
  * Incremental model converter that converts a JSON file with virtual or
  * substrate network information to the model (one virtual network by one).
  *
- * @author Maximilian Kratz (maximilian.kratz@stud.tu-darmstadt.de)
+ * @author Maximilian Kratz (maximilian.kratz@es.tu-darmstadt.de)
  */
 public class IncrementalModelConverter extends BasicModelConverter {
 

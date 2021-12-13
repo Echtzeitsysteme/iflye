@@ -17,7 +17,7 @@ import model.converter.BasicModelConverter;
  * Runnable example for the VNE ILP algorithm implementation that reads a
  * predetermined JSON file.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class VnePmMdvneAlgorithmExampleRead {
 

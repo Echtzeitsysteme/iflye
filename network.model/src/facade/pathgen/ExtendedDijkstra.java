@@ -20,7 +20,7 @@ import model.SubstrateNode;
  * finding process. This is a must-have behavior, because Yen's algorithm needs
  * to delete nodes and links but the model itself should not be changed.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class ExtendedDijkstra extends Dijkstra {
 

@@ -15,7 +15,7 @@ import ilp.solver.examples.GurobiExample;
 /**
  * Tests the availability of the Gurobi ILP solver.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class GurobiIlpTest {
 

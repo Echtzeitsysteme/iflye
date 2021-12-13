@@ -17,7 +17,7 @@ import model.VirtualServer;
  * whole virtual network could fit onto it. If it does not, the algorithm is
  * unable to embed the request. The resources are added all together.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class SimpleVne extends AbstractAlgorithm {
 

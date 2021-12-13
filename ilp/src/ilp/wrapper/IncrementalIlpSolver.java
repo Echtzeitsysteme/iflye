@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * 10.12921/TUPRINTS– 00017362, 2020.
  *
  * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public interface IncrementalIlpSolver {
 	/**
@@ -34,7 +34,7 @@ public interface IncrementalIlpSolver {
 	 * 10.12921/TUPRINTS– 00017362, 2020.
 	 *
 	 * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
-	 * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+	 * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
 	 */
 	public static class Constraint {
 		private final String name;
@@ -93,7 +93,7 @@ public interface IncrementalIlpSolver {
 	/**
 	 * SOS1 constraint implementation.
 	 *
-	 * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+	 * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
 	 */
 	public static class SosConstraint {
 		private final String name;
@@ -125,7 +125,7 @@ public interface IncrementalIlpSolver {
 	 * 10.12921/TUPRINTS– 00017362, 2020.
 	 *
 	 * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
-	 * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+	 * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
 	 */
 	public static class Variable {
 		private final String name;

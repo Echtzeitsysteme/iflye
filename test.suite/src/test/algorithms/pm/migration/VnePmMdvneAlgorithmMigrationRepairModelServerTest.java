@@ -13,7 +13,7 @@ import test.algorithms.pm.VnePmMdvneAlgorithmRepairModelServerTest;
  * trigger the algorithm to re-embed all virtual networks that had elements
  * placed on the substrate server removed.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class VnePmMdvneAlgorithmMigrationRepairModelServerTest extends VnePmMdvneAlgorithmRepairModelServerTest {
 

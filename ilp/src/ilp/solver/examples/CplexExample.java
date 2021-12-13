@@ -20,7 +20,7 @@ import ilog.cplex.IloCplex;
  * https://www.tu-chemnitz.de/mathematik/discrete/manuals/cplex/doc/getstart/html/Java_Start_113.html
  *
  * @author IBM Corporation
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class CplexExample {
 

@@ -13,7 +13,7 @@ import test.algorithms.pm.VnePmMdvneAlgorithmRepairModelNetworkTest;
  * the algorithm to repair the substrate network information after a ungraceful
  * removal of a previously embedded virtual network.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class VnePmMdvneAlgorithmPipelineThreeStagesARepairModelNetworkTest
 		extends VnePmMdvneAlgorithmRepairModelNetworkTest {

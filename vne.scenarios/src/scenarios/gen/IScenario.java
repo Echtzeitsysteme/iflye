@@ -5,7 +5,7 @@ import facade.ModelFacade;
 /**
  * Super type for all scenarios.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public interface IScenario {
 

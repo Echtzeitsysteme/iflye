@@ -17,7 +17,7 @@ import model.converter.FileUtils;
  * generation. This test class is necessary, because some parallelization in the
  * path generation created different models each time they ran.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class ModelFacadePathConsistencyTest {
 

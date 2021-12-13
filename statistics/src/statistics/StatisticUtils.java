@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Utility class for the statistics project.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class StatisticUtils {
 

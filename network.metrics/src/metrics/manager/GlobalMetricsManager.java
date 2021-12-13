@@ -9,7 +9,7 @@ import metrics.time.RuntimeDetailedMetric;
  * Global metrics manager. This class can be used to check in metrics and get
  * them back later on.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class GlobalMetricsManager {
 

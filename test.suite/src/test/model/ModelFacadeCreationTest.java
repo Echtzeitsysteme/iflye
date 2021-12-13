@@ -27,7 +27,7 @@ import model.VirtualSwitch;
 /**
  * Test class for the ModelFacade that tests some creation tasks.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class ModelFacadeCreationTest {
 

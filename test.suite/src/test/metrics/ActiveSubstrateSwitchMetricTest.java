@@ -10,7 +10,7 @@ import model.SubstrateNetwork;
 /**
  * Test class for the metric of active substrate switches.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class ActiveSubstrateSwitchMetricTest extends AMetricTest {
 

@@ -21,7 +21,7 @@ import model.SubstrateNode;
  * all models. Uses the base Dijkstra implementation. Heavily based on this
  * Wikipedia article: https://en.wikipedia.org/wiki/Yen%27s_algorithm
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class Yen implements IPathGen {
 

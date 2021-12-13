@@ -15,7 +15,7 @@ import model.VirtualNetwork;
  * implementation uses a two-stage pipeline approach that first tries to embed a
  * whole virtual network onto a substrate rack B.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class VnePmMdvneAlgorithmPipelineTwoStagesRackB extends VnePmMdvneAlgorithm {
 

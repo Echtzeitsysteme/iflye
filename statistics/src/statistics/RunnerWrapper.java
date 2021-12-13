@@ -10,7 +10,7 @@ import java.util.Set;
  * Runner wrapper class that searches for CSV metric files and starts the Runner
  * class accordingly.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class RunnerWrapper {
 

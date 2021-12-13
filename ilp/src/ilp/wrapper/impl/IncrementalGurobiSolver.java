@@ -40,7 +40,7 @@ import ilp.wrapper.config.IlpSolverConfig;
  * 10.12921/TUPRINTS– 00017362, 2020.
  *
  * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class IncrementalGurobiSolver implements IncrementalIlpSolver {
 

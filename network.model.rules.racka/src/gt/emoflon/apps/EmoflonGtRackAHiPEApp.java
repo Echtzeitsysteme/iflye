@@ -9,7 +9,7 @@ import network.model.rules.racka.api.RackaHiPEApp;
 /**
  * Wrapper class for initializing the rack A rules HiPe App pattern matcher.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class EmoflonGtRackAHiPEApp extends RackaHiPEApp {
 

@@ -53,7 +53,7 @@ import scenario.util.CsvUtil;
  * Runnable (incremental) scenario for VNE algorithms that reads specified files
  * from resource folder.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class DissScenarioLoad {
 

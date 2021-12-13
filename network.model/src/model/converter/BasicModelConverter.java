@@ -18,7 +18,7 @@ import model.Switch;
  * Basic model converter that converts a JSON file with virtual or substrate
  * network information to the model (all virtual networks at once).
  *
- * @author Maximilian Kratz (maximilian.kratz@stud.tu-darmstadt.de)
+ * @author Maximilian Kratz (maximilian.kratz@es.tu-darmstadt.de)
  */
 public class BasicModelConverter {
 

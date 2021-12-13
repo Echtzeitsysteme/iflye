@@ -10,7 +10,7 @@ import facade.config.ModelFacadeConfig;
  * A super type abstract class that acts as a common type for network generator
  * tests.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public abstract class IGeneratorTest {
 

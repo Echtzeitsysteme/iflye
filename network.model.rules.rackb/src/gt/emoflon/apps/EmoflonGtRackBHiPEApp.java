@@ -9,7 +9,7 @@ import network.model.rules.rackb.api.RackbHiPEApp;
 /**
  * Wrapper class for initializing the rack B rules HiPe App pattern matcher.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class EmoflonGtRackBHiPEApp extends RackbHiPEApp {
 

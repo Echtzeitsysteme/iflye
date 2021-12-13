@@ -34,7 +34,7 @@ import model.VirtualNode;
  * pattern matching as a way to reduce the search space of the ILP solver. This
  * implementation embeds whole virtual networks onto substrate servers only.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class VnePmMdvneAlgorithmPipelineStageVnet extends VnePmMdvneAlgorithm {
 
@@ -42,7 +42,7 @@ public class VnePmMdvneAlgorithmPipelineStageVnet extends VnePmMdvneAlgorithm {
 	 * ILP delta generator that converts matches and given model objects into ILP
 	 * constraints for the solver.
 	 *
-	 * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+	 * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
 	 */
 	class IlpDeltaGeneratorVnet extends IlpDeltaGenerator {
 

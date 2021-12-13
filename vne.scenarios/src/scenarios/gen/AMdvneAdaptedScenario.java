@@ -19,7 +19,7 @@ import generators.config.OneTierConfig;
  * Rechenzentren, http://dx.doi.org/10.12921/TUPRINTS-00017362. – DOI
  * 10.12921/TUPRINTS– 00017362, 2020.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public abstract class AMdvneAdaptedScenario implements IScenario {
 

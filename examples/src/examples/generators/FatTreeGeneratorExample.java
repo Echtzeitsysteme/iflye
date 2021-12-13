@@ -8,7 +8,7 @@ import generators.config.FatTreeConfig;
  * Runnable example for the fat tree network generator. Creates one substrate
  * network within the model.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class FatTreeGeneratorExample {
 

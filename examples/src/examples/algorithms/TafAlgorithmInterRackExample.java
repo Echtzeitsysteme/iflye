@@ -16,7 +16,7 @@ import model.VirtualNetwork;
  * Runnable example for the TAF algorithm implementation which implements the
  * virtual networks across multiple racks.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class TafAlgorithmInterRackExample {
 

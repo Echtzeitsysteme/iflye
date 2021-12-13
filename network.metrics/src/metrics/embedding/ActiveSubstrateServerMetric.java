@@ -9,7 +9,7 @@ import model.SubstrateServer;
  * Active substrate servers metric. This one equals the number of substrate
  * servers that have one or more embedded virtual networks on them.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class ActiveSubstrateServerMetric implements IMetric {
 

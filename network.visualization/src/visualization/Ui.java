@@ -26,7 +26,7 @@ import model.VirtualSwitch;
  * Visualization UI based on GraphStream, that can show network topologies based
  * on models read from XMI files.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class Ui {
 	/*

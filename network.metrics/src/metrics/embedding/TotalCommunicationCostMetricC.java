@@ -34,7 +34,7 @@ import model.VirtualServer;
  * (i.e., VM or virtual switch) multiplied by the corresponding requested
  * bandwidth of the virtual link connecting the two virtual nodes"
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class TotalCommunicationCostMetricC implements IMetric {
 

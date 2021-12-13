@@ -3,7 +3,7 @@ package metrics;
 /**
  * Configuration of the metric classes.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class MetricConfig {
 

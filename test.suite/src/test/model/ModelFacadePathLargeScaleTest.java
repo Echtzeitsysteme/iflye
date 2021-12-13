@@ -18,7 +18,7 @@ import model.SubstrateNetwork;
  * with large scale scenarios. This tests do only check the number of created
  * paths.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class ModelFacadePathLargeScaleTest {
 

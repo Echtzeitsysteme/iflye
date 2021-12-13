@@ -29,7 +29,7 @@ import model.VirtualSwitch;
  * Test class for the ModelFacade that checks the model validation
  * functionality.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class ModelFacadeValidationTest {
 

@@ -29,7 +29,7 @@ import model.VirtualSwitch;
 /**
  * Test class for the ModelFacade that tests the removal of networks.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class ModelFacadeNetworkRemovalTest {
 

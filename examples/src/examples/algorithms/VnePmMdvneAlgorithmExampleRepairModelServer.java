@@ -23,7 +23,7 @@ import model.VirtualServer;
  * hosting at least one element of a previously embedded virtual network
  * ungracefully.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class VnePmMdvneAlgorithmExampleRepairModelServer {
 

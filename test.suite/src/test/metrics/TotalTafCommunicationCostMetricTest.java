@@ -15,7 +15,7 @@ import model.SubstratePath;
  * Test class for the metric of total TAF (traffic amount first) communication
  * cost.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class TotalTafCommunicationCostMetricTest extends AMetricTest {
 

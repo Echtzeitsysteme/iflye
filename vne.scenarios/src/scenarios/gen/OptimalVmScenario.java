@@ -27,7 +27,7 @@ import model.VirtualNetwork;
  * International Journal of Autonomous and Adaptive Communications Systems, vol.
  * 8, no. 4, pp. 392-406, 2015.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class OptimalVmScenario implements IScenario {
 

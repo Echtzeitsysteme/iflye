@@ -16,7 +16,7 @@ import model.SubstrateSwitch;
  * servers, the number of used substrate switches and the amount of used
  * resources per substrate server.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class OperatingCostMetric implements IMetric {
 

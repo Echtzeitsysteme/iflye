@@ -19,7 +19,7 @@ import gurobi.GRBVar;
  * https://www.gurobi.com/documentation/9.1/quickstart_mac/java_example_mip1_java.html
  *
  * @author Gurobi Optimization, LLC
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class GurobiExample {
 

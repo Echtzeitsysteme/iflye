@@ -12,7 +12,7 @@ import model.VirtualNetwork;
  * An abstract algorithm class that acts as a common type for embedding
  * algorithms.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public abstract class AbstractAlgorithm {
 

@@ -27,7 +27,7 @@ import network.model.rules.rackb.api.matches.SwitchMatchPositiveMatch;
 /**
  * Implementation of the {@link IncrementalPatternMatcher} for eMoflon.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class EmoflonGtRackB implements IncrementalPatternMatcher {
 

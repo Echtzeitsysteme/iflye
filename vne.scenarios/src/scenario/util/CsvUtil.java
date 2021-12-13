@@ -31,7 +31,7 @@ import model.SubstrateNetwork;
 /**
  * CSV utilities for exporting the metrics.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class CsvUtil {
 

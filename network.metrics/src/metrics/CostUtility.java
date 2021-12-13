@@ -18,7 +18,7 @@ import model.VirtualServer;
 /**
  * Cost utility helper for the VneIlpPathAlgorithm and the VnePmMdvneAlgorithm.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class CostUtility {
 

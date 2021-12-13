@@ -13,7 +13,7 @@ import model.VirtualNetwork;
  * from substrate paths with embedded virtual links on them divided by the
  * number of virtual links.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class AveragePathLengthMetric implements IMetric {
 

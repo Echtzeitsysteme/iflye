@@ -17,7 +17,7 @@ import scenario.util.CsvUtil;
  * Runnable (batch) scenario for VNE algorithms that reads specified files from
  * resource folder.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class DissScenarioLoadBatch extends DissScenarioLoad {
 

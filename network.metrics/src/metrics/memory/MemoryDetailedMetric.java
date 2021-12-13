@@ -10,7 +10,7 @@ import java.util.List;
  * Please keep in mind that this metric will slow down your program, as it has
  * to explicitly trigger the garbage collector.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class MemoryDetailedMetric extends MemoryMetric {
 

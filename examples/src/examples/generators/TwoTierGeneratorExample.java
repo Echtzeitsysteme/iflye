@@ -8,7 +8,7 @@ import generators.config.TwoTierConfig;
  * Runnable example for the two tier network generator. Creates one substrate
  * network within the model.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class TwoTierGeneratorExample {
 

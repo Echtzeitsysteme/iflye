@@ -16,7 +16,7 @@ import model.VirtualNetwork;
  * implementation uses a three-stage pipeline approach with rack A
  * implementation
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class VnePmMdvneAlgorithmPipelineThreeStagesA extends VnePmMdvneAlgorithm {
 

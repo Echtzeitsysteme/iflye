@@ -13,7 +13,7 @@ import test.algorithms.pm.VnePmMdvneAlgorithmTotalPathCostTest;
  * Test class for the VNE pattern matching algorithm implementation for
  * minimizing the total path cost metric including the pipeline functionality.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class VnePmMdvneAlgorithmPipelineThreeStagesATotalPathCostTest extends VnePmMdvneAlgorithmTotalPathCostTest {
 

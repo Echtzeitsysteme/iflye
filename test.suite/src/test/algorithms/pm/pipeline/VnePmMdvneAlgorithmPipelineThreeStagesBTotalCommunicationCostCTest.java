@@ -13,7 +13,7 @@ import test.algorithms.pm.VnePmMdvneAlgorithmTotalCommunicationCostCTest;
  * Test class for the VNE PM MdVNE algorithm implementation for minimizing the
  * total communication cost metric C including the pipeline functionality.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class VnePmMdvneAlgorithmPipelineThreeStagesBTotalCommunicationCostCTest
 		extends VnePmMdvneAlgorithmTotalCommunicationCostCTest {

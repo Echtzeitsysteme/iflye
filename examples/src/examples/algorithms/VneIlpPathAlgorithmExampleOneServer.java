@@ -16,7 +16,7 @@ import model.VirtualNetwork;
  * Runnable example for the VNE ILP algorithm implementation to embed a network
  * onto one server.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class VneIlpPathAlgorithmExampleOneServer {
 

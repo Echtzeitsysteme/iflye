@@ -15,7 +15,7 @@ import model.VirtualNetwork;
  * Abstract test class with one and two tier based networks for the algorithm
  * implementations which also uses more than one virtual network at once.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public abstract class AAlgorithmMultipleVnsTest extends AAlgorithmTwoTierTest {
 

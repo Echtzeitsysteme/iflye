@@ -6,7 +6,7 @@ import model.VirtualElement;
 /**
  * Tuple class for the pattern matcher.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class Tuple {
 

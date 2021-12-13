@@ -9,7 +9,7 @@ package metrics.time;
  * milliseconds of latency to the measurement. Therefore, it is not well suited
  * for capturing very small time frames.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class RuntimeDetailedMetric extends RuntimeMetric {
 

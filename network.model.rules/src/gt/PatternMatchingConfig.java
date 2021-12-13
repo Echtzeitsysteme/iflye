@@ -3,7 +3,7 @@ package gt;
 /**
  * Configuration of the emoflon pattern matcher.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class PatternMatchingConfig {
 
@@ -16,7 +16,7 @@ public class PatternMatchingConfig {
 	/**
 	 * Pattern matcher instance to choose.
 	 *
-	 * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+	 * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
 	 */
 	public enum PatternMatcher {
 		HIPE, DEMOCLES, VIATRA;

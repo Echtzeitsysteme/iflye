@@ -32,7 +32,7 @@ import test.algorithms.generic.AAlgorithmMultipleVnsTest;
  * Test class for the VNE pattern matching algorithm implementation for
  * minimizing the total path cost metric.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class VnePmMdvneAlgorithmTotalPathCostTest extends AAlgorithmMultipleVnsTest {
 

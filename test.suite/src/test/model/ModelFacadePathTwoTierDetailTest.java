@@ -24,7 +24,7 @@ import model.SubstratePath;
 /**
  * Test class for the ModelFacade that tests two tier path related creations.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class ModelFacadePathTwoTierDetailTest {
 

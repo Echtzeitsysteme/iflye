@@ -12,7 +12,7 @@ import model.VirtualSwitch;
 /**
  * Utility class for all VNE PM MdVNE algorithms.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class PmAlgorithmUtils {
 

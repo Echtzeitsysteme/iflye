@@ -19,7 +19,7 @@ import metrics.MetricConsts;
  * Important: Currently, this metric is only able to run on GNU/Linux and/or
  * macOS.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class MemoryPidMetric implements IMetric {
 

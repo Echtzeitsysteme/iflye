@@ -13,7 +13,7 @@ import model.SubstratePath;
 /**
  * Abstract test class for the metric(s) of total communication cost.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public abstract class ATotalCommunicationCostMetricTest extends AMetricTest {
 

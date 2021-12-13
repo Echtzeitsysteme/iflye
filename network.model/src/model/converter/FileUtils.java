@@ -11,7 +11,7 @@ import com.google.gson.JsonObject;
 /**
  * File utilities for loading and saving files.
  *
- * @author Maximilian Kratz (maximilian.kratz@stud.tu-darmstadt.de)
+ * @author Maximilian Kratz (maximilian.kratz@es.tu-darmstadt.de)
  */
 public class FileUtils {
 

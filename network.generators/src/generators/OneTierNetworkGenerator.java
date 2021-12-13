@@ -12,7 +12,7 @@ import model.VirtualNetwork;
 /**
  * Basic implementation of an one tier network topology generator.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class OneTierNetworkGenerator implements INetworkGenerator {
 

@@ -8,7 +8,7 @@ import algorithms.pm.VnePmMdvneAlgorithmMigration;
  * Configuration of the algorithms {@link VneIlpPathAlgorithm} and
  * {@link VnePmMdvneAlgorithm}.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class AlgorithmConfig {
 
@@ -16,7 +16,7 @@ public class AlgorithmConfig {
 	 * Objective that defines which cost function should be used by the algorithms
 	 * {@link VneIlpPathAlgorithm} and {@link VnePmMdvneAlgorithm}.
 	 *
-	 * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+	 * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
 	 */
 	public enum Objective {
 		TOTAL_PATH_COST, // [1]
@@ -63,7 +63,7 @@ public class AlgorithmConfig {
 	 * {@link VnePmMdvneAlgorithm}. Either it uses the calculates matches from
 	 * emoflon or it uses methods implemented in the model facade.
 	 *
-	 * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+	 * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
 	 */
 	public enum Embedding {
 		EMOFLON, // Emoflon PM as it is

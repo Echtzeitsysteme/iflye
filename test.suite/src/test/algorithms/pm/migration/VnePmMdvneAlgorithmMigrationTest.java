@@ -25,7 +25,7 @@ import test.algorithms.generic.AAlgorithmTest;
  * Test class for the VNE pattern matching algorithm migration implementation
  * for testing the migration functionality itself.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class VnePmMdvneAlgorithmMigrationTest extends AAlgorithmTest {
 

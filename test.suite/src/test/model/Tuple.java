@@ -3,7 +3,7 @@ package test.model;
 /**
  * Tuple class for some path related tests.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  *
  * @param <X> Type of value 1.
  * @param <Y> Type of value 2.

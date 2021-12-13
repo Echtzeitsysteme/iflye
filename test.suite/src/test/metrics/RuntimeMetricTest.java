@@ -11,7 +11,7 @@ import metrics.time.RuntimeMetric;
 /**
  * Test class for the metric of runtime.
  *
- * @author Maximilian Kratz {@literal <maximilian.kratz@stud.tu-darmstadt.de>}
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class RuntimeMetricTest extends AMetricTest {
 
