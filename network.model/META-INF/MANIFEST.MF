@@ -5,7 +5,7 @@ Bundle-SymbolicName: network.model;singleton:=true
 Bundle-Version: 0.0.1.qualifier
 Bundle-Vendor: 
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-13
+Bundle-RequiredExecutionEnvironment: JavaSE-16
 Automatic-Module-Name: network.model
 Require-Bundle: org.eclipse.emf.ecore,
  org.eclipse.emf.ecore.xmi,

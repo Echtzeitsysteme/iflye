@@ -1714,12 +1714,14 @@ public class ModelFacade {
 		for (final Node n : vNet.getNodes()) {
 			if (n instanceof VirtualServer) {
 				final VirtualServer vsrv = (VirtualServer) n;
-				if (vsrv.getHost() == null || vsrv.getHost().getNetwork() == null || !vsrv.getHost().getNetwork().getNodes().contains(vsrv.getHost())) {
+				if (vsrv.getHost() == null || vsrv.getHost().getNetwork() == null
+						|| !vsrv.getHost().getNetwork().getNodes().contains(vsrv.getHost())) {
 					return true;
 				}
 			} else if (n instanceof VirtualSwitch) {
 				final VirtualSwitch vsw = (VirtualSwitch) n;
-				if ((vsw.getHost().getNetwork() == null) || !vsw.getHost().getNetwork().getNodes().contains(vsw.getHost())) {
+				if ((vsw.getHost().getNetwork() == null)
+						|| !vsw.getHost().getNetwork().getNodes().contains(vsw.getHost())) {
 					return true;
 				}
 			}

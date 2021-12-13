@@ -43,20 +43,19 @@ public class Dijkstra implements IPathGen {
 	/**
 	 * Priority queue of all nodes.
 	 */
-	protected final PriorityQueue<SubstrateNode> prioNodes = new PriorityQueue<>(
-			new Comparator<SubstrateNode>() {
-				@Override
-				public int compare(final SubstrateNode o1, final SubstrateNode o2) {
-					final int distFirst = dists.get(o1);
-					final int distSecond = dists.get(o2);
+	protected final PriorityQueue<SubstrateNode> prioNodes = new PriorityQueue<>(new Comparator<SubstrateNode>() {
+		@Override
+		public int compare(final SubstrateNode o1, final SubstrateNode o2) {
+			final int distFirst = dists.get(o1);
+			final int distSecond = dists.get(o2);
 
-					if (distFirst == distSecond) {
-						return o1.getName().compareTo(o2.getName());
-					} else {
-						return distFirst - distSecond;
-					}
-				}
-			});
+			if (distFirst == distSecond) {
+				return o1.getName().compareTo(o2.getName());
+			} else {
+				return distFirst - distSecond;
+			}
+		}
+	});
 
 	/**
 	 * Starts the whole algorithm for a given substrate network and one given
