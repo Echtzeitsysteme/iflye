@@ -80,14 +80,15 @@ public class FileUtils {
 		return read;
 	}
 
-  /**
-   * Converts the linebreaks of a given string to the one used by the current system.
-   * 
-   * @param toConvert Input string to convert linebreaks for.
-   * @return String with converted linebreaks.
-   */
-  public static String replaceLinebreaks(final String toConvert) {
-    return toConvert.replace("\r\n", System.lineSeparator()).replace("\n", System.lineSeparator());
-  }
+	/**
+	 * Converts the linebreaks of a given string to the one used by the current
+	 * system.
+	 *
+	 * @param toConvert Input string to convert linebreaks for.
+	 * @return String with converted linebreaks.
+	 */
+	public static String replaceLinebreaks(final String toConvert) {
+		return toConvert.replace("\r\n", System.lineSeparator()).replace("\n", System.lineSeparator());
+	}
 
 }

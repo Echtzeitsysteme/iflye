@@ -87,11 +87,10 @@ public class ModelFacadePathConsistencyTest {
 			builder.append(p.getName() + System.lineSeparator());
 		});
 
-    // FileUtils.writeFile("resources/refPathDijkstra.txt", builder.toString());
-    final String refPath =
-        FileUtils.replaceLinebreaks(FileUtils.readFile("resources/refPathDijkstra.txt"));
-    assertEquals(refPath, builder.toString());
-  }
+		// FileUtils.writeFile("resources/refPathDijkstra.txt", builder.toString());
+		final String refPath = FileUtils.replaceLinebreaks(FileUtils.readFile("resources/refPathDijkstra.txt"));
+		assertEquals(refPath, builder.toString());
+	}
 
 	@Test
 	public void testFatTreePathGenYen() {
@@ -105,10 +104,9 @@ public class ModelFacadePathConsistencyTest {
 			builder.append(p.getName() + System.lineSeparator());
 		});
 
-    // FileUtils.writeFile("resources/refPathYen.txt", builder.toString());
-    final String refPath =
-        FileUtils.replaceLinebreaks(FileUtils.readFile("resources/refPathYen.txt"));
-    assertEquals(refPath, builder.toString());
-  }
+		// FileUtils.writeFile("resources/refPathYen.txt", builder.toString());
+		final String refPath = FileUtils.replaceLinebreaks(FileUtils.readFile("resources/refPathYen.txt"));
+		assertEquals(refPath, builder.toString());
+	}
 
 }
