@@ -1,7 +1,6 @@
 package test.model;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -9,10 +8,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
-import algorithms.ilp.VneIlpPathAlgorithm;
 import facade.ModelFacade;
 import generators.OneTierNetworkGenerator;
 import generators.config.OneTierConfig;
@@ -24,6 +21,7 @@ import model.VirtualLink;
 import model.VirtualNetwork;
 import model.VirtualServer;
 import model.VirtualSwitch;
+import test.utils.GenericTestUtils;
 
 /**
  * Test class for the ModelFacade that checks the model validation
@@ -244,10 +242,8 @@ public class ModelFacadeValidationTest {
 	}
 
 	private void embedVirtToSub() {
-		final AbstractAlgorithm algo = new VneIlpPathAlgorithm(
-				(SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub"),
+		GenericTestUtils.vneFakeIlpEmbedding((SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub"),
 				Set.of((VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt")));
-		assertTrue(algo.execute());
 	}
 
 }

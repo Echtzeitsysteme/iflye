@@ -13,7 +13,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import algorithms.ilp.VneIlpPathAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import model.SubstrateLink;
@@ -25,6 +24,7 @@ import model.VirtualLink;
 import model.VirtualNetwork;
 import model.VirtualServer;
 import model.VirtualSwitch;
+import test.utils.GenericTestUtils;
 
 /**
  * Test class for the ModelFacade that tests the removal of networks.
@@ -80,8 +80,7 @@ public class ModelFacadeNetworkRemovalTest {
 		final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
 		// Embed virtual onto substrate network
-		final VneIlpPathAlgorithm algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
-		assertTrue(algo.execute());
+		GenericTestUtils.vneFakeIlpEmbedding(sNet, Set.of(vNet));
 		assertFalse(sNet.getGuests().isEmpty());
 
 		// Remove substrate network
@@ -128,8 +127,7 @@ public class ModelFacadeNetworkRemovalTest {
 		final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
 		// Embed virtual onto substrate network
-		final VneIlpPathAlgorithm algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
-		assertTrue(algo.execute());
+		GenericTestUtils.vneFakeIlpEmbedding(sNet, Set.of(vNet));
 		assertFalse(sNet.getGuests().isEmpty());
 
 		// Remove substrate network
@@ -190,8 +188,7 @@ public class ModelFacadeNetworkRemovalTest {
 		final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
 		// Embed virtual onto substrate network
-		final VneIlpPathAlgorithm algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
-		assertTrue(algo.execute());
+		GenericTestUtils.vneFakeIlpEmbedding(sNet, Set.of(vNet));
 		assertFalse(sNet.getGuests().isEmpty());
 
 		// Remove substrate network

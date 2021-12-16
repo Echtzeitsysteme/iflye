@@ -8,13 +8,12 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import algorithms.AbstractAlgorithm;
-import algorithms.ilp.VneIlpPathAlgorithm;
 import facade.ModelFacade;
 import generators.OneTierNetworkGenerator;
 import generators.config.OneTierConfig;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
+import test.utils.GenericTestUtils;
 
 /**
  * Test class for the ModelFacade that tests some embedding removal tasks.
@@ -48,8 +47,7 @@ public class ModelFacadeEmbeddingRemovalTest {
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-		final AbstractAlgorithm algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
-		assertTrue(algo.execute());
+		GenericTestUtils.vneFakeIlpEmbedding(sNet, Set.of(vNet));
 
 		assertFalse(((SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub")).getGuests().isEmpty());
 		ModelFacade.getInstance().unembedVirtualNetwork(vNet);
@@ -65,8 +63,7 @@ public class ModelFacadeEmbeddingRemovalTest {
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-		AbstractAlgorithm algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
-		assertTrue(algo.execute());
+		GenericTestUtils.vneFakeIlpEmbedding(sNet, Set.of(vNet));
 
 		ModelFacade.getInstance().removeSubstrateServerFromNetwork("sub_srv_1");
 
