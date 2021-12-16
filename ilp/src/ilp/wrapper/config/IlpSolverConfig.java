@@ -4,6 +4,10 @@ import org.cardygan.ilp.api.solver.CplexSolver;
 import org.cardygan.ilp.api.solver.GurobiSolver;
 import org.cardygan.ilp.api.solver.GurobiSolver.GurobiSolverBuilder;
 
+import ilp.wrapper.IncrementalIlpSolver;
+import ilp.wrapper.impl.IncrementalCplexSolver;
+import ilp.wrapper.impl.IncrementalGurobiSolver;
+
 public class IlpSolverConfig {
 
 	/**
@@ -51,7 +55,24 @@ public class IlpSolverConfig {
 	public static boolean OBJ_LOG = false;
 
 	/**
-	 * Returns a new instance of the configured solver.
+	 * Returns a new instance of the configured solver. This method is used by all
+	 * PM-based VNE algorithms.
+	 * 
+	 * @return New instance of the configured solver.
+	 */
+	public static IncrementalIlpSolver getIlpSolver() {
+		switch (IlpSolverConfig.solver) {
+		case GUROBI:
+			return new IncrementalGurobiSolver(IlpSolverConfig.TIME_OUT, IlpSolverConfig.RANDOM_SEED);
+		case CPLEX:
+			return new IncrementalCplexSolver(IlpSolverConfig.TIME_OUT, IlpSolverConfig.RANDOM_SEED);
+		}
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Returns a new instance of the configured solver. This method is used by the
+	 * purely ILP-based VNE algorithm.
 	 *
 	 * @return New instance of the configured solver.
 	 */

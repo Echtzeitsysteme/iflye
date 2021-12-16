@@ -14,7 +14,6 @@ import gt.emoflon.EmoflonGtFactory;
 import gt.emoflon.EmoflonGtVnet;
 import gt.emoflon.EmoflonGtVnetFactory;
 import ilp.wrapper.config.IlpSolverConfig;
-import ilp.wrapper.impl.IncrementalGurobiSolver;
 import metrics.manager.GlobalMetricsManager;
 import model.Link;
 import model.Node;
@@ -316,7 +315,7 @@ public class VnePmMdvneAlgorithmPipelineStageVnet extends VnePmMdvneAlgorithm {
 	@Override
 	public void init() {
 		// Create new ILP solver object on every method call.
-		ilpSolver = new IncrementalGurobiSolver(IlpSolverConfig.TIME_OUT, IlpSolverConfig.RANDOM_SEED);
+		ilpSolver = IlpSolverConfig.getIlpSolver();
 
 		if (patternMatcher == null) {
 			patternMatcher = new EmoflonGtFactory().create();
