@@ -3,7 +3,6 @@ package test.algorithms.fakeilp;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Set;
 
@@ -13,7 +12,6 @@ import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Embedding;
 import algorithms.AlgorithmConfig.Objective;
 import algorithms.ilp.VneFakeIlpAlgorithm;
-import model.Server;
 import model.SubstrateElement;
 import model.SubstrateNetwork;
 import model.SubstratePath;
@@ -36,89 +34,6 @@ public class VneFakeIlpAlgorithmTotalCommunicationCostCTest extends AAlgorithmMu
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_C;
 		AlgorithmConfig.emb = Embedding.MANUAL;
 		algo = VneFakeIlpAlgorithm.prepare(sNet, vNets);
-	}
-
-	/**
-	 * This test has to be overwritten, because of the fact that this metric drives
-	 * the algorithm to place the switch on a virtual server, to.
-	 */
-	@Override
-	@Test
-	public void testAllOnOneRack() {
-		oneTierSetupTwoServers("virt", 2);
-		oneTierSetupTwoServers("sub", 2);
-		facade.createAllPathsForNetwork("sub");
-
-		final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-		final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
-
-		initAlgo(sNet, Set.of(vNet));
-		assertTrue(algo.execute());
-
-		// Test switch placement
-		final VirtualSwitch virtSw = (VirtualSwitch) facade.getSwitchById("virt_sw");
-		assertEquals("sub_srv1", virtSw.getHost().getName());
-
-		// Test server placements
-		final VirtualServer vSrv1 = (VirtualServer) facade.getServerById("virt_srv1");
-		final VirtualServer vSrv2 = (VirtualServer) facade.getServerById("virt_srv2");
-
-		// Both virtual servers have to be embedded on other substrate servers
-		if (vSrv1.getHost().equals(vSrv2.getHost())) {
-			fail();
-		}
-
-		// Get reference host for later checks of links
-		final String refHost1 = vSrv1.getHost().getName();
-
-		// Test link placements
-		final VirtualLink vLn1 = (VirtualLink) facade.getLinkById("virt_ln1");
-		final VirtualLink vLn2 = (VirtualLink) facade.getLinkById("virt_ln2");
-		final VirtualLink vLn3 = (VirtualLink) facade.getLinkById("virt_ln3");
-		final VirtualLink vLn4 = (VirtualLink) facade.getLinkById("virt_ln4");
-
-		String sourceName = "";
-		String targetName = "";
-
-		// Link 1
-		if (vLn1.getHost() instanceof SubstratePath) {
-			final SubstratePath pLn1 = (SubstratePath) vLn1.getHost();
-			sourceName = pLn1.getSource().getName();
-			targetName = pLn1.getTarget().getName();
-		} else {
-			fail();
-		}
-
-		assertEquals(refHost1, sourceName);
-		assertEquals("sub_srv1", targetName);
-
-		// Link 2
-		if (!(vLn2.getHost() instanceof Server)) {
-			fail();
-		}
-
-		assertEquals(refHost1, sourceName);
-		assertEquals("sub_srv1", targetName);
-
-		// Link 3
-		if (vLn3.getHost() instanceof SubstratePath) {
-			final SubstratePath pLn3 = (SubstratePath) vLn3.getHost();
-			sourceName = pLn3.getSource().getName();
-			targetName = pLn3.getTarget().getName();
-		} else {
-			fail();
-		}
-
-		assertEquals("sub_srv1", sourceName);
-		assertEquals(refHost1, targetName);
-
-		// Link 4
-		if (!(vLn4.getHost() instanceof Server)) {
-			fail();
-		}
-
-		assertEquals("sub_srv1", sourceName);
-		assertEquals(refHost1, targetName);
 	}
 
 	/**
