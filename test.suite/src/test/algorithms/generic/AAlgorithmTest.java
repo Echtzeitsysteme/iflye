@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
+import algorithms.AlgorithmConfig.Embedding;
 import algorithms.AlgorithmConfig.Objective;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
@@ -70,6 +71,11 @@ public abstract class AAlgorithmTest {
 	 */
 	protected Objective oldObjective;
 
+	/**
+	 * Old embedding mechanism configuration.
+	 */
+	protected Embedding oldEmbedding;
+
 	@BeforeEach
 	public void resetModel() {
 		facade.resetAll();
@@ -79,6 +85,7 @@ public abstract class AAlgorithmTest {
 		oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
 		oldIgnoreBw = ModelFacadeConfig.IGNORE_BW;
 		oldNetRejCost = AlgorithmConfig.netRejCostDynamic;
+		oldEmbedding = AlgorithmConfig.emb;
 
 		// Network setup
 		facade.addNetworkToRoot("sub", false);
@@ -99,6 +106,7 @@ public abstract class AAlgorithmTest {
 		ModelFacadeConfig.IGNORE_BW = oldIgnoreBw;
 		AlgorithmConfig.netRejCostDynamic = oldNetRejCost;
 		AlgorithmConfig.obj = oldObjective;
+		AlgorithmConfig.emb = oldEmbedding;
 	}
 
 	/**
