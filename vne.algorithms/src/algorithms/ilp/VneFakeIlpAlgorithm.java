@@ -318,7 +318,7 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 	}
 
 	/**
-	 * Initializes a new instance of the VNE pattern matching algorithm.
+	 * Initializes a new instance of the VNE fake ILP algorithm.
 	 *
 	 * @param sNet  Substrate network to work with.
 	 * @param vNets Set of virtual networks to work with.
@@ -345,7 +345,7 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 	}
 
 	/**
-	 * Resets the ILP solver and the pattern matcher.
+	 * Resets the ILP solver.
 	 */
 	public void dispose() {
 		if (instance == null) {
@@ -674,9 +674,7 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 	protected Set<VirtualNetwork> updateMappingsAndEmbed(final Map<String, Boolean> mappings) {
 		// Embed elements
 		final Set<VirtualNetwork> rejectedNetworks = new HashSet<>();
-//		final EmoflonGt engine = (EmoflonGt) patternMatcher;
 
-		// for (final String s : newMappings) {
 		for (final String s : mappings.keySet()) {
 			if (!mappings.get(s)) {
 				continue;
@@ -690,7 +688,7 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 				continue;
 			}
 
-			// Embed element: Either use emoflon/GT or use manual mode.
+			// Embed element: Only use manual mode.
 			switch (AlgorithmConfig.emb) {
 			case MANUAL:
 				final VirtualElement ve = (VirtualElement) m.getVirtual();
@@ -716,8 +714,7 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 	}
 
 	/**
-	 * Initializes the algorithm by creating a new incremental solver object and a
-	 * new pattern matcher object.
+	 * Initializes the algorithm by creating a new incremental solver object.
 	 */
 	public void init() {
 		// Create new ILP solver object on every method call.
