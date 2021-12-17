@@ -88,6 +88,10 @@ To start them, follow this step:
 
 For easier debugging purposes, a basic GUI for visualizing networks is implemented in the project [network.visualization](network.visualization/) based on [GraphViz](http://www.graphviz.org/download/).
 Currently, it can render tree-based networks as tree structures or use the automatic mode of GraphViz from a model file `model.xmi` in the [examples project](examples/).
+Therefore, launch the class `Ui` with these arguments: `../examples/model.xmi sub 1`
+* `../examples/model.xmi` is the path of the model to read.
+* `sub` is the name of the (substrate) network to visualize.
+* `1` configures the automatic layout. You can also chose `0` to use a tree-like layout.
 
 ![](gfx/gui-tree.png)
 ![](gfx/gui-auto.png)
