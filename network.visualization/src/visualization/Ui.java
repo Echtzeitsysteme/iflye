@@ -68,9 +68,24 @@ public class Ui {
 	 */
 	private static String subNetworkId;
 
+	/**
+	 * Server to server mappings.
+	 */
 	private static Map<Node, List<String>> serverToServerMappings = new HashMap<>();
+
+	/**
+	 * Switch to server mappings.
+	 */
 	private static Map<Node, List<String>> switchToServerMappings = new HashMap<>();
+
+	/**
+	 * Switch to switch mappings.
+	 */
 	private static Map<Node, List<String>> switchMappings = new HashMap<>();
+
+	/**
+	 * Set containing all virtual networks.
+	 */
 	private static Set<String> virtualNetworks = new HashSet<>();
 
 	/**
@@ -96,8 +111,9 @@ public class Ui {
 			final Node srvNode = graph.addNode(srv.getName());
 			srvNode.setAttribute("ui.label", removeNetworkId(srv.getName()));
 			srvNode.setAttribute("ui.style",
-					"fill-color: rgb(000,155,000);" + "stroke-color: rgb(0,0,0);" + "stroke-width: 1px;"
-							+ "stroke-mode: plain;" + "text-size: 10;" + "size: 50px;" + "text-style: bold;");
+					"fill-color: rgb(000,155,000);" + "shape: rounded-box; " + "stroke-color: rgb(0,0,0);"
+							+ "stroke-width: 1px;" + "stroke-mode: plain;" + "text-size: 10;" + "size: 50px;"
+							+ "text-style: bold;");
 
 			// Placement of the server
 			srvNode.setAttribute("xyz", srvCurrX, -srv.getDepth() * SCALE_Y, 0);
@@ -143,9 +159,8 @@ public class Ui {
 			final Node swNode = graph.addNode(sw.getName());
 			swNode.setAttribute("ui.label", removeNetworkId(sw.getName()));
 			swNode.setAttribute("ui.style",
-					"fill-color: rgb(255,255,255); " + "shape: rounded-box; " + "stroke-color: rgb(000,155,000); "
-							+ "stroke-width: 4px; " + "stroke-mode: plain; " + "text-size: 10; " + "size: 50px; "
-							+ "text-style: bold;");
+					"fill-color: rgb(255,255,255); " + "stroke-color: rgb(000,155,000); " + "stroke-width: 4px; "
+							+ "stroke-mode: plain; " + "text-size: 10; " + "size: 50px; " + "text-style: bold;");
 
 			// Placement of the switch
 			final double currX = xMap.get(sw.getDepth());
@@ -169,10 +184,8 @@ public class Ui {
 					graph.addEdge(l.getName(), l.getSource().getName(), l.getTarget().getName(), false);
 				} catch (final EdgeRejectedException ex) {
 					// Graphstream rejects 'addEdge' if there already is an undirected edge from a
-					// to b.
-					// Using the catch clause, the program does not have to track which edges were
-					// already
-					// created.
+					// to b. Using the catch clause, the program does not have to track which edges
+					// were already created.
 				}
 			} else {
 				final Edge lnEdge = graph.addEdge(l.getName(), l.getSource().getName(), l.getTarget().getName(), true);
@@ -191,8 +204,9 @@ public class Ui {
 				final Node srvNode = graph.addNode(act);
 				srvNode.setAttribute("ui.label", act.substring(act.indexOf("_") + 1));
 				srvNode.setAttribute("ui.style",
-						"fill-color: rgb(155,000,000);" + "stroke-color: rgb(0,0,0);" + "stroke-width: 1px;"
-								+ "stroke-mode: plain;" + "text-size: 8;" + "size: 25px;" + "text-style: bold;");
+						"fill-color: rgb(155,000,000);" + "shape: rounded-box; " + "stroke-color: rgb(0,0,0);"
+								+ "stroke-width: 1px;" + "stroke-mode: plain;" + "text-size: 8;" + "size: 25px;"
+								+ "text-style: bold;");
 				srvNode.setAttribute("xyz", coordinates[0] - 0.75, coordinates[1] - 0.5 * counter, 0);
 				counter++;
 			}
@@ -206,9 +220,8 @@ public class Ui {
 				final Node srvNode = graph.addNode(act);
 				srvNode.setAttribute("ui.label", act.substring(act.indexOf("_") + 1));
 				srvNode.setAttribute("ui.style",
-						"fill-color: rgb(255,255,255); " + "shape: rounded-box; " + "stroke-color: rgb(155,000,000); "
-								+ "stroke-width: 4px; " + "stroke-mode: plain; " + "text-size: 8; " + "size: 25px; "
-								+ "text-style: bold;");
+						"fill-color: rgb(255,255,255); " + "stroke-color: rgb(155,000,000); " + "stroke-width: 4px; "
+								+ "stroke-mode: plain; " + "text-size: 8; " + "size: 25px; " + "text-style: bold;");
 				srvNode.setAttribute("xyz", coordinates[0] - 0.75, coordinates[1] - 0.5 * counter, 0);
 				counter++;
 			}
@@ -241,10 +254,8 @@ public class Ui {
 						lnEdge.setAttribute("ui.style", "fill-color: rgb(155,000,000); shape: cubic-curve;");
 					} catch (final EdgeRejectedException ex) {
 						// Graphstream rejects 'addEdge' if there already is an undirected edge from a
-						// to b.
-						// Using the catch clause, the program does not have to track which edges were
-						// already
-						// created.
+						// to b. Using the catch clause, the program does not have to track which edges
+						// were already created.
 					}
 				} else {
 					final Edge lnEdge = graph.addEdge(l.getName(), l.getSource().getName(), l.getTarget().getName(),
@@ -261,6 +272,12 @@ public class Ui {
 		}
 	}
 
+	/**
+	 * Extracts the coordinates for a given node.
+	 * 
+	 * @param node Input node to extract coordinates for.
+	 * @return Array of doubles with the coordinates.
+	 */
 	private static double[] nodeToCoordinates(final Node node) {
 		final Object[] coordinatesObj = (Object[]) node.getAttribute("xyz");
 		final double[] coordinates = new double[3];
