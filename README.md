@@ -7,14 +7,14 @@
 
 * Install [AdoptOpenJDK 16 (HotSpot JVM)](https://adoptopenjdk.net/releases.html?variant=openjdk16&jvmVariant=hotspot) or newer.
 * Install eMoflon::IBeX as described [here](https://github.com/eMoflon/emoflon-ibex#how-to-develop).
-* Install [Gurobi](https://www.gurobi.com/) in version `8.1.1` and activate a license for your computer.
+* Install [Gurobi](https://www.gurobi.com/) in version `9.5.0` and activate a license for your computer.
 * Launch a runtime workspace (while using a runtime Eclipse) as stated in the eMoflon::IBeX installation steps.
     * Additionally, the runtime workspace needs some environment variables to access the Gurobi solver. Do not forget to adapt them to your individual setup:
 ```
 GRB_LICENSE_FILE=/home/maxkratz/gruobi.lic
-GUROBI_HOME=/opt/gurobi811/linux64/
-LD_LIBRARY_PATH=/opt/gurobi811/linux64/lib/
-PATH=/opt/gurobi811/linux64/bin/:$PATH
+GUROBI_HOME=/opt/gurobi950/linux64/
+LD_LIBRARY_PATH=/opt/gurobi950/linux64/lib/
+PATH=/opt/gurobi950/linux64/bin/:$PATH
 ```
 * Clone this Git repository to your local machine and import it: *File -> Import -> General -> Existing Projects into Workspace*. Import all projects.
 * Inside the runtime workspace, build all projects (*Project -> Clean... -> Clean all projects*) to trigger code generation.

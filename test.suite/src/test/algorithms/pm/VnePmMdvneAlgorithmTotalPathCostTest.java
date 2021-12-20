@@ -202,10 +202,16 @@ public class VnePmMdvneAlgorithmTotalPathCostTest extends AAlgorithmMultipleVnsT
 		assertFalse(algo.execute());
 
 		// The last network must be embedded, because its rejection cost is larger
-		assertNotNull(vNets.get(0).getHost());
-		assertNotNull(vNets.get(1).getHost());
-		assertNull(vNets.get(2).getHost());
 		assertNotNull(vNets.get(3).getHost());
+
+		// One of the other virtual networks must not be embedded
+		int hostIsNullCounter = 0;
+		for (int i = 0; i <= 2; i++) {
+			if (vNets.get(i).getHost() == null) {
+				hostIsNullCounter++;
+			}
+		}
+		assertEquals(1, hostIsNullCounter);
 	}
 
 	@Test
