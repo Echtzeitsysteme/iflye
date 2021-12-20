@@ -19,6 +19,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="lib" path="/ilp/lib/cardygan-ilp/ilp-0.2.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
