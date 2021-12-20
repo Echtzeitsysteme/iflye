@@ -20,7 +20,6 @@ import ilp.wrapper.IlpSolverException;
 import ilp.wrapper.IncrementalIlpSolver;
 import ilp.wrapper.Statistics;
 import ilp.wrapper.config.IlpSolverConfig;
-import ilp.wrapper.impl.IncrementalGurobiSolver;
 import metrics.CostUtility;
 import metrics.manager.GlobalMetricsManager;
 import model.Link;
@@ -718,7 +717,7 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 	 */
 	public void init() {
 		// Create new ILP solver object on every method call.
-		ilpSolver = new IncrementalGurobiSolver(IlpSolverConfig.TIME_OUT, IlpSolverConfig.RANDOM_SEED);
+		ilpSolver = IlpSolverConfig.getIlpSolver();
 	}
 
 	public void forEachLink(final SubstratePath sPath, final Consumer<? super Link> operation) {

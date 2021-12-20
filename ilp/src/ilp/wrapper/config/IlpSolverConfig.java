@@ -1,5 +1,9 @@
 package ilp.wrapper.config;
 
+import ilp.wrapper.IncrementalIlpSolver;
+import ilp.wrapper.impl.IncrementalCplexSolver;
+import ilp.wrapper.impl.IncrementalGurobiSolver;
+
 public class IlpSolverConfig {
 
 	/**
