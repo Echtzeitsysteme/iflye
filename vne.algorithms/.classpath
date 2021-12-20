@@ -8,7 +8,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/network.model.rules.racka"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/network.model.rules.rackb"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/network.metrics"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-13">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-16">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
@@ -19,6 +19,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="lib" path="/ilp/lib/cardygan-ilp/ilp-0.2.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

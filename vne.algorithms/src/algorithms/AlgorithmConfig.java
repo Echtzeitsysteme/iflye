@@ -1,6 +1,5 @@
 package algorithms;
 
-import algorithms.ilp.VneIlpPathAlgorithm;
 import algorithms.pm.VnePmMdvneAlgorithm;
 import algorithms.pm.VnePmMdvneAlgorithmMigration;
 

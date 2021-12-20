@@ -1,13 +1,5 @@
 package ilp.wrapper.config;
 
-import org.cardygan.ilp.api.solver.CplexSolver;
-import org.cardygan.ilp.api.solver.GurobiSolver;
-import org.cardygan.ilp.api.solver.GurobiSolver.GurobiSolverBuilder;
-
-import ilp.wrapper.IncrementalIlpSolver;
-import ilp.wrapper.impl.IncrementalCplexSolver;
-import ilp.wrapper.impl.IncrementalGurobiSolver;
-
 public class IlpSolverConfig {
 
 	/**
@@ -66,23 +58,6 @@ public class IlpSolverConfig {
 			return new IncrementalGurobiSolver(IlpSolverConfig.TIME_OUT, IlpSolverConfig.RANDOM_SEED);
 		case CPLEX:
 			return new IncrementalCplexSolver(IlpSolverConfig.TIME_OUT, IlpSolverConfig.RANDOM_SEED);
-		}
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * Returns a new instance of the configured solver. This method is used by the
-	 * purely ILP-based VNE algorithm.
-	 *
-	 * @return New instance of the configured solver.
-	 */
-	public static org.cardygan.ilp.api.solver.Solver getSolver() {
-		switch (IlpSolverConfig.solver) {
-		case GUROBI:
-			final GurobiSolverBuilder builder = GurobiSolver.create();
-			return builder.withLogging(ENABLE_ILP_OUTPUT).withTimeOut(TIME_OUT).withSeed(RANDOM_SEED).build();
-		case CPLEX:
-			return new CplexSolver();
 		}
 		throw new UnsupportedOperationException();
 	}

@@ -6,15 +6,15 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/network.metrics"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/network.generators"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ilp"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-13">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-16">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/commons-cli/commons-cli-1.4.jar"/>
-	<classpathentry kind="lib" path="lib/commons-cli/commons-cli-1.4-javadoc.jar"/>
-	<classpathentry kind="lib" path="lib/commons-cli/commons-cli-1.4-sources.jar"/>
-	<classpathentry kind="lib" path="lib/commons-csv/commons-csv-1.8.jar"/>
-	<classpathentry kind="lib" path="lib/commons-csv/commons-csv-1.8-sources.jar"/>
+	<classpathentry kind="lib" path="lib/commons-cli/commons-cli-1.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-cli/commons-cli-1.5.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/commons-cli/commons-cli-1.5.0-sources.jar"/>
+	<classpathentry kind="lib" path="lib/commons-csv/commons-csv-1.9.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-csv/commons-csv-1.9.0-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

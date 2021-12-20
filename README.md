@@ -5,17 +5,16 @@
 
 ## Installation (development)
 
-* Install [AdoptOpenJDK 13 (HotSpot JVM)](https://adoptopenjdk.net/releases.html?variant=openjdk13&jvmVariant=hotspot) or newer.
+* Install [AdoptOpenJDK 16 (HotSpot JVM)](https://adoptopenjdk.net/releases.html?variant=openjdk16&jvmVariant=hotspot) or newer.
 * Install eMoflon::IBeX as described [here](https://github.com/eMoflon/emoflon-ibex#how-to-develop).
-* Install [Gurobi](https://www.gurobi.com/) in version `8.1.1` and activate a license for your computer.
+* Install [Gurobi](https://www.gurobi.com/) in version `9.5.0` and activate a license for your computer.
 * Launch a runtime workspace (while using a runtime Eclipse) as stated in the eMoflon::IBeX installation steps.
     * Additionally, the runtime workspace needs some environment variables to access the Gurobi solver. Do not forget to adapt them to your individual setup:
 ```
 GRB_LICENSE_FILE=/home/maxkratz/gruobi.lic
-GUROBI_HOME=/opt/gurobi811/linux64/
-GUROBI_JAR_PATH=/opt/gurobi811/linux64/lib/gurobi.jar
-LD_LIBRARY_PATH=/opt/gurobi811/linux64/lib/
-PATH=/opt/gurobi811/linux64/bin/:$PATH
+GUROBI_HOME=/opt/gurobi950/linux64/
+LD_LIBRARY_PATH=/opt/gurobi950/linux64/lib/
+PATH=/opt/gurobi950/linux64/bin/:$PATH
 ```
 * Clone this Git repository to your local machine and import it: *File -> Import -> General -> Existing Projects into Workspace*. Import all projects.
 * Inside the runtime workspace, build all projects (*Project -> Clean... -> Clean all projects*) to trigger code generation.
@@ -88,6 +87,10 @@ To start them, follow this step:
 
 For easier debugging purposes, a basic GUI for visualizing networks is implemented in the project [network.visualization](network.visualization/) based on [GraphViz](http://www.graphviz.org/download/).
 Currently, it can render tree-based networks as tree structures or use the automatic mode of GraphViz from a model file `model.xmi` in the [examples project](examples/).
+Therefore, launch the class `Ui` with these arguments: `../examples/model.xmi sub 1`
+* `../examples/model.xmi` is the path of the model to read.
+* `sub` is the name of the (substrate) network to visualize.
+* `1` configures the automatic layout. You can also chose `0` to use a tree-like layout.
 
 ![](gfx/gui-tree.png)
 ![](gfx/gui-auto.png)

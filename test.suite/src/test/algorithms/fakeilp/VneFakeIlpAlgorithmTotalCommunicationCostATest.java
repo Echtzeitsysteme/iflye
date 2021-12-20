@@ -1,4 +1,4 @@
-package test.algorithms.pm;
+package test.algorithms.fakeilp;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -10,9 +10,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import algorithms.AlgorithmConfig;
+import algorithms.AlgorithmConfig.Embedding;
 import algorithms.AlgorithmConfig.Objective;
-import algorithms.pm.VnePmMdvneAlgorithm;
-import model.SubstrateElement;
+import algorithms.ilp.VneFakeIlpAlgorithm;
 import model.SubstrateNetwork;
 import model.SubstratePath;
 import model.VirtualLink;
@@ -22,22 +22,25 @@ import model.VirtualSwitch;
 import test.algorithms.generic.AAlgorithmMultipleVnsTest;
 
 /**
- * Test class for the VNE PM MdVNE algorithm implementation for minimizing the
- * total communication cost metric C.
+ * Test class for the VNE fake ILP algorithm (incremental version)
+ * implementation for minimizing the total communication cost metric A.
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VnePmMdvneAlgorithmTotalCommunicationCostCTest extends AAlgorithmMultipleVnsTest {
-
-	@Override
-	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_C;
-		algo = VnePmMdvneAlgorithm.prepare(sNet, vNets);
-	}
+public class VneFakeIlpAlgorithmTotalCommunicationCostATest extends AAlgorithmMultipleVnsTest {
 
 	@AfterEach
 	public void resetAlgo() {
-		((VnePmMdvneAlgorithm) algo).dispose();
+		if (algo != null) {
+			((VneFakeIlpAlgorithm) algo).dispose();
+		}
+	}
+
+	@Override
+	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
+		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_A;
+		AlgorithmConfig.emb = Embedding.MANUAL;
+		algo = VneFakeIlpAlgorithm.prepare(sNet, vNets);
 	}
 
 	/**
@@ -112,49 +115,6 @@ public class VnePmMdvneAlgorithmTotalCommunicationCostCTest extends AAlgorithmMu
 		final SubstratePath pLn6 = (SubstratePath) vLn6.getHost();
 		assertEquals(refSwHostName, pLn6.getSource().getName());
 		assertEquals(serverHost3, pLn6.getTarget().getName());
-	}
-
-	/**
-	 * Tests if the algorithm prefers using already filled up substrate servers.
-	 */
-	@Test
-	public void testPreferenceOfFilledServers() {
-		// Setup
-		oneTierSetupThreeServers("sub", 4);
-		oneTierSetupTwoServers("virt", 1);
-		facade.createAllPathsForNetwork("sub");
-
-		final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-		final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
-
-		initAlgo(sNet, Set.of(vNet));
-		assertTrue(algo.execute());
-
-		// Actual test starts here
-		facade.addNetworkToRoot("virt2", true);
-		oneTierSetupTwoServers("virt2", 1);
-		final VirtualNetwork vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
-
-		initAlgo(sNet, Set.of(vNet2));
-		assertTrue(algo.execute());
-
-		// Test expects that all virtual networks are placed on the same substrate
-		// server
-		final SubstrateElement ref = ((VirtualServer) vNet.getNodes().get(1)).getHost();
-
-		vNet.getNodes().forEach(n -> {
-			if (n instanceof VirtualServer) {
-				final VirtualServer vsrv = (VirtualServer) n;
-				assertEquals(ref, vsrv.getHost());
-			}
-		});
-
-		vNet2.getNodes().forEach(n -> {
-			if (n instanceof VirtualServer) {
-				final VirtualServer vsrv = (VirtualServer) n;
-				assertEquals(ref, vsrv.getHost());
-			}
-		});
 	}
 
 }
