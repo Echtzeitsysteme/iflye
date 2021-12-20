@@ -6,7 +6,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/network.metrics"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/network.generators"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ilp"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-13">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-16">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>

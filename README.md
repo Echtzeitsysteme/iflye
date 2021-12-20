@@ -5,7 +5,7 @@
 
 ## Installation (development)
 
-* Install [AdoptOpenJDK 13 (HotSpot JVM)](https://adoptopenjdk.net/releases.html?variant=openjdk13&jvmVariant=hotspot) or newer.
+* Install [AdoptOpenJDK 16 (HotSpot JVM)](https://adoptopenjdk.net/releases.html?variant=openjdk16&jvmVariant=hotspot) or newer.
 * Install eMoflon::IBeX as described [here](https://github.com/eMoflon/emoflon-ibex#how-to-develop).
 * Install [Gurobi](https://www.gurobi.com/) in version `8.1.1` and activate a license for your computer.
 * Launch a runtime workspace (while using a runtime Eclipse) as stated in the eMoflon::IBeX installation steps.
