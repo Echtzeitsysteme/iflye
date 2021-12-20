@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -84,8 +85,10 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 		assertTrue(algo.execute());
 
 		// Test switch placement
-		final VirtualSwitch virtSw = (VirtualSwitch) facade.getSwitchById("virt_sw");
-		assertEquals("sub_sw", virtSw.getHost().getName());
+		// Switch placement is possible on all substrate nodes
+		final VirtualSwitch vSw = (VirtualSwitch) facade.getSwitchById("virt_sw");
+		assertNotNull(vSw.getHost());
+		final String refHostSw = vSw.getHost().getName();
 
 		// Test server placements
 		final VirtualServer vSrv1 = (VirtualServer) facade.getServerById("virt_srv1");
@@ -115,23 +118,29 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 			sourceName = pLn1.getSource().getName();
 			targetName = pLn1.getTarget().getName();
 		} else {
-			fail();
+			final SubstrateServer sLn1 = (SubstrateServer) vLn1.getHost();
+			sourceName = sLn1.getName();
+			targetName = sLn1.getName();
 		}
 
 		assertEquals(refHost1, sourceName);
-		assertEquals("sub_sw", targetName);
+		assertEquals(refHostSw, targetName);
 
 		// Link 2
 		if (vLn2.getHost() instanceof SubstratePath) {
 			final SubstratePath pLn2 = (SubstratePath) vLn2.getHost();
 			sourceName = pLn2.getSource().getName();
 			targetName = pLn2.getTarget().getName();
+		} else if (vLn2.getHost() instanceof SubstrateServer) {
+			final SubstrateServer sLn2 = (SubstrateServer) vLn2.getHost();
+			sourceName = sLn2.getName();
+			targetName = sLn2.getName();
 		} else {
 			fail();
 		}
 
 		assertEquals(refHost2, sourceName);
-		assertEquals("sub_sw", targetName);
+		assertEquals(refHostSw, targetName);
 
 		// Link 3
 		if (vLn3.getHost() instanceof SubstratePath) {
@@ -139,10 +148,12 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 			sourceName = pLn3.getSource().getName();
 			targetName = pLn3.getTarget().getName();
 		} else {
-			fail();
+			final SubstrateServer sLn3 = (SubstrateServer) vLn3.getHost();
+			sourceName = sLn3.getName();
+			targetName = sLn3.getName();
 		}
 
-		assertEquals("sub_sw", sourceName);
+		assertEquals(refHostSw, sourceName);
 		assertEquals(refHost1, targetName);
 
 		// Link 4
@@ -151,10 +162,12 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 			sourceName = pLn4.getSource().getName();
 			targetName = pLn4.getTarget().getName();
 		} else {
-			fail();
+			final SubstrateServer sLn4 = (SubstrateServer) vLn4.getHost();
+			sourceName = sLn4.getName();
+			targetName = sLn4.getName();
 		}
 
-		assertEquals("sub_sw", sourceName);
+		assertEquals(refHostSw, sourceName);
 		assertEquals(refHost2, targetName);
 	}
 

@@ -1,9 +1,5 @@
 package ilp.wrapper.config;
 
-import org.cardygan.ilp.api.solver.CplexSolver;
-import org.cardygan.ilp.api.solver.GurobiSolver;
-import org.cardygan.ilp.api.solver.GurobiSolver.GurobiSolverBuilder;
-
 public class IlpSolverConfig {
 
 	/**
@@ -48,22 +44,6 @@ public class IlpSolverConfig {
 	 * If true, the objective function will introduce a logarithm.
 	 */
 	public static boolean OBJ_LOG = false;
-
-	/**
-	 * Returns a new instance of the configured solver.
-	 *
-	 * @return New instance of the configured solver.
-	 */
-	public static org.cardygan.ilp.api.solver.Solver getSolver() {
-		switch (IlpSolverConfig.solver) {
-		case GUROBI:
-			final GurobiSolverBuilder builder = GurobiSolver.create();
-			return builder.withLogging(ENABLE_ILP_OUTPUT).withTimeOut(TIME_OUT).withSeed(RANDOM_SEED).build();
-		case CPLEX:
-			return new CplexSolver();
-		}
-		throw new UnsupportedOperationException();
-	}
 
 	/**
 	 * Transforms the input value of the former objective function according to the

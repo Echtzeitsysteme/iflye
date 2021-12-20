@@ -3,7 +3,8 @@ package examples.algorithms;
 import java.util.List;
 import java.util.Set;
 
-import algorithms.ilp.VneIlpPathAlgorithm;
+import algorithms.AbstractAlgorithm;
+import algorithms.pm.VnePmMdvneAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.TwoTierNetworkGenerator;
@@ -14,7 +15,7 @@ import model.VirtualNetwork;
 import model.converter.BasicModelConverter;
 
 /**
- * Runnable example for the VNE ILP algorithm implementation that reads a
+ * Runnable example for the VNE PM algorithm implementation that reads a
  * predetermined JSON file.
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
@@ -49,7 +50,7 @@ public class VnePmMdvneAlgorithmExampleRead {
 			final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById(vNetId);
 
 			// Create and execute algorithm
-			final VneIlpPathAlgorithm algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
+			final AbstractAlgorithm algo = VnePmMdvneAlgorithm.prepare(sNet, Set.of(vNet));
 			algo.execute();
 		}
 

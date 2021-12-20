@@ -9,8 +9,6 @@ import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import algorithms.AbstractAlgorithm;
-import algorithms.ilp.VneIlpPathAlgorithm;
 import algorithms.pm.VnePmMdvneAlgorithm;
 import facade.config.ModelFacadeConfig;
 import generators.OneTierNetworkGenerator;
@@ -18,6 +16,7 @@ import generators.config.OneTierConfig;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 import test.algorithms.generic.AAlgorithmTest;
+import test.utils.GenericTestUtils;
 
 /**
  * Test class for the VNE pattern matching algorithm implementation for
@@ -66,8 +65,7 @@ public class VnePmMdvneAlgorithmRepairModelNetworkTest extends AAlgorithmTest {
 		final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
 		// Embed first virtual network with another algorithm
-		AbstractAlgorithm algoLoc = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
-		assertTrue(algoLoc.execute());
+		GenericTestUtils.vneFakeIlpEmbedding(sNet, Set.of(vNet));
 
 		// Remove the first virtual network ungracefully
 		facade.removeNetworkFromRootSimple("virt");
@@ -98,8 +96,7 @@ public class VnePmMdvneAlgorithmRepairModelNetworkTest extends AAlgorithmTest {
 		final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
 
 		// Usage of other algorithm on purpose
-		final VneIlpPathAlgorithm algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
-		assertTrue(algo.execute());
+		GenericTestUtils.vneFakeIlpEmbedding(sNet, Set.of(vNet));
 
 		facade.removeNetworkFromRootSimple("virt");
 		assertThrows(InternalError.class, () -> {

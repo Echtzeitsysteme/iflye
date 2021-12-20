@@ -2,7 +2,8 @@ package examples.algorithms;
 
 import java.util.Set;
 
-import algorithms.ilp.VneIlpPathAlgorithm;
+import algorithms.AbstractAlgorithm;
+import algorithms.ilp.VneFakeIlpBatchAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.OneTierNetworkGenerator;
@@ -14,11 +15,11 @@ import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
 /**
- * Runnable example for the VNE ILP algorithm implementation.
+ * Runnable example for the VNE fake ILP algorithm implementation.
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneIlpPathAlgorithmExampleSmall {
+public class VneFakeIlpAlgorithmExampleSmall {
 
 	/**
 	 * Main method to start the example. String array of arguments will be ignored.
@@ -51,7 +52,7 @@ public class VneIlpPathAlgorithmExampleSmall {
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
 		// Create and execute algorithm
-		final VneIlpPathAlgorithm algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
+		final AbstractAlgorithm algo = VneFakeIlpBatchAlgorithm.prepare(sNet, Set.of(vNet));
 		algo.execute();
 
 		GlobalMetricsManager.stopRuntime();

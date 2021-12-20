@@ -13,7 +13,6 @@
 ```
 GRB_LICENSE_FILE=/home/maxkratz/gruobi.lic
 GUROBI_HOME=/opt/gurobi811/linux64/
-GUROBI_JAR_PATH=/opt/gurobi811/linux64/lib/gurobi.jar
 LD_LIBRARY_PATH=/opt/gurobi811/linux64/lib/
 PATH=/opt/gurobi811/linux64/bin/:$PATH
 ```

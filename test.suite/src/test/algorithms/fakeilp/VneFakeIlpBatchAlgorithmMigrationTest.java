@@ -1,4 +1,4 @@
-package test.algorithms.ilp;
+package test.algorithms.fakeilp;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -6,11 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import algorithms.AlgorithmConfig;
+import algorithms.AlgorithmConfig.Embedding;
 import algorithms.AlgorithmConfig.Objective;
-import algorithms.ilp.VneIlpPathAlgorithmBatch;
+import algorithms.ilp.VneFakeIlpAlgorithm;
+import algorithms.ilp.VneFakeIlpBatchAlgorithm;
 import facade.ModelFacade;
 import generators.OneTierNetworkGenerator;
 import generators.config.OneTierConfig;
@@ -21,12 +24,19 @@ import model.VirtualSwitch;
 import test.algorithms.generic.AAlgorithmTest;
 
 /**
- * Test class for the VNE ILP path algorithm (batch version) implementation for
+ * Test class for the VNE fake ILP algorithm (batch version) implementation for
  * checking the migration functionality.
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneIlpPathAlgorithmBatchMigrationTest extends AAlgorithmTest {
+public class VneFakeIlpBatchAlgorithmMigrationTest extends AAlgorithmTest {
+
+	@AfterEach
+	public void resetAlgo() {
+		if (algo != null) {
+			((VneFakeIlpAlgorithm) algo).dispose();
+		}
+	}
 
 	/**
 	 * ModelFacade to work with.
@@ -43,7 +53,8 @@ public class VneIlpPathAlgorithmBatchMigrationTest extends AAlgorithmTest {
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		// Total communication cost A is needed for this test
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_A;
-		algo = new VneIlpPathAlgorithmBatch(sNet, vNets);
+		AlgorithmConfig.emb = Embedding.MANUAL;
+		algo = VneFakeIlpBatchAlgorithm.prepare(sNet, vNets);
 	}
 
 	@Test
