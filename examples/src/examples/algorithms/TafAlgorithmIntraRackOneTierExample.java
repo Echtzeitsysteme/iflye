@@ -2,6 +2,8 @@ package examples.algorithms;
 
 import java.util.Set;
 
+import algorithms.AlgorithmConfig;
+import algorithms.AlgorithmConfig.Objective;
 import algorithms.heuristics.TafAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
@@ -27,6 +29,7 @@ public class TafAlgorithmIntraRackOneTierExample {
 		// Setup
 		ModelFacadeConfig.MIN_PATH_LENGTH = 1;
 		ModelFacadeConfig.IGNORE_BW = true;
+		AlgorithmConfig.obj = Objective.TOTAL_TAF_COMMUNICATION_COST;
 
 		// Substrate network = one tier network
 		final OneTierConfig substrateConfig = new OneTierConfig(2, 1, false, 1, 1, 1, 20);

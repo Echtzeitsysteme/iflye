@@ -2,7 +2,9 @@ package examples.algorithms;
 
 import java.util.Set;
 
-import algorithms.ilp.VneIlpPathAlgorithm;
+import algorithms.AlgorithmConfig;
+import algorithms.AlgorithmConfig.Embedding;
+import algorithms.ilp.VneFakeIlpAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.OneTierNetworkGenerator;
@@ -17,11 +19,11 @@ import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
 /**
- * Runnable example for the VNE ILP algorithm implementation.
+ * Runnable example for the VNE fake ILP algorithm implementation.
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneIlpPathAlgorithmExampleMedium {
+public class VneFakeIlpAlgorithmExampleMedium {
 
 	/**
 	 * Main method to start the example. String array of arguments will be ignored.
@@ -31,7 +33,8 @@ public class VneIlpPathAlgorithmExampleMedium {
 	public static void main(final String[] args) {
 		// Setup
 		ModelFacadeConfig.MIN_PATH_LENGTH = 1;
-		ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+		ModelFacadeConfig.MAX_PATH_LENGTH = 2;
+		AlgorithmConfig.emb = Embedding.MANUAL;
 
 		GlobalMetricsManager.startRuntime();
 
@@ -56,7 +59,7 @@ public class VneIlpPathAlgorithmExampleMedium {
 
 			// Create and execute algorithm
 			System.out.println("=> Embedding virtual network #" + i);
-			final VneIlpPathAlgorithm algo = new VneIlpPathAlgorithm(sNet, Set.of(vNet));
+			final VneFakeIlpAlgorithm algo = VneFakeIlpAlgorithm.prepare(sNet, Set.of(vNet));
 			algo.execute();
 		}
 
