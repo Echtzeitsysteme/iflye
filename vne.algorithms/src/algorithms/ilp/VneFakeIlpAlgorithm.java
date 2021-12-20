@@ -392,7 +392,7 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 	 * 
 	 * @return PatternMatchingDelta with all possible combinations of matches.
 	 */
-	private PatternMatchingDelta createFakeMatches() {
+	protected PatternMatchingDelta createFakeMatches() {
 		final PatternMatchingDelta delta = new PatternMatchingDelta();
 
 		for (final VirtualNetwork actVNet : this.vNets) {
