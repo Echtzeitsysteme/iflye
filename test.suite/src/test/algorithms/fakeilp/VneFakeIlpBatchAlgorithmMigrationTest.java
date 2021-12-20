@@ -6,11 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Embedding;
 import algorithms.AlgorithmConfig.Objective;
+import algorithms.ilp.VneFakeIlpAlgorithm;
 import algorithms.ilp.VneFakeIlpBatchAlgorithm;
 import facade.ModelFacade;
 import generators.OneTierNetworkGenerator;
@@ -28,6 +30,13 @@ import test.algorithms.generic.AAlgorithmTest;
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class VneFakeIlpBatchAlgorithmMigrationTest extends AAlgorithmTest {
+
+	@AfterEach
+	public void resetAlgo() {
+		if (algo != null) {
+			((VneFakeIlpAlgorithm) algo).dispose();
+		}
+	}
 
 	/**
 	 * ModelFacade to work with.

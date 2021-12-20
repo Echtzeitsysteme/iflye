@@ -2,6 +2,8 @@ package test.algorithms.fakeilp;
 
 import java.util.Set;
 
+import org.junit.jupiter.api.AfterEach;
+
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Embedding;
 import algorithms.AlgorithmConfig.Objective;
@@ -17,6 +19,13 @@ import test.algorithms.generic.AAlgorithmMultipleVnsTest;
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class VneFakeIlpAlgorithmTotalPathCostTest extends AAlgorithmMultipleVnsTest {
+
+	@AfterEach
+	public void resetAlgo() {
+		if (algo != null) {
+			((VneFakeIlpAlgorithm) algo).dispose();
+		}
+	}
 
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {

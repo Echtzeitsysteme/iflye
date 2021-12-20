@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import algorithms.AlgorithmConfig;
@@ -28,6 +29,13 @@ import test.algorithms.generic.AAlgorithmMultipleVnsTest;
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class VneFakeIlpAlgorithmTotalCommunicationCostCTest extends AAlgorithmMultipleVnsTest {
+
+	@AfterEach
+	public void resetAlgo() {
+		if (algo != null) {
+			((VneFakeIlpAlgorithm) algo).dispose();
+		}
+	}
 
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
