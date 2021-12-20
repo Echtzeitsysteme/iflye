@@ -17,8 +17,8 @@ import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Embedding;
 import algorithms.AlgorithmConfig.Objective;
 import algorithms.heuristics.TafAlgorithm;
-import algorithms.ilp.VneIlpPathAlgorithm;
-import algorithms.ilp.VneIlpPathAlgorithmBatch;
+import algorithms.ilp.VneFakeIlpAlgorithm;
+import algorithms.ilp.VneFakeIlpBatchAlgorithm;
 import algorithms.pm.VnePmMdvneAlgorithm;
 import algorithms.pm.VnePmMdvneAlgorithmMigration;
 import algorithms.pm.VnePmMdvneAlgorithmPipelineThreeStagesA;
@@ -397,9 +397,9 @@ public class DissScenarioLoad {
 		case "pm-pipeline3b":
 			return VnePmMdvneAlgorithmPipelineThreeStagesB.prepare(sNet, vNets);
 		case "ilp":
-			return new VneIlpPathAlgorithm(sNet, vNets);
+			return VneFakeIlpAlgorithm.prepare(sNet, vNets);
 		case "ilp-batch":
-			return new VneIlpPathAlgorithmBatch(sNet, vNets);
+			return VneFakeIlpBatchAlgorithm.prepare(sNet, vNets);
 		case "taf":
 			ModelFacadeConfig.IGNORE_BW = true;
 			return new TafAlgorithm(sNet, vNets);
