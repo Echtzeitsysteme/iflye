@@ -6,9 +6,9 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/cplex/cplex-12.8.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="lib" path="lib/gurobi/gurobi-9.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/gurobi/gurobi-javadoc-9.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/cplex/cplex-20.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
