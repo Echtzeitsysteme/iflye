@@ -15,7 +15,6 @@ import ilog.concert.IloNumVar;
 import ilog.concert.IloObjective;
 import ilog.concert.IloRange;
 import ilog.cplex.IloCplex;
-import ilog.cplex.IloCplex.PresolveCallback;
 import ilp.wrapper.IlpSolverException;
 import ilp.wrapper.IncrementalIlpSolver;
 import ilp.wrapper.SolverStatus;
@@ -45,9 +44,6 @@ public class IncrementalCplexSolver implements IncrementalIlpSolver {
 	private final Map<String, Double> objectiveCoefficients = new HashMap<>();
 	private double objectiveValue = -1;
 
-	// TODO: Find a better name for this variable
-	private final long[] vals = { -1, -1, -1 };
-
 	public IncrementalCplexSolver(final int timelimit, final int randomSeed) {
 		try {
 			cplex = new IloCplex();
@@ -58,16 +54,6 @@ public class IncrementalCplexSolver implements IncrementalIlpSolver {
 				cplex.setOut(null);
 			}
 
-			cplex.use(new PresolveCallback() {
-				@Override
-				protected void main() throws IloException {
-					synchronized (vals) {
-						vals[0] = getNremovedCols();
-						vals[1] = getNremovedRows();
-						vals[2] = System.nanoTime();
-					}
-				}
-			});
 			obj = cplex.addMinimize(cplex.linearNumExpr());
 
 		} catch (final IloException e) {
@@ -76,19 +62,19 @@ public class IncrementalCplexSolver implements IncrementalIlpSolver {
 
 	}
 
-	/**
-	 * Returns the CPLEX variable for a given name.
-	 *
-	 * @param name Name to get the variable for.
-	 * @return CPLEX variable for name.
-	 */
-	private IloNumVar getVariable(final String name) {
-		if (variables.containsKey(name)) {
-			return variables.get(name);
-		} else {
-			throw new IlpSolverException("Variable with the name=" + name + " does not exist.");
-		}
-	}
+//	/**
+//	 * Returns the CPLEX variable for a given name.
+//	 *
+//	 * @param name Name to get the variable for.
+//	 * @return CPLEX variable for name.
+//	 */
+//	private IloNumVar getVariable(final String name) {
+//		if (variables.containsKey(name)) {
+//			return variables.get(name);
+//		} else {
+//			throw new IlpSolverException("Variable with the name=" + name + " does not exist.");
+//		}
+//	}
 
 	@Override
 	public void addSosConstraint(final SosConstraint constraint) {
@@ -483,10 +469,7 @@ public class IncrementalCplexSolver implements IncrementalIlpSolver {
 			} else {
 				throw new RuntimeException("Unknown solver status.");
 			}
-			synchronized (vals) {
-				return new Statistics(status, System.nanoTime() - start, (vals[2] - start), (int) vals[0],
-						(int) vals[1]);
-			}
+			return new Statistics(status, System.nanoTime() - start);
 		} catch (final IloException e) {
 			throw new IlpSolverException(e);
 		}
