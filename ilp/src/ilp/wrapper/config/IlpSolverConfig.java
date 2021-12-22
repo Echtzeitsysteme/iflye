@@ -20,8 +20,7 @@ public class IlpSolverConfig {
 	/**
 	 * Configuration for the ILP solver to use.
 	 */
-//	public static final Solver solver = Solver.GUROBI;
-	public static Solver solver = Solver.CPLEX;
+	public static Solver solver = Solver.GUROBI;
 
 	/**
 	 * Timeout for the ILP solver.
