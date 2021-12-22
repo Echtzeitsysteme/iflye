@@ -87,6 +87,7 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
 			env = new GRBEnv("Gurobi_ILP.log");
 			env.set(DoubleParam.TimeLimit, timelimit);
 			env.set(IntParam.Seed, randomSeed);
+			env.set(IntParam.Presolve, IlpSolverConfig.ENABLE_PRESOLVE ? 1 : 0);
 			if (!IlpSolverConfig.ENABLE_ILP_OUTPUT) {
 				env.set(IntParam.OutputFlag, 0);
 			}

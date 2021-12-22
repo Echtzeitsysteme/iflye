@@ -33,6 +33,11 @@ public class IlpSolverConfig {
 	public static int RANDOM_SEED = 0;
 
 	/**
+	 * If true, this enables presolve for all ILP solvers.
+	 */
+	public static boolean ENABLE_PRESOLVE = false;
+
+	/**
 	 * Optimality tolerance for the ILP implementation part of the PM algorithm.
 	 * This value is the default value of the Gurobi solver (1e-6) taken from
 	 * https://www.gurobi.com/documentation/9.1/refman/optimalitytol.html#parameter:OptimalityTol.

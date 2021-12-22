@@ -49,6 +49,7 @@ public class IncrementalCplexSolver implements IncrementalIlpSolver {
 			cplex = new IloCplex();
 			cplex.setParam(IloCplex.Param.TimeLimit, timelimit);
 			cplex.setParam(IloCplex.Param.RandomSeed, randomSeed);
+			cplex.setParam(IloCplex.Param.Preprocessing.Presolve, IlpSolverConfig.ENABLE_PRESOLVE);
 
 			if (!IlpSolverConfig.ENABLE_ILP_OUTPUT) {
 				cplex.setOut(null);
