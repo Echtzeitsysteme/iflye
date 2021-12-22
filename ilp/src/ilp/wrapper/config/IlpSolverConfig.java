@@ -4,6 +4,11 @@ import ilp.wrapper.IncrementalIlpSolver;
 import ilp.wrapper.impl.IncrementalCplexSolver;
 import ilp.wrapper.impl.IncrementalGurobiSolver;
 
+/**
+ * General configuration class for all ILP solvers.
+ * 
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
+ */
 public class IlpSolverConfig {
 
 	/**
@@ -35,7 +40,7 @@ public class IlpSolverConfig {
 	/**
 	 * If true, this enables presolve for all ILP solvers.
 	 */
-	public static boolean ENABLE_PRESOLVE = false;
+	public static boolean ENABLE_PRESOLVE = true;
 
 	/**
 	 * Optimality tolerance for the ILP implementation part of the PM algorithm.
@@ -56,7 +61,7 @@ public class IlpSolverConfig {
 
 	/**
 	 * Returns a new instance of the configured solver. This method is used by all
-	 * PM-based VNE algorithms.
+	 * PM- and ILP-based VNE algorithms.
 	 * 
 	 * @return New instance of the configured solver.
 	 */
@@ -67,7 +72,7 @@ public class IlpSolverConfig {
 		case CPLEX:
 			return new IncrementalCplexSolver(IlpSolverConfig.TIME_OUT, IlpSolverConfig.RANDOM_SEED);
 		}
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("Solver type not implemented.");
 	}
 
 	/**

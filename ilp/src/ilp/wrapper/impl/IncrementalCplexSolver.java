@@ -37,13 +37,43 @@ import ilp.wrapper.config.IlpSolverConfig;
  */
 public class IncrementalCplexSolver implements IncrementalIlpSolver {
 
+	/**
+	 * CPLEX object (solver and model).
+	 */
 	private IloCplex cplex;
+
+	/**
+	 * Objective object.
+	 */
 	private IloObjective obj;
+
+	/**
+	 * Mappings of strings (variable names) to CPLEX variables.
+	 */
 	private final Map<String, IloIntVar> variables = new HashMap<>();
+
+	/**
+	 * Mappings of strings (constraint names) to CPLEXC ranges.
+	 */
 	private final Map<String, IloRange> constraints = new HashMap<>();
+
+	/**
+	 * Mappings of strings (objective coefficients) to doubles.
+	 */
 	private final Map<String, Double> objectiveCoefficients = new HashMap<>();
+
+	/**
+	 * Variable for the final objective value.
+	 */
 	private double objectiveValue = -1;
 
+	/**
+	 * Creates a new object of this incremental CPLEX solver with the given
+	 * parameters.
+	 * 
+	 * @param timelimit  Time limit for the solver.
+	 * @param randomSeed Random seed for the solver.
+	 */
 	public IncrementalCplexSolver(final int timelimit, final int randomSeed) {
 		try {
 			cplex = new IloCplex();
@@ -56,26 +86,11 @@ public class IncrementalCplexSolver implements IncrementalIlpSolver {
 			}
 
 			obj = cplex.addMinimize(cplex.linearNumExpr());
-
 		} catch (final IloException e) {
 			throw new RuntimeException(e);
 		}
 
 	}
-
-//	/**
-//	 * Returns the CPLEX variable for a given name.
-//	 *
-//	 * @param name Name to get the variable for.
-//	 * @return CPLEX variable for name.
-//	 */
-//	private IloNumVar getVariable(final String name) {
-//		if (variables.containsKey(name)) {
-//			return variables.get(name);
-//		} else {
-//			throw new IlpSolverException("Variable with the name=" + name + " does not exist.");
-//		}
-//	}
 
 	@Override
 	public void addSosConstraint(final SosConstraint constraint) {
@@ -113,6 +128,20 @@ public class IncrementalCplexSolver implements IncrementalIlpSolver {
 //			throw new IlpSolverException(e);
 //		}
 	}
+
+//	/**
+//	 * Returns the CPLEX variable for a given name.
+//	 *
+//	 * @param name Name to get the variable for.
+//	 * @return CPLEX variable for name.
+//	 */
+//	private IloNumVar getVariable(final String name) {
+//		if (variables.containsKey(name)) {
+//			return variables.get(name);
+//		} else {
+//			throw new IlpSolverException("Variable with the name=" + name + " does not exist.");
+//		}
+//	}
 
 	@Override
 	public void addSosConstraints(final SosConstraint[] constraints) {
@@ -252,7 +281,11 @@ public class IncrementalCplexSolver implements IncrementalIlpSolver {
 
 	@Override
 	public void dispose() throws IlpSolverException {
-		// nothing to do
+		try {
+			cplex.clearModel();
+		} catch (final IloException e) {
+			throw new IlpSolverException(e);
+		}
 	}
 
 	@Override
@@ -414,6 +447,13 @@ public class IncrementalCplexSolver implements IncrementalIlpSolver {
 		}, true);
 	}
 
+	/**
+	 * Sets the variable weights for a constraint.
+	 * 
+	 * @param changeVariableWeights Map of string -> double for the new weights.
+	 * @param changer               Changes the values inside the CPLEX model.
+	 * @param objective             True if relevant for the objective.
+	 */
 	private void setVariableWeightsForConstraint(final Map<String, Double> changeVariableWeights,
 			final BiConsumer<double[], IloIntVar[]> changer, final boolean objective) {
 		final double[] weights = new double[changeVariableWeights.size()];
