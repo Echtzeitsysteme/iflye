@@ -8,15 +8,18 @@
 * Install [AdoptOpenJDK 16 (HotSpot JVM)](https://adoptopenjdk.net/releases.html?variant=openjdk16&jvmVariant=hotspot) or newer.
 * Install eMoflon::IBeX as described [here](https://github.com/eMoflon/emoflon-ibex#how-to-develop).
 * Install [Gurobi](https://www.gurobi.com/) in version `9.5.0` and activate a license for your computer.
+    * Currently, Gurobi is the default ILP solver used in iflye.
+* Install [IBM ILOG CPLEX](https://www.ibm.com/products/ilog-cplex-optimization-studio) in version `20.1`.
+    * CPLEX is an alternative ILP solver in iflye. You do not need it explicitely, but if you did not install and configure it properly, at least one test case will fail.
 * Launch a runtime workspace (while using a runtime Eclipse) as stated in the eMoflon::IBeX installation steps.
-    * Additionally, the runtime workspace needs some environment variables to access the Gurobi solver. Do not forget to adapt them to your individual setup:
+    * Additionally, the runtime workspace needs some environment variables to access the Gurobi and the CPLEX solver. Do not forget to adapt them to your individual setup:
 ```
 GRB_LICENSE_FILE=/home/maxkratz/gruobi.lic
 GUROBI_HOME=/opt/gurobi950/linux64/
 LD_LIBRARY_PATH=/opt/gurobi950/linux64/lib/
-PATH=/opt/gurobi950/linux64/bin/:$PATH
+PATH=/opt/gurobi950/linux64/bin/:/opt/ibm/ILOG/CPLEX_Studio128/cplex/bin/x86-64_linux/:$PATH
 ```
-* Clone this Git repository to your local machine and import it: *File -> Import -> General -> Existing Projects into Workspace*. Import all projects.
+* Clone this Git repository to your local machine and import it into Eclipse: *File -> Import -> General -> Existing Projects into Workspace*. Import all projects.
 * Inside the runtime workspace, build all projects (*Project -> Clean... -> Clean all projects*) to trigger code generation.
     * Build the projects *network.model*, *network.model.rules*, *network.model.rules.racka*, *network.model.rules.rackb*, and *network.model.rules.vnet* with the black eMoflon hammer symbol.
 
@@ -38,7 +41,7 @@ Before contributing, please set-up your Eclipse code-style settings as follows:
         * Check "Organize imports"
         * Check "Additional actions"
 
-By using this settings, you should be unable to check in unformatted code.
+By using this settings, you should be unable to commit unformatted code.
 
 
 ## Usage (running simulations)
@@ -81,6 +84,8 @@ Feel free to check out some examples in [vne.scenarios/resources/*/](vne.scenari
 Various test cases to test the framework as well as some of the implemented VNE algorithms are implemented in the project [test.suite](test.suite/).
 To start them, follow this step:
 * *Right click on test.suite -> Run As... -> JUnit Test*
+
+Please notice: The test [IlpSolverSetupTest](test.suite/src/test/ilp/IlpSolverSetupTest.java) will check your Gurobi/CPLEX installation and configuration. If this test fails, at least one of the two ILP solvers is not configured properly.
 
 
 ## Visualization
