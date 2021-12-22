@@ -15,7 +15,6 @@ import gurobi.GRB.DoubleAttr;
 import gurobi.GRB.DoubleParam;
 import gurobi.GRB.IntParam;
 import gurobi.GRB.StringAttr;
-import gurobi.GRBCallback;
 import gurobi.GRBConstr;
 import gurobi.GRBEnv;
 import gurobi.GRBException;
@@ -76,9 +75,6 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
 	 */
 	private final Map<GRBConstr, Set<GRBVar>> constraintVars = new HashMap<>();
 
-	// TODO: Find a better name for this variable
-	private final long[] vals = { -1, -1, -1 };
-
 	/**
 	 * Constructor that initializes a new Gurobi solver object for a given time
 	 * limit and random seed.
@@ -91,28 +87,13 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
 			env = new GRBEnv("Gurobi_ILP.log");
 			env.set(DoubleParam.TimeLimit, timelimit);
 			env.set(IntParam.Seed, randomSeed);
+			env.set(IntParam.Presolve, IlpSolverConfig.ENABLE_PRESOLVE ? 1 : 0);
 			if (!IlpSolverConfig.ENABLE_ILP_OUTPUT) {
 				env.set(IntParam.OutputFlag, 0);
 			}
 			model = new GRBModel(env);
 			model.set(DoubleParam.TimeLimit, timelimit);
 			model.set(IntParam.Seed, randomSeed);
-			model.setCallback(new GRBCallback() {
-				@Override
-				protected void callback() {
-					if (where == GRB.CB_PRESOLVE) {
-						try {
-							synchronized (vals) {
-								vals[0] = getIntInfo(GRB.CB_PRE_COLDEL);
-								vals[1] = getIntInfo(GRB.CB_PRE_ROWDEL);
-								vals[2] = System.nanoTime();
-							}
-						} catch (final GRBException e) {
-							throw new IlpSolverException(e);
-						}
-					}
-				}
-			});
 		} catch (final GRBException e) {
 			e.printStackTrace();
 			throw new IlpSolverException(e);
@@ -393,22 +374,6 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
 	public void loadModel(final String path) throws IlpSolverException {
 		try {
 			model = new GRBModel(env, path);
-			model.setCallback(new GRBCallback() {
-				@Override
-				protected void callback() {
-					if (where == GRB.CB_PRESOLVE) {
-						try {
-							synchronized (vals) {
-								vals[0] = getIntInfo(GRB.CB_PRE_COLDEL);
-								vals[1] = getIntInfo(GRB.CB_PRE_ROWDEL);
-								vals[2] = System.nanoTime();
-							}
-						} catch (final GRBException e) {
-							throw new IlpSolverException(e);
-						}
-					}
-				}
-			});
 		} catch (final GRBException e) {
 			throw new IlpSolverException(e);
 		}
@@ -571,36 +536,28 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
 	@Override
 	public Statistics solve() throws IlpSolverException {
 		try {
-			synchronized (vals) {
-				for (int i = 0; i < vals.length; i++) {
-					vals[i] = -1;
-				}
-			}
 			model.update();
 			model.set(DoubleParam.OptimalityTol, IlpSolverConfig.OPT_TOL);
 			final long start = System.nanoTime();
 			model.optimize();
-			synchronized (vals) {
-				SolverStatus status;
-				if (model.get(GRB.IntAttr.Status) == GRB.UNBOUNDED) {
-					status = SolverStatus.UNBOUNDED;
-				} else if (model.get(GRB.IntAttr.Status) == GRB.INF_OR_UNBD) {
-					status = SolverStatus.INF_OR_UNBD;
-				} else if (model.get(GRB.IntAttr.Status) == GRB.INFEASIBLE) {
-					status = SolverStatus.INFEASIBLE;
-				} else if (model.get(GRB.IntAttr.Status) == GRB.OPTIMAL) {
-					status = SolverStatus.OPTIMAL;
-				} else if (model.get(GRB.IntAttr.Status) == GRB.TIME_LIMIT) {
-					System.err.println("Warning: time limit (" + model.get(GRB.DoubleParam.TimeLimit) + "s) reached! "
-							+ model.get(GRB.IntAttr.SolCount) + " solutions were found so far.");
-					status = SolverStatus.TIME_OUT;
-				} else {
-					throw new RuntimeException("Unknown solver status.");
-				}
-
-				return new Statistics(status, System.nanoTime() - start, (vals[2] - start), (int) vals[0],
-						(int) vals[1]);
+			SolverStatus status;
+			if (model.get(GRB.IntAttr.Status) == GRB.UNBOUNDED) {
+				status = SolverStatus.UNBOUNDED;
+			} else if (model.get(GRB.IntAttr.Status) == GRB.INF_OR_UNBD) {
+				status = SolverStatus.INF_OR_UNBD;
+			} else if (model.get(GRB.IntAttr.Status) == GRB.INFEASIBLE) {
+				status = SolverStatus.INFEASIBLE;
+			} else if (model.get(GRB.IntAttr.Status) == GRB.OPTIMAL) {
+				status = SolverStatus.OPTIMAL;
+			} else if (model.get(GRB.IntAttr.Status) == GRB.TIME_LIMIT) {
+				System.err.println("Warning: time limit (" + model.get(GRB.DoubleParam.TimeLimit) + "s) reached! "
+						+ model.get(GRB.IntAttr.SolCount) + " solutions were found so far.");
+				status = SolverStatus.TIME_OUT;
+			} else {
+				throw new RuntimeException("Unknown solver status.");
 			}
+
+			return new Statistics(status, System.nanoTime() - start);
 		} catch (final GRBException e) {
 			throw new IlpSolverException(e);
 		}

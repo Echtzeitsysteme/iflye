@@ -84,7 +84,7 @@ public class CplexExample {
 	//
 	// using the IloMPModeler API
 
-	static void populateByRow(final IloMPModeler model, final IloNumVar[][] var, final IloRange[][] rng)
+	private static void populateByRow(final IloMPModeler model, final IloNumVar[][] var, final IloRange[][] rng)
 			throws IloException {
 		final double[] lb = { 0.0, 0.0, 0.0 };
 		final double[] ub = { 40.0, Double.MAX_VALUE, Double.MAX_VALUE };

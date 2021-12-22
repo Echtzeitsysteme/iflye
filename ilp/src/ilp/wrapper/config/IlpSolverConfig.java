@@ -1,5 +1,14 @@
 package ilp.wrapper.config;
 
+import ilp.wrapper.IncrementalIlpSolver;
+import ilp.wrapper.impl.IncrementalCplexSolver;
+import ilp.wrapper.impl.IncrementalGurobiSolver;
+
+/**
+ * General configuration class for all ILP solvers.
+ *
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
+ */
 public class IlpSolverConfig {
 
 	/**
@@ -16,7 +25,7 @@ public class IlpSolverConfig {
 	/**
 	 * Configuration for the ILP solver to use.
 	 */
-	public static final Solver solver = Solver.GUROBI;
+	public static Solver solver = Solver.GUROBI;
 
 	/**
 	 * Timeout for the ILP solver.
@@ -27,6 +36,11 @@ public class IlpSolverConfig {
 	 * Random seed for the ILP solver.
 	 */
 	public static int RANDOM_SEED = 0;
+
+	/**
+	 * If true, this enables presolve for all ILP solvers.
+	 */
+	public static boolean ENABLE_PRESOLVE = true;
 
 	/**
 	 * Optimality tolerance for the ILP implementation part of the PM algorithm.
@@ -44,6 +58,22 @@ public class IlpSolverConfig {
 	 * If true, the objective function will introduce a logarithm.
 	 */
 	public static boolean OBJ_LOG = false;
+
+	/**
+	 * Returns a new instance of the configured solver. This method is used by all
+	 * PM- and ILP-based VNE algorithms.
+	 *
+	 * @return New instance of the configured solver.
+	 */
+	public static IncrementalIlpSolver getIlpSolver() {
+		switch (IlpSolverConfig.solver) {
+		case GUROBI:
+			return new IncrementalGurobiSolver(IlpSolverConfig.TIME_OUT, IlpSolverConfig.RANDOM_SEED);
+		case CPLEX:
+			return new IncrementalCplexSolver(IlpSolverConfig.TIME_OUT, IlpSolverConfig.RANDOM_SEED);
+		}
+		throw new UnsupportedOperationException("Solver type not implemented.");
+	}
 
 	/**
 	 * Transforms the input value of the former objective function according to the

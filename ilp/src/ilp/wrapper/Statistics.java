@@ -1,41 +1,49 @@
 package ilp.wrapper;
 
+/**
+ * Statistics class for the ILP solver implementations.
+ *
+ * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
+ */
 public class Statistics {
-	// TODO!
 
+	/**
+	 * Status of the solver after running, e.g., OPTIMAL.
+	 */
 	private final SolverStatus status;
-	private final long duration;
-	private final long presolveTime;
-	private final int colsRemovedByPresolve;
-	private final int rowsRemovedByPresolve;
 
-	public Statistics(final SolverStatus status, final long duration, final long presolveTime,
-			final int colsRemovedByPresolve, final int rowsRemovedByPresolve) {
-		this.presolveTime = presolveTime;
+	/**
+	 * Runtime of the solver in nanoseconds.
+	 */
+	private final long duration;
+
+	/**
+	 * Creates a new statistics object with given parameters.
+	 *
+	 * @param status   Solver status.
+	 * @param duration Runtime in nanoseconds.
+	 */
+	public Statistics(final SolverStatus status, final long duration) {
 		this.status = status;
 		this.duration = duration;
-		this.colsRemovedByPresolve = colsRemovedByPresolve;
-		this.rowsRemovedByPresolve = rowsRemovedByPresolve;
 	}
 
+	/**
+	 * Returns the status of the solver.
+	 *
+	 * @return Status of the solver.
+	 */
 	public SolverStatus getStatus() {
 		return status;
 	}
 
+	/**
+	 * Returns the runtime of the solver in nanoseconds.
+	 *
+	 * @return Runtime of the solver in nanoseconds.
+	 */
 	public long getDuration() {
 		return duration;
-	}
-
-	public long getPresolveTime() {
-		return presolveTime;
-	}
-
-	public int getColsRemovedByPresolve() {
-		return colsRemovedByPresolve;
-	}
-
-	public int getRowsRemovedByPresolve() {
-		return rowsRemovedByPresolve;
 	}
 
 	/**
