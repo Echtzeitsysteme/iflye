@@ -274,7 +274,7 @@ public class Ui {
 
 	/**
 	 * Extracts the coordinates for a given node.
-	 * 
+	 *
 	 * @param node Input node to extract coordinates for.
 	 * @return Array of doubles with the coordinates.
 	 */

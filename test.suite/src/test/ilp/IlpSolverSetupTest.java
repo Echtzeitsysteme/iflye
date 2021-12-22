@@ -16,7 +16,7 @@ import ilp.wrapper.config.Solver;
 /**
  * ILP solver setup test that ensures that all possible ILP solvers are properly
  * setup in the iflye workspace.
- * 
+ *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class IlpSolverSetupTest {

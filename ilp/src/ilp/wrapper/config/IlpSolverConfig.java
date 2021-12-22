@@ -6,7 +6,7 @@ import ilp.wrapper.impl.IncrementalGurobiSolver;
 
 /**
  * General configuration class for all ILP solvers.
- * 
+ *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class IlpSolverConfig {
@@ -62,7 +62,7 @@ public class IlpSolverConfig {
 	/**
 	 * Returns a new instance of the configured solver. This method is used by all
 	 * PM- and ILP-based VNE algorithms.
-	 * 
+	 *
 	 * @return New instance of the configured solver.
 	 */
 	public static IncrementalIlpSolver getIlpSolver() {

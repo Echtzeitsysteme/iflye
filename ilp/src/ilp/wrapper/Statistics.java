@@ -2,7 +2,7 @@ package ilp.wrapper;
 
 /**
  * Statistics class for the ILP solver implementations.
- * 
+ *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public class Statistics {
@@ -19,7 +19,7 @@ public class Statistics {
 
 	/**
 	 * Creates a new statistics object with given parameters.
-	 * 
+	 *
 	 * @param status   Solver status.
 	 * @param duration Runtime in nanoseconds.
 	 */
@@ -30,7 +30,7 @@ public class Statistics {
 
 	/**
 	 * Returns the status of the solver.
-	 * 
+	 *
 	 * @return Status of the solver.
 	 */
 	public SolverStatus getStatus() {
@@ -39,7 +39,7 @@ public class Statistics {
 
 	/**
 	 * Returns the runtime of the solver in nanoseconds.
-	 * 
+	 *
 	 * @return Runtime of the solver in nanoseconds.
 	 */
 	public long getDuration() {

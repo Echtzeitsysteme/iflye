@@ -388,7 +388,7 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 
 	/**
 	 * Creates all possible combinations of matches.
-	 * 
+	 *
 	 * @return PatternMatchingDelta with all possible combinations of matches.
 	 */
 	protected PatternMatchingDelta createFakeMatches() {

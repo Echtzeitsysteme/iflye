@@ -21,7 +21,7 @@ public class GenericTestUtils {
 	/**
 	 * Embeds a given set of virtual networks to a substrate network using the fake
 	 * ILP algorithm.
-	 * 
+	 *
 	 * @param sNet  Substrate network to embed virtual networks onto.
 	 * @param vNets Set of virtual networks to embed onto the substrate network.
 	 */

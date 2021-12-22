@@ -70,7 +70,7 @@ public class IncrementalCplexSolver implements IncrementalIlpSolver {
 	/**
 	 * Creates a new object of this incremental CPLEX solver with the given
 	 * parameters.
-	 * 
+	 *
 	 * @param timelimit  Time limit for the solver.
 	 * @param randomSeed Random seed for the solver.
 	 */
@@ -96,14 +96,14 @@ public class IncrementalCplexSolver implements IncrementalIlpSolver {
 	public void addSosConstraint(final SosConstraint constraint) {
 		/*
 		 * TODO: Fix this.
-		 * 
+		 *
 		 * The order is specified by assigning weights to each variable. The order of
 		 * the variables in the model (such as in the MPS or LP format data file, or the
 		 * column index in a Callable Library application) is not used in SOS branching.
 		 * If there is no ordered relationship among the variables (such that weights
 		 * cannot be specified or would not be meaningful), other formulations should be
 		 * used instead of a special ordered set.
-		 * 
+		 *
 		 * https://www.ibm.com/docs/en/icos/12.9.0?topic=sos-what-is-special-ordered-set
 		 */
 
@@ -449,7 +449,7 @@ public class IncrementalCplexSolver implements IncrementalIlpSolver {
 
 	/**
 	 * Sets the variable weights for a constraint.
-	 * 
+	 *
 	 * @param changeVariableWeights Map of string -> double for the new weights.
 	 * @param changer               Changes the values inside the CPLEX model.
 	 * @param objective             True if relevant for the objective.
