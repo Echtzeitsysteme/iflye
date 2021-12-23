@@ -50,7 +50,7 @@ for ((i=1;i<=$r;i++));
 do
     # Without memory measurement
     export RUN_NAME="${a}_${s}_l${l}_k${k}_relaxed_scaled_run${i}"
-    export ARGS="-a $a -o total-comm-c -e emoflon_wo_update -l $l -k $k -s resources/$s/snet.json -v resources/$s/vnets.json -c ./metrics/$RUN_NAME.csv -i 600 --ilpopttol 0.01 --ilpobjscaling 0.001"
+    export ARGS="-a $a -o total-comm-c -e emoflon_wo_update -l $l -k $k -s resources/$s/snet.json -v resources/40-vnets/vnets.json -c ./metrics/$RUN_NAME.csv -i 600 --ilpopttol 0.01 --ilpobjscaling 0.001"
     echo "#"
     echo "# => Using ARGS: $ARGS"
     echo "#"

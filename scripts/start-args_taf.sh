@@ -50,7 +50,7 @@ for ((i=1;i<=$r;i++));
 do
     # Without memory measurement
     export RUN_NAME="${a}_${s}_l${l}_k${k}_run${i}_taf"
-    export ARGS="-a $a -o total-taf-comm -e emoflon_wo_update -l $l -k $k -s resources/$s/snet.json -v resources/$s/vnets.json -c ./metrics/$RUN_NAME.csv -i 600"
+    export ARGS="-a $a -o total-taf-comm -e emoflon_wo_update -l $l -k $k -s resources/$s/snet.json -v resources/40-vnets/vnets.json -c ./metrics/$RUN_NAME.csv -i 600"
     echo "#"
     echo "# => Using ARGS: $ARGS"
     echo "#"
