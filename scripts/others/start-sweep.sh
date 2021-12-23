@@ -48,7 +48,7 @@ do
             for k in "${k_paths[@]}"
             do
                 export RUN_NAME="${a}_${s}_l${l}_k${k}"
-                export ARGS="-a $a -o total-comm-c -e emoflon_wo_update -l $l -k $k -s resources/$s/snet.json -v resources/$s/vnets.json -c ./metrics/$RUN_NAME.csv -i 600"
+                export ARGS="-a $a -o total-comm-c -e emoflon_wo_update -l $l -k $k -s resources/$s/snet.json -v resources/40-vnets/vnets.json -c ./metrics/$RUN_NAME.csv -i 600"
                 echo "#"
                 echo "# => Using ARGS: $ARGS"
                 echo "#"
