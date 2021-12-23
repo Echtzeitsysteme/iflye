@@ -18,7 +18,7 @@
 GRB_LICENSE_FILE=/home/maxkratz/gruobi.lic
 GUROBI_HOME=/opt/gurobi950/linux64/
 LD_LIBRARY_PATH=/opt/gurobi950/linux64/lib/
-PATH=/opt/gurobi950/linux64/bin/:/opt/ibm/ILOG/CPLEX_Studio128/cplex/bin/x86-64_linux/:$PATH
+PATH=/opt/gurobi950/linux64/bin/:/opt/ibm/ILOG/CPLEX_Studio201/cplex/bin/x86-64_linux/:$PATH
 ```
 * Clone this Git repository to your local machine and import it into Eclipse: *File -> Import -> General -> Existing Projects into Workspace*. Import all projects.
 * Inside the runtime workspace, build all projects (*Project -> Clean... -> Clean all projects*) to trigger code generation.
