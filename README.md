@@ -15,7 +15,7 @@
 * Launch a runtime workspace (while using a runtime Eclipse) as stated in the eMoflon::IBeX installation steps.
     * Additionally, the runtime workspace needs some environment variables to access the Gurobi and the CPLEX solver. Do not forget to adapt them to your individual setup:
 ```
-GRB_LICENSE_FILE=/home/maxkratz/gruobi.lic
+GRB_LICENSE_FILE=/home/maxkratz/gurobi.lic
 GUROBI_HOME=/opt/gurobi950/linux64/
 LD_LIBRARY_PATH=/opt/gurobi950/linux64/lib/
 PATH=/opt/gurobi950/linux64/bin/:/opt/ibm/ILOG/CPLEX_Studio201/cplex/bin/x86-64_linux/:$PATH
