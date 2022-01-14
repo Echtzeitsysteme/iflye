@@ -132,3 +132,6 @@ doc/javadoc/
 network.model/text/description.txt
 
 examples/model.xmi
+
+# ant
+test.suite/apache-ant*/
