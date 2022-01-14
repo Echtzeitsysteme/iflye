@@ -20,6 +20,8 @@ rule embedNetwork() {
 
 condition noIncompleteEmbedding = forbid incompleteEmbedding
 
+condition isVNR = forbid embeddedNetwork
+
 //
 // Servers
 //
@@ -53,7 +55,7 @@ rule serverMatchPositive() {
 	# virtualNode.cpu <= substrateNode.residualCpu
 	# virtualNode.memory <= substrateNode.residualMemory
 	# virtualNode.storage <= substrateNode.residualStorage
-}
+} when isVNR
 
 // Two substrate servers have at least the required resources available
 rule serverMatchPositiveBackup() {
@@ -91,7 +93,7 @@ rule serverMatchPositiveBackup() {
 	# virtualNode.cpu <= substrateNode.residualCpu
 	# virtualNode.memory <= substrateNode.residualMemory
 	# virtualNode.storage <= substrateNode.residualStorage
-}
+} when isVNR
 
 //
 // Switches
@@ -120,7 +122,7 @@ rule switchNodeMatchPositive() {
 	virtualNetwork: VirtualNetwork {
 		-nodes -> virtualSwitch
 	}
-}
+} when isVNR
 
 //
 // Links
@@ -159,7 +161,7 @@ rule linkPathMatchPositive() {
 	
 	// Explicitly exclude substrate paths with a residual bandwidth equals to 0
 	# substratePath.residualBandwidth > 0
-}
+} when isVNR
 
 // Match from virtual link to substrate server
 // This one does not have any constraints.
@@ -184,4 +186,4 @@ rule linkServerMatchPositive() {
 	virtualNetwork: VirtualNetwork {
 		-links -> virtualLink
 	}
-}
+} when isVNR

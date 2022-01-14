@@ -14,6 +14,9 @@ Require-Bundle: org.emoflon.ibex.common,
  org.emoflon.ibex.gt.democles,
  org.emoflon.ibex.gt.hipe,
  org.emoflon.ibex.gt.viatra
-Export-Package: network.model.rules.api,
+Export-Package: gt,
+ gt.emoflon,
+ gt.emoflon.apps,
+ network.model.rules.api,
  network.model.rules.api.matches,
  network.model.rules.api.rules

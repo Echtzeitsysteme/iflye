@@ -26,3 +26,16 @@ pattern embeddedVirtualServer() {
 	}
 	virtSrv : VirtualServer
 }
+
+pattern embeddedNetwork() {
+	root : Root {
+		-networks -> substrateNetwork
+		-networks -> virtualNetwork
+	}
+	
+	substrateNetwork: SubstrateNetwork {
+		-guests->virtualNetwork
+	}
+	
+	virtualNetwork: VirtualNetwork
+}
