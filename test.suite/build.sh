@@ -34,6 +34,7 @@ mkdir -p "${ant_folder}/lib/emf"
 mkdir -p "${ant_folder}/lib/google"
 (cd "${ant_folder}/lib/google" && curl --remote-name "https://repo1.maven.org/maven2/com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar")
 
+# TODO: Change all paths from /tmp/... to something ant workspace related
 mkdir -p "${ant_folder}/lib/emoflon"
 (mkdir -p /tmp/emoflon && cd /tmp/emoflon && git clone https://github.com/eMoflon/emoflon-ibex-updatesite.git && cp -r /tmp/emoflon/emoflon-ibex-updatesite/snapshot/updatesite/plugins/*.jar "${ant_folder_abs}/lib/emoflon" && rm -rf /tmp/emoflon)
 

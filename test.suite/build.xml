@@ -28,7 +28,6 @@
         <fileset dir="${ant.home}/lib/google" includes="*.jar" />
         <fileset dir="${ant.home}/lib/emoflon" includes="*.jar" />
         <fileset dir="${ant.home}/lib/hipe" includes="*.jar" />
-        <fileset dir="${ant.home}/lib/hipe-dependencies" includes="*.jar" />
         <fileset dir="${ant.home}/lib/eclipse-collections" includes="*.jar" />
         <fileset dir="${ant.home}/lib/log4j" includes="*.jar" />
 
