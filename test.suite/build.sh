@@ -40,7 +40,7 @@ mkdir -p "${ant_folder}/lib/emoflon"
 
 mkdir -p "${ant_folder}/lib/hipe"
 (mkdir -p /tmp/hipe && cd /tmp/hipe && git clone https://github.com/HiPE-DevOps/HiPE-Updatesite.git && cp -r /tmp/hipe/HiPE-Updatesite/hipe.updatesite/plugins/*.jar "${ant_folder_abs}/lib/hipe" && rm -rf /tmp/hipe)
-(cd "${ant_folder}/lib/hipe" && unzip hipe.dependencies_*.jar)
+(cd "${ant_folder}/lib/hipe" && unzip -o hipe.dependencies_*.jar)
 
 mkdir -p "${ant_folder}/lib/eclipse-collections"
 (cd "${ant_folder}/lib/eclipse-collections" && curl --remote-name "https://repo1.maven.org/maven2/org/eclipse/collections/eclipse-collections/11.0.0/eclipse-collections-11.0.0.jar")
