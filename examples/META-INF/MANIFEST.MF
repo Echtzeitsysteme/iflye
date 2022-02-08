@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: examples
+Bundle-SymbolicName: examples
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-16
+Automatic-Module-Name: examples
+Export-Package: examples.algorithms,
+ examples.generators,
+ examples.model
+Require-Bundle: vne.algorithms;bundle-version="0.1.0",
+ network.generators;bundle-version="0.1.0",
+ network.metrics;bundle-version="0.1.0",
+ network.model;bundle-version="0.0.1"

@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: statistics
+Bundle-SymbolicName: statistics
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-16
+Automatic-Module-Name: statistics
+Export-Package: statistics
+Require-Bundle: vne.scenarios;bundle-version="1.0.0"
