@@ -1,7 +1,26 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: test
-Bundle-SymbolicName: test; singleton:=true
-Bundle-Version: 0.1.0.qualifier
-Require-Bundle: org.eclipse.emf.ecore
+Bundle-Name: test.suite
+Bundle-SymbolicName: test.suite;singleton:=true
+Bundle-Version: 0.0.3.qualifier
+Require-Bundle: org.eclipse.emf.ecore,
+ network.metrics,
+ network.generators,
+ network.model,
+ vne.algorithms,
+ ilp
+Automatic-Module-Name: test.singleton.true
+Bundle-RequiredExecutionEnvironment: JavaSE-16
 Import-Package: org.junit.jupiter.api
+Export-Package: test.algorithms.fakeilp,
+ test.algorithms.generic,
+ test.algorithms.heuristics,
+ test.algorithms.pm,
+ test.algorithms.pm.migration,
+ test.algorithms.pm.pipeline,
+ test.generators,
+ test.ilp,
+ test.metrics,
+ test.model,
+ test.utils
+Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt

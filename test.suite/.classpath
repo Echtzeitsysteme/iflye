@@ -8,10 +8,5 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/network.metrics"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/network.generators"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/network.model"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/vne.algorithms"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ilp"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

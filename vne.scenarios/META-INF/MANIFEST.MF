@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: vne.scenarios
+Bundle-SymbolicName: vne.scenarios
+Bundle-Version: 0.0.3.qualifier
+Bundle-ClassPath: scenarios.jar,
+ lib/commons-cli/commons-cli-1.5.0.jar,
+ lib/commons-cli/commons-cli-1.5.0-javadoc.jar,
+ lib/commons-cli/commons-cli-1.5.0-sources.jar,
+ lib/commons-csv/commons-csv-1.9.0.jar,
+ lib/commons-csv/commons-csv-1.9.0-sources.jar
+Automatic-Module-Name: vne.scenarios
+Bundle-RequiredExecutionEnvironment: JavaSE-16
+Export-Package: org.apache.commons.cli,
+ org.apache.commons.csv,
+ scenario.util,
+ scenarios.gen,
+ scenarios.load
+Require-Bundle: ilp,
+ network.model,
+ vne.algorithms,
+ network.metrics,
+ network.generators
+Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt
