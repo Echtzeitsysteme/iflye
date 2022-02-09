@@ -11,7 +11,6 @@ Require-Bundle: org.eclipse.emf.ecore,
  network.model.rules.rackb;bundle-version="1.0.0",
  network.model.rules.vnet;bundle-version="1.0.0",
  network.metrics;bundle-version="0.1.0"
-Import-Package: model
 Export-Package: algorithms,
  algorithms.heuristics,
  algorithms.ilp,
