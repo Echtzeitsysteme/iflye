@@ -2,15 +2,15 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: vne.algorithms
 Bundle-SymbolicName: vne.algorithms; singleton:=true
-Bundle-Version: 0.1.0.qualifier
+Bundle-Version: 0.0.3.qualifier
 Require-Bundle: org.eclipse.emf.ecore,
- network.model;bundle-version="0.0.1",
- ilp;bundle-version="1.0.0",
- network.model.rules;bundle-version="1.0.0",
- network.model.rules.racka;bundle-version="1.0.0",
- network.model.rules.rackb;bundle-version="1.0.0",
- network.model.rules.vnet;bundle-version="1.0.0",
- network.metrics;bundle-version="0.1.0"
+ network.model,
+ ilp,
+ network.model.rules,
+ network.model.rules.racka,
+ network.model.rules.rackb,
+ network.model.rules.vnet,
+ network.metrics
 Export-Package: algorithms,
  algorithms.heuristics,
  algorithms.ilp,

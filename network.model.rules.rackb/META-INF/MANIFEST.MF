@@ -3,7 +3,7 @@ Automatic-Module-Name: network.model.rules.rackb
 Bundle-ManifestVersion: 2
 Bundle-Name: network.model.rules.rackb
 Bundle-Vendor: My Company
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.0.3.qualifier
 Bundle-SymbolicName: network.model.rules.rackb;singleton:=true
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.log4j,org.apache.commons.logging

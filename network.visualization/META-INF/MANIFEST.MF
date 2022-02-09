@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: network.visualization
 Bundle-SymbolicName: network.visualization;singleton:=true
-Bundle-Version: 0.1.0.qualifier
+Bundle-Version: 0.0.3.qualifier
 Require-Bundle: org.eclipse.emf.ecore,
- network.model;bundle-version="0.0.1",
- network.generators;bundle-version="0.1.0"
+ network.model,
+ network.generators
 Automatic-Module-Name: test.singleton.true
 Bundle-RequiredExecutionEnvironment: JavaSE-16
 Export-Package: org.graphstream.graph,

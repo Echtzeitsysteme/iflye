@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: vne.scenarios
 Bundle-SymbolicName: vne.scenarios
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.0.3.qualifier
 Bundle-ClassPath: scenarios.jar,
  lib/commons-cli/commons-cli-1.5.0.jar,
  lib/commons-cli/commons-cli-1.5.0-javadoc.jar,
@@ -16,8 +16,8 @@ Export-Package: org.apache.commons.cli,
  scenario.util,
  scenarios.gen,
  scenarios.load
-Require-Bundle: ilp;bundle-version="1.0.0",
- network.model;bundle-version="0.0.1",
- vne.algorithms;bundle-version="0.1.0",
- network.metrics;bundle-version="0.1.0",
- network.generators;bundle-version="0.1.0"
+Require-Bundle: ilp,
+ network.model,
+ vne.algorithms,
+ network.metrics,
+ network.generators
