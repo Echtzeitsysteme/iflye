@@ -7,3 +7,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-16
 Automatic-Module-Name: statistics
 Export-Package: statistics
 Require-Bundle: vne.scenarios
+Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt

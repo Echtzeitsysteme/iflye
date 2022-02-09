@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: network.model
 Bundle-SymbolicName: network.model;singleton:=true
 Bundle-Version: 0.0.3.qualifier
-Bundle-Vendor: 
+Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-16
 Automatic-Module-Name: network.model

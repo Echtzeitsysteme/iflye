@@ -17,3 +17,4 @@ Export-Package: algorithms,
  algorithms.pm,
  algorithms.pm.stages,
  algorithms.simple
+Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt

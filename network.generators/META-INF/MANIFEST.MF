@@ -6,3 +6,4 @@ Bundle-Version: 0.0.3.qualifier
 Require-Bundle: org.eclipse.emf.ecore
 Export-Package: generators,
  generators.config
+Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt

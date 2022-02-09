@@ -21,3 +21,4 @@ Require-Bundle: ilp,
  vne.algorithms,
  network.metrics,
  network.generators
+Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt

@@ -63,3 +63,4 @@ Export-Package: org.graphstream.graph,
  org.miv.pherd.ntree.util,
  resources,
  visualization
+Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt

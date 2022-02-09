@@ -17,3 +17,4 @@ Export-Package: gurobi,
  ilp.wrapper,
  ilp.wrapper.config,
  ilp.wrapper.impl
+Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt

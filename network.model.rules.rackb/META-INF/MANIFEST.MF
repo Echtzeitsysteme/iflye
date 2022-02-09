@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Automatic-Module-Name: network.model.rules.rackb
 Bundle-ManifestVersion: 2
 Bundle-Name: network.model.rules.rackb
-Bundle-Vendor: My Company
+Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt
 Bundle-Version: 0.0.3.qualifier
 Bundle-SymbolicName: network.model.rules.rackb;singleton:=true
 Bundle-ActivationPolicy: lazy
