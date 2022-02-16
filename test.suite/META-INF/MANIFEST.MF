@@ -24,3 +24,4 @@ Export-Package: test.algorithms.fakeilp,
  test.model,
  test.utils
 Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt
+Bundle-ClassPath: lib/junit-platform-reporting/junit-platform-reporting-1.8.2.jar
