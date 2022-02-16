@@ -133,4 +133,6 @@ network.model/text/description.txt
 
 examples/model.xmi
 
-test.suite/build/
+test.suite/build/
+
+test.suite/report.html

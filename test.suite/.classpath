@@ -2,6 +2,13 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="lib/junit-platform-reporting/junit-platform-reporting-1.8.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/html-report-generator/extentreports-5.0.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/html-report-generator/freemarker-2.3.30.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/html-report-generator/gson-2.8.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/html-report-generator/junit5-html-report-generator-1.0.0-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/html-report-generator/lombok-1.18.12.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/html-report-generator/reactive-streams-1.0.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/html-report-generator/rxjava-3.0.4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-16">
 		<attributes>
 			<attribute name="module" value="true"/>
