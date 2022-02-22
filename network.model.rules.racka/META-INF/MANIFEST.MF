@@ -11,9 +11,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-16
 Require-Bundle: org.emoflon.ibex.common,
  org.emoflon.ibex.gt,
  org.emoflon.ibex.patternmodel,
- org.emoflon.ibex.gt.democles,
  org.emoflon.ibex.gt.hipe,
- org.emoflon.ibex.gt.viatra
+ org.eclipse.collections
 Export-Package: gt.emoflon,
  gt.emoflon.apps,
  network.model.rules.racka.api,
