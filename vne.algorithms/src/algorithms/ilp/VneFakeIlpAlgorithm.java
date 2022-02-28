@@ -414,12 +414,6 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 					final SubstrateSwitch actSSw = (SubstrateSwitch) actOuterNode;
 					delta.addSwitchMatchPositive(actVSw, actSSw);
 				}
-
-				// To substrate servers
-				for (final Node actOuterNode : facade.getAllServersOfNetwork(sNet.getName())) {
-					final SubstrateServer actSSrv = (SubstrateServer) actOuterNode;
-					delta.addSwitchMatchPositive(actVSw, actSSrv);
-				}
 			}
 
 			// Virtual links
@@ -429,12 +423,6 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 				// To substrate paths
 				for (final SubstratePath actOuterPath : facade.getAllPathsOfNetwork(sNet.getName())) {
 					delta.addLinkPathMatchPositive(actVL, actOuterPath);
-				}
-
-				// To substrate servers
-				for (final Node actOuterNode : facade.getAllServersOfNetwork(sNet.getName())) {
-					final SubstrateServer actSSrv = (SubstrateServer) actOuterNode;
-					delta.addLinkServerMatchPositive(actVL, actSSrv);
 				}
 			}
 		}
@@ -490,10 +478,6 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 				.filter(m -> !ignoredVnets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
 				.filter(m -> vNets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
 				.forEach(gen::addLinkPathMatch);
-		delta.getNewLinkServerMatchPositives().stream()
-				.filter(m -> !ignoredVnets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
-				.filter(m -> vNets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
-				.forEach(gen::addLinkServerMatch);
 
 		// apply delta in ILP generator
 		gen.apply();
@@ -695,13 +679,9 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 				if (ve instanceof VirtualServer) {
 					facade.embedServerToServer(se.getName(), ve.getName());
 				} else if (ve instanceof VirtualSwitch) {
-					facade.embedSwitchToNode(se.getName(), ve.getName());
+					facade.embedSwitchToSwitch(se.getName(), ve.getName());
 				} else if (ve instanceof VirtualLink) {
-					if (se instanceof SubstrateServer) {
-						facade.embedLinkToServer(se.getName(), ve.getName());
-					} else if (se instanceof SubstratePath) {
-						facade.embedLinkToPath(se.getName(), ve.getName());
-					}
+					facade.embedLinkToPath(se.getName(), ve.getName());
 				}
 				break;
 			default:

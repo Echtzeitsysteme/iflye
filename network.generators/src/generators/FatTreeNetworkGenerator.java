@@ -8,8 +8,6 @@ import facade.ModelFacade;
 import generators.config.FatTreeConfig;
 import generators.config.GlobalGeneratorConfig;
 import generators.config.IGeneratorConfig;
-import generators.config.OneTierConfig;
-import model.VirtualNetwork;
 
 /**
  * Basic implementation of a fat tree [1] network topology generator.
@@ -187,13 +185,6 @@ public class FatTreeNetworkGenerator implements INetworkGenerator {
 		// Generate paths
 		if (!isVirtual) {
 			ModelFacade.getInstance().createAllPathsForNetwork(networkId);
-		} else {
-			final VirtualNetwork vnet = ((VirtualNetwork) facade.getNetworkById(networkId));
-			final OneTierConfig rack = config.getRack();
-			final int numberOfServers = config.getPods() * config.getServersPerPod();
-			vnet.setCpu(numberOfServers * rack.getCpuPerServer());
-			vnet.setMemory(numberOfServers * rack.getMemoryPerServer());
-			vnet.setStorage(numberOfServers * rack.getStoragePerServer());
 		}
 	}
 

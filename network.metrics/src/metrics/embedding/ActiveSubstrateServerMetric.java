@@ -28,8 +28,7 @@ public class ActiveSubstrateServerMetric implements IMetric {
 
 		for (final Node n : facade.getAllServersOfNetwork(sNet.getName())) {
 			final SubstrateServer srv = (SubstrateServer) n;
-			if (!srv.getGuestServers().isEmpty() || !srv.getGuestSwitches().isEmpty()
-					|| !srv.getGuestLinks().isEmpty()) {
+			if (!srv.getGuestServers().isEmpty()) {
 				value++;
 			}
 		}

@@ -127,14 +127,6 @@ public class Ui {
 				serverToServerMappings.get(srvNode).add(gs.getName());
 				virtualNetworks.add(gs.getNetwork().getName());
 			}
-			// Guest switches
-			for (final VirtualSwitch gs : ssrv.getGuestSwitches()) {
-				if (!switchToServerMappings.containsKey(srvNode)) {
-					switchToServerMappings.put(srvNode, new LinkedList<String>());
-				}
-				switchToServerMappings.get(srvNode).add(gs.getName());
-				virtualNetworks.add(gs.getNetwork().getName());
-			}
 
 			srvCurrX += SCALE_X;
 		}

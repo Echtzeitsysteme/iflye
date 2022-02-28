@@ -93,7 +93,6 @@ public class PatternMatchingDelta {
 	private final Set<Match> newServerMatchPositives = new HashSet<>();
 	private final Set<Match> newSwitchMatchPositives = new HashSet<>();
 	private final Set<Match> newLinkPathMatchPositives = new HashSet<>();
-	private final Set<Match> newLinkServerMatchPositives = new HashSet<>();
 	private final Set<Match> newNetworkServerMatchPositives = new HashSet<>();
 
 	/**
@@ -123,10 +122,6 @@ public class PatternMatchingDelta {
 		addValue(new Match(virtual, substrate), newLinkPathMatchPositives);
 	}
 
-	public void addLinkServerMatchPositive(final Element virtual, final Element substrate) {
-		addValue(new Match(virtual, substrate), newLinkServerMatchPositives);
-	}
-
 	public void addNetworkServerMatchPositive(final Element virtual, final Element substrate) {
 		addValue(new Match(virtual, substrate), newNetworkServerMatchPositives);
 	}
@@ -147,10 +142,6 @@ public class PatternMatchingDelta {
 		return newLinkPathMatchPositives;
 	}
 
-	public Set<Match> getNewLinkServerMatchPositives() {
-		return newLinkServerMatchPositives;
-	}
-
 	public Set<Match> getNewNetworkServerMatchPositives() {
 		return newNetworkServerMatchPositives;
 	}
@@ -163,7 +154,6 @@ public class PatternMatchingDelta {
 		this.newServerMatchPositives.addAll(other.newServerMatchPositives);
 		this.newSwitchMatchPositives.addAll(other.newSwitchMatchPositives);
 		this.newLinkPathMatchPositives.addAll(other.newLinkPathMatchPositives);
-		this.newLinkServerMatchPositives.addAll(other.newLinkServerMatchPositives);
 		this.newNetworkServerMatchPositives.addAll(other.newNetworkServerMatchPositives);
 	}
 
@@ -171,7 +161,6 @@ public class PatternMatchingDelta {
 		newServerMatchPositives.clear();
 		newSwitchMatchPositives.clear();
 		newLinkPathMatchPositives.clear();
-		newLinkServerMatchPositives.clear();
 		newNetworkServerMatchPositives.clear();
 	}
 

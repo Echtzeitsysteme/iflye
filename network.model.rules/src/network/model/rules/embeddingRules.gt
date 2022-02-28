@@ -49,22 +49,22 @@ rule serverMatchPositive() {
 
 // Match from virtual switch to substrate node
 // (Substrate node could either be a server or a switch.)
-rule switchNodeMatchPositive() {
+rule switchMatchPositive() {
 	root: Root {
 		-networks -> substrateNetwork
 		-networks -> virtualNetwork
 	}
 	
-	substrateNode: SubstrateNode {
+	substrateSwitch: SubstrateSwitch {
 		++ -guestSwitches -> virtualSwitch
 	}
 	
 	virtualSwitch : VirtualSwitch {
-		++ -host -> substrateNode
+		++ -host -> substrateSwitch
 	}
 	
 	substrateNetwork: SubstrateNetwork {
-		-nodes -> substrateNode
+		-nodes -> substrateSwitch
 	}
 	
 	virtualNetwork: VirtualNetwork {
@@ -109,29 +109,4 @@ rule linkPathMatchPositive() {
 	
 	// Explicitly exclude substrate paths with a residual bandwidth equals to 0
 	# substratePath.residualBandwidth > 0
-}
-
-// Match from virtual link to substrate server
-// This one does not have any constraints.
-rule linkServerMatchPositive() {
-	root: Root {
-		-networks -> substrateNetwork
-		-networks -> virtualNetwork
-	}
-	
-	substrateServer: SubstrateServer {
-		++ -guestLinks -> virtualLink
-	}
-	
-	virtualLink: VirtualLink {
-		++ -host -> substrateServer
-	}
-	
-	substrateNetwork: SubstrateNetwork {
-		-nodes -> substrateServer
-	}
-	
-	virtualNetwork: VirtualNetwork {
-		-links -> virtualLink
-	}
 }

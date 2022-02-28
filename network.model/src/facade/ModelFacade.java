@@ -28,7 +28,6 @@ import model.Network;
 import model.Node;
 import model.Root;
 import model.Server;
-import model.SubstrateHostLink;
 import model.SubstrateLink;
 import model.SubstrateNetwork;
 import model.SubstrateNode;
@@ -1037,70 +1036,17 @@ public class ModelFacade {
 	}
 
 	/**
-	 * Adds an embedding of one virtual switch to one substrate node. The substrate
-	 * node may either be a substrate switch or a substrate server.
+	 * Adds an embedding of one virtual switch to one substrate switch.
 	 *
 	 * @param substrateId Substrate Id.
 	 * @param virtualId   Virtual Id.
 	 * @return True if embedding was successful.
 	 */
-	public boolean embedSwitchToNode(final String substrateId, final String virtualId) {
-		final SubstrateNode subNode = (SubstrateNode) getNodeById(substrateId);
+	public boolean embedSwitchToSwitch(final String substrateId, final String virtualId) {
+		final SubstrateSwitch subNode = (SubstrateSwitch) getSwitchById(substrateId);
 		final VirtualSwitch virtSwitch = (VirtualSwitch) getSwitchById(virtualId);
 		virtSwitch.setHost(subNode);
 		return subNode.getGuestSwitches().add(virtSwitch);
-	}
-
-	/**
-	 * Adds an embedding of one virtual link to one substrate server. There are no
-	 * constraints to check in this particular case.
-	 *
-	 * @param substrateId Substrate Id.
-	 * @param virtualId   Virtual Id.
-	 * @return True if embedding was successful.
-	 */
-	public boolean embedLinkToServer(final String substrateId, final String virtualId) {
-		final SubstrateServer subServ = (SubstrateServer) getServerById(substrateId);
-		final VirtualLink virtLink = (VirtualLink) getLinkById(virtualId);
-
-		// // Check conditions
-		// // Source
-		// if (virtLink.getSource() instanceof VirtualServer) {
-		// if (((VirtualServer) virtLink.getSource()).getHost() == null) {
-		// throw new UnsupportedOperationException("Virtual link source host is null.");
-		// }
-		// if (!((VirtualServer) virtLink.getSource()).getHost().equals(subServ)) {
-		// throw new UnsupportedOperationException();
-		// }
-		// } else if (virtLink.getSource() instanceof VirtualSwitch) {
-		// if (((VirtualSwitch) virtLink.getSource()).getHost() == null) {
-		// throw new UnsupportedOperationException("Virtual link source host is null.");
-		// }
-		// if (!((VirtualSwitch) virtLink.getSource()).getHost().equals(subServ)) {
-		// throw new UnsupportedOperationException();
-		// }
-		// }
-		//
-		// // Target
-		// if (virtLink.getTarget() instanceof VirtualServer) {
-		// if (((VirtualServer) virtLink.getTarget()).getHost() == null) {
-		// throw new UnsupportedOperationException("Virtual link target host is null.");
-		// }
-		// if (!((VirtualServer) virtLink.getTarget()).getHost().equals(subServ)) {
-		// throw new UnsupportedOperationException();
-		// }
-		// } else if (virtLink.getTarget() instanceof VirtualSwitch) {
-		// if (((VirtualSwitch) virtLink.getTarget()).getHost() == null) {
-		// throw new UnsupportedOperationException("Virtual link target host is null.");
-		// }
-		// if (!((VirtualSwitch) virtLink.getTarget()).getHost().equals(subServ)) {
-		// throw new UnsupportedOperationException();
-		// }
-		// }
-
-		// No constraints to check!
-		virtLink.setHost(subServ);
-		return subServ.getGuestLinks().add(virtLink);
 	}
 
 	/**
@@ -1124,14 +1070,6 @@ public class ModelFacade {
 
 		success &= subPath.getGuestLinks().add(virtLink);
 		virtLink.setHost(subPath);
-
-		// Add guest link to all substrate links contained in the path?
-		if (ModelFacadeConfig.LINK_HOST_EMBED_PATH) {
-			for (final Link l : subPath.getLinks()) {
-				final SubstrateLink sl = (SubstrateLink) l;
-				sl.getGuestLinks().add(virtLink);
-			}
-		}
 
 		// Update residual values of the host path
 		if (!ModelFacadeConfig.IGNORE_BW) {
@@ -1277,7 +1215,7 @@ public class ModelFacade {
 
 			for (final Link l : vNet.getLinks()) {
 				final VirtualLink vl = (VirtualLink) l;
-				final SubstrateHostLink host = vl.getHost();
+				final SubstratePath host = vl.getHost();
 				if (host == null) {
 					continue;
 				}
@@ -1285,7 +1223,7 @@ public class ModelFacade {
 
 				if (!ModelFacadeConfig.IGNORE_BW) {
 					if (host instanceof SubstratePath) {
-						final SubstratePath hostPath = (SubstratePath) host;
+						final SubstratePath hostPath = host;
 						hostPath.setResidualBandwidth(hostPath.getResidualBandwidth() + vl.getBandwidth());
 						for (final Link hostPathLink : hostPath.getLinks()) {
 							final SubstrateLink sl = (SubstrateLink) hostPathLink;
@@ -1340,12 +1278,6 @@ public class ModelFacade {
 			for (final VirtualServer guestSrv : ssrv.getGuestServers()) {
 				guestsToRemove.add(guestSrv);
 			}
-			for (final VirtualSwitch guestSw : ssrv.getGuestSwitches()) {
-				guestsToRemove.add(guestSw);
-			}
-			for (final VirtualLink guestL : ssrv.getGuestLinks()) {
-				guestsToRemove.add(guestL);
-			}
 			guestsToRemove.forEach(e -> {
 				if (e instanceof VirtualServer) {
 					((VirtualServer) e).setHost(null);
@@ -1393,12 +1325,6 @@ public class ModelFacade {
 			throw new IllegalArgumentException("Given link is not a substrate link.");
 		}
 		final SubstrateLink sl = (SubstrateLink) link;
-
-		if (removeEmbeddings) {
-			sl.getGuestLinks().forEach(gl -> {
-				gl.setHost(null);
-			});
-		}
 
 		sl.getSource().getOutgoingLinks().remove(sl);
 		sl.getTarget().getIncomingLinks().remove(sl);
@@ -1573,23 +1499,6 @@ public class ModelFacade {
 			}
 		}
 
-		// Check if virtual links are also embedded to substrate ones (additional to
-		// substrate paths).
-		if (ModelFacadeConfig.LINK_HOST_EMBED_PATH) {
-			for (final Link l : sNet.getLinks()) {
-				final SubstrateLink sl = (SubstrateLink) l;
-				int sumGuestBw = 0;
-
-				for (final VirtualLink gl : sl.getGuestLinks()) {
-					sumGuestBw += gl.getBandwidth();
-				}
-
-				if (sl.getResidualBandwidth() != sl.getBandwidth() - sumGuestBw) {
-					throw new InternalError("Residual bandwidth value of link " + sl.getName() + " was incorrect.");
-				}
-			}
-		}
-
 		for (final SubstratePath p : sNet.getPaths()) {
 			final SubstratePath sp = p;
 			int sumGuestBw = 0;
@@ -1691,7 +1600,7 @@ public class ModelFacade {
 						continue;
 					}
 				} else if (vl.getHost() instanceof SubstratePath) {
-					final SubstratePath lHost = (SubstratePath) vl.getHost();
+					final SubstratePath lHost = vl.getHost();
 					if (host.equals(lHost.getNetwork())) {
 						continue;
 					}
@@ -1730,7 +1639,7 @@ public class ModelFacade {
 		for (final Link l : vNet.getLinks()) {
 			final VirtualLink vl = (VirtualLink) l;
 			if (vl.getHost() instanceof SubstratePath) {
-				final SubstratePath host = (SubstratePath) vl.getHost();
+				final SubstratePath host = vl.getHost();
 				if ((host.getNetwork() == null) || !host.getNetwork().getPaths().contains(host)) {
 					return true;
 				}

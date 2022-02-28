@@ -451,10 +451,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 				.filter(m -> !ignoredVnets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
 				.filter(m -> vNets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
 				.forEach(gen::addLinkPathMatch);
-		delta.getNewLinkServerMatchPositives().stream()
-				.filter(m -> !ignoredVnets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
-				.filter(m -> vNets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
-				.forEach(gen::addLinkServerMatch);
 
 		// apply delta in ILP generator
 		gen.apply();
@@ -667,13 +663,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 				if (ve instanceof VirtualServer) {
 					facade.embedServerToServer(se.getName(), ve.getName());
 				} else if (ve instanceof VirtualSwitch) {
-					facade.embedSwitchToNode(se.getName(), ve.getName());
+					facade.embedSwitchToSwitch(se.getName(), ve.getName());
 				} else if (ve instanceof VirtualLink) {
-					if (se instanceof SubstrateServer) {
-						facade.embedLinkToServer(se.getName(), ve.getName());
-					} else if (se instanceof SubstratePath) {
-						facade.embedLinkToPath(se.getName(), ve.getName());
-					}
+					facade.embedLinkToPath(se.getName(), ve.getName());
 				}
 				break;
 			}

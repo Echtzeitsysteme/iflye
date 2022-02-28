@@ -21,9 +21,8 @@ import model.VirtualElement;
 import network.model.rules.api.RulesAPI;
 import network.model.rules.api.RulesApp;
 import network.model.rules.api.matches.LinkPathMatchPositiveMatch;
-import network.model.rules.api.matches.LinkServerMatchPositiveMatch;
 import network.model.rules.api.matches.ServerMatchPositiveMatch;
-import network.model.rules.api.matches.SwitchNodeMatchPositiveMatch;
+import network.model.rules.api.matches.SwitchMatchPositiveMatch;
 
 /**
  * Implementation of the {@link IncrementalPatternMatcher} for eMoflon.
@@ -91,19 +90,14 @@ public class EmoflonGt implements IncrementalPatternMatcher {
 			tupleToGtMatch.put(new Tuple(m.getVirtualNode(), m.getSubstrateNode()), m);
 		});
 
-		api.switchNodeMatchPositive().subscribeAppearing(m -> {
-			addMatch(currentDelta::addSwitchMatchPositive, m.getVirtualSwitch(), m.getSubstrateNode());
-			tupleToGtMatch.put(new Tuple(m.getVirtualSwitch(), m.getSubstrateNode()), m);
+		api.switchMatchPositive().subscribeAppearing(m -> {
+			addMatch(currentDelta::addSwitchMatchPositive, m.getVirtualSwitch(), m.getSubstrateSwitch());
+			tupleToGtMatch.put(new Tuple(m.getVirtualSwitch(), m.getSubstrateSwitch()), m);
 		});
 
 		api.linkPathMatchPositive().subscribeAppearing(m -> {
 			addMatch(currentDelta::addLinkPathMatchPositive, m.getVirtualLink(), m.getSubstratePath());
 			tupleToGtMatch.put(new Tuple(m.getVirtualLink(), m.getSubstratePath()), m);
-		});
-
-		api.linkServerMatchPositive().subscribeAppearing(m -> {
-			addMatch(currentDelta::addLinkServerMatchPositive, m.getVirtualLink(), m.getSubstrateServer());
-			tupleToGtMatch.put(new Tuple(m.getVirtualLink(), m.getSubstrateServer()), m);
 		});
 
 	}
@@ -120,12 +114,10 @@ public class EmoflonGt implements IncrementalPatternMatcher {
 		final GraphTransformationMatch<?, ?> match = tupleToGtMatch.get(new Tuple(virt, sub));
 		if (match instanceof ServerMatchPositiveMatch) {
 			api.serverMatchPositive().apply((ServerMatchPositiveMatch) match, doUpdate);
-		} else if (match instanceof SwitchNodeMatchPositiveMatch) {
-			api.switchNodeMatchPositive().apply((SwitchNodeMatchPositiveMatch) match, doUpdate);
+		} else if (match instanceof SwitchMatchPositiveMatch) {
+			api.switchMatchPositive().apply((SwitchMatchPositiveMatch) match, doUpdate);
 		} else if (match instanceof LinkPathMatchPositiveMatch) {
 			api.linkPathMatchPositive().apply((LinkPathMatchPositiveMatch) match, doUpdate);
-		} else if (match instanceof LinkServerMatchPositiveMatch) {
-			api.linkServerMatchPositive().apply((LinkServerMatchPositiveMatch) match, doUpdate);
 		}
 	}
 
