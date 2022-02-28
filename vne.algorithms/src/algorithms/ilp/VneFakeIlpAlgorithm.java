@@ -128,6 +128,10 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 			final String sourceVarName = vLink.getSource().getName() + "_" + sLink.getSource().getName();
 			final String targetVarName = vLink.getTarget().getName() + "_" + sLink.getTarget().getName();
 
+			if (!delta.hasAddVariable(sourceVarName) || !delta.hasAddVariable(targetVarName)) {
+				return;
+			}
+
 			final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
 
 			delta.addVariable(varName, getCost(vLink, sLink));
