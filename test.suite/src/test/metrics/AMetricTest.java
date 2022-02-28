@@ -60,7 +60,7 @@ public abstract class AMetricTest {
 	 */
 	protected void setupEmbeddingTwoHosts() {
 		facade.embedNetworkToNetwork("sub", "virt");
-		facade.embedSwitchToNode("ssw", "vsw");
+		facade.embedSwitchToSwitch("ssw", "vsw");
 		facade.embedServerToServer("ssrv1", "vsrv1");
 		facade.embedServerToServer("ssrv2", "vsrv2");
 		final SubstrateLink l1 = (SubstrateLink) facade.getLinkFromSourceToTarget("ssw", "ssrv1");

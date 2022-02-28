@@ -75,7 +75,7 @@ public class ActiveSubstrateSwitchMetricTest extends AMetricTest {
 		for (int i = 0; i < numberOfSwitches; i++) {
 			facade.addSwitchToNetwork("ssw_" + (i + substrateSwitchOffset), "sub", 0);
 			facade.addSwitchToNetwork("vsw_" + virtNetId + i, virtNetId, 0);
-			facade.embedSwitchToNode("ssw_" + (i + substrateSwitchOffset), "vsw_" + virtNetId + i);
+			facade.embedSwitchToSwitch("ssw_" + (i + substrateSwitchOffset), "vsw_" + virtNetId + i);
 		}
 	}
 

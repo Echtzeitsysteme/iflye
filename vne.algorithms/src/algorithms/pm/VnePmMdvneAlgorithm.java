@@ -654,7 +654,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 				if (ve instanceof VirtualServer) {
 					facade.embedServerToServer(se.getName(), ve.getName());
 				} else if (ve instanceof VirtualSwitch) {
-					facade.embedSwitchToNode(se.getName(), ve.getName());
+					facade.embedSwitchToSwitch(se.getName(), ve.getName());
 				} else if (ve instanceof VirtualLink) {
 					facade.embedLinkToLink(se.getName(), ve.getName());
 				}

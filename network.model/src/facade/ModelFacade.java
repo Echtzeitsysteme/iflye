@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,7 +22,6 @@ import model.Root;
 import model.Server;
 import model.SubstrateLink;
 import model.SubstrateNetwork;
-import model.SubstrateNode;
 import model.SubstrateServer;
 import model.SubstrateSwitch;
 import model.Switch;
@@ -379,81 +377,6 @@ public class ModelFacade {
 	}
 
 	/**
-	 * Determines the maximum path length needed to connect one server within the
-	 * network with a core switch. Throws an {@link UnsupportedOperationException}
-	 * if servers have different depths.
-	 *
-	 * @param networkId Network ID to calculate maximum needed path length for.
-	 * @return Maximum path length.
-	 */
-	private int determineMaxPathLengthForTree(final String networkId) {
-		int maxServerDepth = Integer.MAX_VALUE;
-
-		final List<Node> servers = getAllServersOfNetwork(networkId);
-		for (final Node n : servers) {
-			final SubstrateServer srv = (SubstrateServer) n;
-
-			if (srv.getDepth() != maxServerDepth) {
-				if (maxServerDepth != Integer.MAX_VALUE) {
-					throw new UnsupportedOperationException(
-							"In network " + networkId + " are servers with different depths, which is not supported.");
-				}
-
-				if (srv.getDepth() < maxServerDepth) {
-					maxServerDepth = srv.getDepth();
-				}
-			}
-		}
-
-		int minSwitchDepth = Integer.MAX_VALUE;
-		final List<Node> switches = getAllSwitchesOfNetwork(networkId);
-		for (final Node n : switches) {
-			final SubstrateSwitch sw = (SubstrateSwitch) n;
-			if (sw.getDepth() < minSwitchDepth) {
-				minSwitchDepth = sw.getDepth();
-			}
-		}
-
-		return maxServerDepth - minSwitchDepth;
-	}
-
-	/**
-	 * Creates a string with all names of given node list.
-	 *
-	 * @param nodes Input list of nodes.
-	 * @return String with all names of given node list.
-	 */
-	private String concatNodeNames(final List<SubstrateNode> nodes) {
-		String name = "path";
-
-		for (final Node n : nodes) {
-			name += "-";
-			name += n.getName();
-		}
-
-		return name;
-	}
-
-	/**
-	 * Calculates the minimum bandwidth found in a collection of links. This method
-	 * is used to calculate the actual bandwidth of a path.
-	 *
-	 * @param links Collection of links to search the minimal value in.
-	 * @return Minimal bandwidth value of all links from the collection.
-	 */
-	private int getMinimumBandwidthFromSubstrateLinks(final Collection<SubstrateLink> links) {
-		int val = Integer.MAX_VALUE;
-
-		for (final Link l : links) {
-			if (l.getBandwidth() < val) {
-				val = l.getBandwidth();
-			}
-		}
-
-		return val;
-	}
-
-	/**
 	 * Takes a given link and searches for the opposite one. The opposite link has
 	 * the original target as source and vice versa.
 	 *
@@ -474,24 +397,6 @@ public class ModelFacade {
 		}
 
 		throw new UnsupportedOperationException("Opposite link could not be found!");
-	}
-
-	/**
-	 * Returns a list of all opposite links for a given set of links. Basically, it
-	 * calls the method {@link #getOppositeLink(Link)} for every link in the
-	 * incoming collection.
-	 *
-	 * @param links Collection of links to get opposites for.
-	 * @return List of opposite links.
-	 */
-	private List<SubstrateLink> getOppositeLinks(final Collection<SubstrateLink> links) {
-		final List<SubstrateLink> opposites = new LinkedList<>();
-
-		for (Link l : links) {
-			opposites.add((SubstrateLink) getOppositeLink(l));
-		}
-
-		return opposites;
 	}
 
 	/**
@@ -719,7 +624,7 @@ public class ModelFacade {
 	 * @param virtualId   Virtual Id.
 	 * @return True if embedding was successful.
 	 */
-	public boolean embedSwitchToNode(final String substrateId, final String virtualId) {
+	public boolean embedSwitchToSwitch(final String substrateId, final String virtualId) {
 		final SubstrateSwitch subSwitch = (SubstrateSwitch) getNodeById(substrateId);
 		final VirtualSwitch virtSwitch = (VirtualSwitch) getSwitchById(virtualId);
 		virtSwitch.setHost(subSwitch);

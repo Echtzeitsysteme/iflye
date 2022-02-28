@@ -102,7 +102,7 @@ public class ModelFacadeEmbeddingTest {
 		ModelFacade.getInstance().addSwitchToNetwork("1", "sub", 0);
 		ModelFacade.getInstance().addSwitchToNetwork("2", "virt", 0);
 
-		ModelFacade.getInstance().embedSwitchToNode("1", "2");
+		ModelFacade.getInstance().embedSwitchToSwitch("1", "2");
 		assertEquals(1, ((SubstrateSwitch) ModelFacade.getInstance().getSwitchById("1")).getGuestSwitches().size());
 		assertEquals("1", ((VirtualSwitch) ModelFacade.getInstance().getSwitchById("2")).getHost().getName());
 	}
