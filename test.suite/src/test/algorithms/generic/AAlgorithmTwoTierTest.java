@@ -175,10 +175,10 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 		facade.addSwitchToNetwork(networkId + "_sw", networkId, 0);
 		facade.addServerToNetwork(networkId + "_srv1", networkId, slotsPerServer, slotsPerServer, slotsPerServer, 1);
 		facade.addServerToNetwork(networkId + "_srv2", networkId, slotsPerServer, slotsPerServer, slotsPerServer, 1);
-		facade.addLinkToNetwork(networkId + "_ln1", networkId, 1, networkId + "_srv1", networkId + "_sw");
-		facade.addLinkToNetwork(networkId + "_ln2", networkId, 1, networkId + "_srv2", networkId + "_sw");
-		facade.addLinkToNetwork(networkId + "_ln3", networkId, 1, networkId + "_sw", networkId + "_srv1");
-		facade.addLinkToNetwork(networkId + "_ln4", networkId, 1, networkId + "_sw", networkId + "_srv2");
+		facade.addLinkToNetwork(networkId + "_ln1", networkId, slotsPerServer, networkId + "_srv1", networkId + "_sw");
+		facade.addLinkToNetwork(networkId + "_ln2", networkId, slotsPerServer, networkId + "_srv2", networkId + "_sw");
+		facade.addLinkToNetwork(networkId + "_ln3", networkId, slotsPerServer, networkId + "_sw", networkId + "_srv1");
+		facade.addLinkToNetwork(networkId + "_ln4", networkId, slotsPerServer, networkId + "_sw", networkId + "_srv2");
 	}
 
 	/**
@@ -192,12 +192,12 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 		facade.addServerToNetwork(networkId + "_srv1", networkId, slotsPerServer, slotsPerServer, slotsPerServer, 1);
 		facade.addServerToNetwork(networkId + "_srv2", networkId, slotsPerServer, slotsPerServer, slotsPerServer, 1);
 		facade.addServerToNetwork(networkId + "_srv3", networkId, slotsPerServer, slotsPerServer, slotsPerServer, 1);
-		facade.addLinkToNetwork(networkId + "_ln1", networkId, 1, networkId + "_srv1", networkId + "_sw");
-		facade.addLinkToNetwork(networkId + "_ln2", networkId, 1, networkId + "_srv2", networkId + "_sw");
-		facade.addLinkToNetwork(networkId + "_ln3", networkId, 1, networkId + "_srv3", networkId + "_sw");
-		facade.addLinkToNetwork(networkId + "_ln4", networkId, 1, networkId + "_sw", networkId + "_srv1");
-		facade.addLinkToNetwork(networkId + "_ln5", networkId, 1, networkId + "_sw", networkId + "_srv2");
-		facade.addLinkToNetwork(networkId + "_ln6", networkId, 1, networkId + "_sw", networkId + "_srv3");
+		facade.addLinkToNetwork(networkId + "_ln1", networkId, slotsPerServer, networkId + "_srv1", networkId + "_sw");
+		facade.addLinkToNetwork(networkId + "_ln2", networkId, slotsPerServer, networkId + "_srv2", networkId + "_sw");
+		facade.addLinkToNetwork(networkId + "_ln3", networkId, slotsPerServer, networkId + "_srv3", networkId + "_sw");
+		facade.addLinkToNetwork(networkId + "_ln4", networkId, slotsPerServer, networkId + "_sw", networkId + "_srv1");
+		facade.addLinkToNetwork(networkId + "_ln5", networkId, slotsPerServer, networkId + "_sw", networkId + "_srv2");
+		facade.addLinkToNetwork(networkId + "_ln6", networkId, slotsPerServer, networkId + "_sw", networkId + "_srv3");
 	}
 
 	/**
@@ -217,19 +217,31 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 		facade.addServerToNetwork(networkId + "_srv3", networkId, slotsPerServer, slotsPerServer, slotsPerServer, 2);
 		facade.addServerToNetwork(networkId + "_srv4", networkId, slotsPerServer, slotsPerServer, slotsPerServer, 2);
 
-		facade.addLinkToNetwork(networkId + "_ln1", networkId, 1, networkId + "_srv1", networkId + "_rsw1");
-		facade.addLinkToNetwork(networkId + "_ln2", networkId, 1, networkId + "_srv2", networkId + "_rsw1");
-		facade.addLinkToNetwork(networkId + "_ln3", networkId, 1, networkId + "_rsw1", networkId + "_srv1");
-		facade.addLinkToNetwork(networkId + "_ln4", networkId, 1, networkId + "_rsw1", networkId + "_srv2");
-		facade.addLinkToNetwork(networkId + "_ln5", networkId, 1, networkId + "_srv3", networkId + "_rsw2");
-		facade.addLinkToNetwork(networkId + "_ln6", networkId, 1, networkId + "_srv4", networkId + "_rsw2");
-		facade.addLinkToNetwork(networkId + "_ln7", networkId, 1, networkId + "_rsw2", networkId + "_srv3");
-		facade.addLinkToNetwork(networkId + "_ln8", networkId, 1, networkId + "_rsw2", networkId + "_srv4");
+		facade.addLinkToNetwork(networkId + "_ln1", networkId, slotsPerServer, networkId + "_srv1",
+				networkId + "_rsw1");
+		facade.addLinkToNetwork(networkId + "_ln2", networkId, slotsPerServer, networkId + "_srv2",
+				networkId + "_rsw1");
+		facade.addLinkToNetwork(networkId + "_ln3", networkId, slotsPerServer, networkId + "_rsw1",
+				networkId + "_srv1");
+		facade.addLinkToNetwork(networkId + "_ln4", networkId, slotsPerServer, networkId + "_rsw1",
+				networkId + "_srv2");
+		facade.addLinkToNetwork(networkId + "_ln5", networkId, slotsPerServer, networkId + "_srv3",
+				networkId + "_rsw2");
+		facade.addLinkToNetwork(networkId + "_ln6", networkId, slotsPerServer, networkId + "_srv4",
+				networkId + "_rsw2");
+		facade.addLinkToNetwork(networkId + "_ln7", networkId, slotsPerServer, networkId + "_rsw2",
+				networkId + "_srv3");
+		facade.addLinkToNetwork(networkId + "_ln8", networkId, slotsPerServer, networkId + "_rsw2",
+				networkId + "_srv4");
 
-		facade.addLinkToNetwork(networkId + "_ln9", networkId, 10, networkId + "_rsw1", networkId + "_csw1");
-		facade.addLinkToNetwork(networkId + "_ln10", networkId, 10, networkId + "_rsw2", networkId + "_csw1");
-		facade.addLinkToNetwork(networkId + "_ln11", networkId, 10, networkId + "_csw1", networkId + "_rsw1");
-		facade.addLinkToNetwork(networkId + "_ln12", networkId, 10, networkId + "_csw1", networkId + "_rsw2");
+		facade.addLinkToNetwork(networkId + "_ln9", networkId, 10 * slotsPerServer, networkId + "_rsw1",
+				networkId + "_csw1");
+		facade.addLinkToNetwork(networkId + "_ln10", networkId, 10 * slotsPerServer, networkId + "_rsw2",
+				networkId + "_csw1");
+		facade.addLinkToNetwork(networkId + "_ln11", networkId, 10 * slotsPerServer, networkId + "_csw1",
+				networkId + "_rsw1");
+		facade.addLinkToNetwork(networkId + "_ln12", networkId, 10 * slotsPerServer, networkId + "_csw1",
+				networkId + "_rsw2");
 	}
 
 }
