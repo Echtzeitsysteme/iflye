@@ -92,8 +92,7 @@ public class PatternMatchingDelta {
 	// private final Set<Match> newNetworkMatches = new HashSet<>();
 	private final Set<Match> newServerMatchPositives = new HashSet<>();
 	private final Set<Match> newSwitchMatchPositives = new HashSet<>();
-	private final Set<Match> newLinkPathMatchPositives = new HashSet<>();
-	private final Set<Match> newLinkServerMatchPositives = new HashSet<>();
+	private final Set<Match> newLinkMatchPositives = new HashSet<>();
 	private final Set<Match> newNetworkServerMatchPositives = new HashSet<>();
 
 	/**
@@ -119,12 +118,8 @@ public class PatternMatchingDelta {
 		addValue(new Match(virtual, substrate), newSwitchMatchPositives);
 	}
 
-	public void addLinkPathMatchPositive(final Element virtual, final Element substrate) {
-		addValue(new Match(virtual, substrate), newLinkPathMatchPositives);
-	}
-
-	public void addLinkServerMatchPositive(final Element virtual, final Element substrate) {
-		addValue(new Match(virtual, substrate), newLinkServerMatchPositives);
+	public void addLinkMatchPositive(final Element virtual, final Element substrate) {
+		addValue(new Match(virtual, substrate), newLinkMatchPositives);
 	}
 
 	public void addNetworkServerMatchPositive(final Element virtual, final Element substrate) {
@@ -143,12 +138,8 @@ public class PatternMatchingDelta {
 		return newSwitchMatchPositives;
 	}
 
-	public Set<Match> getNewLinkPathMatchPositives() {
-		return newLinkPathMatchPositives;
-	}
-
-	public Set<Match> getNewLinkServerMatchPositives() {
-		return newLinkServerMatchPositives;
+	public Set<Match> getNewLinkMatchPositives() {
+		return newLinkMatchPositives;
 	}
 
 	public Set<Match> getNewNetworkServerMatchPositives() {
@@ -162,16 +153,14 @@ public class PatternMatchingDelta {
 	public void addOther(final PatternMatchingDelta other) {
 		this.newServerMatchPositives.addAll(other.newServerMatchPositives);
 		this.newSwitchMatchPositives.addAll(other.newSwitchMatchPositives);
-		this.newLinkPathMatchPositives.addAll(other.newLinkPathMatchPositives);
-		this.newLinkServerMatchPositives.addAll(other.newLinkServerMatchPositives);
+		this.newLinkMatchPositives.addAll(other.newLinkMatchPositives);
 		this.newNetworkServerMatchPositives.addAll(other.newNetworkServerMatchPositives);
 	}
 
 	public void clear() {
 		newServerMatchPositives.clear();
 		newSwitchMatchPositives.clear();
-		newLinkPathMatchPositives.clear();
-		newLinkServerMatchPositives.clear();
+		newLinkMatchPositives.clear();
 		newNetworkServerMatchPositives.clear();
 	}
 

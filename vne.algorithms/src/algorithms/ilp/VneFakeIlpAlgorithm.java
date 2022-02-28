@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import algorithms.AbstractAlgorithm;
@@ -28,7 +27,6 @@ import model.SubstrateElement;
 import model.SubstrateLink;
 import model.SubstrateNetwork;
 import model.SubstrateNode;
-import model.SubstratePath;
 import model.SubstrateServer;
 import model.SubstrateSwitch;
 import model.VirtualElement;
@@ -107,48 +105,13 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 		}
 
 		/**
-		 * Adds a match from a virtual link to a substrate server.
-		 *
-		 * @param match Match to get information from.
-		 */
-		public void addLinkServerMatch(final Match match) {
-			final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
-			final VirtualLink vLink = (VirtualLink) facade.getLinkById(match.getVirtual().getName());
-
-			// If the source node (target node) of the virtual link may not be embedded to
-			// the substrate
-			// node, it's mapping variable is missing in the solver's model. Due to the fact
-			// that there is
-			// no way to properly map the source node (target node) onto this substrate
-			// server, the ILP
-			// solver does not have to deal with the embedding of the link for this
-			// particular substrate
-			// node, to.
-			final String sourceVarName = vLink.getSource().getName() + "_" + match.getSubstrate().getName();
-			final String targetVarName = vLink.getTarget().getName() + "_" + match.getSubstrate().getName();
-
-			if (!delta.hasAddVariable(sourceVarName) || !delta.hasAddVariable(targetVarName)) {
-				return;
-			}
-
-			delta.addVariable(varName, getCost(vLink, (SubstrateNode) match.getSubstrate()));
-			delta.setVariableWeightForConstraint("vl" + match.getVirtual().getName(), 1, varName);
-			delta.addLessOrEqualsConstraint("req" + varName, 0, new int[] { 2, -1, -1 },
-					new String[] { varName, sourceVarName, targetVarName });
-			variablesToMatch.put(varName, match);
-
-			// SOS match
-			addSosMappings(match.getVirtual().getName(), varName);
-		}
-
-		/**
 		 * Adds a match from a virtual link to a substrate path.
 		 *
 		 * @param match Match to get information from.
 		 */
-		public void addLinkPathMatch(final Match match) {
+		public void addLinkMatch(final Match match) {
 			final VirtualLink vLink = (VirtualLink) facade.getLinkById(match.getVirtual().getName());
-			final SubstratePath sPath = facade.getPathById(match.getSubstrate().getName());
+			final SubstrateLink sLink = (SubstrateLink) facade.getLinkById(match.getSubstrate().getName());
 
 			// If the source node (target node) of the virtual link may not be embedded to
 			// the substrate
@@ -162,21 +125,16 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 			// This may e.g. be the case if the virtual node is a server but the substrate
 			// node is a
 			// switch.
-			final String sourceVarName = vLink.getSource().getName() + "_" + sPath.getSource().getName();
-			final String targetVarName = vLink.getTarget().getName() + "_" + sPath.getTarget().getName();
-
-			if (!delta.hasAddVariable(sourceVarName) || !delta.hasAddVariable(targetVarName)) {
-				return;
-			}
+			final String sourceVarName = vLink.getSource().getName() + "_" + sLink.getSource().getName();
+			final String targetVarName = vLink.getTarget().getName() + "_" + sLink.getTarget().getName();
 
 			final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
 
-			delta.addVariable(varName, getCost(vLink, sPath));
+			delta.addVariable(varName, getCost(vLink, sLink));
 			delta.setVariableWeightForConstraint("vl" + match.getVirtual().getName(), 1, varName);
 			delta.addLessOrEqualsConstraint("req" + varName, 0, new int[] { 2, -1, -1 },
 					new String[] { varName, sourceVarName, targetVarName });
-			forEachLink(sPath,
-					l -> delta.setVariableWeightForConstraint("sl" + l.getName(), vLink.getBandwidth(), varName));
+			delta.setVariableWeightForConstraint("sl" + sLink.getName(), vLink.getBandwidth(), varName);
 			variablesToMatch.put(varName, match);
 
 			// SOS match
@@ -426,15 +384,10 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 			for (final Link actInnerLink : facade.getAllLinksOfNetwork(actVNet.getName())) {
 				final VirtualLink actVL = (VirtualLink) actInnerLink;
 
-				// To substrate paths
-				for (final SubstratePath actOuterPath : facade.getAllPathsOfNetwork(sNet.getName())) {
-					delta.addLinkPathMatchPositive(actVL, actOuterPath);
-				}
-
-				// To substrate servers
-				for (final Node actOuterNode : facade.getAllServersOfNetwork(sNet.getName())) {
-					final SubstrateServer actSSrv = (SubstrateServer) actOuterNode;
-					delta.addLinkServerMatchPositive(actVL, actSSrv);
+				// To substrate links
+				for (final Link actOuterLink : facade.getAllLinksOfNetwork(sNet.getName())) {
+					final SubstrateLink actOuterSubLink = (SubstrateLink) actOuterLink;
+					delta.addLinkMatchPositive(actVL, actOuterSubLink);
 				}
 			}
 		}
@@ -483,17 +436,12 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 				.filter(m -> vNets.contains(((VirtualSwitch) m.getVirtual()).getNetwork()))
 				.forEach(gen::addSwitchMatch);
 
-		// Important: Due to the fact that both link constraint generating methods check
+		// Important: Due to the fact that the link constraint generating method checks
 		// the existence of the node mapping variables, the link constraints have to be
 		// added *after* all node constraints.
-		delta.getNewLinkPathMatchPositives().stream()
+		delta.getNewLinkMatchPositives().stream()
 				.filter(m -> !ignoredVnets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
-				.filter(m -> vNets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
-				.forEach(gen::addLinkPathMatch);
-		delta.getNewLinkServerMatchPositives().stream()
-				.filter(m -> !ignoredVnets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
-				.filter(m -> vNets.contains(((VirtualLink) m.getVirtual()).getNetwork()))
-				.forEach(gen::addLinkServerMatch);
+				.filter(m -> vNets.contains(((VirtualLink) m.getVirtual()).getNetwork())).forEach(gen::addLinkMatch);
 
 		// apply delta in ILP generator
 		gen.apply();
@@ -591,11 +539,6 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 		// Path creation has to be enabled for paths with length = 1
 		if (ModelFacadeConfig.MIN_PATH_LENGTH != 1) {
 			throw new UnsupportedOperationException("Minimum path length must be 1.");
-		}
-
-		// There must be generated substrate paths
-		if (sNet.getPaths().isEmpty()) {
-			throw new UnsupportedOperationException("Generated paths are missing in substrate network.");
 		}
 	}
 
@@ -697,11 +640,7 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 				} else if (ve instanceof VirtualSwitch) {
 					facade.embedSwitchToNode(se.getName(), ve.getName());
 				} else if (ve instanceof VirtualLink) {
-					if (se instanceof SubstrateServer) {
-						facade.embedLinkToServer(se.getName(), ve.getName());
-					} else if (se instanceof SubstratePath) {
-						facade.embedLinkToPath(se.getName(), ve.getName());
-					}
+					facade.embedLinkToLink(se.getName(), ve.getName());
 				}
 				break;
 			default:
@@ -718,10 +657,6 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 	public void init() {
 		// Create new ILP solver object on every method call.
 		ilpSolver = IlpSolverConfig.getIlpSolver();
-	}
-
-	public void forEachLink(final SubstratePath sPath, final Consumer<? super Link> operation) {
-		sPath.getLinks().stream().forEach(operation);
 	}
 
 	/**

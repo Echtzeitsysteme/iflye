@@ -47,24 +47,23 @@ rule serverMatchPositive() {
 // Switches
 //
 
-// Match from virtual switch to substrate node
-// (Substrate node could either be a server or a switch.)
-rule switchNodeMatchPositive() {
+// Match from virtual switch to substrate switch
+rule switchMatchPositive() {
 	root: Root {
 		-networks -> substrateNetwork
 		-networks -> virtualNetwork
 	}
 	
-	substrateNode: SubstrateNode {
+	substrateSwitch: SubstrateSwitch {
 		++ -guestSwitches -> virtualSwitch
 	}
 	
 	virtualSwitch : VirtualSwitch {
-		++ -host -> substrateNode
+		++ -host -> substrateSwitch
 	}
 	
 	substrateNetwork: SubstrateNetwork {
-		-nodes -> substrateNode
+		-nodes -> substrateSwitch
 	}
 	
 	virtualNetwork: VirtualNetwork {
@@ -76,62 +75,32 @@ rule switchNodeMatchPositive() {
 // Links
 //
 
-// Match from a virtual link to a substrate path (positive)
-rule linkPathMatchPositive() {
+// Match from a virtual link to a substrate link
+rule linkMatchPositive() {
 	root: Root {
 		-networks -> substrateNetwork
 		-networks -> virtualNetwork
 	}
 	
-	substratePath: SubstratePath {
+	substrateLink: SubstrateLink {
 		++ -guestLinks -> virtualLink
-		.residualBandwidth := substratePath.residualBandwidth - virtualLink.bandwidth
-		
-		// Update all substrate links
-		forEach links->l {
-			iterator::l.residualBandwidth := iterator::l.residualBandwidth - virtualLink.bandwidth
-		}
+		.residualBandwidth := substrateLink.residualBandwidth - virtualLink.bandwidth
 	}
 	
 	virtualLink: VirtualLink {
-		++ -host -> substratePath
+		++ -host -> substrateLink
 	}
 	
 	substrateNetwork: SubstrateNetwork {
-		-paths -> substratePath
+		-links -> substrateLink
 	}
 	
 	virtualNetwork: VirtualNetwork {
 		-links -> virtualLink
 	}
 	
-	# virtualLink.bandwidth <= substratePath.residualBandwidth
+	# virtualLink.bandwidth <= substrateLink.residualBandwidth
 	
 	// Explicitly exclude substrate paths with a residual bandwidth equals to 0
-	# substratePath.residualBandwidth > 0
-}
-
-// Match from virtual link to substrate server
-// This one does not have any constraints.
-rule linkServerMatchPositive() {
-	root: Root {
-		-networks -> substrateNetwork
-		-networks -> virtualNetwork
-	}
-	
-	substrateServer: SubstrateServer {
-		++ -guestLinks -> virtualLink
-	}
-	
-	virtualLink: VirtualLink {
-		++ -host -> substrateServer
-	}
-	
-	substrateNetwork: SubstrateNetwork {
-		-nodes -> substrateServer
-	}
-	
-	virtualNetwork: VirtualNetwork {
-		-links -> virtualLink
-	}
+	# substrateLink.residualBandwidth > 0
 }

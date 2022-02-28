@@ -4,11 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import facade.ModelFacade;
-import model.Node;
-import model.VirtualNetwork;
-import model.VirtualServer;
-
 /**
  * Incremental model converter that converts a JSON file with virtual or
  * substrate network information to the model (one virtual network by one).
@@ -54,27 +49,6 @@ public class IncrementalModelConverter extends BasicModelConverter {
 		final JsonArray links = (JsonArray) net.get("links");
 
 		createNetwork(name, switches, servers, links, isVirtual);
-
-		if (!isVirtual) {
-			ModelFacade.getInstance().createAllPathsForNetwork(name.getAsString());
-		} else {
-			final VirtualNetwork vnet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById(name.getAsString());
-			long sumCpu = 0;
-			long sumMem = 0;
-			long sumSto = 0;
-			for (final Node n : vnet.getNodes()) {
-				if (n instanceof VirtualServer) {
-					final VirtualServer vsrv = (VirtualServer) n;
-					sumCpu += vsrv.getCpu();
-					sumMem += vsrv.getMemory();
-					sumSto += vsrv.getStorage();
-				}
-			}
-			vnet.setCpu(sumCpu);
-			vnet.setMemory(sumMem);
-			vnet.setStorage(sumSto);
-		}
-
 		counter++;
 		return name.getAsString();
 	}

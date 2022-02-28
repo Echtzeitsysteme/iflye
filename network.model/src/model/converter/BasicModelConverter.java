@@ -49,10 +49,6 @@ public class BasicModelConverter {
 
 			createNetwork(name, switches, servers, links, isVirtual);
 			networkOutputIds.add(name.getAsString());
-
-			if (!isVirtual) {
-				ModelFacade.getInstance().createAllPathsForNetwork(name.getAsString());
-			}
 		}
 
 		return networkOutputIds;

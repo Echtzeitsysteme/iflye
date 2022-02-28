@@ -2,8 +2,6 @@ package facade;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -16,23 +14,16 @@ import java.util.stream.Collectors;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.moflon.core.utilities.eMoflonEMFUtil;
 
-import com.google.common.collect.Lists;
-
 import facade.config.ModelFacadeConfig;
-import facade.pathgen.Dijkstra;
-import facade.pathgen.IPathGen;
-import facade.pathgen.Yen;
 import model.Link;
 import model.ModelFactory;
 import model.Network;
 import model.Node;
 import model.Root;
 import model.Server;
-import model.SubstrateHostLink;
 import model.SubstrateLink;
 import model.SubstrateNetwork;
 import model.SubstrateNode;
-import model.SubstratePath;
 import model.SubstrateServer;
 import model.SubstrateSwitch;
 import model.Switch;
@@ -68,9 +59,7 @@ public class ModelFacade {
 	 * Collections for the path creation methods.
 	 */
 	private final Set<Node> visitedNodes = new HashSet<>();
-	private final List<SubstratePath> generatedMetaPaths = new LinkedList<>();
 	private final Set<Link> linksUntilNode = new HashSet<>();
-	private final Map<SubstrateNode, Set<SubstratePath>> pathSourceMap = new HashMap<>();
 
 	/**
 	 * Private constructor to disable direct object instantiation.
@@ -98,7 +87,6 @@ public class ModelFacade {
 	/*
 	 * Look-up data structures.
 	 */
-	private Map<String, SubstratePath> paths = new HashMap<>();
 	private Map<String, Link> links = new HashMap<>();
 
 	/**
@@ -155,23 +143,6 @@ public class ModelFacade {
 		checkStringValid(networkId);
 
 		return getNetworkById(networkId).getLinks();
-	}
-
-	/**
-	 * Returns a list of all paths of a given network ID.
-	 *
-	 * @param networkId Network ID.
-	 * @return List of all paths of the given network ID.
-	 */
-	public List<SubstratePath> getAllPathsOfNetwork(final String networkId) {
-		checkStringValid(networkId);
-
-		final Network net = getNetworkById(networkId);
-		if (net instanceof VirtualNetwork) {
-			throw new IllegalArgumentException("Virtual networks do not have paths.");
-		}
-
-		return ((SubstrateNetwork) getNetworkById(networkId)).getPaths();
 	}
 
 	/**
@@ -255,26 +226,6 @@ public class ModelFacade {
 		// });
 		// return links.get(0);
 		return links.get(id);
-	}
-
-	/**
-	 * Returns a path object for a given ID.
-	 *
-	 * @param id ID to return path object for.
-	 * @return Path object for given ID.
-	 */
-	public SubstratePath getPathById(final String id) {
-		checkStringValid(id);
-
-		// List<Network> nets = root.getNetworks();
-		// List<Path> paths = new ArrayList<Path>();
-		// nets.stream().forEach(net -> {
-		// net.getPaths().stream().filter(p -> p.getName().equals(id)).forEach(p ->
-		// paths.add(p));
-		// });
-		//
-		// return paths.get(0);
-		return paths.get(id);
 	}
 
 	/**
@@ -428,81 +379,6 @@ public class ModelFacade {
 	}
 
 	/**
-	 * This method creates all necessary paths *after* all other components are
-	 * added to the network.
-	 *
-	 * Assumptions: Every server of the given network is only connected to one
-	 * switch.
-	 *
-	 * @param networkdId Network ID to add paths to.
-	 */
-	public void createAllPathsForNetwork(final String networkdId) {
-		checkStringValid(networkdId);
-		final Network net = getNetworkById(networkdId);
-
-		if (net instanceof VirtualNetwork) {
-			throw new UnsupportedOperationException("Given network ID is virtual," + " which is not supported!");
-		}
-
-		final SubstrateNetwork snet = (SubstrateNetwork) net;
-
-		// Check if maximum path length automatic is set
-		if (ModelFacadeConfig.MAX_PATH_LENGTH_AUTO) {
-			ModelFacadeConfig.MAX_PATH_LENGTH = determineMaxPathLengthForTree(networkdId);
-		}
-
-		getAllServersOfNetwork(networkdId).stream().forEach((s) -> {
-			final SubstrateServer srv = (SubstrateServer) s;
-			final IPathGen gen;
-
-			// Decide whether the paths should be generated using the algorithm of Dijkstra
-			// (shortest
-			// path) or the algorithm of Yen (K shortest paths).
-			if (ModelFacadeConfig.YEN_PATH_GEN) {
-				gen = new Yen();
-
-				final Map<SubstrateNode, List<List<SubstrateLink>>> actMap = gen.getAllKFastestPaths(snet, srv,
-						ModelFacadeConfig.YEN_K);
-
-				final List<SubstrateNode> sortedKeys = new LinkedList<>();
-				sortedKeys.addAll(actMap.keySet());
-				sortedKeys.sort(new Comparator<SubstrateNode>() {
-
-					@Override
-					public int compare(final SubstrateNode o1, final SubstrateNode o2) {
-						return o1.getName().compareTo(o2.getName());
-					}
-				});
-
-				// Iterate over all "paths" of the current node
-				for (final SubstrateNode n : sortedKeys) {
-					for (final List<SubstrateLink> l : actMap.get(n)) {
-						createBidirectionalPathFromLinks(l);
-					}
-				}
-			} else {
-				gen = new Dijkstra();
-
-				final Map<SubstrateNode, List<SubstrateLink>> actMap = gen.getAllFastestPaths(snet, srv);
-
-				final List<SubstrateNode> sortedKeys = new LinkedList<>();
-				sortedKeys.addAll(actMap.keySet());
-				sortedKeys.sort(new Comparator<SubstrateNode>() {
-
-					@Override
-					public int compare(final SubstrateNode o1, final SubstrateNode o2) {
-						return o1.getName().compareTo(o2.getName());
-					}
-				});
-
-				for (final SubstrateNode n : sortedKeys) {
-					createBidirectionalPathFromLinks(actMap.get(n));
-				}
-			}
-		});
-	}
-
-	/**
 	 * Determines the maximum path length needed to connect one server within the
 	 * network with a core switch. Throws an {@link UnsupportedOperationException}
 	 * if servers have different depths.
@@ -539,103 +415,6 @@ public class ModelFacade {
 		}
 
 		return maxServerDepth - minSwitchDepth;
-	}
-
-	/**
-	 * Creates the bidirectional path (forward and backward) from a given list of
-	 * links. The order of the list elements is important: The source node of the
-	 * forward path is determined by the source node of the first link and the
-	 * target node of the forward path is determined by the target node of the last
-	 * link. For the backward path, both nodes described above are swapped.
-	 *
-	 * @param links Input list of links to generate paths from.
-	 */
-	private synchronized void createBidirectionalPathFromLinks(final List<SubstrateLink> links) {
-		// Check path limits
-		if (links.size() < ModelFacadeConfig.MIN_PATH_LENGTH || links.size() > ModelFacadeConfig.MAX_PATH_LENGTH) {
-			return;
-		}
-
-		// Check if a server is used as forwarding node (which is forbidden)
-		for (int i = 0; i < links.size(); i++) {
-			if (i != 0) {
-				if (links.get(i).getSource() instanceof Server) {
-					return;
-				}
-			}
-
-			if (i != links.size() - 1) {
-				if (links.get(i).getTarget() instanceof Server) {
-					return;
-				}
-			}
-		}
-
-		// Get all nodes from links
-		final List<SubstrateNode> nodes = new LinkedList<>();
-
-		for (final SubstrateLink l : links) {
-			nodes.add((SubstrateNode) l.getSource());
-			// nodes.add(l.getTarget());
-		}
-		nodes.add((SubstrateNode) links.get(links.size() - 1).getTarget());
-
-		final int lastIndex = links.size() - 1;
-		final SubstrateNode source = (SubstrateNode) links.get(0).getSource();
-		final SubstrateNode target = (SubstrateNode) links.get(lastIndex).getTarget();
-
-		// Create forward path
-		if (!doesSpecificPathWithSourceAndTargetExist(source, target, nodes, links)) {
-			final SubstratePath forward = genMetaPath(source, target);
-			forward.setHops(links.size());
-			forward.setNetwork((SubstrateNetwork) links.get(0).getNetwork());
-			final String name = concatNodeNames(nodes);
-			forward.setName(name);
-
-			forward.getNodes().addAll(nodes);
-			forward.getLinks().addAll(links);
-
-			// Determine bandwidth
-			final int bw = getMinimumBandwidthFromSubstrateLinks(links);
-			forward.setBandwidth(bw);
-			forward.setResidualBandwidth(bw);
-
-			paths.put(name, forward);
-
-			// Add path to lookup map
-			if (!pathSourceMap.containsKey(source)) {
-				pathSourceMap.put(source, new HashSet<SubstratePath>());
-			}
-			pathSourceMap.get(source).add(forward);
-		}
-
-		// Create reverse path
-		final List<SubstrateNode> reversedNodes = Lists.reverse(nodes);
-		// Get all opposite links
-		final List<SubstrateLink> oppositeLinks = getOppositeLinks(links);
-
-		if (!doesSpecificPathWithSourceAndTargetExist(target, source, reversedNodes, Lists.reverse(oppositeLinks))) {
-			final SubstratePath reverse = genMetaPath(target, source);
-			reverse.getLinks().addAll(Lists.reverse(oppositeLinks));
-
-			reverse.setHops(links.size());
-			reverse.setNetwork((SubstrateNetwork) links.get(0).getNetwork());
-			final String name = concatNodeNames(reversedNodes);
-			reverse.setName(name);
-			reverse.getNodes().addAll(reversedNodes);
-
-			final int revBw = getMinimumBandwidthFromSubstrateLinks(oppositeLinks);
-			reverse.setBandwidth(revBw);
-			reverse.setResidualBandwidth(revBw);
-
-			paths.put(name, reverse);
-
-			// Add path to lookup map
-			if (!pathSourceMap.containsKey(target)) {
-				pathSourceMap.put(target, new HashSet<SubstratePath>());
-			}
-			pathSourceMap.get(target).add(reverse);
-		}
 	}
 
 	/**
@@ -716,46 +495,6 @@ public class ModelFacade {
 	}
 
 	/**
-	 * Generates a meta path that has only the source and the target node set up.
-	 * This is a utility method for the path creation.
-	 *
-	 * @param source Source node for the path.
-	 * @param target Target node for the path.
-	 * @return Generated substrate (meta-)path.
-	 */
-	private SubstratePath genMetaPath(final Node source, final Node target) {
-		SubstratePath path = ModelFactory.eINSTANCE.createSubstratePath();
-		path.setSource((SubstrateNode) source);
-		path.setTarget((SubstrateNode) target);
-		return path;
-	}
-
-	/**
-	 * This method checks the availability of a specific path with given source and
-	 * target node.
-	 *
-	 * @param source Source to search path for.
-	 * @param target Target to search path for.
-	 * @param nodes  List of nodes that must be contained in the found path.
-	 * @param links  List of links that must be contained in the found path.
-	 * @return True if a path with given parameters already exists.
-	 */
-	private boolean doesSpecificPathWithSourceAndTargetExist(final SubstrateNode source, final SubstrateNode target,
-			final List<SubstrateNode> nodes, final List<SubstrateLink> links) {
-		final Set<SubstratePath> foundPaths = getPathsFromSourceToTarget(source, target);
-
-		for (final SubstratePath p : foundPaths) {
-			// Check that both "sets" of nodes and links are equal
-			if (nodes.containsAll(p.getNodes()) && p.getNodes().containsAll(nodes) && links.containsAll(p.getLinks())
-					&& p.getLinks().containsAll(links)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
 	 * Returns true, if a given node ID exists in a given network model.
 	 *
 	 * @param id        Node ID to check.
@@ -790,86 +529,11 @@ public class ModelFacade {
 	 */
 	public void resetAll() {
 		root.getNetworks().clear();
-		generatedMetaPaths.clear();
 		visitedNodes.clear();
 		linksUntilNode.clear();
 		counter.set(0);
 		links.clear();
-		paths.clear();
-		pathSourceMap.clear();
 		root = ModelFactory.eINSTANCE.createRoot();
-	}
-
-	/**
-	 * Returns a path from source node to target node if such a path exists. Else it
-	 * returns null.
-	 *
-	 * @param source Source node.
-	 * @param target Target node.
-	 * @return Path if a path between source and target does exist.
-	 */
-	public SubstratePath getPathFromSourceToTarget(final SubstrateNode source, final SubstrateNode target) {
-		final Set<SubstratePath> allPaths = pathSourceMap.get(source);
-
-		// Check if there are any paths from source node to any other node
-		if (allPaths == null) {
-			return null;
-		}
-
-		for (final SubstratePath p : allPaths) {
-			if (p.getSource().equals(source) && p.getTarget().equals(target)) {
-				return p;
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * Returns a path from source node ID to target node ID if such a path exists.
-	 * Else it returns null.
-	 *
-	 * @param sourceId Source node ID.
-	 * @param targetId Target node ID.
-	 * @return Path if a path between source and target does exist.
-	 */
-	public SubstratePath getPathFromSourceToTarget(final String sourceId, final String targetId) {
-		final Node source = getNodeById(sourceId);
-		final Node target = getNodeById(targetId);
-
-		if (!(source instanceof SubstrateNode) || !(target instanceof SubstrateNode)) {
-			throw new IllegalArgumentException(
-					"One or both of the provided node IDs do not belong to a substrate network.");
-		}
-
-		return getPathFromSourceToTarget((SubstrateNode) source, (SubstrateNode) target);
-	}
-
-	/**
-	 * Returns all paths from source node to target node if any exists. Else it
-	 * returns an empty set.
-	 *
-	 * @param source Source node.
-	 * @param target Target node.
-	 * @return Set of paths if any exists or else an empty set.
-	 */
-	public Set<SubstratePath> getPathsFromSourceToTarget(final SubstrateNode source, final SubstrateNode target) {
-		final Set<SubstratePath> allPaths = pathSourceMap.get(source);
-
-		// Check if there are any paths from source node to any other node
-		if (allPaths == null) {
-			return new HashSet<>();
-		}
-
-		final Set<SubstratePath> foundPaths = Collections.synchronizedSet(new HashSet<SubstratePath>());
-
-		allPaths.stream().forEach(p -> {
-			if (p.getSource().equals(source) && p.getTarget().equals(target)) {
-				foundPaths.add(p);
-			}
-		});
-
-		return foundPaths;
 	}
 
 	/**
@@ -1037,120 +701,40 @@ public class ModelFacade {
 	}
 
 	/**
-	 * Adds an embedding of one virtual switch to one substrate node. The substrate
-	 * node may either be a substrate switch or a substrate server.
+	 * Adds an embedding of one virtual switch to one substrate switch.
 	 *
 	 * @param substrateId Substrate Id.
 	 * @param virtualId   Virtual Id.
 	 * @return True if embedding was successful.
 	 */
 	public boolean embedSwitchToNode(final String substrateId, final String virtualId) {
-		final SubstrateNode subNode = (SubstrateNode) getNodeById(substrateId);
+		final SubstrateSwitch subSwitch = (SubstrateSwitch) getNodeById(substrateId);
 		final VirtualSwitch virtSwitch = (VirtualSwitch) getSwitchById(virtualId);
-		virtSwitch.setHost(subNode);
-		return subNode.getGuestSwitches().add(virtSwitch);
+		virtSwitch.setHost(subSwitch);
+		return subSwitch.getGuestSwitches().add(virtSwitch);
 	}
 
 	/**
-	 * Adds an embedding of one virtual link to one substrate server. There are no
-	 * constraints to check in this particular case.
+	 * Adds an embedding of one virtual link to one substrate link.
 	 *
 	 * @param substrateId Substrate Id.
 	 * @param virtualId   Virtual Id.
 	 * @return True if embedding was successful.
 	 */
-	public boolean embedLinkToServer(final String substrateId, final String virtualId) {
-		final SubstrateServer subServ = (SubstrateServer) getServerById(substrateId);
-		final VirtualLink virtLink = (VirtualLink) getLinkById(virtualId);
-
-		// // Check conditions
-		// // Source
-		// if (virtLink.getSource() instanceof VirtualServer) {
-		// if (((VirtualServer) virtLink.getSource()).getHost() == null) {
-		// throw new UnsupportedOperationException("Virtual link source host is null.");
-		// }
-		// if (!((VirtualServer) virtLink.getSource()).getHost().equals(subServ)) {
-		// throw new UnsupportedOperationException();
-		// }
-		// } else if (virtLink.getSource() instanceof VirtualSwitch) {
-		// if (((VirtualSwitch) virtLink.getSource()).getHost() == null) {
-		// throw new UnsupportedOperationException("Virtual link source host is null.");
-		// }
-		// if (!((VirtualSwitch) virtLink.getSource()).getHost().equals(subServ)) {
-		// throw new UnsupportedOperationException();
-		// }
-		// }
-		//
-		// // Target
-		// if (virtLink.getTarget() instanceof VirtualServer) {
-		// if (((VirtualServer) virtLink.getTarget()).getHost() == null) {
-		// throw new UnsupportedOperationException("Virtual link target host is null.");
-		// }
-		// if (!((VirtualServer) virtLink.getTarget()).getHost().equals(subServ)) {
-		// throw new UnsupportedOperationException();
-		// }
-		// } else if (virtLink.getTarget() instanceof VirtualSwitch) {
-		// if (((VirtualSwitch) virtLink.getTarget()).getHost() == null) {
-		// throw new UnsupportedOperationException("Virtual link target host is null.");
-		// }
-		// if (!((VirtualSwitch) virtLink.getTarget()).getHost().equals(subServ)) {
-		// throw new UnsupportedOperationException();
-		// }
-		// }
-
-		// No constraints to check!
-		virtLink.setHost(subServ);
-		return subServ.getGuestLinks().add(virtLink);
-	}
-
-	/**
-	 * Adds an embedding of one virtual link to one substrate path.
-	 *
-	 * @param substrateId Substrate Id.
-	 * @param virtualId   Virtual Id.
-	 * @return True if embedding was successful.
-	 */
-	public boolean embedLinkToPath(final String substrateId, final String virtualId) {
-		final SubstratePath subPath = getPathById(substrateId);
+	public boolean embedLinkToLink(final String substrateId, final String virtualId) {
+		final SubstrateLink subLink = (SubstrateLink) getLinkById(substrateId);
 		final VirtualLink virtLink = (VirtualLink) getLinkById(virtualId);
 		boolean success = true;
 
 		if (!ModelFacadeConfig.IGNORE_BW) {
-			if (subPath.getResidualBandwidth() < virtLink.getBandwidth()) {
+			if (subLink.getResidualBandwidth() < virtLink.getBandwidth()) {
 				throw new UnsupportedOperationException(
 						"Embeding of link not possible due resource constraint violation.");
 			}
 		}
 
-		success &= subPath.getGuestLinks().add(virtLink);
-		virtLink.setHost(subPath);
-
-		// Add guest link to all substrate links contained in the path?
-		if (ModelFacadeConfig.LINK_HOST_EMBED_PATH) {
-			for (final Link l : subPath.getLinks()) {
-				final SubstrateLink sl = (SubstrateLink) l;
-				sl.getGuestLinks().add(virtLink);
-			}
-		}
-
-		// Update residual values of the host path
-		if (!ModelFacadeConfig.IGNORE_BW) {
-			final int oldResBw = subPath.getResidualBandwidth();
-			subPath.setResidualBandwidth(oldResBw - virtLink.getBandwidth());
-
-			// Update all residual bandwidths of all links of the path
-			// This should only be done, if the virtual links are *not* embedded to the
-			// substrate ones
-			// before, because else we would subtract the virtual bandwidth twice.
-			if (!ModelFacadeConfig.LINK_HOST_EMBED_PATH) {
-				for (Link actLink : subPath.getLinks()) {
-					SubstrateLink actSubLink = (SubstrateLink) actLink;
-					final int resBw = actSubLink.getResidualBandwidth();
-					actSubLink.setResidualBandwidth(resBw - virtLink.getBandwidth());
-				}
-			}
-		}
-
+		success &= subLink.getGuestLinks().add(virtLink);
+		virtLink.setHost(subLink);
 		return success;
 	}
 
@@ -1277,22 +861,11 @@ public class ModelFacade {
 
 			for (final Link l : vNet.getLinks()) {
 				final VirtualLink vl = (VirtualLink) l;
-				final SubstrateHostLink host = vl.getHost();
+				final SubstrateLink host = vl.getHost();
 				if (host == null) {
 					continue;
 				}
 				host.getGuestLinks().remove(vl);
-
-				if (!ModelFacadeConfig.IGNORE_BW) {
-					if (host instanceof SubstratePath) {
-						final SubstratePath hostPath = (SubstratePath) host;
-						hostPath.setResidualBandwidth(hostPath.getResidualBandwidth() + vl.getBandwidth());
-						for (final Link hostPathLink : hostPath.getLinks()) {
-							final SubstrateLink sl = (SubstrateLink) hostPathLink;
-							sl.setResidualBandwidth(sl.getResidualBandwidth() + vl.getBandwidth());
-						}
-					}
-				}
 			}
 		}
 	}
@@ -1340,12 +913,6 @@ public class ModelFacade {
 			for (final VirtualServer guestSrv : ssrv.getGuestServers()) {
 				guestsToRemove.add(guestSrv);
 			}
-			for (final VirtualSwitch guestSw : ssrv.getGuestSwitches()) {
-				guestsToRemove.add(guestSw);
-			}
-			for (final VirtualLink guestL : ssrv.getGuestLinks()) {
-				guestsToRemove.add(guestL);
-			}
 			guestsToRemove.forEach(e -> {
 				if (e instanceof VirtualServer) {
 					((VirtualServer) e).setHost(null);
@@ -1358,14 +925,6 @@ public class ModelFacade {
 				}
 			});
 		}
-
-		// Remove all paths
-		final Set<SubstratePath> pathsToRemove = new HashSet<>();
-		pathsToRemove.addAll(ssrv.getIncomingPaths());
-		pathsToRemove.addAll(ssrv.getOutgoingPaths());
-		pathsToRemove.forEach(p -> {
-			removeSubstratePath(p, removeEmbeddings);
-		});
 
 		// Remove all links
 		final Set<Link> linksToRemove = new HashSet<>();
@@ -1381,8 +940,7 @@ public class ModelFacade {
 	}
 
 	/**
-	 * Removes the given substrate link from the network. Does not check any guests
-	 * or paths.
+	 * Removes the given substrate link from the network. Does not check any guests.
 	 *
 	 * @param link             Substrate link to remove from the network.
 	 * @param removeEmbeddings True if embeddings must be removed. Otherwise, the
@@ -1403,64 +961,9 @@ public class ModelFacade {
 		sl.getSource().getOutgoingLinks().remove(sl);
 		sl.getTarget().getIncomingLinks().remove(sl);
 
-		if (sl.getPaths() != null && !sl.getPaths().isEmpty()) {
-			final Set<SubstratePath> pathsToRemove = new HashSet<>();
-			sl.getPaths().forEach(p -> {
-				removeSubstratePath(p, removeEmbeddings);
-				pathsToRemove.add(p);
-			});
-			sl.getPaths().removeAll(pathsToRemove);
-		}
-
 		getNetworkById(link.getNetwork().getName()).getLinks().remove(link);
 		links.remove(sl.getName());
 		EcoreUtil.delete(sl);
-	}
-
-	/**
-	 * Removes the given substrate path from the network. Does not check any guests.
-	 *
-	 * @param path             Substrate path to remove from the network.
-	 * @param removeEmbeddings True if embeddings must be removed. Otherwise, the
-	 *                         substrate path will only be removed from the network.
-	 */
-	private void removeSubstratePath(final SubstratePath path, final boolean removeEmbeddings) {
-		if (!(path instanceof SubstratePath)) {
-			throw new IllegalArgumentException("Given path is not a substrate path.");
-		}
-		final SubstratePath sp = path;
-
-		// Remove path from look-up data structures
-		paths.remove(sp.getName());
-		pathSourceMap.get(sp.getSource()).remove(sp);
-
-		// Remove it from guest links
-		if (removeEmbeddings) {
-			final Set<VirtualLink> guestLinksToRemove = new HashSet<>();
-			guestLinksToRemove.addAll(sp.getGuestLinks());
-			guestLinksToRemove.forEach(l -> l.setHost(null));
-		}
-
-		if (sp.getSource() != null) {
-			sp.getSource().getOutgoingPaths().remove(sp);
-		}
-
-		if (sp.getTarget() != null) {
-			sp.getTarget().getIncomingPaths().remove(sp);
-		}
-
-		// Remove path from links
-		final Set<SubstrateLink> linksToRemove = new HashSet<>();
-		sp.getLinks().forEach(l -> linksToRemove.add(l));
-		linksToRemove.forEach(l -> l.getPaths().remove(sp));
-
-		// Remove path from nodes
-		final Set<SubstrateNode> nodesToRemove = new HashSet<>();
-		sp.getNodes().forEach(n -> nodesToRemove.add(n));
-		nodesToRemove.forEach(n -> n.getPaths().remove(sp));
-
-		sp.getNetwork().getPaths().remove(sp);
-		EcoreUtil.delete(sp);
 	}
 
 	/**
@@ -1540,19 +1043,6 @@ public class ModelFacade {
 			if (!sNet.getLinks().containsAll(n.getOutgoingLinks())) {
 				throw new InternalError("Outgoing links of node " + n.getName() + " are missing in network.");
 			}
-
-			// Check paths
-			if (!sNet.getPaths().containsAll(((SubstrateNode) n).getIncomingPaths())) {
-				throw new InternalError("Incoming paths of node " + n.getName() + " are missing in network.");
-			}
-
-			if (!sNet.getPaths().containsAll(((SubstrateNode) n).getOutgoingPaths())) {
-				throw new InternalError("Outgoing paths of node " + n.getName() + " are missing in network.");
-			}
-
-			if (!sNet.getPaths().containsAll(((SubstrateNode) n).getPaths())) {
-				throw new InternalError("Contained paths of node " + n.getName() + " are missing in network.");
-			}
 		}
 
 		// If ignoring of bandwidth is activated, no link or path has to be checked.
@@ -1587,43 +1077,6 @@ public class ModelFacade {
 				if (sl.getResidualBandwidth() != sl.getBandwidth() - sumGuestBw) {
 					throw new InternalError("Residual bandwidth value of link " + sl.getName() + " was incorrect.");
 				}
-			}
-		}
-
-		for (final SubstratePath p : sNet.getPaths()) {
-			final SubstratePath sp = p;
-			int sumGuestBw = 0;
-
-			if (sp.getBandwidth() < 0) {
-				throw new InternalError("Normal bandwidth of path " + sp.getName() + " was smaller than zero.");
-			}
-
-			if (sp.getResidualBandwidth() < 0) {
-				throw new InternalError("Residual bandwidth of path " + sp.getName() + " was smaller than zero.");
-			}
-
-			for (final VirtualLink gl : sp.getGuestLinks()) {
-				sumGuestBw += gl.getBandwidth();
-			}
-
-			if (sp.getResidualBandwidth() != sp.getBandwidth() - sumGuestBw) {
-				throw new InternalError("Residual bandwidth value of path " + sp.getName() + " was incorrect.");
-			}
-		}
-
-		// Check if links are contained in paths
-		for (final Link l : sNet.getLinks()) {
-			final SubstrateLink sl = (SubstrateLink) l;
-			if (!sNet.getPaths().containsAll(sl.getPaths())) {
-				throw new InternalError();
-			}
-		}
-
-		// Check if paths are contained in links
-		for (final SubstratePath p : sNet.getPaths()) {
-			final SubstratePath sp = p;
-			if (!sNet.getLinks().containsAll(sp.getLinks())) {
-				throw new InternalError();
 			}
 		}
 	}
@@ -1685,13 +1138,8 @@ public class ModelFacade {
 			if (host == null && vl.getHost() == null) {
 				continue;
 			} else {
-				if (vl.getHost() instanceof SubstrateServer) {
-					final SubstrateServer lHost = (SubstrateServer) vl.getHost();
-					if (host.equals(lHost.getNetwork())) {
-						continue;
-					}
-				} else if (vl.getHost() instanceof SubstratePath) {
-					final SubstratePath lHost = (SubstratePath) vl.getHost();
+				if (vl.getHost() instanceof SubstrateLink) {
+					final SubstrateLink lHost = vl.getHost();
 					if (host.equals(lHost.getNetwork())) {
 						continue;
 					}
@@ -1729,14 +1177,9 @@ public class ModelFacade {
 
 		for (final Link l : vNet.getLinks()) {
 			final VirtualLink vl = (VirtualLink) l;
-			if (vl.getHost() instanceof SubstratePath) {
-				final SubstratePath host = (SubstratePath) vl.getHost();
-				if ((host.getNetwork() == null) || !host.getNetwork().getPaths().contains(host)) {
-					return true;
-				}
-			} else if (vl.getHost() instanceof SubstrateServer) {
-				final SubstrateServer host = (SubstrateServer) vl.getHost();
-				if ((host.getNetwork() == null) || !host.getNetwork().getNodes().contains(host)) {
+			if (vl.getHost() instanceof SubstrateLink) {
+				final SubstrateLink host = vl.getHost();
+				if ((host.getNetwork() == null) || !host.getNetwork().getLinks().contains(host)) {
 					return true;
 				}
 			}

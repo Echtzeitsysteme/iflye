@@ -3,11 +3,9 @@ package generators;
 import java.util.LinkedList;
 import java.util.List;
 
-import facade.ModelFacade;
 import generators.config.GlobalGeneratorConfig;
 import generators.config.IGeneratorConfig;
 import generators.config.OneTierConfig;
-import model.VirtualNetwork;
 
 /**
  * Basic implementation of an one tier network topology generator.
@@ -97,16 +95,6 @@ public class OneTierNetworkGenerator implements INetworkGenerator {
 		// Connect switches together if option is enabled
 		if (config.isSwitchesConnected()) {
 			throw new UnsupportedOperationException("Not implemented, yet!");
-		}
-
-		// Generate paths
-		if (!isVirtual) {
-			ModelFacade.getInstance().createAllPathsForNetwork(networkId);
-		} else {
-			final VirtualNetwork vnet = ((VirtualNetwork) facade.getNetworkById(networkId));
-			vnet.setCpu(config.getNumberOfServers() * config.getCpuPerServer());
-			vnet.setMemory(config.getNumberOfServers() * config.getMemoryPerServer());
-			vnet.setStorage(config.getNumberOfServers() * config.getStoragePerServer());
 		}
 	}
 

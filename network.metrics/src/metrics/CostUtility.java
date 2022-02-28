@@ -7,7 +7,6 @@ import model.Node;
 import model.Server;
 import model.SubstrateElement;
 import model.SubstrateLink;
-import model.SubstratePath;
 import model.SubstrateServer;
 import model.Switch;
 import model.VirtualElement;
@@ -66,17 +65,6 @@ public class CostUtility {
 	 * @return Cost for this particular mapping.
 	 */
 	public static double getTotalPathCostLink(final SubstrateElement host) {
-		if (host instanceof Server) {
-			return 1;
-		} else if (host instanceof SubstratePath) {
-			final SubstratePath p = (SubstratePath) host;
-			if (p.getHops() == 1) {
-				return 2;
-			} else if (p.getHops() > 1) {
-				return Math.pow(4, p.getHops());
-			}
-		}
-
 		throw new IllegalArgumentException("Element not matched.");
 	}
 
@@ -182,15 +170,6 @@ public class CostUtility {
 		if (host instanceof Server) {
 			// Server -> 0 hops
 			return 0;
-		} else if (host instanceof SubstratePath) {
-			final SubstratePath subPath = (SubstratePath) host;
-			if (subPath.getHops() == 1) {
-				// Path, 1 hop -> 1 hop * virtual bandwidth
-				return virt.getBandwidth();
-			} else if (subPath.getHops() > 1) {
-				// Path, >1 hop -> 5 * virtual bandwidth
-				return 5 * virt.getBandwidth();
-			}
 		} else if (host instanceof SubstrateLink) {
 			// Link -> 1 hop * virtual bandwidth
 			return virt.getBandwidth();
@@ -254,10 +233,6 @@ public class CostUtility {
 		if (host instanceof Server) {
 			// Server -> 0 hops
 			return 0;
-		} else if (host instanceof SubstratePath) {
-			// Path -> n hops * virtual bandwidth
-			final SubstratePath subPath = (SubstratePath) host;
-			return virt.getBandwidth() * subPath.getHops();
 		} else if (host instanceof SubstrateLink) {
 			// Link -> 1 hop * virtual bandwidth
 			return virt.getBandwidth();

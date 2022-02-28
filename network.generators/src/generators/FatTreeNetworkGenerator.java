@@ -4,12 +4,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import facade.ModelFacade;
 import generators.config.FatTreeConfig;
 import generators.config.GlobalGeneratorConfig;
 import generators.config.IGeneratorConfig;
-import generators.config.OneTierConfig;
-import model.VirtualNetwork;
 
 /**
  * Basic implementation of a fat tree [1] network topology generator.
@@ -182,18 +179,6 @@ public class FatTreeNetworkGenerator implements INetworkGenerator {
 				facade.addLinkToNetwork(getNextLinkId(networkId), networkId, config.getRack().getBandwidthPerLink(),
 						edgeSwId, srvId);
 			}
-		}
-
-		// Generate paths
-		if (!isVirtual) {
-			ModelFacade.getInstance().createAllPathsForNetwork(networkId);
-		} else {
-			final VirtualNetwork vnet = ((VirtualNetwork) facade.getNetworkById(networkId));
-			final OneTierConfig rack = config.getRack();
-			final int numberOfServers = config.getPods() * config.getServersPerPod();
-			vnet.setCpu(numberOfServers * rack.getCpuPerServer());
-			vnet.setMemory(numberOfServers * rack.getMemoryPerServer());
-			vnet.setStorage(numberOfServers * rack.getStoragePerServer());
 		}
 	}
 
