@@ -19,11 +19,8 @@ import generators.config.FatTreeConfig;
 import generators.config.OneTierConfig;
 import model.Link;
 import model.Server;
-import model.SubstratePath;
 import model.SubstrateServer;
-import model.VirtualLink;
 import model.VirtualServer;
-import model.VirtualSwitch;
 
 /**
  * Test class for the ModelFacade that tests the removal of substrate servers.
@@ -79,24 +76,6 @@ public class ModelFacadeServerRemovalTest {
 	}
 
 	@Test
-	public void testRemovalOneTierPathsOnlySmall() {
-		setUpOneTier(2, netId, false);
-		assertEquals(2, facade.getAllServersOfNetwork(netId).size());
-		assertEquals(6, facade.getAllPathsOfNetwork(netId).size());
-		final String removeId = netId + "_srv_0";
-		final SubstrateServer removeServer = (SubstrateServer) facade.getServerById(removeId);
-		facade.removeSubstrateServerFromNetwork(removeId);
-		assertEquals(2, facade.getAllPathsOfNetwork(netId).size());
-
-		// Check left over paths
-		for (final SubstratePath p : facade.getAllPathsOfNetwork(netId)) {
-			assertFalse(p.getSource().getName().equals(removeId));
-			assertFalse(p.getTarget().getName().equals(removeId));
-			assertFalse(p.getNodes().contains(removeServer));
-		}
-	}
-
-	@Test
 	public void testRemovalOneTierServersOnlyLarge() {
 		setUpOneTier(20, netId, false);
 		assertEquals(20, facade.getAllServersOfNetwork(netId).size());
@@ -142,31 +121,6 @@ public class ModelFacadeServerRemovalTest {
 	}
 
 	@Test
-	public void testRemovalOneTierPathsOnlyLarge() {
-		setUpOneTier(20, netId, false);
-		assertEquals(20, facade.getAllServersOfNetwork(netId).size());
-		final int totalNumberOfPaths = 20 * (20 - 1 + 2);
-		assertEquals(totalNumberOfPaths, facade.getAllPathsOfNetwork(netId).size());
-
-		final Set<SubstrateServer> removedServers = new HashSet<>();
-
-		for (int i = 0; i < 19; i++) {
-			final String id = netId + "_srv_" + i;
-			removedServers.add((SubstrateServer) facade.getServerById(id));
-			facade.removeSubstrateServerFromNetwork(id);
-
-			// Check left over paths
-			for (final SubstratePath p : facade.getAllPathsOfNetwork(netId)) {
-				removedServers.forEach(s -> {
-					assertFalse(p.getSource().equals(s));
-					assertFalse(p.getTarget().equals(s));
-					assertFalse(p.getNodes().contains(s));
-				});
-			}
-		}
-	}
-
-	@Test
 	public void testRemovalFatTreeServerOnlySmall() {
 		setUpFatTree(4);
 		assertEquals(16, facade.getAllServersOfNetwork(netId).size());
@@ -198,24 +152,6 @@ public class ModelFacadeServerRemovalTest {
 	}
 
 	@Test
-	public void testRemovalFatTreePathsOnlySmall() {
-		setUpFatTree(4);
-		assertEquals(16, facade.getAllServersOfNetwork(netId).size());
-		assertEquals(496, facade.getAllPathsOfNetwork(netId).size());
-		final String removeId = netId + "_srv_0";
-		final SubstrateServer removeServer = (SubstrateServer) facade.getServerById(removeId);
-		facade.removeSubstrateServerFromNetwork(removeId);
-		assertEquals(462, facade.getAllPathsOfNetwork(netId).size());
-
-		// Check left over paths
-		for (final SubstratePath p : facade.getAllPathsOfNetwork(netId)) {
-			assertFalse(p.getSource().getName().equals(removeId));
-			assertFalse(p.getTarget().getName().equals(removeId));
-			assertFalse(p.getNodes().contains(removeServer));
-		}
-	}
-
-	@Test
 	public void testRemovalOneTierEmbeddingServer() {
 		setUpOneTier(2, netId, false);
 		assertEquals(2, facade.getAllServersOfNetwork(netId).size());
@@ -229,52 +165,6 @@ public class ModelFacadeServerRemovalTest {
 		final SubstrateServer deleted = ((SubstrateServer) facade.getServerById(removeId));
 		assertEquals(1, deleted.getGuestServers().size());
 		final VirtualServer guest = (VirtualServer) facade.getServerById("vnet_srv_0");
-		assertNotNull(guest.getHost());
-
-		facade.removeSubstrateServerFromNetwork(removeId);
-		assertEquals(1, facade.getAllServersOfNetwork(netId).size());
-		assertNull(guest.getHost());
-	}
-
-	@Test
-	public void testRemovalOneTierEmbeddingSwitch() {
-		setUpOneTier(2, netId, false);
-		assertEquals(2, facade.getAllServersOfNetwork(netId).size());
-		final String removeId = netId + "_srv_0";
-
-		facade.addNetworkToRoot("vnet", true);
-		facade.addSwitchToNetwork("vnet_sw_0", "vnet", 0);
-		facade.embedNetworkToNetwork(netId, "vnet");
-		facade.embedSwitchToNode(removeId, "vnet_sw_0");
-
-		final SubstrateServer deleted = ((SubstrateServer) facade.getServerById(removeId));
-		assertEquals(1, deleted.getGuestSwitches().size());
-		final VirtualSwitch guest = (VirtualSwitch) facade.getSwitchById("vnet_sw_0");
-		assertNotNull(guest.getHost());
-
-		facade.removeSubstrateServerFromNetwork(removeId);
-		assertEquals(1, facade.getAllServersOfNetwork(netId).size());
-		assertNull(guest.getHost());
-	}
-
-	@Test
-	public void testRemovalOneTierEmbeddingLink() {
-		setUpOneTier(2, netId, false);
-		assertEquals(2, facade.getAllServersOfNetwork(netId).size());
-		final String removeId = netId + "_srv_0";
-
-		facade.addNetworkToRoot("vnet", true);
-		facade.addSwitchToNetwork("vnet_sw_0", "vnet", 0);
-		facade.addServerToNetwork("vnet_srv_0", "vnet", 1, 1, 1, 1);
-		facade.addLinkToNetwork("vnet_l_0", "vnet", 1, "vnet_sw_0", "vnet_srv_0");
-		facade.embedNetworkToNetwork(netId, "vnet");
-		facade.embedSwitchToNode(removeId, "vnet_sw_0");
-		facade.embedServerToServer(removeId, "vnet_srv_0");
-		facade.embedLinkToServer(removeId, "vnet_l_0");
-
-		final SubstrateServer deleted = ((SubstrateServer) facade.getServerById(removeId));
-		assertEquals(1, deleted.getGuestLinks().size());
-		final VirtualLink guest = (VirtualLink) facade.getLinkById("vnet_l_0");
 		assertNotNull(guest.getHost());
 
 		facade.removeSubstrateServerFromNetwork(removeId);

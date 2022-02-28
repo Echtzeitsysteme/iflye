@@ -77,60 +77,6 @@ public class VnePmMdvneAlgorithmMigrationTest extends AAlgorithmTest {
 		facade.validateModel();
 	}
 
-	@Test
-	public void testUpdateMultiple() {
-		createSubstrateScenario();
-		createSmallVirtualNetworkAndEmbedItOn("vnet1", "sub_srv_0");
-		createSmallVirtualNetworkAndEmbedItOn("vnet2", "sub_srv_0");
-		createSmallVirtualNetworkAndEmbedItOn("vnet3", "sub_srv_1");
-		createSmallVirtualNetworkAndEmbedItOn("vnet4", "sub_srv_1");
-		createSmallVirtualNetworkAndEmbedItOn("vnet5", "sub_srv_2");
-		createSmallVirtualNetworkAndEmbedItOn("vnet6", "sub_srv_2");
-
-		/*
-		 * Last virtual network (that must trigger the updates)
-		 */
-		final OneTierConfig virtualConfig = new OneTierConfig(2, 1, false, 3, 3, 3, 1);
-		final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
-		virtGen.createNetwork("virt7", true);
-		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
-		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt7");
-		initAlgo(sNet, Set.of(vNet));
-		assertTrue(algo.execute());
-
-		// All networks must be embedded
-		assertEquals(7, sNet.getGuests().size());
-		facade.validateModel();
-	}
-
-	@Test
-	public void testUpdateTryLimit() {
-		createSubstrateScenario();
-		createSmallVirtualNetworkAndEmbedItOn("vnet1", "sub_srv_0");
-		createSmallVirtualNetworkAndEmbedItOn("vnet2", "sub_srv_0");
-		createSmallVirtualNetworkAndEmbedItOn("vnet3", "sub_srv_1");
-		createSmallVirtualNetworkAndEmbedItOn("vnet4", "sub_srv_1");
-		createSmallVirtualNetworkAndEmbedItOn("vnet5", "sub_srv_2");
-		createSmallVirtualNetworkAndEmbedItOn("vnet6", "sub_srv_2");
-
-		AlgorithmConfig.pmNoMigrations = 2;
-
-		/*
-		 * Last virtual network (that must trigger the updates)
-		 */
-		final OneTierConfig virtualConfig = new OneTierConfig(2, 1, false, 3, 3, 3, 1);
-		final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
-		virtGen.createNetwork("virt7", true);
-		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
-		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt7");
-		initAlgo(sNet, Set.of(vNet));
-		assertFalse(algo.execute());
-
-		// All previously embedded networks still must be embedded
-		assertEquals(6, sNet.getGuests().size());
-		facade.validateModel();
-	}
-
 	/*
 	 * Negative tests.
 	 */
@@ -209,20 +155,6 @@ public class VnePmMdvneAlgorithmMigrationTest extends AAlgorithmTest {
 		final OneTierConfig subConfig = new OneTierConfig(3, 1, false, 4, 4, 4, 10);
 		final OneTierNetworkGenerator subGen = new OneTierNetworkGenerator(subConfig);
 		subGen.createNetwork("sub", false);
-	}
-
-	private void createSmallVirtualNetworkAndEmbedItOn(final String vNetId, final String ssrvId) {
-		// Create network
-		final OneTierConfig virtualConfig = new OneTierConfig(1, 1, false, 1, 1, 1, 1);
-		OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
-		virtGen.createNetwork(vNetId, true);
-
-		// Embed it on
-		facade.embedNetworkToNetwork(facade.getServerById(ssrvId).getNetwork().getName(), vNetId);
-		facade.embedSwitchToNode(ssrvId, vNetId + "_sw_0");
-		facade.embedServerToServer(ssrvId, vNetId + "_srv_0");
-		facade.embedLinkToServer(ssrvId, vNetId + "_ln_0");
-		facade.embedLinkToServer(ssrvId, vNetId + "_ln_1");
 	}
 
 }

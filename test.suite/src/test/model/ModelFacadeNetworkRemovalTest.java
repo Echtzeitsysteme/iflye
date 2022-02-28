@@ -17,7 +17,6 @@ import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import model.SubstrateLink;
 import model.SubstrateNetwork;
-import model.SubstratePath;
 import model.SubstrateServer;
 import model.SubstrateSwitch;
 import model.VirtualLink;
@@ -144,13 +143,6 @@ public class ModelFacadeNetworkRemovalTest {
 			assertEquals(1, sl.getResidualBandwidth());
 		});
 
-		// Paths
-		sNet.getPaths().forEach(p -> {
-			final SubstratePath sp = p;
-			assertTrue(sp.getGuestLinks().isEmpty());
-			assertEquals(1, sp.getResidualBandwidth());
-		});
-
 		sNet.getNodes().forEach(n -> {
 			// Servers
 			if (n instanceof SubstrateServer) {
@@ -202,13 +194,6 @@ public class ModelFacadeNetworkRemovalTest {
 			final SubstrateLink sl = (SubstrateLink) l;
 			assertTrue(sl.getGuestLinks().isEmpty());
 			assertEquals(1, sl.getResidualBandwidth());
-		});
-
-		// Paths
-		sNet.getPaths().forEach(p -> {
-			final SubstratePath sp = p;
-			assertTrue(sp.getGuestLinks().isEmpty());
-			assertEquals(1, sp.getResidualBandwidth());
 		});
 	}
 

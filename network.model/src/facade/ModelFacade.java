@@ -557,6 +557,18 @@ public class ModelFacade {
 	}
 
 	/**
+	 * Returns a link from source node to target node if such a link exists. Else it
+	 * returns null.
+	 *
+	 * @param source Source ID.
+	 * @param target Target ID.
+	 * @return Link if a link between source and target does exist.
+	 */
+	public Link getLinkFromSourceToTarget(final String source, final String target) {
+		return getLinkFromSourceToTarget(getNodeById(source), getNodeById(target));
+	}
+
+	/**
 	 * Checks string validity (null and blank).
 	 *
 	 * @param strings Possible array of strings to check.

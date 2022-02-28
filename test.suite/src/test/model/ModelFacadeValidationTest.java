@@ -14,7 +14,6 @@ import facade.ModelFacade;
 import generators.OneTierNetworkGenerator;
 import generators.config.OneTierConfig;
 import model.SubstrateNetwork;
-import model.SubstratePath;
 import model.SubstrateServer;
 import model.SubstrateSwitch;
 import model.VirtualLink;
@@ -117,19 +116,6 @@ public class ModelFacadeValidationTest {
 	}
 
 	@Test
-	public void testManipulatesSubstratePath() {
-		createSubstrateNetwork();
-
-		final SubstratePath sp = ((SubstrateNetwork) ModelFacade.getInstance().getRoot().getNetworks().get(0))
-				.getPaths().get(0);
-		sp.setResidualBandwidth(0);
-
-		assertThrows(InternalError.class, () -> {
-			ModelFacade.getInstance().validateModel();
-		});
-	}
-
-	@Test
 	public void testRemovedGuestServer() {
 		createSubstrateNetwork();
 		createVirtualNetwork();
@@ -159,24 +145,25 @@ public class ModelFacadeValidationTest {
 		});
 	}
 
-	@Test
-	public void testRemovedGuestLink() {
-		createSubstrateNetwork();
-		createVirtualNetwork();
-		embedVirtToSub();
-
-		ModelFacade.getInstance().getRoot();
-
-		for (int i = 0; i < 6; i++) {
-			final SubstratePath sp = ((SubstrateNetwork) ModelFacade.getInstance().getRoot().getNetworks().get(0))
-					.getPaths().get(i);
-			sp.getGuestLinks().clear();
-		}
-
-		assertThrows(InternalError.class, () -> {
-			ModelFacade.getInstance().validateModel();
-		});
-	}
+	// TODO
+//	@Test
+//	public void testRemovedGuestLink() {
+//		createSubstrateNetwork();
+//		createVirtualNetwork();
+//		embedVirtToSub();
+//
+//		ModelFacade.getInstance().getRoot();
+//
+//		for (int i = 0; i < 6; i++) {
+//			final SubstratePath sp = ((SubstrateNetwork) ModelFacade.getInstance().getRoot().getNetworks().get(0))
+//					.getPaths().get(i);
+//			sp.getGuestLinks().clear();
+//		}
+//
+//		assertThrows(InternalError.class, () -> {
+//			ModelFacade.getInstance().validateModel();
+//		});
+//	}
 
 	@Test
 	public void testRemovedHostServer() {

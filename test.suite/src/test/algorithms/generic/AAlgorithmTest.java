@@ -1,7 +1,6 @@
 package test.algorithms.generic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -18,8 +17,6 @@ import facade.config.ModelFacadeConfig;
 import model.Link;
 import model.Node;
 import model.SubstrateNetwork;
-import model.SubstratePath;
-import model.SubstrateServer;
 import model.VirtualLink;
 import model.VirtualNetwork;
 import model.VirtualServer;
@@ -141,13 +138,7 @@ public abstract class AAlgorithmTest {
 
 			for (final Link l : facade.getAllLinksOfNetwork(vNet.getName())) {
 				final VirtualLink vl = (VirtualLink) l;
-				if (vl.getHost() instanceof SubstratePath) {
-					assertEquals(sNet, ((SubstratePath) vl.getHost()).getNetwork());
-				} else if (vl.getHost() instanceof SubstrateServer) {
-					assertEquals(sNet, ((SubstrateServer) vl.getHost()).getNetwork());
-				} else {
-					fail();
-				}
+				assertEquals(sNet, vl.getHost().getNetwork());
 			}
 		}
 	}

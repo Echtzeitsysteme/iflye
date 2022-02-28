@@ -20,7 +20,6 @@ import model.Node;
 import model.Server;
 import model.SubstrateLink;
 import model.SubstrateNetwork;
-import model.SubstratePath;
 import model.SubstrateServer;
 import model.Switch;
 import model.VirtualNetwork;
@@ -62,9 +61,6 @@ public class OneTierNetworkGeneratorTest extends IGeneratorTest {
 
 		// Links
 		assertEquals(4, net.getLinks().size());
-
-		// Paths, only 2 because of the default values for path limits
-		assertEquals(2, net.getPaths().size());
 	}
 
 	@Test
@@ -107,9 +103,6 @@ public class OneTierNetworkGeneratorTest extends IGeneratorTest {
 
 		// Links
 		assertEquals(1000, net.getLinks().size());
-
-		// Paths, only 100 * (100 1) because of the default values for path limits
-		assertEquals(100 * (100 - 1), net.getPaths().size());
 	}
 
 	@Test
@@ -216,18 +209,6 @@ public class OneTierNetworkGeneratorTest extends IGeneratorTest {
 		assertEquals("sub_srv_1", links.get(3).getTarget().getName());
 	}
 
-	@Test
-	public void testPathsSourceAndTargetNotNull() {
-		final OneTierConfig config = new OneTierConfig(4, 2, false, 1, 1, 1, 1);
-		final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(config);
-		gen.createNetwork("sub", false);
-
-		for (final SubstratePath p : ((SubstrateNetwork) facade.getNetworkById("sub")).getPaths()) {
-			assertNotNull(p.getSource());
-			assertNotNull(p.getTarget());
-		}
-	}
-
 	@Disabled
 	@Test
 	public void testSwitchesConnected() {
@@ -244,7 +225,6 @@ public class OneTierNetworkGeneratorTest extends IGeneratorTest {
 
 		assertFalse(facade.getNetworkById("a").getNodes().isEmpty());
 		assertFalse(facade.getNetworkById("a").getLinks().isEmpty());
-		assertFalse(((SubstrateNetwork) facade.getNetworkById("a")).getPaths().isEmpty());
 	}
 
 	/*

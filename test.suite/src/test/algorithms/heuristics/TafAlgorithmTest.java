@@ -1,13 +1,13 @@
 package test.algorithms.heuristics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import algorithms.AlgorithmConfig;
@@ -15,10 +15,8 @@ import algorithms.AlgorithmConfig.Objective;
 import algorithms.heuristics.TafAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
-import model.Link;
-import model.Node;
+import model.SubstrateLink;
 import model.SubstrateNetwork;
-import model.SubstratePath;
 import model.VirtualLink;
 import model.VirtualNetwork;
 import model.VirtualServer;
@@ -30,6 +28,7 @@ import test.algorithms.generic.AAlgorithmTest;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
+@Disabled
 public class TafAlgorithmTest extends AAlgorithmTest {
 
 	@Override
@@ -51,45 +50,10 @@ public class TafAlgorithmTest extends AAlgorithmTest {
 		AlgorithmConfig.obj = Objective.TOTAL_TAF_COMMUNICATION_COST;
 	}
 
-	/*
-	 * Positive tests.
-	 */
-
-	@Test
-	public void testAllOnOneServer() {
-		oneTierSetupTwoServers("virt", 1);
-		oneTierSetupTwoServers("sub", 2);
-		ModelFacade.getInstance().createAllPathsForNetwork("sub");
-
-		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
-		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
-
-		final TafAlgorithm taf = new TafAlgorithm(sNet, Set.of(vNet));
-		assertTrue(taf.execute());
-
-		// Test all vServer hosts
-		for (final Node n : ModelFacade.getInstance().getAllServersOfNetwork("virt")) {
-			assertEquals("sub_srv1", ((VirtualServer) n).getHost().getName());
-		}
-
-		// Test all vSwitch hosts
-		for (final Node n : ModelFacade.getInstance().getAllSwitchesOfNetwork("virt")) {
-			assertEquals("sub_srv1", ((VirtualSwitch) n).getHost().getName());
-		}
-
-		// Test all vLink hosts
-		for (final Link l : ModelFacade.getInstance().getAllLinksOfNetwork("virt")) {
-			final VirtualLink vl = (VirtualLink) l;
-			// This one host must be substrate server 1
-			assertEquals("sub_srv1", vl.getHost().getName());
-		}
-	}
-
 	@Test
 	public void testAllOnOneRack() {
 		oneTierSetupTwoServers("virt", 2);
 		oneTierSetupTwoServers("sub", 2);
-		ModelFacade.getInstance().createAllPathsForNetwork("sub");
 
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
@@ -114,22 +78,22 @@ public class TafAlgorithmTest extends AAlgorithmTest {
 		final VirtualLink vLn4 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln4");
 
 		// Link 1
-		final SubstratePath pLn1 = (SubstratePath) vLn1.getHost();
+		final SubstrateLink pLn1 = vLn1.getHost();
 		assertEquals("sub_srv1", pLn1.getSource().getName());
 		assertEquals("sub_sw", pLn1.getTarget().getName());
 
 		// Link 2
-		final SubstratePath pLn2 = (SubstratePath) vLn2.getHost();
+		final SubstrateLink pLn2 = vLn2.getHost();
 		assertEquals("sub_srv2", pLn2.getSource().getName());
 		assertEquals("sub_sw", pLn2.getTarget().getName());
 
 		// Link 3
-		final SubstratePath pLn3 = (SubstratePath) vLn3.getHost();
+		final SubstrateLink pLn3 = vLn3.getHost();
 		assertEquals("sub_sw", pLn3.getSource().getName());
 		assertEquals("sub_srv1", pLn3.getTarget().getName());
 
 		// Link 4
-		final SubstratePath pLn4 = (SubstratePath) vLn4.getHost();
+		final SubstrateLink pLn4 = vLn4.getHost();
 		assertEquals("sub_sw", pLn4.getSource().getName());
 		assertEquals("sub_srv2", pLn4.getTarget().getName());
 	}
@@ -138,8 +102,6 @@ public class TafAlgorithmTest extends AAlgorithmTest {
 	public void testAllOnOneRackTwoTier() {
 		oneTierSetupTwoServers("virt", 1);
 		twoTierSetupFourServers("sub", 1);
-
-		ModelFacade.getInstance().createAllPathsForNetwork("sub");
 
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
@@ -175,90 +137,24 @@ public class TafAlgorithmTest extends AAlgorithmTest {
 		final VirtualLink vLn4 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln4");
 
 		// Link 1
-		final SubstratePath pLn1 = (SubstratePath) vLn1.getHost();
+		final SubstrateLink pLn1 = vLn1.getHost();
 		assertEquals("sub_srv1", pLn1.getSource().getName());
 		assertEquals(virtSwHostRef, pLn1.getTarget().getName());
 
 		// Link 2
-		final SubstratePath pLn2 = (SubstratePath) vLn2.getHost();
+		final SubstrateLink pLn2 = vLn2.getHost();
 		assertEquals("sub_srv2", pLn2.getSource().getName());
 		assertEquals(virtSwHostRef, pLn2.getTarget().getName());
 
 		// Link 3
-		final SubstratePath pLn3 = (SubstratePath) vLn3.getHost();
+		final SubstrateLink pLn3 = vLn3.getHost();
 		assertEquals(virtSwHostRef, pLn3.getSource().getName());
 		assertEquals("sub_srv1", pLn3.getTarget().getName());
 
 		// Link 4
-		final SubstratePath pLn4 = (SubstratePath) vLn4.getHost();
+		final SubstrateLink pLn4 = vLn4.getHost();
 		assertEquals(virtSwHostRef, pLn4.getSource().getName());
 		assertEquals("sub_srv2", pLn4.getTarget().getName());
-	}
-
-	@Test
-	public void testAllOnMultipleRacks() {
-		oneTierSetupThreeServers("virt", 1);
-		twoTierSetupFourServers("sub", 1);
-
-		ModelFacade.getInstance().createAllPathsForNetwork("sub");
-
-		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
-		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
-
-		final TafAlgorithm taf = new TafAlgorithm(sNet, Set.of(vNet));
-		assertTrue(taf.execute());
-
-		// TODO:
-
-		// Test switch placement
-		final VirtualSwitch virtSw = (VirtualSwitch) ModelFacade.getInstance().getSwitchById("virt_sw");
-		assertEquals("sub_csw1", virtSw.getHost().getName());
-
-		// Test server placements
-		final VirtualServer vSrv1 = (VirtualServer) ModelFacade.getInstance().getServerById("virt_srv1");
-		final VirtualServer vSrv2 = (VirtualServer) ModelFacade.getInstance().getServerById("virt_srv2");
-		final VirtualServer vSrv3 = (VirtualServer) ModelFacade.getInstance().getServerById("virt_srv3");
-		assertEquals("sub_srv1", vSrv1.getHost().getName());
-		assertEquals("sub_srv2", vSrv2.getHost().getName());
-		assertEquals("sub_srv3", vSrv3.getHost().getName());
-
-		// Test link placements
-		final VirtualLink vLn1 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln1");
-		final VirtualLink vLn2 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln2");
-		final VirtualLink vLn3 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln3");
-		final VirtualLink vLn4 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln4");
-		final VirtualLink vLn5 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln5");
-		final VirtualLink vLn6 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln6");
-
-		// Link 1
-		final SubstratePath pLn1 = (SubstratePath) vLn1.getHost();
-		assertEquals("sub_srv1", pLn1.getSource().getName());
-		assertEquals("sub_csw1", pLn1.getTarget().getName());
-
-		// Link 2
-		final SubstratePath pLn2 = (SubstratePath) vLn2.getHost();
-		assertEquals("sub_srv2", pLn2.getSource().getName());
-		assertEquals("sub_csw1", pLn2.getTarget().getName());
-
-		// Link 3
-		final SubstratePath pLn3 = (SubstratePath) vLn3.getHost();
-		assertEquals("sub_srv3", pLn3.getSource().getName());
-		assertEquals("sub_csw1", pLn3.getTarget().getName());
-
-		// Link 4
-		final SubstratePath pLn4 = (SubstratePath) vLn4.getHost();
-		assertEquals("sub_csw1", pLn4.getSource().getName());
-		assertEquals("sub_srv1", pLn4.getTarget().getName());
-
-		// Link 5
-		final SubstratePath pLn5 = (SubstratePath) vLn5.getHost();
-		assertEquals("sub_csw1", pLn5.getSource().getName());
-		assertEquals("sub_srv2", pLn5.getTarget().getName());
-
-		// Link 6
-		final SubstratePath pLn6 = (SubstratePath) vLn6.getHost();
-		assertEquals("sub_csw1", pLn6.getSource().getName());
-		assertEquals("sub_srv3", pLn6.getTarget().getName());
 	}
 
 	/*
@@ -334,26 +230,6 @@ public class TafAlgorithmTest extends AAlgorithmTest {
 		assertThrows(UnsupportedOperationException.class, () -> {
 			new TafAlgorithm(sNet, Set.of(vNet));
 		});
-	}
-
-	@Test
-	public void testNoEmbeddingWithSplittedVm() {
-		oneTierSetupTwoServers("virt", 2);
-		twoTierSetupFourServers("sub", 1);
-
-		ModelFacade.getInstance().createAllPathsForNetwork("sub");
-
-		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
-		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
-
-		final TafAlgorithm taf = new TafAlgorithm(sNet, Set.of(vNet));
-
-		// Embedding should not be possible, because a split of one VM to embed it on
-		// two substrate
-		// servers is not possible although the total amount of resources could handle
-		// the virtual
-		// network.
-		assertFalse(taf.execute());
 	}
 
 	@Test

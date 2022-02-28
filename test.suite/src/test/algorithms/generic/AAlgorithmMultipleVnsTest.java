@@ -25,7 +25,6 @@ public abstract class AAlgorithmMultipleVnsTest extends AAlgorithmTwoTierTest {
 		oneTierSetupTwoServers("virt", 1);
 		oneTierSetupTwoServers("virt2", 1);
 		oneTierSetupTwoServers("sub", 2);
-		facade.createAllPathsForNetwork("sub");
 
 		final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
 
@@ -50,7 +49,6 @@ public abstract class AAlgorithmMultipleVnsTest extends AAlgorithmTwoTierTest {
 		oneTierSetupTwoServers("virt3", 1);
 		oneTierSetupTwoServers("virt4", 1);
 		oneTierSetupTwoServers("sub", 4);
-		facade.createAllPathsForNetwork("sub");
 
 		final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
 
@@ -77,7 +75,6 @@ public abstract class AAlgorithmMultipleVnsTest extends AAlgorithmTwoTierTest {
 		oneTierSetupTwoServers("virt3", 2);
 		oneTierSetupTwoServers("virt4", 2);
 		twoTierSetupFourServers("sub", 8);
-		facade.createAllPathsForNetwork("sub");
 
 		final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
 
@@ -100,7 +97,6 @@ public abstract class AAlgorithmMultipleVnsTest extends AAlgorithmTwoTierTest {
 		oneTierSetupTwoServers("virt", 2);
 		oneTierSetupTwoServers("virt2", 2);
 		twoTierSetupFourServers("sub", 8);
-		facade.createAllPathsForNetwork("sub");
 
 		final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");

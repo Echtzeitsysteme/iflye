@@ -21,7 +21,6 @@ import model.Node;
 import model.Server;
 import model.SubstrateLink;
 import model.SubstrateNetwork;
-import model.SubstratePath;
 import model.SubstrateServer;
 import model.Switch;
 import model.VirtualNetwork;
@@ -68,12 +67,6 @@ public class TwoTierNetworkGeneratorTest extends IGeneratorTest {
 
 		// Links
 		assertEquals(16, net.getLinks().size());
-
-		// Paths:
-		// 4 servers bidirectional to 3 other servers;
-		// 4 servers bidirectional to 2 core switches;
-		// 4 servers bidirectional to one rack-switch each;
-		assertEquals((4 * (4 - 1) + 4 * 2 * 2 + 2 * 4 * 1), net.getPaths().size());
 	}
 
 	@Test
@@ -125,12 +118,6 @@ public class TwoTierNetworkGeneratorTest extends IGeneratorTest {
 
 		// Links
 		assertEquals(440, net.getLinks().size());
-
-		// Paths:
-		// 200 servers bidirectional to 199 other servers;
-		// 200 servers bidirectional to 10 core switches;
-		// 200 servers bidirectional to one rack-switch each;
-		assertEquals((200 * (200 - 1) + 200 * 10 * 2 + 2 * 200 * 1), net.getPaths().size());
 	}
 
 	@Test
@@ -257,18 +244,6 @@ public class TwoTierNetworkGeneratorTest extends IGeneratorTest {
 		assertEquals("sub_rsw_0", links.get(3).getTarget().getName());
 	}
 
-	@Test
-	public void testPathsSourceAndTargetNotNull() {
-		final TwoTierConfig config = new TwoTierConfig();
-		final TwoTierNetworkGenerator gen = new TwoTierNetworkGenerator(config);
-		gen.createNetwork("sub", false);
-
-		for (final SubstratePath p : ((SubstrateNetwork) facade.getNetworkById("sub")).getPaths()) {
-			assertNotNull(p.getSource());
-			assertNotNull(p.getTarget());
-		}
-	}
-
 	@Disabled
 	@Test
 	public void testSwitchesConnected() {
@@ -285,7 +260,6 @@ public class TwoTierNetworkGeneratorTest extends IGeneratorTest {
 
 		assertFalse(facade.getNetworkById("a").getNodes().isEmpty());
 		assertFalse(facade.getNetworkById("a").getLinks().isEmpty());
-		assertFalse(((SubstrateNetwork) facade.getNetworkById("a")).getPaths().isEmpty());
 	}
 
 	/*

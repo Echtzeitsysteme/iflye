@@ -55,13 +55,6 @@ public class FatTreeNetworkGeneratorTest extends IGeneratorTest {
 	}
 
 	@Test
-	public void testAtLeastOnePathGenerated() {
-		basicKFourSetup();
-
-		assertTrue(1 < facade.getAllPathsOfNetwork("test").size());
-	}
-
-	@Test
 	public void testVirtualNetwork() {
 		final FatTreeConfig config = new FatTreeConfig(4);
 		final FatTreeNetworkGenerator gen = new FatTreeNetworkGenerator(config);
