@@ -39,12 +39,6 @@ public class ModelFacadeConfig {
 	public static boolean IGNORE_BW = false;
 
 	/**
-	 * If true, virtual links will also be embedded to substrate links contained in
-	 * paths, if the virtual link will initially be embedded to a path.
-	 */
-	public static boolean LINK_HOST_EMBED_PATH = false;
-
-	/**
 	 * If true, all virtual paths will be generated using Yen's algorithm with the
 	 * parameter {@link #YEN_K} for the number of K fastest links per node pair.
 	 */
