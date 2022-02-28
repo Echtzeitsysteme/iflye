@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import facade.ModelFacade;
@@ -20,6 +21,7 @@ import test.utils.GenericTestUtils;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
+@Disabled
 public class ModelFacadeEmbeddingRemovalTest {
 
 	@BeforeEach

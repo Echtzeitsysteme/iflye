@@ -3,6 +3,7 @@ package test.algorithms.fakeilp;
 import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Embedding;
@@ -18,6 +19,7 @@ import model.VirtualNetwork;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
+@Disabled
 public class VneFakeIlpBatchAlgorithmTotalPathCostTest extends VneFakeIlpAlgorithmTotalPathCostTest {
 
 	@Override

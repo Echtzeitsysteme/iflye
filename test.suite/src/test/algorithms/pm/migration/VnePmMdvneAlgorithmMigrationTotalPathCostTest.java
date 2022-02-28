@@ -2,6 +2,8 @@ package test.algorithms.pm.migration;
 
 import java.util.Set;
 
+import org.junit.jupiter.api.Disabled;
+
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
 import algorithms.pm.VnePmMdvneAlgorithmMigration;
@@ -15,6 +17,7 @@ import test.algorithms.pm.VnePmMdvneAlgorithmTotalPathCostTest;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
+@Disabled
 public class VnePmMdvneAlgorithmMigrationTotalPathCostTest extends VnePmMdvneAlgorithmTotalPathCostTest {
 
 	@Override

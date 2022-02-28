@@ -38,7 +38,7 @@ public class ModelFacadeValidationTest {
 	@BeforeEach
 	public void resetModel() {
 		oldObjective = AlgorithmConfig.obj;
-		AlgorithmConfig.obj = Objective.TOTAL_PATH_COST;
+		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_C;
 		ModelFacade.getInstance().resetAll();
 	}
 
