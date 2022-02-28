@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import algorithms.AlgorithmConfig;
@@ -30,6 +31,7 @@ import test.algorithms.generic.AAlgorithmTest;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
+@Disabled
 public class TafAlgorithmTest extends AAlgorithmTest {
 
 	@Override
@@ -114,22 +116,22 @@ public class TafAlgorithmTest extends AAlgorithmTest {
 		final VirtualLink vLn4 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln4");
 
 		// Link 1
-		final SubstratePath pLn1 = (SubstratePath) vLn1.getHost();
+		final SubstratePath pLn1 = vLn1.getHost();
 		assertEquals("sub_srv1", pLn1.getSource().getName());
 		assertEquals("sub_sw", pLn1.getTarget().getName());
 
 		// Link 2
-		final SubstratePath pLn2 = (SubstratePath) vLn2.getHost();
+		final SubstratePath pLn2 = vLn2.getHost();
 		assertEquals("sub_srv2", pLn2.getSource().getName());
 		assertEquals("sub_sw", pLn2.getTarget().getName());
 
 		// Link 3
-		final SubstratePath pLn3 = (SubstratePath) vLn3.getHost();
+		final SubstratePath pLn3 = vLn3.getHost();
 		assertEquals("sub_sw", pLn3.getSource().getName());
 		assertEquals("sub_srv1", pLn3.getTarget().getName());
 
 		// Link 4
-		final SubstratePath pLn4 = (SubstratePath) vLn4.getHost();
+		final SubstratePath pLn4 = vLn4.getHost();
 		assertEquals("sub_sw", pLn4.getSource().getName());
 		assertEquals("sub_srv2", pLn4.getTarget().getName());
 	}
@@ -175,22 +177,22 @@ public class TafAlgorithmTest extends AAlgorithmTest {
 		final VirtualLink vLn4 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln4");
 
 		// Link 1
-		final SubstratePath pLn1 = (SubstratePath) vLn1.getHost();
+		final SubstratePath pLn1 = vLn1.getHost();
 		assertEquals("sub_srv1", pLn1.getSource().getName());
 		assertEquals(virtSwHostRef, pLn1.getTarget().getName());
 
 		// Link 2
-		final SubstratePath pLn2 = (SubstratePath) vLn2.getHost();
+		final SubstratePath pLn2 = vLn2.getHost();
 		assertEquals("sub_srv2", pLn2.getSource().getName());
 		assertEquals(virtSwHostRef, pLn2.getTarget().getName());
 
 		// Link 3
-		final SubstratePath pLn3 = (SubstratePath) vLn3.getHost();
+		final SubstratePath pLn3 = vLn3.getHost();
 		assertEquals(virtSwHostRef, pLn3.getSource().getName());
 		assertEquals("sub_srv1", pLn3.getTarget().getName());
 
 		// Link 4
-		final SubstratePath pLn4 = (SubstratePath) vLn4.getHost();
+		final SubstratePath pLn4 = vLn4.getHost();
 		assertEquals(virtSwHostRef, pLn4.getSource().getName());
 		assertEquals("sub_srv2", pLn4.getTarget().getName());
 	}
@@ -231,32 +233,32 @@ public class TafAlgorithmTest extends AAlgorithmTest {
 		final VirtualLink vLn6 = (VirtualLink) ModelFacade.getInstance().getLinkById("virt_ln6");
 
 		// Link 1
-		final SubstratePath pLn1 = (SubstratePath) vLn1.getHost();
+		final SubstratePath pLn1 = vLn1.getHost();
 		assertEquals("sub_srv1", pLn1.getSource().getName());
 		assertEquals("sub_csw1", pLn1.getTarget().getName());
 
 		// Link 2
-		final SubstratePath pLn2 = (SubstratePath) vLn2.getHost();
+		final SubstratePath pLn2 = vLn2.getHost();
 		assertEquals("sub_srv2", pLn2.getSource().getName());
 		assertEquals("sub_csw1", pLn2.getTarget().getName());
 
 		// Link 3
-		final SubstratePath pLn3 = (SubstratePath) vLn3.getHost();
+		final SubstratePath pLn3 = vLn3.getHost();
 		assertEquals("sub_srv3", pLn3.getSource().getName());
 		assertEquals("sub_csw1", pLn3.getTarget().getName());
 
 		// Link 4
-		final SubstratePath pLn4 = (SubstratePath) vLn4.getHost();
+		final SubstratePath pLn4 = vLn4.getHost();
 		assertEquals("sub_csw1", pLn4.getSource().getName());
 		assertEquals("sub_srv1", pLn4.getTarget().getName());
 
 		// Link 5
-		final SubstratePath pLn5 = (SubstratePath) vLn5.getHost();
+		final SubstratePath pLn5 = vLn5.getHost();
 		assertEquals("sub_csw1", pLn5.getSource().getName());
 		assertEquals("sub_srv2", pLn5.getTarget().getName());
 
 		// Link 6
-		final SubstratePath pLn6 = (SubstratePath) vLn6.getHost();
+		final SubstratePath pLn6 = vLn6.getHost();
 		assertEquals("sub_csw1", pLn6.getSource().getName());
 		assertEquals("sub_srv3", pLn6.getTarget().getName());
 	}

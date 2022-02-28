@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import algorithms.AlgorithmConfig;
@@ -77,6 +78,7 @@ public class VnePmMdvneAlgorithmMigrationTest extends AAlgorithmTest {
 		facade.validateModel();
 	}
 
+	@Disabled
 	@Test
 	public void testUpdateMultiple() {
 		createSubstrateScenario();
@@ -103,6 +105,7 @@ public class VnePmMdvneAlgorithmMigrationTest extends AAlgorithmTest {
 		facade.validateModel();
 	}
 
+	@Disabled
 	@Test
 	public void testUpdateTryLimit() {
 		createSubstrateScenario();
@@ -219,10 +222,10 @@ public class VnePmMdvneAlgorithmMigrationTest extends AAlgorithmTest {
 
 		// Embed it on
 		facade.embedNetworkToNetwork(facade.getServerById(ssrvId).getNetwork().getName(), vNetId);
-		facade.embedSwitchToNode(ssrvId, vNetId + "_sw_0");
+		facade.embedSwitchToSwitch(ssrvId, vNetId + "_sw_0");
 		facade.embedServerToServer(ssrvId, vNetId + "_srv_0");
-		facade.embedLinkToServer(ssrvId, vNetId + "_ln_0");
-		facade.embedLinkToServer(ssrvId, vNetId + "_ln_1");
+		facade.embedLinkToPath(ssrvId, vNetId + "_ln_0");
+		facade.embedLinkToPath(ssrvId, vNetId + "_ln_1");
 	}
 
 }

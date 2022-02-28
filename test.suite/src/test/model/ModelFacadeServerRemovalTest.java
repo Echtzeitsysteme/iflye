@@ -21,9 +21,7 @@ import model.Link;
 import model.Server;
 import model.SubstratePath;
 import model.SubstrateServer;
-import model.VirtualLink;
 import model.VirtualServer;
-import model.VirtualSwitch;
 
 /**
  * Test class for the ModelFacade that tests the removal of substrate servers.
@@ -229,52 +227,6 @@ public class ModelFacadeServerRemovalTest {
 		final SubstrateServer deleted = ((SubstrateServer) facade.getServerById(removeId));
 		assertEquals(1, deleted.getGuestServers().size());
 		final VirtualServer guest = (VirtualServer) facade.getServerById("vnet_srv_0");
-		assertNotNull(guest.getHost());
-
-		facade.removeSubstrateServerFromNetwork(removeId);
-		assertEquals(1, facade.getAllServersOfNetwork(netId).size());
-		assertNull(guest.getHost());
-	}
-
-	@Test
-	public void testRemovalOneTierEmbeddingSwitch() {
-		setUpOneTier(2, netId, false);
-		assertEquals(2, facade.getAllServersOfNetwork(netId).size());
-		final String removeId = netId + "_srv_0";
-
-		facade.addNetworkToRoot("vnet", true);
-		facade.addSwitchToNetwork("vnet_sw_0", "vnet", 0);
-		facade.embedNetworkToNetwork(netId, "vnet");
-		facade.embedSwitchToNode(removeId, "vnet_sw_0");
-
-		final SubstrateServer deleted = ((SubstrateServer) facade.getServerById(removeId));
-		assertEquals(1, deleted.getGuestSwitches().size());
-		final VirtualSwitch guest = (VirtualSwitch) facade.getSwitchById("vnet_sw_0");
-		assertNotNull(guest.getHost());
-
-		facade.removeSubstrateServerFromNetwork(removeId);
-		assertEquals(1, facade.getAllServersOfNetwork(netId).size());
-		assertNull(guest.getHost());
-	}
-
-	@Test
-	public void testRemovalOneTierEmbeddingLink() {
-		setUpOneTier(2, netId, false);
-		assertEquals(2, facade.getAllServersOfNetwork(netId).size());
-		final String removeId = netId + "_srv_0";
-
-		facade.addNetworkToRoot("vnet", true);
-		facade.addSwitchToNetwork("vnet_sw_0", "vnet", 0);
-		facade.addServerToNetwork("vnet_srv_0", "vnet", 1, 1, 1, 1);
-		facade.addLinkToNetwork("vnet_l_0", "vnet", 1, "vnet_sw_0", "vnet_srv_0");
-		facade.embedNetworkToNetwork(netId, "vnet");
-		facade.embedSwitchToNode(removeId, "vnet_sw_0");
-		facade.embedServerToServer(removeId, "vnet_srv_0");
-		facade.embedLinkToServer(removeId, "vnet_l_0");
-
-		final SubstrateServer deleted = ((SubstrateServer) facade.getServerById(removeId));
-		assertEquals(1, deleted.getGuestLinks().size());
-		final VirtualLink guest = (VirtualLink) facade.getLinkById("vnet_l_0");
 		assertNotNull(guest.getHost());
 
 		facade.removeSubstrateServerFromNetwork(removeId);

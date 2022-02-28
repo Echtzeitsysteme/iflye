@@ -33,18 +33,6 @@ public class TotalTafCommunicationCostMetricTest extends AMetricTest {
 	}
 
 	@Test
-	public void testEmbeddingSameHost() {
-		createSubstrateNetwork();
-		setupEmbeddingSameHost();
-		final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-		final TotalTafCommunicationCostMetric metric = new TotalTafCommunicationCostMetric(sNet);
-
-		// cost = 2 * C_ALPHA * vLink.bandwidth
-		// cost = 2 * 1 * 3
-		assertEquals(2 * CostUtility.TAF_C_ALPHA * 3, metric.getValue());
-	}
-
-	@Test
 	public void testEmbeddingTwoHosts() {
 		createSubstrateNetwork();
 		setupEmbeddingTwoHosts();
@@ -105,7 +93,7 @@ public class TotalTafCommunicationCostMetricTest extends AMetricTest {
 	 */
 	private void setupEmbeddingTwoTier() {
 		facade.embedNetworkToNetwork("sub", "virt");
-		facade.embedSwitchToNode("scsw", "vsw");
+		facade.embedSwitchToSwitch("scsw", "vsw");
 		facade.embedServerToServer("ssrv1", "vsrv1");
 		facade.embedServerToServer("ssrv2", "vsrv2");
 

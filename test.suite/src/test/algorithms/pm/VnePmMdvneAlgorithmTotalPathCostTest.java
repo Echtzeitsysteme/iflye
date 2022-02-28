@@ -185,11 +185,15 @@ public class VnePmMdvneAlgorithmTotalPathCostTest extends AAlgorithmMultipleVnsT
 		initAlgo(sNet, new HashSet<>(vNets));
 		assertFalse(algo.execute());
 
-		// The first three networks must be embedded
-		assertNotNull(vNets.get(0).getHost());
-		assertNotNull(vNets.get(1).getHost());
-		assertNotNull(vNets.get(2).getHost());
-		assertNull(vNets.get(3).getHost());
+		// Three networks must be embedded (including the largest)
+		assertNotNull(vNets.get(3).getHost());
+		int counter = 0;
+		for (final VirtualNetwork v : vNets) {
+			if (v.getHost() != null) {
+				counter++;
+			}
+		}
+		assertEquals(3, counter);
 	}
 
 	@Test

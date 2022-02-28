@@ -43,13 +43,11 @@ public class ModelFacadeEmbeddingTest {
 		ModelFacade.getInstance().addNetworkToRoot("sub", false);
 		ModelFacade.getInstance().addNetworkToRoot("virt", true);
 
-		oldLinkHostEmbed = ModelFacadeConfig.LINK_HOST_EMBED_PATH;
 		oldIgnoreBw = ModelFacadeConfig.IGNORE_BW;
 	}
 
 	@AfterEach
 	public void restoreConfig() {
-		ModelFacadeConfig.LINK_HOST_EMBED_PATH = oldLinkHostEmbed;
 		ModelFacadeConfig.IGNORE_BW = oldIgnoreBw;
 	}
 
@@ -106,36 +104,13 @@ public class ModelFacadeEmbeddingTest {
 	}
 
 	@Test
-	public void testEmbedSwitchToServer() {
-		ModelFacade.getInstance().addServerToNetwork("1", "sub", 0, 0, 0, 0);
-		ModelFacade.getInstance().addSwitchToNetwork("2", "virt", 0);
-
-		ModelFacade.getInstance().embedSwitchToNode("1", "2");
-		assertEquals(1, ((SubstrateServer) ModelFacade.getInstance().getServerById("1")).getGuestSwitches().size());
-		assertEquals("1", ((VirtualSwitch) ModelFacade.getInstance().getSwitchById("2")).getHost().getName());
-	}
-
-	@Test
 	public void testEmbedSwitchtoSwitch() {
 		ModelFacade.getInstance().addSwitchToNetwork("1", "sub", 0);
 		ModelFacade.getInstance().addSwitchToNetwork("2", "virt", 0);
 
-		ModelFacade.getInstance().embedSwitchToNode("1", "2");
+		ModelFacade.getInstance().embedSwitchToSwitch("1", "2");
 		assertEquals(1, ((SubstrateSwitch) ModelFacade.getInstance().getSwitchById("1")).getGuestSwitches().size());
 		assertEquals("1", ((VirtualSwitch) ModelFacade.getInstance().getSwitchById("2")).getHost().getName());
-	}
-
-	@Test
-	public void testEmbedLinkToServer() {
-		ModelFacade.getInstance().addServerToNetwork("1", "sub", 0, 0, 0, 0);
-
-		ModelFacade.getInstance().addServerToNetwork("2", "virt", 0, 0, 0, 0);
-		ModelFacade.getInstance().addServerToNetwork("3", "virt", 0, 0, 0, 0);
-		ModelFacade.getInstance().addLinkToNetwork("4", "virt", 0, "2", "3");
-
-		ModelFacade.getInstance().embedLinkToServer("1", "4");
-		assertEquals(1, ((SubstrateServer) ModelFacade.getInstance().getServerById("1")).getGuestLinks().size());
-		assertEquals("1", ((VirtualLink) ModelFacade.getInstance().getLinkById("4")).getHost().getName());
 	}
 
 	@Test
@@ -184,7 +159,6 @@ public class ModelFacadeEmbeddingTest {
 	@Test
 	public void testEmbedLinkToPathNormal() {
 		ModelFacadeConfig.IGNORE_BW = false;
-		ModelFacadeConfig.LINK_HOST_EMBED_PATH = false;
 
 		// Substrate network
 		final OneTierConfig subConfig = new OneTierConfig(2, 1, false, 1, 1, 1, 1);
@@ -203,47 +177,12 @@ public class ModelFacadeEmbeddingTest {
 		final VirtualLink guest = (VirtualLink) ModelFacade.getInstance().getLinkById("vl");
 		assertEquals(sp, guest.getHost());
 		assertEquals(guest, sp.getGuestLinks().get(0));
-
-		// Sub links must not have an embedding
-		sp.getLinks().forEach(l -> {
-			final SubstrateLink sl = l;
-			assertTrue(sl.getGuestLinks().isEmpty());
-		});
-	}
-
-	@Test
-	public void testEmbedLinkToPathAlsoSubLinks() {
-		ModelFacadeConfig.IGNORE_BW = false;
-		ModelFacadeConfig.LINK_HOST_EMBED_PATH = true;
-
-		// Substrate network
-		final OneTierConfig subConfig = new OneTierConfig(2, 1, false, 1, 1, 1, 1);
-		final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(subConfig);
-		gen.createNetwork("net", false);
-		assertFalse(ModelFacade.getInstance().getAllPathsOfNetwork("net").isEmpty());
-
-		// Virtual elements
-		ModelFacade.getInstance().addNetworkToRoot("v", true);
-		ModelFacade.getInstance().addServerToNetwork("vsrv", "v", 1, 1, 1, 1);
-		ModelFacade.getInstance().addSwitchToNetwork("vsw", "v", 0);
-		ModelFacade.getInstance().addLinkToNetwork("vl", "v", 1, "vsrv", "vsw");
-
-		final SubstratePath sp = ModelFacade.getInstance().getPathFromSourceToTarget("net_srv_0", "net_sw_0");
-		assertTrue(ModelFacade.getInstance().embedLinkToPath(sp.getName(), "vl"));
-
-		// Sub links must have an embedding
-		sp.getLinks().forEach(l -> {
-			final SubstrateLink sl = l;
-			assertFalse(sl.getGuestLinks().isEmpty());
-			assertEquals(1, sl.getGuestLinks().size());
-		});
 	}
 
 	@Test
 	public void testEmbedLinkToPathIgnoreBw() {
 		// Set ignore bandwidth to true in ModelFacadeConfig.
 		ModelFacadeConfig.IGNORE_BW = true;
-		ModelFacadeConfig.LINK_HOST_EMBED_PATH = false;
 
 		// Substrate network
 		final OneTierConfig subConfig = new OneTierConfig(2, 1, false, 1, 1, 1, 1);
@@ -266,8 +205,6 @@ public class ModelFacadeEmbeddingTest {
 
 	@Test
 	public void testRemoveNetworkEmbedding() {
-		ModelFacadeConfig.LINK_HOST_EMBED_PATH = false;
-
 		// Substrate network
 		final OneTierConfig subConfig = new OneTierConfig(2, 1, false, 5, 5, 5, 10);
 		final OneTierNetworkGenerator gen = new OneTierNetworkGenerator(subConfig);
@@ -285,7 +222,7 @@ public class ModelFacadeEmbeddingTest {
 		ModelFacade.getInstance().addLinkToNetwork("vl4", "v", 1, "vsw", "vsrv2");
 
 		ModelFacade.getInstance().embedNetworkToNetwork("net", "v");
-		ModelFacade.getInstance().embedSwitchToNode("net_sw_0", "vsw");
+		ModelFacade.getInstance().embedSwitchToSwitch("net_sw_0", "vsw");
 		ModelFacade.getInstance().embedServerToServer("net_srv_0", "vsrv1");
 		ModelFacade.getInstance().embedServerToServer("net_srv_1", "vsrv2");
 		final SubstratePath path1 = ModelFacade.getInstance().getPathFromSourceToTarget("net_srv_0", "net_sw_0");
@@ -332,7 +269,6 @@ public class ModelFacadeEmbeddingTest {
 
 		for (final Link l : ModelFacade.getInstance().getAllLinksOfNetwork("net")) {
 			final SubstrateLink sl = (SubstrateLink) l;
-			assertTrue(sl.getGuestLinks().isEmpty());
 			assertEquals(sl.getBandwidth(), sl.getResidualBandwidth());
 		}
 

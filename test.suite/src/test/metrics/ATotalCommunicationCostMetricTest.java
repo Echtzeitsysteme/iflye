@@ -48,16 +48,6 @@ public abstract class ATotalCommunicationCostMetricTest extends AMetricTest {
 	}
 
 	@Test
-	public void testEmbeddingSameHost() {
-		createSubstrateNetwork();
-		setupEmbeddingSameHost();
-		final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-		setMetric(sNet);
-
-		assertEquals(0, metric.getValue());
-	}
-
-	@Test
 	public void testEmbeddingTwoHosts() {
 		createSubstrateNetwork();
 		setupEmbeddingTwoHosts();
@@ -92,7 +82,7 @@ public abstract class ATotalCommunicationCostMetricTest extends AMetricTest {
 		facade.createAllPathsForNetwork("sub");
 
 		facade.embedNetworkToNetwork("sub", "virt");
-		facade.embedSwitchToNode("cssw", "vsw");
+		facade.embedSwitchToSwitch("cssw", "vsw");
 		facade.embedServerToServer("ssrv1", "vsrv1");
 		facade.embedServerToServer("ssrv2", "vsrv2");
 

@@ -26,17 +26,6 @@ public class TotalCommunicationCostMetricDTest extends ATotalCommunicationCostMe
 
 	@Override
 	@Test
-	public void testEmbeddingSameHost() {
-		createSubstrateNetwork();
-		setupEmbeddingSameHost();
-		final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-		setMetric(sNet);
-
-		assertEquals(Double.POSITIVE_INFINITY, metric.getValue());
-	}
-
-	@Override
-	@Test
 	public void testEmbeddingTwoHosts() {
 		createSubstrateNetwork();
 		setupEmbeddingTwoHosts();

@@ -3,7 +3,6 @@ package test.metrics;
 import org.junit.jupiter.api.BeforeEach;
 
 import facade.ModelFacade;
-import model.SubstrateNode;
 import model.SubstratePath;
 
 /**
@@ -56,28 +55,13 @@ public abstract class AMetricTest {
 	}
 
 	/**
-	 * Sets an embedding with one host only (server) up. All elements of the virtual
-	 * network are embedded on the one substrate server.
-	 */
-	protected void setupEmbeddingSameHost() {
-		facade.embedNetworkToNetwork("sub", "virt");
-		facade.embedSwitchToNode("ssrv1", "vsw");
-		facade.embedServerToServer("ssrv1", "vsrv1");
-		facade.embedServerToServer("ssrv1", "vsrv2");
-		facade.embedLinkToServer("ssrv1", "vln1");
-		facade.embedLinkToServer("ssrv1", "vln2");
-		facade.embedLinkToServer("ssrv1", "vln3");
-		facade.embedLinkToServer("ssrv1", "vln4");
-	}
-
-	/**
 	 * Sets an embedding with two substrate servers up. The switch will be embedded
 	 * on the substrate switch.
 	 */
 	protected void setupEmbeddingTwoHosts() {
 		facade.createAllPathsForNetwork("sub");
 		facade.embedNetworkToNetwork("sub", "virt");
-		facade.embedSwitchToNode("ssw", "vsw");
+		facade.embedSwitchToSwitch("ssw", "vsw");
 		facade.embedServerToServer("ssrv1", "vsrv1");
 		facade.embedServerToServer("ssrv2", "vsrv2");
 		final SubstratePath p1 = facade.getPathFromSourceToTarget("ssw", "ssrv1");
@@ -88,28 +72,6 @@ public abstract class AMetricTest {
 		facade.embedLinkToPath(p2.getName(), "vln2");
 		facade.embedLinkToPath(p3.getName(), "vln3");
 		facade.embedLinkToPath(p4.getName(), "vln4");
-	}
-
-	/**
-	 * Sets an embedding with two virtual servers on one substrate server and one
-	 * virtual switch on the other substrate server up.
-	 */
-	protected void setupEmbeddingTwoHops() {
-		facade.createAllPathsForNetwork("sub");
-		facade.embedNetworkToNetwork("sub", "virt");
-		facade.embedSwitchToNode("ssrv2", "vsw");
-		facade.embedServerToServer("ssrv1", "vsrv1");
-		facade.embedServerToServer("ssrv1", "vsrv2");
-
-		final SubstratePath pa = facade.getPathFromSourceToTarget((SubstrateNode) facade.getServerById("ssrv1"),
-				(SubstrateNode) facade.getServerById("ssrv2"));
-		final SubstratePath pb = facade.getPathFromSourceToTarget((SubstrateNode) facade.getServerById("ssrv2"),
-				(SubstrateNode) facade.getServerById("ssrv1"));
-
-		facade.embedLinkToPath(pa.getName(), "vln1");
-		facade.embedLinkToPath(pa.getName(), "vln2");
-		facade.embedLinkToPath(pb.getName(), "vln3");
-		facade.embedLinkToPath(pb.getName(), "vln4");
 	}
 
 }

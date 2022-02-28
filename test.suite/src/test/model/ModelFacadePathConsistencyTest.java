@@ -41,11 +41,6 @@ public class ModelFacadePathConsistencyTest {
 	private boolean oldIgnoreBw;
 
 	/**
-	 * Old link host embed path value.
-	 */
-	private boolean oldLinkHostEmbedPath;
-
-	/**
 	 * Old Yen path generation value.
 	 */
 	private boolean oldYenPathGen;
@@ -58,12 +53,10 @@ public class ModelFacadePathConsistencyTest {
 		oldLowerLimit = ModelFacadeConfig.MIN_PATH_LENGTH;
 		oldUpperLimit = ModelFacadeConfig.MAX_PATH_LENGTH;
 		oldIgnoreBw = ModelFacadeConfig.IGNORE_BW;
-		oldLinkHostEmbedPath = ModelFacadeConfig.LINK_HOST_EMBED_PATH;
 		oldYenPathGen = ModelFacadeConfig.YEN_PATH_GEN;
 		ModelFacadeConfig.MIN_PATH_LENGTH = 1;
 		ModelFacadeConfig.MAX_PATH_LENGTH = 4;
 		ModelFacadeConfig.IGNORE_BW = false;
-		ModelFacadeConfig.LINK_HOST_EMBED_PATH = false;
 		ModelFacadeConfig.YEN_PATH_GEN = false;
 	}
 
@@ -72,7 +65,6 @@ public class ModelFacadePathConsistencyTest {
 		ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
 		ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
 		ModelFacadeConfig.IGNORE_BW = oldIgnoreBw;
-		ModelFacadeConfig.LINK_HOST_EMBED_PATH = oldLinkHostEmbedPath;
 		ModelFacadeConfig.YEN_PATH_GEN = oldYenPathGen;
 	}
 

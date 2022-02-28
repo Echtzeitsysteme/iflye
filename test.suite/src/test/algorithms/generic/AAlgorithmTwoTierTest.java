@@ -10,10 +10,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Set;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import model.Link;
-import model.Network;
 import model.Node;
 import model.SubstrateNetwork;
 import model.SubstratePath;
@@ -35,6 +35,7 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 	 * Positive tests.
 	 */
 
+	@Disabled
 	@Test
 	public void testAllOnOneServer() {
 		oneTierSetupTwoServers("virt", 1);
@@ -114,7 +115,7 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 
 		// Link 1
 		if (vLn1.getHost() instanceof SubstratePath) {
-			final SubstratePath pLn1 = (SubstratePath) vLn1.getHost();
+			final SubstratePath pLn1 = vLn1.getHost();
 			sourceName = pLn1.getSource().getName();
 			targetName = pLn1.getTarget().getName();
 		} else {
@@ -128,7 +129,7 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 
 		// Link 2
 		if (vLn2.getHost() instanceof SubstratePath) {
-			final SubstratePath pLn2 = (SubstratePath) vLn2.getHost();
+			final SubstratePath pLn2 = vLn2.getHost();
 			sourceName = pLn2.getSource().getName();
 			targetName = pLn2.getTarget().getName();
 		} else if (vLn2.getHost() instanceof SubstrateServer) {
@@ -144,7 +145,7 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 
 		// Link 3
 		if (vLn3.getHost() instanceof SubstratePath) {
-			final SubstratePath pLn3 = (SubstratePath) vLn3.getHost();
+			final SubstratePath pLn3 = vLn3.getHost();
 			sourceName = pLn3.getSource().getName();
 			targetName = pLn3.getTarget().getName();
 		} else {
@@ -158,7 +159,7 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 
 		// Link 4
 		if (vLn4.getHost() instanceof SubstratePath) {
-			final SubstratePath pLn4 = (SubstratePath) vLn4.getHost();
+			final SubstratePath pLn4 = vLn4.getHost();
 			sourceName = pLn4.getSource().getName();
 			targetName = pLn4.getTarget().getName();
 		} else {
@@ -209,32 +210,32 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 		final VirtualLink vLn6 = (VirtualLink) facade.getLinkById("virt_ln6");
 
 		// Link 1
-		final SubstratePath pLn1 = (SubstratePath) vLn1.getHost();
+		final SubstratePath pLn1 = vLn1.getHost();
 		assertEquals(serverHost1, pLn1.getSource().getName());
 		assertEquals("sub_csw1", pLn1.getTarget().getName());
 
 		// Link 2
-		final SubstratePath pLn2 = (SubstratePath) vLn2.getHost();
+		final SubstratePath pLn2 = vLn2.getHost();
 		assertEquals(serverHost2, pLn2.getSource().getName());
 		assertEquals("sub_csw1", pLn2.getTarget().getName());
 
 		// Link 3
-		final SubstratePath pLn3 = (SubstratePath) vLn3.getHost();
+		final SubstratePath pLn3 = vLn3.getHost();
 		assertEquals(serverHost3, pLn3.getSource().getName());
 		assertEquals("sub_csw1", pLn3.getTarget().getName());
 
 		// Link 4
-		final SubstratePath pLn4 = (SubstratePath) vLn4.getHost();
+		final SubstratePath pLn4 = vLn4.getHost();
 		assertEquals("sub_csw1", pLn4.getSource().getName());
 		assertEquals(serverHost1, pLn4.getTarget().getName());
 
 		// Link 5
-		final SubstratePath pLn5 = (SubstratePath) vLn5.getHost();
+		final SubstratePath pLn5 = vLn5.getHost();
 		assertEquals("sub_csw1", pLn5.getSource().getName());
 		assertEquals(serverHost2, pLn5.getTarget().getName());
 
 		// Link 6
-		final SubstratePath pLn6 = (SubstratePath) vLn6.getHost();
+		final SubstratePath pLn6 = vLn6.getHost();
 		assertEquals("sub_csw1", pLn6.getSource().getName());
 		assertEquals(serverHost3, pLn6.getTarget().getName());
 	}
@@ -278,12 +279,10 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 		facade.addSwitchToNetwork(networkId + "_sw", networkId, 0);
 		facade.addServerToNetwork(networkId + "_srv1", networkId, slotsPerServer, slotsPerServer, slotsPerServer, 1);
 		facade.addServerToNetwork(networkId + "_srv2", networkId, slotsPerServer, slotsPerServer, slotsPerServer, 1);
-		facade.addLinkToNetwork(networkId + "_ln1", networkId, 1, networkId + "_srv1", networkId + "_sw");
-		facade.addLinkToNetwork(networkId + "_ln2", networkId, 1, networkId + "_srv2", networkId + "_sw");
-		facade.addLinkToNetwork(networkId + "_ln3", networkId, 1, networkId + "_sw", networkId + "_srv1");
-		facade.addLinkToNetwork(networkId + "_ln4", networkId, 1, networkId + "_sw", networkId + "_srv2");
-
-		setMetamodelExtensionVnet(networkId, slotsPerServer * 2);
+		facade.addLinkToNetwork(networkId + "_ln1", networkId, slotsPerServer, networkId + "_srv1", networkId + "_sw");
+		facade.addLinkToNetwork(networkId + "_ln2", networkId, slotsPerServer, networkId + "_srv2", networkId + "_sw");
+		facade.addLinkToNetwork(networkId + "_ln3", networkId, slotsPerServer, networkId + "_sw", networkId + "_srv1");
+		facade.addLinkToNetwork(networkId + "_ln4", networkId, slotsPerServer, networkId + "_sw", networkId + "_srv2");
 	}
 
 	/**
@@ -297,14 +296,12 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 		facade.addServerToNetwork(networkId + "_srv1", networkId, slotsPerServer, slotsPerServer, slotsPerServer, 1);
 		facade.addServerToNetwork(networkId + "_srv2", networkId, slotsPerServer, slotsPerServer, slotsPerServer, 1);
 		facade.addServerToNetwork(networkId + "_srv3", networkId, slotsPerServer, slotsPerServer, slotsPerServer, 1);
-		facade.addLinkToNetwork(networkId + "_ln1", networkId, 1, networkId + "_srv1", networkId + "_sw");
-		facade.addLinkToNetwork(networkId + "_ln2", networkId, 1, networkId + "_srv2", networkId + "_sw");
-		facade.addLinkToNetwork(networkId + "_ln3", networkId, 1, networkId + "_srv3", networkId + "_sw");
-		facade.addLinkToNetwork(networkId + "_ln4", networkId, 1, networkId + "_sw", networkId + "_srv1");
-		facade.addLinkToNetwork(networkId + "_ln5", networkId, 1, networkId + "_sw", networkId + "_srv2");
-		facade.addLinkToNetwork(networkId + "_ln6", networkId, 1, networkId + "_sw", networkId + "_srv3");
-
-		setMetamodelExtensionVnet(networkId, slotsPerServer * 3);
+		facade.addLinkToNetwork(networkId + "_ln1", networkId, slotsPerServer, networkId + "_srv1", networkId + "_sw");
+		facade.addLinkToNetwork(networkId + "_ln2", networkId, slotsPerServer, networkId + "_srv2", networkId + "_sw");
+		facade.addLinkToNetwork(networkId + "_ln3", networkId, slotsPerServer, networkId + "_srv3", networkId + "_sw");
+		facade.addLinkToNetwork(networkId + "_ln4", networkId, slotsPerServer, networkId + "_sw", networkId + "_srv1");
+		facade.addLinkToNetwork(networkId + "_ln5", networkId, slotsPerServer, networkId + "_sw", networkId + "_srv2");
+		facade.addLinkToNetwork(networkId + "_ln6", networkId, slotsPerServer, networkId + "_sw", networkId + "_srv3");
 	}
 
 	/**
@@ -324,37 +321,31 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 		facade.addServerToNetwork(networkId + "_srv3", networkId, slotsPerServer, slotsPerServer, slotsPerServer, 2);
 		facade.addServerToNetwork(networkId + "_srv4", networkId, slotsPerServer, slotsPerServer, slotsPerServer, 2);
 
-		facade.addLinkToNetwork(networkId + "_ln1", networkId, 1, networkId + "_srv1", networkId + "_rsw1");
-		facade.addLinkToNetwork(networkId + "_ln2", networkId, 1, networkId + "_srv2", networkId + "_rsw1");
-		facade.addLinkToNetwork(networkId + "_ln3", networkId, 1, networkId + "_rsw1", networkId + "_srv1");
-		facade.addLinkToNetwork(networkId + "_ln4", networkId, 1, networkId + "_rsw1", networkId + "_srv2");
-		facade.addLinkToNetwork(networkId + "_ln5", networkId, 1, networkId + "_srv3", networkId + "_rsw2");
-		facade.addLinkToNetwork(networkId + "_ln6", networkId, 1, networkId + "_srv4", networkId + "_rsw2");
-		facade.addLinkToNetwork(networkId + "_ln7", networkId, 1, networkId + "_rsw2", networkId + "_srv3");
-		facade.addLinkToNetwork(networkId + "_ln8", networkId, 1, networkId + "_rsw2", networkId + "_srv4");
+		facade.addLinkToNetwork(networkId + "_ln1", networkId, slotsPerServer, networkId + "_srv1",
+				networkId + "_rsw1");
+		facade.addLinkToNetwork(networkId + "_ln2", networkId, slotsPerServer, networkId + "_srv2",
+				networkId + "_rsw1");
+		facade.addLinkToNetwork(networkId + "_ln3", networkId, slotsPerServer, networkId + "_rsw1",
+				networkId + "_srv1");
+		facade.addLinkToNetwork(networkId + "_ln4", networkId, slotsPerServer, networkId + "_rsw1",
+				networkId + "_srv2");
+		facade.addLinkToNetwork(networkId + "_ln5", networkId, slotsPerServer, networkId + "_srv3",
+				networkId + "_rsw2");
+		facade.addLinkToNetwork(networkId + "_ln6", networkId, slotsPerServer, networkId + "_srv4",
+				networkId + "_rsw2");
+		facade.addLinkToNetwork(networkId + "_ln7", networkId, slotsPerServer, networkId + "_rsw2",
+				networkId + "_srv3");
+		facade.addLinkToNetwork(networkId + "_ln8", networkId, slotsPerServer, networkId + "_rsw2",
+				networkId + "_srv4");
 
-		facade.addLinkToNetwork(networkId + "_ln9", networkId, 10, networkId + "_rsw1", networkId + "_csw1");
-		facade.addLinkToNetwork(networkId + "_ln10", networkId, 10, networkId + "_rsw2", networkId + "_csw1");
-		facade.addLinkToNetwork(networkId + "_ln11", networkId, 10, networkId + "_csw1", networkId + "_rsw1");
-		facade.addLinkToNetwork(networkId + "_ln12", networkId, 10, networkId + "_csw1", networkId + "_rsw2");
-
-		setMetamodelExtensionVnet(networkId, slotsPerServer * 4);
-	}
-
-	/**
-	 * Sets the new values for the extended metamodel in virtual network.
-	 *
-	 * @param networkId  Network ID.
-	 * @param slotsTotal Total slots of the virtual network.
-	 */
-	protected void setMetamodelExtensionVnet(final String networkId, final int slotsTotal) {
-		final Network net = facade.getNetworkById(networkId);
-		if (net instanceof VirtualNetwork) {
-			final VirtualNetwork vnet = (VirtualNetwork) net;
-			vnet.setCpu(slotsTotal);
-			vnet.setMemory(slotsTotal);
-			vnet.setStorage(slotsTotal);
-		}
+		facade.addLinkToNetwork(networkId + "_ln9", networkId, 10 * slotsPerServer, networkId + "_rsw1",
+				networkId + "_csw1");
+		facade.addLinkToNetwork(networkId + "_ln10", networkId, 10 * slotsPerServer, networkId + "_rsw2",
+				networkId + "_csw1");
+		facade.addLinkToNetwork(networkId + "_ln11", networkId, 10 * slotsPerServer, networkId + "_csw1",
+				networkId + "_rsw1");
+		facade.addLinkToNetwork(networkId + "_ln12", networkId, 10 * slotsPerServer, networkId + "_csw1",
+				networkId + "_rsw2");
 	}
 
 }

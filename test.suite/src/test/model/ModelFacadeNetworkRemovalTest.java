@@ -140,7 +140,6 @@ public class ModelFacadeNetworkRemovalTest {
 		// Links
 		sNet.getLinks().forEach(l -> {
 			final SubstrateLink sl = (SubstrateLink) l;
-			assertTrue(sl.getGuestLinks().isEmpty());
 			assertEquals(1, sl.getResidualBandwidth());
 		});
 
@@ -200,7 +199,6 @@ public class ModelFacadeNetworkRemovalTest {
 		// Links
 		sNet.getLinks().forEach(l -> {
 			final SubstrateLink sl = (SubstrateLink) l;
-			assertTrue(sl.getGuestLinks().isEmpty());
 			assertEquals(1, sl.getResidualBandwidth());
 		});
 
