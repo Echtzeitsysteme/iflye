@@ -142,43 +142,8 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Abstract class that represents a substrate node."/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="guestSwitches" upperBound="-1"
-        eType="#//VirtualSwitch" eOpposite="#//VirtualSwitch/host">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Virtual guest switches."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="paths" upperBound="-1"
-        eType="#//SubstratePath" eOpposite="#//SubstratePath/nodes">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Paths that use this node."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="outgoingPaths" upperBound="-1"
-        eType="#//SubstratePath" eOpposite="#//SubstratePath/source">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Set of outgoing paths (paths that start at this node)."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="incomingPaths" upperBound="-1"
-        eType="#//SubstratePath" eOpposite="#//SubstratePath/target">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Set of incoming paths (paths that end at this node)."/>
-      </eAnnotations>
-    </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="SubstrateHostLink" abstract="true" eSuperTypes="#//SubstrateElement">
-    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="Abstract class that can host a virtual link."/>
-    </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="guestLinks" upperBound="-1"
-        eType="#//VirtualLink" eOpposite="#//VirtualLink/host">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Virtual guest links."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="SubstrateServer" eSuperTypes="#//Server #//SubstrateNode #//SubstrateHostLink">
+  <eClassifiers xsi:type="ecore:EClass" name="SubstrateServer" eSuperTypes="#//Server #//SubstrateNode">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Class that represents a substrate server."/>
     </eAnnotations>
@@ -206,19 +171,15 @@
         <details key="documentation" value="Residual storage amount of this server."/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="guestNetworks" upperBound="-1"
-        eType="#//VirtualNetwork" eOpposite="#//VirtualNetwork/hostServer">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Virtual guest networks."/>
-      </eAnnotations>
-    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SubstrateSwitch" eSuperTypes="#//Switch #//SubstrateNode">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Class that represents a substrate switch."/>
     </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="guestSwitches" unique="false"
+        upperBound="-1" eType="#//VirtualSwitch"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="SubstrateLink" eSuperTypes="#//Link #//SubstrateElement #//SubstrateHostLink">
+  <eClassifiers xsi:type="ecore:EClass" name="SubstrateLink" eSuperTypes="#//Link #//SubstrateElement">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Class that represents a substrate link."/>
     </eAnnotations>
@@ -228,64 +189,8 @@
         <details key="documentation" value="Residual bandwidth amount of this link."/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="paths" upperBound="-1"
-        eType="#//SubstratePath" eOpposite="#//SubstratePath/links">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Paths that use this link."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="SubstratePath" eSuperTypes="#//SubstrateElement #//SubstrateHostLink">
-    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="Class that represents a substrate path."/>
-    </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="network" lowerBound="1"
-        eType="#//SubstrateNetwork" eOpposite="#//SubstrateNetwork/paths">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Network this path belongs to."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="source" lowerBound="1"
-        eType="#//SubstrateNode" eOpposite="#//SubstrateNode/outgoingPaths">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Source node at which this path starts."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="target" lowerBound="1"
-        eType="#//SubstrateNode" eOpposite="#//SubstrateNode/incomingPaths">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Target node at which this path ends."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" upperBound="-1"
-        eType="#//SubstrateNode" eOpposite="#//SubstrateNode/paths">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="All nodes that are part of this path."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="links" upperBound="-1"
-        eType="#//SubstrateLink" eOpposite="#//SubstrateLink/paths">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="All links that are part of this path."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bandwidth" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Bandwidth amount of this path."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="hops" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Number of hops of this path."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="residualBandwidth" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Residual bandwidth amount of this path."/>
-      </eAnnotations>
-    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="guestLinks" upperBound="-1"
+        eType="#//VirtualLink"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SubstrateNetwork" eSuperTypes="#//Network #//SubstrateElement">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -295,12 +200,6 @@
         eType="#//VirtualNetwork" eOpposite="#//VirtualNetwork/host">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Virtual guest networks that are running on this host network."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="paths" upperBound="-1"
-        eType="#//SubstratePath" containment="true" eOpposite="#//SubstratePath/network">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Set of paths that are part of this network."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -329,8 +228,7 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Class that represents a virtual switch."/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="host" lowerBound="1" eType="#//SubstrateNode"
-        eOpposite="#//SubstrateNode/guestSwitches">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="host" lowerBound="1" eType="#//SubstrateSwitch">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Host node that runs this virtual switch."/>
       </eAnnotations>
@@ -340,8 +238,7 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Class that represents a virtual link."/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="host" lowerBound="1" eType="#//SubstrateHostLink"
-        eOpposite="#//SubstrateHostLink/guestLinks">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="host" lowerBound="1" eType="#//SubstrateLink">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Substrate host element."/>
       </eAnnotations>
@@ -355,29 +252,6 @@
         eOpposite="#//SubstrateNetwork/guests">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Host network that runs this virtual network."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cpu" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Total CPU amount of this virtual network."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="memory" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Total memory amount of this virtual network."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="storage" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Total storage amount of this virtual network."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="hostServer" lowerBound="1"
-        eType="#//SubstrateServer" eOpposite="#//SubstrateServer/guestNetworks">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Host server that runs this virtual network."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
