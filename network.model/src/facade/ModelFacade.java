@@ -68,7 +68,7 @@ public class ModelFacade {
 	/**
 	 * Path to import and export models.
 	 */
-	private static final String PERSISTANT_MODEL_PATH = "./model.xmi";
+	private static final String PERSISTENT_MODEL_PATH = "./model.xmi";
 
 	/*
 	 * Collections for the path creation methods.
@@ -949,7 +949,7 @@ public class ModelFacade {
 	 * Saves the model to file.
 	 */
 	public void persistModel() {
-		persistModel(PERSISTANT_MODEL_PATH);
+		persistModel(PERSISTENT_MODEL_PATH);
 	}
 
 	/**
@@ -984,7 +984,7 @@ public class ModelFacade {
 	 * Loads the model from file.
 	 */
 	public void loadModel() {
-		loadModel(PERSISTANT_MODEL_PATH);
+		loadModel(PERSISTENT_MODEL_PATH);
 	}
 
 	// TODO: May be broken for SmartEMF models
