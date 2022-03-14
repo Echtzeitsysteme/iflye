@@ -5,7 +5,8 @@ Bundle-SymbolicName: network.visualization;singleton:=true
 Bundle-Version: 0.0.3.qualifier
 Require-Bundle: org.eclipse.emf.ecore,
  network.model,
- network.generators
+ network.generators,
+ org.emoflon.smartemf
 Automatic-Module-Name: test.singleton.true
 Bundle-RequiredExecutionEnvironment: JavaSE-16
 Export-Package: org.graphstream.graph,
