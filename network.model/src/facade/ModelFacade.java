@@ -1,5 +1,6 @@
 package facade;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -13,7 +14,12 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.emoflon.smartemf.persistence.SmartEMFResourceFactoryImpl;
 import org.moflon.core.utilities.eMoflonEMFUtil;
 
 import com.google.common.collect.Lists;
@@ -943,7 +949,7 @@ public class ModelFacade {
 	 * Saves the model to file.
 	 */
 	public void persistModel() {
-		eMoflonEMFUtil.saveModel(root, PERSISTANT_MODEL_PATH);
+		persistModel(PERSISTANT_MODEL_PATH);
 	}
 
 	/**
@@ -952,7 +958,26 @@ public class ModelFacade {
 	 * @param path File path as string.
 	 */
 	public void persistModel(final String path) {
-		eMoflonEMFUtil.saveModel(root, path);
+		// Old eMoflon way
+		// eMoflonEMFUtil.saveModel(root, path);
+
+		// New manual way
+		// Create new model for saving
+		final ResourceSet rs = new ResourceSetImpl();
+		// EMF
+		// rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new
+		// XMIResourceFactoryImpl());
+		// SmartEMF
+		rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi",
+				new SmartEMFResourceFactoryImpl(System.getenv("WORKSPACE")));
+		final Resource r = rs.createResource(URI.createFileURI(path));
+		// Fetch model contents from eMoflon
+		r.getContents().add(root);
+		try {
+			r.save(null);
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
