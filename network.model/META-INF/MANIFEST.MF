@@ -11,12 +11,11 @@ Require-Bundle: org.eclipse.emf.ecore,
  org.eclipse.emf.ecore.xmi,
  org.junit,
  org.junit.jupiter.api,
- org.moflon.core.utilities
+ org.moflon.core.utilities,
+ org.emoflon.smartemf
 Export-Package: facade,
  facade.config,
  facade.pathgen,
  model,
  model.converter,
- model.impl,
- model.util,
- model.validation
+ model.impl
