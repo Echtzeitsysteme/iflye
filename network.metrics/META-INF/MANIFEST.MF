@@ -5,7 +5,8 @@ Bundle-SymbolicName: network.metrics; singleton:=true
 Bundle-Version: 0.0.3.qualifier
 Require-Bundle: org.eclipse.emf.ecore,
  org.junit,
- org.junit.jupiter.api
+ org.junit.jupiter.api,
+ org.emoflon.smartemf
 Export-Package: metrics,
  metrics.embedding,
  metrics.manager,
