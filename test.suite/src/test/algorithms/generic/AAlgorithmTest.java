@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import algorithms.AbstractAlgorithm;
@@ -97,16 +98,16 @@ public abstract class AAlgorithmTest {
 		oldObjective = AlgorithmConfig.obj;
 	}
 
-//	@AfterEach
-//	public void restoreConfig() {
-//		facade.validateModel();
-//		ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
-//		ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
-//		ModelFacadeConfig.IGNORE_BW = oldIgnoreBw;
-//		AlgorithmConfig.netRejCostDynamic = oldNetRejCost;
-//		AlgorithmConfig.obj = oldObjective;
-//		AlgorithmConfig.emb = oldEmbedding;
-//	}
+	@AfterEach
+	public void restoreConfig() {
+		facade.validateModel();
+		ModelFacadeConfig.MIN_PATH_LENGTH = oldLowerLimit;
+		ModelFacadeConfig.MAX_PATH_LENGTH = oldUpperLimit;
+		ModelFacadeConfig.IGNORE_BW = oldIgnoreBw;
+		AlgorithmConfig.netRejCostDynamic = oldNetRejCost;
+		AlgorithmConfig.obj = oldObjective;
+		AlgorithmConfig.emb = oldEmbedding;
+	}
 
 	/**
 	 * Initializes the algorithm to test.
