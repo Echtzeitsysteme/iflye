@@ -41,7 +41,15 @@ public class VneRoamAlgorithm extends AbstractAlgorithm {
 	public boolean execute() {
 		// TODO: Time measurement
 		ModelFacade.getInstance().persistModel(MODEL_FILE_PATH);
-		return MdvneRoamIflyeAdapter.execute(MODEL_FILE_PATH);
+		final boolean roamSuccess = MdvneRoamIflyeAdapter.execute(MODEL_FILE_PATH);
+		if (roamSuccess) {
+			// Current workaround: Embed all virtual networks "by hand" if Roam run was
+			// successful
+			for (final VirtualNetwork v : vNets) {
+				facade.embedNetworkToNetwork(sNet.getName(), v.getName());
+			}
+		}
+		return roamSuccess;
 	}
 
 	/**
