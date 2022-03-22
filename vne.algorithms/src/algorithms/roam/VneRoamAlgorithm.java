@@ -48,6 +48,9 @@ public class VneRoamAlgorithm extends AbstractAlgorithm {
 			for (final VirtualNetwork v : vNets) {
 				facade.embedNetworkToNetwork(sNet.getName(), v.getName());
 			}
+
+			// Propagate solution to iflye model facade
+			ModelFacade.getInstance().loadModel(MODEL_FILE_PATH);
 		}
 		return roamSuccess;
 	}
