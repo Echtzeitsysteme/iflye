@@ -21,7 +21,6 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.emoflon.smartemf.persistence.SmartEMFResourceFactoryImpl;
-import org.moflon.core.utilities.eMoflonEMFUtil;
 
 import com.google.common.collect.Lists;
 
@@ -1008,10 +1007,36 @@ public class ModelFacade {
 	 */
 	public void loadModel(final String path) {
 		checkStringValid(path);
+		// Old implementation:
 		// TODO: Figure out, why the load mechanism does not work if there wasn't
 		// any save operation beforehand.
-		eMoflonEMFUtil.saveModel(root, "/dev/null");
-		root = (Root) eMoflonEMFUtil.loadModel(path);
+		// eMoflonEMFUtil.saveModel(root, "/dev/null");
+		// root = (Root) eMoflonEMFUtil.loadModel(path);
+
+		// New manual way
+		final ResourceSet rs = new ResourceSetImpl();
+		rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi",
+				new SmartEMFResourceFactoryImpl(System.getenv("WORKSPACE")));
+		final Resource res = rs.getResource(URI.createFileURI(path), true);
+		root = (Root) res.getContents().get(0);
+
+		// Restore other look-up data structures
+		this.links.clear();
+		this.paths.clear();
+		for (final Network n : root.getNetworks()) {
+			// Links
+			for (final Link l : n.getLinks()) {
+				this.links.put(l.getName(), l);
+			}
+
+			// Paths
+			if (n instanceof SubstrateNetwork) {
+				final SubstrateNetwork sNet = (SubstrateNetwork) n;
+				for (final SubstratePath p : sNet.getPaths()) {
+					this.paths.put(p.getName(), p);
+				}
+			}
+		}
 	}
 
 	/*
