@@ -1,5 +1,6 @@
 package facade;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -960,6 +961,18 @@ public class ModelFacade {
 	public void persistModel(final String path) {
 		// Old eMoflon way
 		// eMoflonEMFUtil.saveModel(root, path);
+
+		// Workaround: Create file if not exists
+		// TODO: Remove when bug in SmartEMF implementation is fixed
+		// See: https://github.com/eMoflon/emoflon-core/issues/136
+		final File f = new File(path);
+		if (!f.exists() && !f.isDirectory()) {
+			try {
+				f.createNewFile();
+			} catch (final IOException e) {
+				e.printStackTrace();
+			}
+		}
 
 		// New manual way
 		// Create new model for saving
