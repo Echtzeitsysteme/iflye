@@ -68,7 +68,7 @@ public class ModelFacade {
 	/**
 	 * Path to import and export models.
 	 */
-	private static final String PERSISTANT_MODEL_PATH = "./model.xmi";
+	private static final String PERSISTENT_MODEL_PATH = "./model.xmi";
 
 	/*
 	 * Collections for the path creation methods.
@@ -929,7 +929,7 @@ public class ModelFacade {
 			throw new IllegalArgumentException("Provided int(-array) was null!");
 		}
 
-		for (int cInt : ints) {
+		for (final int cInt : ints) {
 			if (cInt < 0) {
 				throw new IllegalArgumentException("Provided int was smaller than zero!");
 			}
@@ -949,7 +949,7 @@ public class ModelFacade {
 	 * Saves the model to file.
 	 */
 	public void persistModel() {
-		persistModel(PERSISTANT_MODEL_PATH);
+		persistModel(PERSISTENT_MODEL_PATH);
 	}
 
 	/**
@@ -958,11 +958,8 @@ public class ModelFacade {
 	 * @param path File path as string.
 	 */
 	public void persistModel(final String path) {
-		// Old eMoflon way
-		// eMoflonEMFUtil.saveModel(root, path);
-
-		// Workaround: Create file if not exists
-		// TODO: Remove when bug in SmartEMF implementation is fixed
+		// Workaround: Create file if it does not exist
+		// TODO: Remove this when bug in SmartEMF implementation is fixed
 		// See: https://github.com/eMoflon/emoflon-core/issues/136
 		final File f = new File(path);
 		if (!f.exists() && !f.isDirectory()) {
@@ -973,13 +970,8 @@ public class ModelFacade {
 			}
 		}
 
-		// New manual way
 		// Create new model for saving
 		final ResourceSet rs = new ResourceSetImpl();
-		// EMF
-		// rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new
-		// XMIResourceFactoryImpl());
-		// SmartEMF
 		rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi",
 				new SmartEMFResourceFactoryImpl(System.getenv("WORKSPACE")));
 		final Resource r = rs.createResource(URI.createFileURI(path));
@@ -996,7 +988,7 @@ public class ModelFacade {
 	 * Loads the model from file.
 	 */
 	public void loadModel() {
-		loadModel(PERSISTANT_MODEL_PATH);
+		loadModel(PERSISTENT_MODEL_PATH);
 	}
 
 	/**
@@ -1006,13 +998,7 @@ public class ModelFacade {
 	 */
 	public void loadModel(final String path) {
 		checkStringValid(path);
-		// Old implementation:
-		// TODO: Figure out, why the load mechanism does not work if there wasn't
-		// any save operation beforehand.
-		// eMoflonEMFUtil.saveModel(root, "/dev/null");
-		// root = (Root) eMoflonEMFUtil.loadModel(path);
 
-		// New manual way
 		final ResourceSet rs = new ResourceSetImpl();
 		rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi",
 				new SmartEMFResourceFactoryImpl(System.getenv("WORKSPACE")));
