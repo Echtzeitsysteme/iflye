@@ -1,5 +1,7 @@
 package facade;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -13,8 +15,12 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.moflon.core.utilities.eMoflonEMFUtil;
+import org.emoflon.smartemf.persistence.SmartEMFResourceFactoryImpl;
 
 import com.google.common.collect.Lists;
 
@@ -61,7 +67,7 @@ public class ModelFacade {
 	/**
 	 * Path to import and export models.
 	 */
-	private static final String PERSISTANT_MODEL_PATH = "./model.xmi";
+	private static final String PERSISTENT_MODEL_PATH = "./model.xmi";
 
 	/*
 	 * Collections for the path creation methods.
@@ -922,7 +928,7 @@ public class ModelFacade {
 			throw new IllegalArgumentException("Provided int(-array) was null!");
 		}
 
-		for (int cInt : ints) {
+		for (final int cInt : ints) {
 			if (cInt < 0) {
 				throw new IllegalArgumentException("Provided int was smaller than zero!");
 			}
@@ -942,7 +948,7 @@ public class ModelFacade {
 	 * Saves the model to file.
 	 */
 	public void persistModel() {
-		eMoflonEMFUtil.saveModel(root, PERSISTANT_MODEL_PATH);
+		persistModel(PERSISTENT_MODEL_PATH);
 	}
 
 	/**
@@ -951,14 +957,37 @@ public class ModelFacade {
 	 * @param path File path as string.
 	 */
 	public void persistModel(final String path) {
-		eMoflonEMFUtil.saveModel(root, path);
+		// Workaround: Create file if it does not exist
+		// TODO: Remove this when bug in SmartEMF implementation is fixed
+		// See: https://github.com/eMoflon/emoflon-core/issues/136
+		final File f = new File(path);
+		if (!f.exists() && !f.isDirectory()) {
+			try {
+				f.createNewFile();
+			} catch (final IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		// Create new model for saving
+		final ResourceSet rs = new ResourceSetImpl();
+		rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi",
+				new SmartEMFResourceFactoryImpl(System.getenv("WORKSPACE")));
+		final Resource r = rs.createResource(URI.createFileURI(path));
+		// Fetch model contents from eMoflon
+		r.getContents().add(root);
+		try {
+			r.save(null);
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
 	 * Loads the model from file.
 	 */
 	public void loadModel() {
-		loadModel(PERSISTANT_MODEL_PATH);
+		loadModel(PERSISTENT_MODEL_PATH);
 	}
 
 	/**
@@ -968,10 +997,30 @@ public class ModelFacade {
 	 */
 	public void loadModel(final String path) {
 		checkStringValid(path);
-		// TODO: Figure out, why the load mechanism does not work if there wasn't
-		// any save operation beforehand.
-		eMoflonEMFUtil.saveModel(root, "/dev/null");
-		root = (Root) eMoflonEMFUtil.loadModel(path);
+
+		final ResourceSet rs = new ResourceSetImpl();
+		rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi",
+				new SmartEMFResourceFactoryImpl(System.getenv("WORKSPACE")));
+		final Resource res = rs.getResource(URI.createFileURI(path), true);
+		root = (Root) res.getContents().get(0);
+
+		// Restore other look-up data structures
+		this.links.clear();
+		this.paths.clear();
+		for (final Network n : root.getNetworks()) {
+			// Links
+			for (final Link l : n.getLinks()) {
+				this.links.put(l.getName(), l);
+			}
+
+			// Paths
+			if (n instanceof SubstrateNetwork) {
+				final SubstrateNetwork sNet = (SubstrateNetwork) n;
+				for (final SubstratePath p : sNet.getPaths()) {
+					this.paths.put(p.getName(), p);
+				}
+			}
+		}
 	}
 
 	/*
