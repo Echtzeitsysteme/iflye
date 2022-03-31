@@ -21,6 +21,8 @@ import metrics.embedding.AveragePathLengthMetric;
 import metrics.embedding.OperatingCostMetric;
 import metrics.embedding.TotalCommunicationCostMetricA;
 import metrics.embedding.TotalCommunicationCostMetricB;
+import metrics.embedding.TotalCommunicationCostMetricC;
+import metrics.embedding.TotalCommunicationCostMetricD;
 import metrics.embedding.TotalCommunicationCostObjectiveC;
 import metrics.embedding.TotalCommunicationCostObjectiveD;
 import metrics.embedding.TotalPathCostMetric;
@@ -49,16 +51,35 @@ public class CsvUtil {
 	/**
 	 * CSV file header format for normal runs (simulation).
 	 */
-	private static CSVFormat formatNormal = CSVFormat.DEFAULT.withHeader("counter", "timestamp", "lastVNR", "time_pm",
-			"time_ilp", "time_deploy", "time_rest", "accepted_vnrs", "total_path_cost", "average_path_length",
-			"total_communication_cost_a", "total_communication_cost_b", "total_communication_objective_c",
-			"total_communication_objective_d", "total_taf_communication_cost", "operation_cost", "memory_start",
-			"memory_ilp", "memory_end", "memory_pid_max");
+	private static CSVFormat formatNormal = CSVFormat.DEFAULT.withHeader(//
+			"counter", //
+			"timestamp", //
+			"lastVNR", //
+			"time_pm", //
+			"time_ilp", //
+			"time_deploy", //
+			"time_rest", //
+			"accepted_vnrs", //
+			"total_path_cost", //
+			"average_path_length", //
+			"total_communication_cost_a", //
+			"total_communication_cost_b", //
+			"total_communication_cost_c", //
+			"total_communication_cost_d", //
+			"total_communication_objective_c", //
+			"total_communication_objective_d", //
+			"total_taf_communication_cost", //
+			"operation_cost", //
+			"memory_start", //
+			"memory_ilp", //
+			"memory_end", //
+			"memory_pid_max");
 
 	/**
 	 * CSV file header format for mean and standard derivation (after simulation).
 	 */
-	private static CSVFormat formatStats = CSVFormat.DEFAULT.withHeader("counter", //
+	private static CSVFormat formatStats = CSVFormat.DEFAULT.withHeader(//
+			"counter", //
 			"time_pm", "time_pm_stddev", //
 			"time_ilp", "time_ilp_stddev", //
 			"time_deploy", "time_deploy_stddev", //
@@ -68,6 +89,8 @@ public class CsvUtil {
 			"average_path_length", "average_path_length_stddev", //
 			"total_communication_cost_a", "total_communication_cost_a_stddev", //
 			"total_communication_cost_b", "total_communication_cost_b_stddev", //
+			"total_communication_cost_c", "total_communication_cost_c_stddev", //
+			"total_communication_cost_d", "total_communication_cost_d_stddev", //
 			"total_communication_objective_c", "total_communication_objective_c_stddev", //
 			"total_communication_objective_d", "total_communication_objective_d_stddev", //
 			"total_taf_communication_cost", "total_taf_communication_cost_stddev", //
@@ -112,16 +135,18 @@ public class CsvUtil {
 		content[9] = String.valueOf(new AveragePathLengthMetric(sNet).getValue());
 		content[10] = String.valueOf(new TotalCommunicationCostMetricA(sNet).getValue());
 		content[11] = String.valueOf(new TotalCommunicationCostMetricB(sNet).getValue());
-		content[12] = String.valueOf(new TotalCommunicationCostObjectiveC(sNet).getValue());
-		content[13] = String.valueOf(new TotalCommunicationCostObjectiveD(sNet).getValue());
-		content[14] = String.valueOf(new TotalTafCommunicationCostMetric(sNet).getValue());
-		content[15] = String.valueOf(new OperatingCostMetric(sNet).getValue());
-		content[16] = String.valueOf(GlobalMetricsManager.getMemory().getValue(0)); // Memory start
+		content[12] = String.valueOf(new TotalCommunicationCostMetricC(sNet).getValue());
+		content[13] = String.valueOf(new TotalCommunicationCostMetricD(sNet).getValue());
+		content[14] = String.valueOf(new TotalCommunicationCostObjectiveC(sNet).getValue());
+		content[15] = String.valueOf(new TotalCommunicationCostObjectiveD(sNet).getValue());
+		content[16] = String.valueOf(new TotalTafCommunicationCostMetric(sNet).getValue());
+		content[17] = String.valueOf(new OperatingCostMetric(sNet).getValue());
+		content[18] = String.valueOf(GlobalMetricsManager.getMemory().getValue(0)); // Memory start
 																					// execute
-		content[17] = String.valueOf(GlobalMetricsManager.getMemory().getValue(1)); // Memory before ILP
-		content[18] = String.valueOf(GlobalMetricsManager.getMemory().getValue(2)); // Memory end
+		content[19] = String.valueOf(GlobalMetricsManager.getMemory().getValue(1)); // Memory before ILP
+		content[20] = String.valueOf(GlobalMetricsManager.getMemory().getValue(2)); // Memory end
 																					// execute
-		content[19] = String.valueOf(GlobalMetricsManager.getMemoryPid()); // Maximum amount of memory
+		content[21] = String.valueOf(GlobalMetricsManager.getMemoryPid()); // Maximum amount of memory
 																			// (RAM) consumed
 		writeCsvLine(csvPath, formatNormal, content);
 	}
@@ -141,14 +166,14 @@ public class CsvUtil {
 			final CSVParser parser = new CSVParser(new FileReader(csvPath), formatNormal);
 			final List<CSVRecord> recs = parser.getRecords();
 			for (int i = 1; i < recs.size(); i++) {
-				final Double[] val = new Double[18];
+				final Double[] val = new Double[22];
 				final CSVRecord rec = recs.get(i);
-				for (int j = 3; j <= 19; j++) {
+				for (int j = 3; j <= 23; j++) {
 					val[j - 3] = Double.valueOf(rec.get(j));
 				}
 
 				// Sum time metrics up
-				val[17] = val[0] // time_pm
+				val[21] = val[0] // time_pm
 						+ val[1] // time_ilp
 						+ val[2] // time_deploy
 						+ val[3]; // time_rest

@@ -14,6 +14,7 @@ import generators.config.OneTierConfig;
 import metrics.embedding.AcceptedVnrMetric;
 import metrics.embedding.AveragePathLengthMetric;
 import metrics.embedding.TotalCommunicationCostMetricA;
+import metrics.embedding.TotalCommunicationCostMetricC;
 import metrics.embedding.TotalCommunicationCostObjectiveC;
 import metrics.embedding.TotalPathCostMetric;
 import metrics.manager.GlobalMetricsManager;
@@ -93,8 +94,10 @@ public class VnePmMdvneAlgorithmExampleFatTree {
 		System.out.println("=> Average path length: " + averagePathLength.getValue());
 		final TotalCommunicationCostMetricA tcca = new TotalCommunicationCostMetricA(sNet);
 		System.out.println("=> Total Communication Cost A: " + tcca.getValue());
-		final TotalCommunicationCostObjectiveC tccc = new TotalCommunicationCostObjectiveC(sNet);
-		System.out.println("=> Total Communication Objective C: " + tccc.getValue());
+		final TotalCommunicationCostMetricC tccc = new TotalCommunicationCostMetricC(sNet);
+		System.out.println("=> Total Communication Metric C: " + tccc.getValue());
+		final TotalCommunicationCostObjectiveC tcoc = new TotalCommunicationCostObjectiveC(sNet);
+		System.out.println("=> Total Communication Objective C: " + tcoc.getValue());
 
 		System.exit(0);
 	}
