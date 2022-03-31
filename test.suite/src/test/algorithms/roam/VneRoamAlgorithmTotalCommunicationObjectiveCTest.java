@@ -23,7 +23,7 @@ import test.algorithms.generic.AAlgorithmMultipleVnsTest;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneRoamAlgorithmTotalCommunicationCostCTest extends AAlgorithmMultipleVnsTest {
+public class VneRoamAlgorithmTotalCommunicationObjectiveCTest extends AAlgorithmMultipleVnsTest {
 
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
