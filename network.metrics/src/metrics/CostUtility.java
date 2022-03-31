@@ -131,7 +131,8 @@ public class CostUtility {
 
 	/**
 	 * Returns the adapted total communication cost for a node to node embedding.
-	 * This one prefers already filled up substrate servers over empty ones.
+	 * (This one is used by the OBJECTIVE.) This one prefers already filled up
+	 * substrate servers over empty ones.
 	 *
 	 * @param virtualElement   Virtual node to embed.
 	 * @param substrateElement Substrate node to embed.
@@ -150,8 +151,27 @@ public class CostUtility {
 	}
 
 	/**
+	 * Returns the adapted total communication cost for substrate server. (This one
+	 * is used by the METRIC.) This one prefers already filled up substrate servers
+	 * over empty ones.
+	 *
+	 * @param substrateElement Substrate node to embed.
+	 * @return Cost for this particular mapping.
+	 */
+	public static double getTotalCommunicationCostMetricNodeC(final SubstrateElement substrateElement) {
+		if (substrateElement instanceof SubstrateServer) {
+			final SubstrateServer ssrv = (SubstrateServer) substrateElement;
+			return 1.0 * ssrv.getResidualCpu() / ssrv.getCpu() + 1.0 * ssrv.getResidualMemory() / ssrv.getMemory()
+					+ 1.0 * ssrv.getResidualStorage() / ssrv.getStorage();
+		}
+
+		return 0;
+	}
+
+	/**
 	 * Returns the adapted total communication cost for a node to node embedding.
-	 * This one prefers empty substrate servers over non-empty ones.
+	 * (This one is used by the OBJECTIVE.) This one prefers empty substrate servers
+	 * over non-empty ones.
 	 *
 	 * @param virtualElement   Virtual node to embed.
 	 * @param substrateElement Substrate node to embed.
@@ -161,6 +181,22 @@ public class CostUtility {
 			final SubstrateElement substrateElement) {
 		if (virtualElement instanceof VirtualServer && substrateElement instanceof SubstrateServer) {
 			return 1.0 / getTotalCommunicationCostObjectiveNodeC(virtualElement, substrateElement);
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Returns the adapted total communication cost for a node to node embedding.
+	 * (This one is used by the METRIC.) This one prefers empty substrate servers
+	 * over non-empty ones.
+	 *
+	 * @param substrateElement Substrate node to embed.
+	 * @return Cost for this particular mapping.
+	 */
+	public static double getTotalCommunicationCostMetricNodeD(final SubstrateElement substrateElement) {
+		if (substrateElement instanceof SubstrateServer) {
+			return 1.0 / getTotalCommunicationCostMetricNodeC(substrateElement);
 		}
 
 		return 0;
