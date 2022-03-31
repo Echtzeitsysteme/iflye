@@ -22,7 +22,7 @@ import test.algorithms.generic.AAlgorithmTest;
 
 /**
  * Test class for the VNE Roam algorithm implementation for minimizing the total
- * communication cost metric C.
+ * communication cost objective C.
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
@@ -40,9 +40,9 @@ public class VneRoamAlgorithmObjectiveTest extends AAlgorithmTest {
 
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		// The algorithm is only able to use the total communication cost C because it
-		// is hard-coded in RSLANG
-		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_C;
+		// The algorithm is only able to use the total communication objective C because
+		// it is hard-coded in RSLANG
+		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
 		algo = VneRoamAlgorithm.prepare(sNet, vNets);
 	}
 

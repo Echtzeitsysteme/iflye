@@ -42,7 +42,7 @@ public class VneRoamAlgorithm extends AbstractAlgorithm {
 	@Override
 	public boolean execute() {
 		// Check if correct objective is used
-		if (AlgorithmConfig.obj != Objective.TOTAL_COMMUNICATION_COST_C) {
+		if (AlgorithmConfig.obj != Objective.TOTAL_COMMUNICATION_OBJECTIVE_C) {
 			throw new UnsupportedOperationException(
 					"The VNE Roam algorithm can only be used with the total communication cost C.");
 		}

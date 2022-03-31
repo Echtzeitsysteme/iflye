@@ -3,6 +3,8 @@ package examples.algorithms;
 import java.util.Set;
 
 import algorithms.AbstractAlgorithm;
+import algorithms.AlgorithmConfig;
+import algorithms.AlgorithmConfig.Objective;
 import algorithms.roam.VneRoamAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
@@ -30,6 +32,7 @@ public class VneRoamAlgorithmExampleSmall {
 		// Setup
 		ModelFacadeConfig.MIN_PATH_LENGTH = 1;
 		ModelFacadeConfig.MAX_PATH_LENGTH = 4;
+		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
 
 		GlobalMetricsManager.startRuntime();
 
@@ -64,13 +67,6 @@ public class VneRoamAlgorithmExampleSmall {
 		// Time measurements
 		System.out.println("=> Elapsed time (total): " + GlobalMetricsManager.getRuntime().getValue() / 1_000_000_000
 				+ " seconds");
-		System.out.println(
-				"=> Elapsed time (PM): " + GlobalMetricsManager.getRuntime().getPmValue() / 1_000_000_000 + " seconds");
-		System.out.println("=> Elapsed time (ILP): " + GlobalMetricsManager.getRuntime().getIlpValue() / 1_000_000_000
-				+ " seconds");
-		System.out.println("=> Elapsed time (rest): " + GlobalMetricsManager.getRuntime().getRestValue() / 1_000_000_000
-				+ " seconds");
-
 		System.exit(0);
 	}
 
