@@ -7,9 +7,9 @@ import metrics.IMetric;
 import model.Link;
 import model.Node;
 import model.SubstrateNetwork;
+import model.SubstrateServer;
 import model.VirtualLink;
 import model.VirtualNetwork;
-import model.VirtualServer;
 
 /**
  * Implementation of the cost function of paper [1] and [2]. In comparison to
@@ -17,6 +17,9 @@ import model.VirtualServer;
  * embedding of servers is defined as increasing function for substrate server
  * filling. This means, that an almost full substrate server is more "expensive"
  * than an empty one.
+ * 
+ * Please notice: This "metric" checks every substrate server (not just the ones
+ * with embeddings on them!).
  *
  * [1] Meng, Xiaoqiao, Vasileios Pappas, and Li Zhang. "Improving the
  * scalability of data center networks with traffic-aware virtual machine
@@ -61,12 +64,12 @@ public class TotalCommunicationCostMetricD implements IMetric {
 				cost += CostUtility.getTotalCommunicationCostLinkBCD(vl, vl.getHost());
 			}
 
-			final List<Node> guestServers = facade.getAllServersOfNetwork(vNet.getName());
+			final List<Node> substrateServers = facade.getAllServersOfNetwork(sNet.getName());
 
-			// Iterate over all virtual servers
-			for (final Node s : guestServers) {
-				final VirtualServer vs = (VirtualServer) s;
-				cost += CostUtility.getTotalCommunicationCostNodeD(vs, vs.getHost());
+			// Iterate over all substrate servers
+			for (final Node s : substrateServers) {
+				final SubstrateServer srv = (SubstrateServer) s;
+				cost += CostUtility.getTotalCommunicationCostMetricNodeD(srv);
 			}
 		}
 

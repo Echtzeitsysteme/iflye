@@ -15,6 +15,7 @@ import metrics.embedding.AcceptedVnrMetric;
 import metrics.embedding.AveragePathLengthMetric;
 import metrics.embedding.TotalCommunicationCostMetricA;
 import metrics.embedding.TotalCommunicationCostMetricC;
+import metrics.embedding.TotalCommunicationCostObjectiveC;
 import metrics.embedding.TotalPathCostMetric;
 import metrics.manager.GlobalMetricsManager;
 import model.SubstrateNetwork;
@@ -94,7 +95,9 @@ public class VnePmMdvneAlgorithmExampleTwoTier {
 		final TotalCommunicationCostMetricA tcca = new TotalCommunicationCostMetricA(sNet);
 		System.out.println("=> Total Communication Cost A: " + tcca.getValue());
 		final TotalCommunicationCostMetricC tccc = new TotalCommunicationCostMetricC(sNet);
-		System.out.println("=> Total Communication Cost C: " + tccc.getValue());
+		System.out.println("=> Total Communication Metric C: " + tccc.getValue());
+		final TotalCommunicationCostObjectiveC tcoc = new TotalCommunicationCostObjectiveC(sNet);
+		System.out.println("=> Total Communication Objective C: " + tcoc.getValue());
 
 		System.exit(0);
 	}
