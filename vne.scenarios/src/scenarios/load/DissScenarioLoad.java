@@ -38,6 +38,8 @@ import metrics.embedding.TotalCommunicationCostMetricA;
 import metrics.embedding.TotalCommunicationCostMetricB;
 import metrics.embedding.TotalCommunicationCostMetricC;
 import metrics.embedding.TotalCommunicationCostMetricD;
+import metrics.embedding.TotalCommunicationCostObjectiveC;
+import metrics.embedding.TotalCommunicationCostObjectiveD;
 import metrics.embedding.TotalPathCostMetric;
 import metrics.embedding.TotalTafCommunicationCostMetric;
 import metrics.manager.GlobalMetricsManager;
@@ -284,10 +286,10 @@ public class DissScenarioLoad {
 			AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_B;
 			break;
 		case "total-comm-c":
-			AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_C;
+			AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
 			break;
 		case "total-comm-d":
-			AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_D;
+			AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_D;
 			break;
 		case "total-taf-comm":
 			AlgorithmConfig.obj = Objective.TOTAL_TAF_COMMUNICATION_COST;
@@ -432,6 +434,10 @@ public class DissScenarioLoad {
 		System.out.println("=> Total communication cost B: " + new TotalCommunicationCostMetricB(sNet).getValue());
 		System.out.println("=> Total communication cost C: " + new TotalCommunicationCostMetricC(sNet).getValue());
 		System.out.println("=> Total communication cost D: " + new TotalCommunicationCostMetricD(sNet).getValue());
+		System.out.println(
+				"=> Total communication objective C: " + new TotalCommunicationCostObjectiveC(sNet).getValue());
+		System.out.println(
+				"=> Total communication objective D: " + new TotalCommunicationCostObjectiveD(sNet).getValue());
 		System.out.println("=> Total TAF communication cost: " + new TotalTafCommunicationCostMetric(sNet).getValue());
 		System.out.println("=> Operation cost: " + new OperatingCostMetric(sNet).getValue());
 
