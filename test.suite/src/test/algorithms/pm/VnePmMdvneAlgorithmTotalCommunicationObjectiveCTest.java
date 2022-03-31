@@ -19,15 +19,15 @@ import test.algorithms.generic.AAlgorithmMultipleVnsTest;
 
 /**
  * Test class for the VNE PM MdVNE algorithm implementation for minimizing the
- * total communication cost metric C.
+ * total communication cost objective C.
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VnePmMdvneAlgorithmTotalCommunicationCostCTest extends AAlgorithmMultipleVnsTest {
+public class VnePmMdvneAlgorithmTotalCommunicationObjectiveCTest extends AAlgorithmMultipleVnsTest {
 
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_C;
+		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
 		algo = VnePmMdvneAlgorithm.prepare(sNet, vNets);
 	}
 

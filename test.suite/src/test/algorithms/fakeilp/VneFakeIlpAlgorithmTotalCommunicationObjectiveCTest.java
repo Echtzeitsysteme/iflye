@@ -20,11 +20,11 @@ import test.algorithms.generic.AAlgorithmMultipleVnsTest;
 
 /**
  * Test class for the VNE fake ILP algorithm (incremental version)
- * implementation for minimizing the total communication cost metric C.
+ * implementation for minimizing the total communication cost objective C.
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneFakeIlpAlgorithmTotalCommunicationCostCTest extends AAlgorithmMultipleVnsTest {
+public class VneFakeIlpAlgorithmTotalCommunicationObjectiveCTest extends AAlgorithmMultipleVnsTest {
 
 	@AfterEach
 	public void resetAlgo() {
@@ -35,7 +35,7 @@ public class VneFakeIlpAlgorithmTotalCommunicationCostCTest extends AAlgorithmMu
 
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_C;
+		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
 		AlgorithmConfig.emb = Embedding.MANUAL;
 		algo = VneFakeIlpAlgorithm.prepare(sNet, vNets);
 	}

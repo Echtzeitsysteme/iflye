@@ -7,19 +7,20 @@ import metrics.IMetric;
 import model.Link;
 import model.Node;
 import model.SubstrateNetwork;
-import model.SubstrateServer;
 import model.VirtualLink;
 import model.VirtualNetwork;
+import model.VirtualServer;
 
 /**
  * Implementation of the cost function of paper [1] and [2]. In comparison to
  * the paper [1], we define the cost of one hop as 1 as stated in [2]. Node
- * embedding of servers is defined as decreasing function for substrate server
- * filling. This means, that an almost full substrate server is "cheaper" than
- * an empty one.
+ * embedding of servers is defined as increasing function for substrate server
+ * filling. This means, that an almost full substrate server is more "expensive"
+ * than an empty one.
  * 
- * Please notice: This "metric" checks every substrate server (not just the ones
- * with embeddings on them!).
+ * Please notice: This "metric" is only an objective function that deals with
+ * embedded virtual resources and their substrate hosts. For a "real" (patched)
+ * version of this, please refer to {@link TotalCommunicationCostMetricD}.
  *
  * [1] Meng, Xiaoqiao, Vasileios Pappas, and Li Zhang. "Improving the
  * scalability of data center networks with traffic-aware virtual machine
@@ -39,7 +40,7 @@ import model.VirtualNetwork;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class TotalCommunicationCostMetricC implements IMetric {
+public class TotalCommunicationCostObjectiveD implements IMetric {
 
 	/**
 	 * Calculated cost.
@@ -51,7 +52,7 @@ public class TotalCommunicationCostMetricC implements IMetric {
 	 *
 	 * @param sNet Substrate network to calculate the metric for.
 	 */
-	public TotalCommunicationCostMetricC(final SubstrateNetwork sNet) {
+	public TotalCommunicationCostObjectiveD(final SubstrateNetwork sNet) {
 		double cost = 0;
 
 		// Iterate over all virtual networks that are embedded on the substrate network
@@ -64,12 +65,12 @@ public class TotalCommunicationCostMetricC implements IMetric {
 				cost += CostUtility.getTotalCommunicationCostLinkBCD(vl, vl.getHost());
 			}
 
-			final List<Node> substrateServers = facade.getAllServersOfNetwork(sNet.getName());
+			final List<Node> guestServers = facade.getAllServersOfNetwork(vNet.getName());
 
-			// Iterate over all substrate servers
-			for (final Node s : substrateServers) {
-				final SubstrateServer srv = (SubstrateServer) s;
-				cost += CostUtility.getTotalCommunicationCostMetricNodeC(srv);
+			// Iterate over all virtual servers
+			for (final Node s : guestServers) {
+				final VirtualServer vs = (VirtualServer) s;
+				cost += CostUtility.getTotalCommunicationCostObjectiveNodeD(vs, vs.getHost());
 			}
 		}
 
