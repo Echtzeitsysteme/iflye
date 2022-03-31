@@ -6,6 +6,8 @@ import java.util.Set;
 import org.emoflon.roam.roamslang.examples.mdvne.MdvneRoamIflyeAdapter;
 
 import algorithms.AbstractAlgorithm;
+import algorithms.AlgorithmConfig;
+import algorithms.AlgorithmConfig.Objective;
 import facade.ModelFacade;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
@@ -39,6 +41,12 @@ public class VneRoamAlgorithm extends AbstractAlgorithm {
 
 	@Override
 	public boolean execute() {
+		// Check if correct objective is used
+		if (AlgorithmConfig.obj != Objective.TOTAL_COMMUNICATION_COST_C) {
+			throw new UnsupportedOperationException(
+					"The VNE Roam algorithm can only be used with the total communication cost C.");
+		}
+
 		// TODO: Time measurement
 		ModelFacade.getInstance().persistModel(MODEL_FILE_PATH);
 		final boolean roamSuccess = MdvneRoamIflyeAdapter.execute(MODEL_FILE_PATH);
