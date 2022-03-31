@@ -23,6 +23,12 @@ import model.VirtualServer;
 public class CostUtility {
 
 	/**
+	 * Private constructor to forbid instantiation.
+	 */
+	private CostUtility() {
+	}
+
+	/**
 	 * Returns the total path cost for a link to path/server embedding.
 	 *
 	 * Implementation of the cost function of paper [1].
