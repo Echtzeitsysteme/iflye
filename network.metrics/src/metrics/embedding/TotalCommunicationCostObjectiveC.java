@@ -14,9 +14,13 @@ import model.VirtualServer;
 /**
  * Implementation of the cost function of paper [1] and [2]. In comparison to
  * the paper [1], we define the cost of one hop as 1 as stated in [2]. Node
- * embedding of servers is defined as increasing function for substrate server
- * filling. This means, that an almost full substrate server is more "expensive"
- * than an empty one.
+ * embedding of servers is defined as decreasing function for substrate server
+ * filling. This means, that an almost full substrate server is "cheaper" than
+ * an empty one.
+ * 
+ * Please notice: This "metric" is only an objective function that deals with
+ * embedded virtual resources and their substrate hosts. For a "real" (patched)
+ * version of this, please refer to {@link TotalCommunicationCostMetricC}.
  *
  * [1] Meng, Xiaoqiao, Vasileios Pappas, and Li Zhang. "Improving the
  * scalability of data center networks with traffic-aware virtual machine
@@ -36,7 +40,7 @@ import model.VirtualServer;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class TotalCommunicationCostMetricD implements IMetric {
+public class TotalCommunicationCostObjectiveC implements IMetric {
 
 	/**
 	 * Calculated cost.
@@ -48,7 +52,7 @@ public class TotalCommunicationCostMetricD implements IMetric {
 	 *
 	 * @param sNet Substrate network to calculate the metric for.
 	 */
-	public TotalCommunicationCostMetricD(final SubstrateNetwork sNet) {
+	public TotalCommunicationCostObjectiveC(final SubstrateNetwork sNet) {
 		double cost = 0;
 
 		// Iterate over all virtual networks that are embedded on the substrate network
@@ -66,7 +70,7 @@ public class TotalCommunicationCostMetricD implements IMetric {
 			// Iterate over all virtual servers
 			for (final Node s : guestServers) {
 				final VirtualServer vs = (VirtualServer) s;
-				cost += CostUtility.getTotalCommunicationCostNodeD(vs, vs.getHost());
+				cost += CostUtility.getTotalCommunicationCostObjectiveNodeC(vs, vs.getHost());
 			}
 		}
 

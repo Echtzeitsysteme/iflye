@@ -21,8 +21,8 @@ import metrics.embedding.AveragePathLengthMetric;
 import metrics.embedding.OperatingCostMetric;
 import metrics.embedding.TotalCommunicationCostMetricA;
 import metrics.embedding.TotalCommunicationCostMetricB;
-import metrics.embedding.TotalCommunicationCostMetricC;
-import metrics.embedding.TotalCommunicationCostMetricD;
+import metrics.embedding.TotalCommunicationCostObjectiveC;
+import metrics.embedding.TotalCommunicationCostObjectiveD;
 import metrics.embedding.TotalPathCostMetric;
 import metrics.embedding.TotalTafCommunicationCostMetric;
 import metrics.manager.GlobalMetricsManager;
@@ -51,8 +51,8 @@ public class CsvUtil {
 	 */
 	private static CSVFormat formatNormal = CSVFormat.DEFAULT.withHeader("counter", "timestamp", "lastVNR", "time_pm",
 			"time_ilp", "time_deploy", "time_rest", "accepted_vnrs", "total_path_cost", "average_path_length",
-			"total_communication_cost_a", "total_communication_cost_b", "total_communication_cost_c",
-			"total_communication_cost_d", "total_taf_communication_cost", "operation_cost", "memory_start",
+			"total_communication_cost_a", "total_communication_cost_b", "total_communication_objective_c",
+			"total_communication_objective_d", "total_taf_communication_cost", "operation_cost", "memory_start",
 			"memory_ilp", "memory_end", "memory_pid_max");
 
 	/**
@@ -68,8 +68,8 @@ public class CsvUtil {
 			"average_path_length", "average_path_length_stddev", //
 			"total_communication_cost_a", "total_communication_cost_a_stddev", //
 			"total_communication_cost_b", "total_communication_cost_b_stddev", //
-			"total_communication_cost_c", "total_communication_cost_c_stddev", //
-			"total_communication_cost_d", "total_communication_cost_d_stddev", //
+			"total_communication_objective_c", "total_communication_objective_c_stddev", //
+			"total_communication_objective_d", "total_communication_objective_d_stddev", //
 			"total_taf_communication_cost", "total_taf_communication_cost_stddev", //
 			"operation_cost", "operation_cost_stddev", //
 			"memory_start", "memory_start_stddev", //
@@ -112,8 +112,8 @@ public class CsvUtil {
 		content[9] = String.valueOf(new AveragePathLengthMetric(sNet).getValue());
 		content[10] = String.valueOf(new TotalCommunicationCostMetricA(sNet).getValue());
 		content[11] = String.valueOf(new TotalCommunicationCostMetricB(sNet).getValue());
-		content[12] = String.valueOf(new TotalCommunicationCostMetricC(sNet).getValue());
-		content[13] = String.valueOf(new TotalCommunicationCostMetricD(sNet).getValue());
+		content[12] = String.valueOf(new TotalCommunicationCostObjectiveC(sNet).getValue());
+		content[13] = String.valueOf(new TotalCommunicationCostObjectiveD(sNet).getValue());
 		content[14] = String.valueOf(new TotalTafCommunicationCostMetric(sNet).getValue());
 		content[15] = String.valueOf(new OperatingCostMetric(sNet).getValue());
 		content[16] = String.valueOf(GlobalMetricsManager.getMemory().getValue(0)); // Memory start

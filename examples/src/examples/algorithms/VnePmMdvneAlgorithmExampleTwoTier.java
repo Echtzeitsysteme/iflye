@@ -14,7 +14,7 @@ import generators.config.TwoTierConfig;
 import metrics.embedding.AcceptedVnrMetric;
 import metrics.embedding.AveragePathLengthMetric;
 import metrics.embedding.TotalCommunicationCostMetricA;
-import metrics.embedding.TotalCommunicationCostMetricC;
+import metrics.embedding.TotalCommunicationCostObjectiveC;
 import metrics.embedding.TotalPathCostMetric;
 import metrics.manager.GlobalMetricsManager;
 import model.SubstrateNetwork;
@@ -93,8 +93,8 @@ public class VnePmMdvneAlgorithmExampleTwoTier {
 		System.out.println("=> Average path length: " + averagePathLength.getValue());
 		final TotalCommunicationCostMetricA tcca = new TotalCommunicationCostMetricA(sNet);
 		System.out.println("=> Total Communication Cost A: " + tcca.getValue());
-		final TotalCommunicationCostMetricC tccc = new TotalCommunicationCostMetricC(sNet);
-		System.out.println("=> Total Communication Cost C: " + tccc.getValue());
+		final TotalCommunicationCostObjectiveC tccc = new TotalCommunicationCostObjectiveC(sNet);
+		System.out.println("=> Total Communication Objective C: " + tccc.getValue());
 
 		System.exit(0);
 	}

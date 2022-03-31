@@ -137,7 +137,7 @@ public class CostUtility {
 	 * @param substrateElement Substrate node to embed.
 	 * @return Cost for this particular mapping.
 	 */
-	public static double getTotalCommunicationCostNodeC(final VirtualElement virtualElement,
+	public static double getTotalCommunicationCostObjectiveNodeC(final VirtualElement virtualElement,
 			final SubstrateElement substrateElement) {
 		if (virtualElement instanceof VirtualServer && substrateElement instanceof SubstrateServer) {
 			// final VirtualServer vsrv = (VirtualServer) virtualElement;
@@ -157,10 +157,10 @@ public class CostUtility {
 	 * @param substrateElement Substrate node to embed.
 	 * @return Cost for this particular mapping.
 	 */
-	public static double getTotalCommunicationCostNodeD(final VirtualElement virtualElement,
+	public static double getTotalCommunicationCostObjectiveNodeD(final VirtualElement virtualElement,
 			final SubstrateElement substrateElement) {
 		if (virtualElement instanceof VirtualServer && substrateElement instanceof SubstrateServer) {
-			return 1.0 / getTotalCommunicationCostNodeC(virtualElement, substrateElement);
+			return 1.0 / getTotalCommunicationCostObjectiveNodeC(virtualElement, substrateElement);
 		}
 
 		return 0;

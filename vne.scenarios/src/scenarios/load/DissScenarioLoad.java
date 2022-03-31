@@ -36,8 +36,8 @@ import metrics.embedding.AveragePathLengthMetric;
 import metrics.embedding.OperatingCostMetric;
 import metrics.embedding.TotalCommunicationCostMetricA;
 import metrics.embedding.TotalCommunicationCostMetricB;
-import metrics.embedding.TotalCommunicationCostMetricC;
-import metrics.embedding.TotalCommunicationCostMetricD;
+import metrics.embedding.TotalCommunicationCostObjectiveC;
+import metrics.embedding.TotalCommunicationCostObjectiveD;
 import metrics.embedding.TotalPathCostMetric;
 import metrics.embedding.TotalTafCommunicationCostMetric;
 import metrics.manager.GlobalMetricsManager;
@@ -430,8 +430,10 @@ public class DissScenarioLoad {
 		System.out.println("=> Average path length: " + new AveragePathLengthMetric(sNet).getValue());
 		System.out.println("=> Total communication cost A: " + new TotalCommunicationCostMetricA(sNet).getValue());
 		System.out.println("=> Total communication cost B: " + new TotalCommunicationCostMetricB(sNet).getValue());
-		System.out.println("=> Total communication cost C: " + new TotalCommunicationCostMetricC(sNet).getValue());
-		System.out.println("=> Total communication cost D: " + new TotalCommunicationCostMetricD(sNet).getValue());
+		System.out.println(
+				"=> Total communication objective C: " + new TotalCommunicationCostObjectiveC(sNet).getValue());
+		System.out.println(
+				"=> Total communication objective D: " + new TotalCommunicationCostObjectiveD(sNet).getValue());
 		System.out.println("=> Total TAF communication cost: " + new TotalTafCommunicationCostMetric(sNet).getValue());
 		System.out.println("=> Operation cost: " + new OperatingCostMetric(sNet).getValue());
 

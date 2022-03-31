@@ -767,9 +767,9 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 		case TOTAL_COMMUNICATION_COST_B:
 			return CostUtility.getTotalCommunicationCostNodeAB();
 		case TOTAL_COMMUNICATION_COST_C:
-			return CostUtility.getTotalCommunicationCostNodeC(virt, sub);
+			return CostUtility.getTotalCommunicationCostObjectiveNodeC(virt, sub);
 		case TOTAL_COMMUNICATION_COST_D:
-			return CostUtility.getTotalCommunicationCostNodeD(virt, sub);
+			return CostUtility.getTotalCommunicationCostObjectiveNodeD(virt, sub);
 		default:
 			throw new UnsupportedOperationException();
 		}

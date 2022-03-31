@@ -4,36 +4,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import metrics.embedding.TotalCommunicationCostMetricD;
+import metrics.embedding.TotalCommunicationCostObjectiveC;
 import model.SubstrateNetwork;
 
 /**
  * Test class for the metric of total communication cost as implemented in
- * {@link TotalCommunicationCostMetricD}.
+ * {@link TotalCommunicationCostObjectiveC}.
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class TotalCommunicationCostMetricDTest extends ATotalCommunicationCostMetricTest {
+public class TotalCommunicationCostObjectiveCTest extends ATotalCommunicationCostMetricTest {
 
 	@Override
 	protected void setMetric(final SubstrateNetwork sNet) {
-		metric = new TotalCommunicationCostMetricD(sNet);
+		metric = new TotalCommunicationCostObjectiveC(sNet);
 	}
 
 	/*
 	 * Positive tests
 	 */
-
-	@Override
-	@Test
-	public void testEmbeddingSameHost() {
-		createSubstrateNetwork();
-		setupEmbeddingSameHost();
-		final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-		setMetric(sNet);
-
-		assertEquals(Double.POSITIVE_INFINITY, metric.getValue());
-	}
 
 	@Override
 	@Test
@@ -43,7 +32,7 @@ public class TotalCommunicationCostMetricDTest extends ATotalCommunicationCostMe
 		final SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
 		setMetric(sNet);
 
-		assertEquals(13.333, metric.getValue(), 0.01);
+		assertEquals(2 * 2 * 3 + 3, metric.getValue());
 	}
 
 }
