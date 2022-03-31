@@ -588,19 +588,10 @@ public class ModelFacade {
 
 		// Restore other look-up data structures
 		this.links.clear();
-		this.paths.clear();
 		for (final Network n : root.getNetworks()) {
 			// Links
 			for (final Link l : n.getLinks()) {
 				this.links.put(l.getName(), l);
-			}
-
-			// Paths
-			if (n instanceof SubstrateNetwork) {
-				final SubstrateNetwork sNet = (SubstrateNetwork) n;
-				for (final SubstratePath p : sNet.getPaths()) {
-					this.paths.put(p.getName(), p);
-				}
 			}
 		}
 	}
