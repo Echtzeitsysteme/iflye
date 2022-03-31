@@ -14,16 +14,16 @@ import model.VirtualNetwork;
 
 /**
  * Test class for the VNE fake ILP algorithm (batch version) implementation for
- * minimizing the total communication cost metric C.
+ * minimizing the total communication cost objective C.
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneFakeIlpBatchAlgorithmTotalCommunicationCostCTest
-		extends VneFakeIlpAlgorithmTotalCommunicationCostCTest {
+public class VneFakeIlpBatchAlgorithmTotalCommunicationObjectiveCTest
+		extends VneFakeIlpAlgorithmTotalCommunicationObjectiveCTest {
 
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_C;
+		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
 		AlgorithmConfig.emb = Embedding.MANUAL;
 		algo = VneFakeIlpBatchAlgorithm.prepare(sNet, vNets);
 	}

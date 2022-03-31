@@ -21,8 +21,8 @@ public class AlgorithmConfig {
 		TOTAL_PATH_COST, // [1]
 		TOTAL_COMMUNICATION_COST_A, // [2]
 		TOTAL_COMMUNICATION_COST_B, // [3,4] (One hop = 1 cost, no node costs)
-		TOTAL_COMMUNICATION_COST_C, // [5] (One hop = 1 cost, with node costs)
-		TOTAL_COMMUNICATION_COST_D, // [6] (One hop = 1 cost, with node costs)
+		TOTAL_COMMUNICATION_OBJECTIVE_C, // [5] (One hop = 1 cost, with node costs)
+		TOTAL_COMMUNICATION_OBJECTIVE_D, // [6] (One hop = 1 cost, with node costs)
 		TOTAL_TAF_COMMUNICATION_COST; // [7]
 
 		/*
@@ -80,7 +80,7 @@ public class AlgorithmConfig {
 	 * Objective goal for the algorithms {@link VneIlpPathAlgorithm} and
 	 * {@link VnePmMdvneAlgorithm}.
 	 */
-	public static Objective obj = Objective.TOTAL_COMMUNICATION_COST_C;
+	public static Objective obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
 
 	/**
 	 * Embedding mechanism for the {@link VnePmMdvneAlgorithm}
