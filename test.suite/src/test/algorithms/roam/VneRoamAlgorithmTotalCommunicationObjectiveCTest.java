@@ -1,5 +1,6 @@
 package test.algorithms.roam;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -142,8 +143,6 @@ public class VneRoamAlgorithmTotalCommunicationObjectiveCTest extends AAlgorithm
 	/**
 	 * Tests if the algorithm prefers using already filled up substrate servers.
 	 */
-	// TODO: Activate if VNE Roam algorithm is able to embed in multiple steps.
-	@Disabled
 	@Test
 	public void testPreferenceOfFilledServers() {
 		// Setup
@@ -182,6 +181,266 @@ public class VneRoamAlgorithmTotalCommunicationObjectiveCTest extends AAlgorithm
 				assertEquals(ref, vsrv.getHost());
 			}
 		});
+	}
+
+	@Test
+	public void testMultipleVnsAfterEachOtherMedium() {
+		// Setup
+		oneTierSetupThreeServers("sub", 4);
+		oneTierSetupTwoServers("virt", 1);
+		facade.createAllPathsForNetwork("sub");
+
+		SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+		VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
+
+		initAlgo(sNet, Set.of(vNet));
+		assertTrue(algo.execute());
+		assertDoesNotThrow(facade::validateModel);
+
+		// Actual test starts here
+		facade.addNetworkToRoot("virt2", true);
+		oneTierSetupTwoServers("virt2", 1);
+		VirtualNetwork vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
+
+		initAlgo(sNet, Set.of(vNet2));
+		assertTrue(algo.execute());
+
+		// Get objects from facade
+		sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+		vNet = (VirtualNetwork) facade.getNetworkById("virt");
+		vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
+
+		// Test expects that all virtual networks are embedded
+		assertNotNull(vNet.getHost());
+		assertNotNull(vNet2.getHost());
+		assertEquals(sNet, vNet.getHost());
+		assertEquals(sNet, vNet2.getHost());
+		assertDoesNotThrow(facade::validateModel);
+	}
+
+	// TODO: Flaky?
+	@Test
+	public void testMultipleVnsAfterEachOtherOneTierLarge() {
+		// Setup
+		oneTierSetupThreeServers("sub", 10);
+		facade.createAllPathsForNetwork("sub");
+
+		for (int i = 0; i < 15; i++) {
+			facade.addNetworkToRoot("virt" + i, true);
+			oneTierSetupTwoServers("virt" + i, 1);
+			SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+			VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt" + i);
+
+			initAlgo(sNet, Set.of(vNet));
+			assertTrue(algo.execute());
+
+			// Testing
+			sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+			vNet = (VirtualNetwork) facade.getNetworkById("virt" + i);
+			assertNotNull(vNet.getHost());
+			assertEquals(sNet, vNet.getHost());
+			assertEquals(i + 1, sNet.getGuests().size());
+			assertDoesNotThrow(facade::validateModel);
+		}
+	}
+
+	@Test
+	public void testMultipleVnsAfterEachOtherTwoTierLarge() {
+		// Setup
+		twoTierSetupFourServers("sub", 8);
+		facade.createAllPathsForNetwork("sub");
+
+		for (int i = 0; i < 15; i++) {
+			facade.addNetworkToRoot("virt" + i, true);
+			oneTierSetupTwoServers("virt" + i, 1);
+			SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+			VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt" + i);
+
+			initAlgo(sNet, Set.of(vNet));
+			assertTrue(algo.execute());
+
+			// Testing
+			sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+			vNet = (VirtualNetwork) facade.getNetworkById("virt" + i);
+			assertNotNull(vNet.getHost());
+			assertEquals(sNet, vNet.getHost());
+			assertEquals(i + 1, sNet.getGuests().size());
+			assertDoesNotThrow(facade::validateModel);
+		}
+	}
+
+	// TODO: Flaky?
+	@Test
+	public void testMultipleVnsAfterEachOtherOntoOneServer() {
+		// Setup
+		facade.addServerToNetwork("sub" + "_srv1", "sub", 10, 10, 10, 1);
+		oneTierSetupTwoServers("virt", 1);
+		facade.createAllPathsForNetwork("sub");
+
+		SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+		VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
+
+		initAlgo(sNet, Set.of(vNet));
+		assertTrue(algo.execute());
+		assertDoesNotThrow(facade::validateModel);
+
+		// Actual test starts here
+		facade.addNetworkToRoot("virt2", true);
+		oneTierSetupTwoServers("virt2", 1);
+		VirtualNetwork vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
+
+		initAlgo(sNet, Set.of(vNet2));
+		assertTrue(algo.execute());
+
+		// Get objects from facade
+		sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+		vNet = (VirtualNetwork) facade.getNetworkById("virt");
+		vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
+
+		// Test expects that all virtual networks are embedded
+		assertNotNull(vNet.getHost());
+		assertNotNull(vNet2.getHost());
+		assertEquals(sNet, vNet.getHost());
+		assertEquals(sNet, vNet2.getHost());
+		assertDoesNotThrow(facade::validateModel);
+	}
+
+	@Test
+	public void testVnAfterServer() {
+		// Setup
+		oneTierSetupThreeServers("sub", 4);
+		facade.addServerToNetwork("virt" + "_srv1", "virt", 1, 1, 1, 1);
+		facade.createAllPathsForNetwork("sub");
+
+		SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+		VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
+
+		initAlgo(sNet, Set.of(vNet));
+		assertTrue(algo.execute());
+		assertDoesNotThrow(facade::validateModel);
+
+		// Actual test starts here
+		facade.addNetworkToRoot("virt2", true);
+		oneTierSetupTwoServers("virt2", 1);
+		VirtualNetwork vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
+
+		initAlgo(sNet, Set.of(vNet2));
+		assertTrue(algo.execute());
+
+		// Get objects from facade
+		sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+		vNet = (VirtualNetwork) facade.getNetworkById("virt");
+		vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
+
+		// Test expects that all virtual networks are embedded
+		assertNotNull(vNet.getHost());
+		assertNotNull(vNet2.getHost());
+		assertEquals(sNet, vNet.getHost());
+		assertEquals(sNet, vNet2.getHost());
+		assertDoesNotThrow(facade::validateModel);
+	}
+
+	@Test
+	public void testVnAfterSwitch() {
+		// Setup
+		oneTierSetupThreeServers("sub", 4);
+		facade.addSwitchToNetwork("virt" + "_sw1", "virt", 0);
+		facade.createAllPathsForNetwork("sub");
+
+		SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+		VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
+
+		initAlgo(sNet, Set.of(vNet));
+		assertTrue(algo.execute());
+		assertDoesNotThrow(facade::validateModel);
+
+		// Actual test starts here
+		facade.addNetworkToRoot("virt2", true);
+		oneTierSetupTwoServers("virt2", 1);
+		VirtualNetwork vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
+
+		initAlgo(sNet, Set.of(vNet2));
+		assertTrue(algo.execute());
+
+		// Get objects from facade
+		sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+		vNet = (VirtualNetwork) facade.getNetworkById("virt");
+		vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
+
+		// Test expects that all virtual networks are embedded
+		assertNotNull(vNet.getHost());
+		assertNotNull(vNet2.getHost());
+		assertEquals(sNet, vNet.getHost());
+		assertEquals(sNet, vNet2.getHost());
+		assertDoesNotThrow(facade::validateModel);
+	}
+
+	@Test
+	public void testMultipleServersAfterEachOtherSimple() {
+		// Setup
+		facade.addServerToNetwork("sub" + "_srv1", "sub", 2, 2, 2, 1);
+		facade.addServerToNetwork("virt" + "_srv1", "virt", 1, 1, 1, 1);
+
+		SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+		VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
+
+		initAlgo(sNet, Set.of(vNet));
+		assertTrue(algo.execute());
+		assertDoesNotThrow(facade::validateModel);
+
+		// Actual test starts here
+		facade.addNetworkToRoot("virt2", true);
+		facade.addServerToNetwork("virt2" + "_srv1", "virt", 1, 1, 1, 1);
+		VirtualNetwork vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
+
+		initAlgo(sNet, Set.of(vNet2));
+		assertTrue(algo.execute());
+
+		// Get objects from facade
+		sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+		vNet = (VirtualNetwork) facade.getNetworkById("virt");
+		vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
+
+		// Test expects that all virtual networks are embedded
+		assertNotNull(vNet.getHost());
+		assertNotNull(vNet2.getHost());
+		assertEquals(sNet, vNet.getHost());
+		assertEquals(sNet, vNet2.getHost());
+		assertDoesNotThrow(facade::validateModel);
+	}
+
+	@Test
+	public void testMultipleSwitchesAfterEachOtherSimple() {
+		// Setup
+		facade.addSwitchToNetwork("sub" + "sw1", "sub", 0);
+		facade.addSwitchToNetwork("virt" + "_sw1", "virt", 0);
+
+		SubstrateNetwork sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+		VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById("virt");
+
+		initAlgo(sNet, Set.of(vNet));
+		assertTrue(algo.execute());
+		assertDoesNotThrow(facade::validateModel);
+
+		// Actual test starts here
+		facade.addNetworkToRoot("virt2", true);
+		facade.addSwitchToNetwork("virt2" + "_sw1", "virt", 0);
+		VirtualNetwork vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
+
+		initAlgo(sNet, Set.of(vNet2));
+		assertTrue(algo.execute());
+
+		// Get objects from facade
+		sNet = (SubstrateNetwork) facade.getNetworkById("sub");
+		vNet = (VirtualNetwork) facade.getNetworkById("virt");
+		vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
+
+		// Test expects that all virtual networks are embedded
+		assertNotNull(vNet.getHost());
+		assertNotNull(vNet2.getHost());
+		assertEquals(sNet, vNet.getHost());
+		assertEquals(sNet, vNet2.getHost());
+		assertDoesNotThrow(facade::validateModel);
 	}
 
 }

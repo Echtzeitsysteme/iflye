@@ -48,6 +48,7 @@ public class VneRoamAlgorithmObjectiveTest extends AAlgorithmTest {
 
 	@AfterEach
 	public void resetAlgo() {
+		facade.resetAll();
 		((VneRoamAlgorithm) algo).dispose();
 	}
 
@@ -89,6 +90,7 @@ public class VneRoamAlgorithmObjectiveTest extends AAlgorithmTest {
 		embedAndCheckCostValue(120 - 3);
 	}
 
+	// TODO: Flaky?
 	@Test
 	public void testAllOnOneRackLarge() {
 		sNet = setUpSubNet(10, 4);
