@@ -33,6 +33,11 @@ public class MemoryPidMetric implements IMetric {
 	 * Creation time is equal to measurement time.
 	 */
 	public MemoryPidMetric() {
+		// If on windows, skip this metric because it is not supported
+		if (System.getProperty("os.name").toLowerCase().contains("win")) {
+			this.memory = -1;
+			return;
+		}
 		final File file = new File("/proc/" + getPid() + "/status");
 		final List<String> lines = Unix4j.grep("VmHWM", file).toStringList();
 		final String memComplex = lines.get(0);
