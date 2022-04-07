@@ -26,6 +26,7 @@ import algorithms.pm.VnePmMdvneAlgorithmPipelineThreeStagesB;
 import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesRackA;
 import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesRackB;
 import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesVnet;
+import algorithms.roam.VneRoamAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import ilp.wrapper.config.IlpSolverConfig;
@@ -157,25 +158,26 @@ public class DissScenarioLoad {
 	 * <ol>
 	 * <li>#0: Algorithm "pm", "pm-migration", "pm-pipeline2-vnet",
 	 * "pm-pipeline2-racka", "pm-pipeline2-rackb", "pm-pipeline3a", "pm-pipeline3b",
-	 * "ilp", "ilp-batch" or "taf"</li>
+	 * "ilp", "ilp-batch", "roam" or "taf" (required)</li>
 	 * <li>#1: Objective "total-path", "total-comm-a", "total-comm-b",
-	 * "total-comm-c", "total-comm-d", "total-taf-comm"</li>
+	 * "total-obj-c", "total-obj-d", "total-taf-comm" (required)</li>
 	 * <li>#2: Embedding "emoflon", "emoflon_wo_update" or "manual" [only relevant
-	 * for VNE PM algorithm]
-	 * <li>#3: Maximum path length: int or "auto"</li>
+	 * for VNE PM algorithm] (optional)
+	 * <li>#3: Maximum path length: int or "auto" (optional)</li>
 	 * <li>#4: Substrate network file to load, e.g.
-	 * "resources/two-tier-4-pods/snet.json"</li>
-	 * <li>#5: Virtual network(s) file to load, e.g.
-	 * "resources/two-tier-4-pods/vnets.json"</li>
-	 * <li>#6: Number of migration tries [only relevant for VNE PM algorithm]</li>
-	 * <li>#7: K fastest paths between two nodes</li>
-	 * <li>#8: CSV metric file path</li>
-	 * <li>#9: ILP solver timeout value</li>
-	 * <li>#10: ILP solver random seed value</li>
-	 * <li>#11: ILP solver optimality tolerance</li>
-	 * <li>#12: ILP solver objective scaling</li>
-	 * <li>#13: Memory measurement enabled</li>
-	 * <li>#14: ILP solver objective logarithm</li>
+	 * "resources/two-tier-4-pods/snet.json" (required)</li>
+	 * <li>#5: Virtual network(s) file to load, e.g. "resources/40-vnets/vnets.json"
+	 * (required)</li>
+	 * <li>#6: Number of migration tries [only relevant for VNE PM algorithm]
+	 * (optional)</li>
+	 * <li>#7: K fastest paths between two nodes (optional)</li>
+	 * <li>#8: CSV metric file path (optional)</li>
+	 * <li>#9: ILP solver timeout value (optional)</li>
+	 * <li>#10: ILP solver random seed value (optional)</li>
+	 * <li>#11: ILP solver optimality tolerance (optional)</li>
+	 * <li>#12: ILP solver objective scaling (optional)</li>
+	 * <li>#13: Memory measurement enabled (optional)</li>
+	 * <li>#14: ILP solver objective logarithm (optional)</li>
 	 * </ol>
 	 *
 	 * @param args Arguments to parse.
@@ -253,6 +255,7 @@ public class DissScenarioLoad {
 		memEnabled.setRequired(false);
 		options.addOption(memEnabled);
 
+		// ILP solver logarithm function
 		final Option ilpObjLog = new Option("x", "ilpobjlog", false, "ILP solver objective logarithm");
 		ilpObjLog.setRequired(false);
 		options.addOption(ilpObjLog);
@@ -285,10 +288,10 @@ public class DissScenarioLoad {
 		case "total-comm-b":
 			AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_B;
 			break;
-		case "total-comm-c":
+		case "total-obj-c":
 			AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
 			break;
-		case "total-comm-d":
+		case "total-obj-d":
 			AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_D;
 			break;
 		case "total-taf-comm":
@@ -402,6 +405,8 @@ public class DissScenarioLoad {
 			return VneFakeIlpAlgorithm.prepare(sNet, vNets);
 		case "ilp-batch":
 			return VneFakeIlpBatchAlgorithm.prepare(sNet, vNets);
+		case "roam":
+			return VneRoamAlgorithm.prepare(sNet, vNets);
 		case "taf":
 			ModelFacadeConfig.IGNORE_BW = true;
 			return new TafAlgorithm(sNet, vNets);
