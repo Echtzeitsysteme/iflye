@@ -126,6 +126,9 @@ public class DissScenarioLoad {
 			GlobalMetricsManager.stopRuntime();
 
 			// Save metrics to CSV file
+			// Reload substrate network from model facade (needed for Roam-based
+			// algorithms.)
+			sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNet.getName());
 			CsvUtil.appendCsvLine(vNet.getName(), csvPath, sNet);
 			GlobalMetricsManager.resetRuntime();
 			GlobalMetricsManager.resetMemory();
