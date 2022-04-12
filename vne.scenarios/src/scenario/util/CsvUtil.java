@@ -174,14 +174,14 @@ public class CsvUtil {
 			final CSVParser parser = new CSVParser(new FileReader(csvPath), formatNormal);
 			final List<CSVRecord> recs = parser.getRecords();
 			for (int i = 1; i < recs.size(); i++) {
-				final Double[] val = new Double[22];
+				final Double[] val = new Double[20];
 				final CSVRecord rec = recs.get(i);
-				for (int j = 3; j <= 23; j++) {
+				for (int j = 3; j <= 21; j++) {
 					val[j - 3] = Double.valueOf(rec.get(j));
 				}
 
 				// Sum time metrics up
-				val[21] = val[0] // time_pm
+				val[19] = val[0] // time_pm
 						+ val[1] // time_ilp
 						+ val[2] // time_deploy
 						+ val[3]; // time_rest
