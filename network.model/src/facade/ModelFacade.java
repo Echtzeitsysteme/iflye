@@ -1,6 +1,5 @@
 package facade;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -958,23 +957,14 @@ public class ModelFacade {
 	 * @param path File path as string.
 	 */
 	public void persistModel(final String path) {
-		// Workaround: Create file if it does not exist
-		// TODO: Remove this when bug in SmartEMF implementation is fixed
-		// See: https://github.com/eMoflon/emoflon-core/issues/136
-		final File f = new File(path);
-		if (!f.exists() && !f.isDirectory()) {
-			try {
-				f.createNewFile();
-			} catch (final IOException e) {
-				e.printStackTrace();
-			}
-		}
+		// Workaround: Always use absolute path
+		final URI absPath = URI.createFileURI(System.getProperty("user.dir") + "/" + path);
 
 		// Create new model for saving
 		final ResourceSet rs = new ResourceSetImpl();
-		rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi",
-				new SmartEMFResourceFactoryImpl(System.getenv("WORKSPACE")));
-		final Resource r = rs.createResource(URI.createFileURI(path));
+		rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new SmartEMFResourceFactoryImpl(null));
+		// ^null is okay if all paths are absolute
+		final Resource r = rs.createResource(absPath);
 		// Fetch model contents from eMoflon
 		r.getContents().add(root);
 		try {
@@ -998,11 +988,12 @@ public class ModelFacade {
 	 */
 	public void loadModel(final String path) {
 		checkStringValid(path);
+		final URI absPath = URI.createFileURI(System.getProperty("user.dir") + "/" + path);
 
 		final ResourceSet rs = new ResourceSetImpl();
-		rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi",
-				new SmartEMFResourceFactoryImpl(System.getenv("WORKSPACE")));
-		final Resource res = rs.getResource(URI.createFileURI(path), true);
+		rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new SmartEMFResourceFactoryImpl(null));
+		// ^null is okay if all paths are absolute
+		final Resource res = rs.getResource(absPath, true);
 		root = (Root) res.getContents().get(0);
 
 		// Restore other look-up data structures
