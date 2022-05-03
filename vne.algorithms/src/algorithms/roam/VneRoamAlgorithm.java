@@ -3,7 +3,7 @@ package algorithms.roam;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.emoflon.roam.roamslang.examples.mdvne.MdvneRoamIflyeAdapter;
+import org.emoflon.gips.gipsl.examples.mdvne.MdvneGipsIflyeAdapter;
 
 import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
@@ -49,7 +49,7 @@ public class VneRoamAlgorithm extends AbstractAlgorithm {
 
 		// TODO: Time measurement
 		ModelFacade.getInstance().persistModel(MODEL_FILE_PATH);
-		final boolean roamSuccess = MdvneRoamIflyeAdapter.execute(MODEL_FILE_PATH);
+		final boolean roamSuccess = MdvneGipsIflyeAdapter.execute(MODEL_FILE_PATH);
 		if (roamSuccess) {
 			// Propagate solution to iflye model facade
 			ModelFacade.getInstance().loadModel(MODEL_FILE_PATH);

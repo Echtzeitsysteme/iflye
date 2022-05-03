@@ -20,4 +20,4 @@ Export-Package: algorithms,
  algorithms.roam,
  algorithms.simple
 Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt
-Import-Package: org.emoflon.roam.roamslang.examples.mdvne
+Import-Package: org.emoflon.gips.gipsl.examples.mdvne
