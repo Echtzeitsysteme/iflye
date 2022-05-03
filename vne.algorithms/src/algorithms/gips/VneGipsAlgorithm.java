@@ -1,4 +1,4 @@
-package algorithms.roam;
+package algorithms.gips;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,21 +13,21 @@ import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
 /**
- * Roam-based VNE algorithm implementation.
+ * GIPS-based VNE algorithm implementation.
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneRoamAlgorithm extends AbstractAlgorithm {
+public class VneGipsAlgorithm extends AbstractAlgorithm {
 
 	/**
 	 * Algorithm instance (singleton).
 	 */
-	private static VneRoamAlgorithm instance;
+	private static VneGipsAlgorithm instance;
 
 	/**
-	 * Default model saving path. Must be used for Roam to load the model.
+	 * Default model saving path. Must be used for GIPS to load the model.
 	 */
-	final private static String MODEL_FILE_PATH = "model-roam-algo-in.xmi";
+	final private static String MODEL_FILE_PATH = "model-gips-algo-in.xmi";
 
 	/**
 	 * Constructor that gets the substrate as well as the virtual network.
@@ -35,7 +35,7 @@ public class VneRoamAlgorithm extends AbstractAlgorithm {
 	 * @param sNet  Substrate network to work with.
 	 * @param vNets Set of virtual networks to work with.
 	 */
-	public VneRoamAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
+	public VneGipsAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		super(sNet, vNets);
 	}
 
@@ -44,33 +44,33 @@ public class VneRoamAlgorithm extends AbstractAlgorithm {
 		// Check if correct objective is used
 		if (AlgorithmConfig.obj != Objective.TOTAL_COMMUNICATION_OBJECTIVE_C) {
 			throw new UnsupportedOperationException(
-					"The VNE Roam algorithm can only be used with the total communication cost C.");
+					"The VNE GIPS algorithm can only be used with the total communication cost C.");
 		}
 
 		// TODO: Time measurement
 		ModelFacade.getInstance().persistModel(MODEL_FILE_PATH);
-		final boolean roamSuccess = MdvneGipsIflyeAdapter.execute(MODEL_FILE_PATH);
-		if (roamSuccess) {
+		final boolean gipsSuccess = MdvneGipsIflyeAdapter.execute(MODEL_FILE_PATH);
+		if (gipsSuccess) {
 			// Propagate solution to iflye model facade
 			ModelFacade.getInstance().loadModel(MODEL_FILE_PATH);
 
-			// Current workaround: Embed all virtual networks "by hand" if Roam run was
+			// Current workaround: Embed all virtual networks "by hand" if GIPS run was
 			// successful
 			for (final VirtualNetwork v : vNets) {
 				facade.embedNetworkToNetwork(sNet.getName(), v.getName());
 			}
 		}
-		return roamSuccess;
+		return gipsSuccess;
 	}
 
 	/**
-	 * Initializes a new instance of the Roam-based VNE algorithm.
+	 * Initializes a new instance of the GIPS-based VNE algorithm.
 	 *
 	 * @param sNet  Substrate network to work with.
 	 * @param vNets Set of virtual networks to work with.
 	 * @return Instance of this algorithm implementation.
 	 */
-	public static VneRoamAlgorithm prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
+	public static VneGipsAlgorithm prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		if (sNet == null || vNets == null) {
 			throw new IllegalArgumentException("One of the provided network objects was null.");
 		}
@@ -80,7 +80,7 @@ public class VneRoamAlgorithm extends AbstractAlgorithm {
 		}
 
 		if (instance == null) {
-			instance = new VneRoamAlgorithm(sNet, vNets);
+			instance = new VneGipsAlgorithm(sNet, vNets);
 		}
 		instance.sNet = sNet;
 		instance.vNets = new HashSet<>();

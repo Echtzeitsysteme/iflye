@@ -1,4 +1,4 @@
-package test.algorithms.roam;
+package test.algorithms.gips;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
-import algorithms.roam.VneRoamAlgorithm;
+import algorithms.gips.VneGipsAlgorithm;
 import generators.OneTierNetworkGenerator;
 import generators.TwoTierNetworkGenerator;
 import generators.config.OneTierConfig;
@@ -21,12 +21,12 @@ import model.VirtualNetwork;
 import test.algorithms.generic.AAlgorithmTest;
 
 /**
- * Test class for the VNE Roam algorithm implementation for minimizing the total
+ * Test class for the VNE GIPS algorithm implementation for minimizing the total
  * communication cost objective C.
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneRoamAlgorithmObjectiveTest extends AAlgorithmTest {
+public class VneGipsAlgorithmObjectiveTest extends AAlgorithmTest {
 
 	/**
 	 * Substrate network.
@@ -43,13 +43,13 @@ public class VneRoamAlgorithmObjectiveTest extends AAlgorithmTest {
 		// The algorithm is only able to use the total communication objective C because
 		// it is hard-coded in RSLANG
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
-		algo = VneRoamAlgorithm.prepare(sNet, vNets);
+		algo = VneGipsAlgorithm.prepare(sNet, vNets);
 	}
 
 	@AfterEach
 	public void resetAlgo() {
 		facade.resetAll();
-		((VneRoamAlgorithm) algo).dispose();
+		((VneGipsAlgorithm) algo).dispose();
 	}
 
 	//

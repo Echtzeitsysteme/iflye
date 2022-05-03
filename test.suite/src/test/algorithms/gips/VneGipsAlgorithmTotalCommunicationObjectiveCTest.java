@@ -1,4 +1,4 @@
-package test.algorithms.roam;
+package test.algorithms.gips;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
-import algorithms.roam.VneRoamAlgorithm;
+import algorithms.gips.VneGipsAlgorithm;
 import model.SubstrateElement;
 import model.SubstrateNetwork;
 import model.SubstratePath;
@@ -25,28 +25,28 @@ import model.VirtualSwitch;
 import test.algorithms.generic.AAlgorithmMultipleVnsTest;
 
 /**
- * Test class for the VNE PM MdVNE algorithm implementation for minimizing the
+ * Test class for the VNE GIPS algorithm implementation for minimizing the
  * total communication cost objective C.
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneRoamAlgorithmTotalCommunicationObjectiveCTest extends AAlgorithmMultipleVnsTest {
+public class VneGipsAlgorithmTotalCommunicationObjectiveCTest extends AAlgorithmMultipleVnsTest {
 
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
-		algo = VneRoamAlgorithm.prepare(sNet, vNets);
+		algo = VneGipsAlgorithm.prepare(sNet, vNets);
 	}
 
 	@AfterEach
 	public void resetAlgo() {
 		if (algo != null) {
-			((VneRoamAlgorithm) algo).dispose();
+			((VneGipsAlgorithm) algo).dispose();
 		}
 	}
 
 	/**
-	 * TODO: Currently, the VNE Roam algorithm can only embed all virtual networks
+	 * TODO: Currently, the VNE GIPS algorithm can only embed all virtual networks
 	 * from the model. Because of this limitation, this test case must be disabled.
 	 */
 	@Override

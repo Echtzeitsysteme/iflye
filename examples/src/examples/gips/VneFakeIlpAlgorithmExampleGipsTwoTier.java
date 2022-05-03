@@ -1,27 +1,27 @@
-package examples.algorithms;
+package examples.gips;
 
 import java.util.Set;
 
 import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
-import algorithms.AlgorithmConfig.Objective;
-import algorithms.roam.VneRoamAlgorithm;
+import algorithms.AlgorithmConfig.Embedding;
+import algorithms.ilp.VneFakeIlpBatchAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.OneTierNetworkGenerator;
 import generators.TwoTierNetworkGenerator;
 import generators.config.OneTierConfig;
 import generators.config.TwoTierConfig;
-import metrics.manager.GlobalMetricsManager;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
 /**
- * Runnable example for the VNE Roam algorithm implementation.
+ * Runnable example for the VNE fake ILP algorithm implementation for the use by
+ * GIPS.
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneRoamAlgorithmExampleSmall {
+public class VneFakeIlpAlgorithmExampleGipsTwoTier {
 
 	/**
 	 * Main method to start the example. String array of arguments will be ignored.
@@ -31,42 +31,38 @@ public class VneRoamAlgorithmExampleSmall {
 	public static void main(final String[] args) {
 		// Setup
 		ModelFacadeConfig.MIN_PATH_LENGTH = 1;
-		ModelFacadeConfig.MAX_PATH_LENGTH = 4;
-		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
-
-		GlobalMetricsManager.startRuntime();
+		ModelFacadeConfig.MAX_PATH_LENGTH = 2;
+		AlgorithmConfig.emb = Embedding.MANUAL;
 
 		// Substrate network = two tier network
-		final OneTierConfig rackConfig = new OneTierConfig(2, 1, false, 10, 10, 10, 10);
 		final TwoTierConfig substrateConfig = new TwoTierConfig();
+		final OneTierConfig rackConfig = new OneTierConfig(10, 1, false, 10, 10, 10, 10);
 		substrateConfig.setRack(rackConfig);
+		substrateConfig.setNumberOfCoreSwitches(2);
+		substrateConfig.setNumberOfRacks(4);
+		substrateConfig.setCoreSwitchesConnected(false);
 		substrateConfig.setCoreBandwidth(100);
-		substrateConfig.setNumberOfCoreSwitches(1);
-		substrateConfig.setNumberOfRacks(2);
 		final TwoTierNetworkGenerator subGen = new TwoTierNetworkGenerator(substrateConfig);
 		subGen.createNetwork("sub", false);
 
 		// Virtual network = one tier network
-		final OneTierConfig virtualConfig = new OneTierConfig(4, 1, false, 10, 1, 1, 1);
+		final OneTierConfig virtualConfig = new OneTierConfig(10, 1, false, 10, 10, 10, 10);
 		final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
 		virtGen.createNetwork("virt", true);
+
+		ModelFacade.getInstance().persistModel("model-before.xmi");
 
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
 		// Create and execute algorithm
-		final AbstractAlgorithm algo = VneRoamAlgorithm.prepare(sNet, Set.of(vNet));
+		final AbstractAlgorithm algo = VneFakeIlpBatchAlgorithm.prepare(sNet, Set.of(vNet));
 		algo.execute();
 
-		GlobalMetricsManager.stopRuntime();
-
 		// Save model to file
-		ModelFacade.getInstance().persistModel();
+		ModelFacade.getInstance().persistModel("model-after.xmi");
 		System.out.println("=> Execution finished.");
 
-		// Time measurements
-		System.out.println("=> Elapsed time (total): " + GlobalMetricsManager.getRuntime().getValue() / 1_000_000_000
-				+ " seconds");
 		System.exit(0);
 	}
 

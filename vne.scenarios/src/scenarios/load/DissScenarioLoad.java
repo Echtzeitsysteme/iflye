@@ -16,6 +16,7 @@ import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Embedding;
 import algorithms.AlgorithmConfig.Objective;
+import algorithms.gips.VneGipsAlgorithm;
 import algorithms.heuristics.TafAlgorithm;
 import algorithms.ilp.VneFakeIlpAlgorithm;
 import algorithms.ilp.VneFakeIlpBatchAlgorithm;
@@ -26,7 +27,6 @@ import algorithms.pm.VnePmMdvneAlgorithmPipelineThreeStagesB;
 import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesRackA;
 import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesRackB;
 import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesVnet;
-import algorithms.roam.VneRoamAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import ilp.wrapper.config.IlpSolverConfig;
@@ -126,7 +126,7 @@ public class DissScenarioLoad {
 			GlobalMetricsManager.stopRuntime();
 
 			// Save metrics to CSV file
-			// Reload substrate network from model facade (needed for Roam-based
+			// Reload substrate network from model facade (needed for GIPS-based
 			// algorithms.)
 			sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNet.getName());
 			CsvUtil.appendCsvLine(vNet.getName(), csvPath, sNet);
@@ -161,7 +161,7 @@ public class DissScenarioLoad {
 	 * <ol>
 	 * <li>#0: Algorithm "pm", "pm-migration", "pm-pipeline2-vnet",
 	 * "pm-pipeline2-racka", "pm-pipeline2-rackb", "pm-pipeline3a", "pm-pipeline3b",
-	 * "ilp", "ilp-batch", "roam" or "taf" (required)</li>
+	 * "ilp", "ilp-batch", "gips" or "taf" (required)</li>
 	 * <li>#1: Objective "total-path", "total-comm-a", "total-comm-b",
 	 * "total-obj-c", "total-obj-d", "total-taf-comm" (required)</li>
 	 * <li>#2: Embedding "emoflon", "emoflon_wo_update" or "manual" [only relevant
@@ -408,8 +408,8 @@ public class DissScenarioLoad {
 			return VneFakeIlpAlgorithm.prepare(sNet, vNets);
 		case "ilp-batch":
 			return VneFakeIlpBatchAlgorithm.prepare(sNet, vNets);
-		case "roam":
-			return VneRoamAlgorithm.prepare(sNet, vNets);
+		case "gips":
+			return VneGipsAlgorithm.prepare(sNet, vNets);
 		case "taf":
 			ModelFacadeConfig.IGNORE_BW = true;
 			return new TafAlgorithm(sNet, vNets);

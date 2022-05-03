@@ -13,11 +13,11 @@ Require-Bundle: org.eclipse.emf.ecore,
  network.metrics,
  org.emoflon.smartemf
 Export-Package: algorithms,
+ algorithms.gips,
  algorithms.heuristics,
  algorithms.ilp,
  algorithms.pm,
  algorithms.pm.stages,
- algorithms.roam,
  algorithms.simple
 Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt
 Import-Package: org.emoflon.gips.gipsl.examples.mdvne

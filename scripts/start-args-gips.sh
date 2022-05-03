@@ -46,21 +46,21 @@ export l=$3 # maximum path length
 export k=$4 # k fastest paths to generate
 export r=$5 # number of runs
 
-# Roam workaround for all needed xmi files
-if [ $a = "roam" ]; then
-    echo "=> Applying Roam hipe-network.xmi workaround."
+# GIPS workaround for all needed xmi files
+if [ $a = "gips" ]; then
+    echo "=> Applying GIPS hipe-network.xmi workaround."
 
     # Extract hipe-network.xmi file
-    unzip -o $JAR "org/emoflon/roam/roamslang/examples/mdvne/hipe/*/hipe-network.xmi"
-    unzip -o $JAR "org/emoflon/roam/roamslang/examples/mdvne/api/*/roam-model.xmi"
-    unzip -o $JAR "org/emoflon/roam/roamslang/examples/mdvne/api/ibex-patterns.xmi"
+    unzip -o $JAR "org/emoflon/gips/gipsl/examples/mdvne/hipe/*/hipe-network.xmi"
+    unzip -o $JAR "org/emoflon/gips/gipsl/examples/mdvne/api/*/gips-model.xmi"
+    unzip -o $JAR "org/emoflon/gips/gipsl/examples/mdvne/api/ibex-patterns.xmi"
 
-    mkdir -p ../org.emoflon.roam.roamslang.examples.mdvne/src-gen/
-    mkdir -p C%3A/Users/mkratz/git/roam-examples/org.emoflon.roam.roamslang.examples.mdvne/src-gen
+    mkdir -p ../org.emoflon.gips.gipsl.examples.mdvne/src-gen/
+    mkdir -p C%3A/Users/mkratz/git/gips-examples/org.emoflon.gips.gipsl.examples.mdvne/src-gen
 
     rsync -a ./org ./bin
-    rsync -a ./org ../org.emoflon.roam.roamslang.examples.mdvne/src-gen
-    rsync -a ./org ./C%3A/Users/mkratz/git/roam-examples/org.emoflon.roam.roamslang.examples.mdvne/src-gen
+    rsync -a ./org ../org.emoflon.gips.gipsl.examples.mdvne/src-gen
+    rsync -a ./org ./C%3A/Users/mkratz/git/gips-examples/org.emoflon.gips.gipsl.examples.mdvne/src-gen
     rm -r ./org
 fi
 

@@ -1,4 +1,4 @@
-package test.algorithms.roam;
+package test.algorithms.gips;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
-import algorithms.roam.VneRoamAlgorithm;
+import algorithms.gips.VneGipsAlgorithm;
 import generators.OneTierNetworkGenerator;
 import generators.TwoTierNetworkGenerator;
 import generators.config.OneTierConfig;
@@ -26,12 +26,12 @@ import model.VirtualSwitch;
 import test.algorithms.generic.AAlgorithmTest;
 
 /**
- * Test class for the VNE Roam algorithm implementation for rejecting VNs that
+ * Test class for the VNE GIPS algorithm implementation for rejecting VNs that
  * can not be embedded properly.
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneRoamAlgorithmRejectionTest extends AAlgorithmTest {
+public class VneGipsAlgorithmRejectionTest extends AAlgorithmTest {
 
 	/**
 	 * Substrate network.
@@ -48,13 +48,13 @@ public class VneRoamAlgorithmRejectionTest extends AAlgorithmTest {
 		// The algorithm is only able to use the total communication objective C because
 		// it is hard-coded in RSLANG
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
-		algo = VneRoamAlgorithm.prepare(sNet, vNets);
+		algo = VneGipsAlgorithm.prepare(sNet, vNets);
 	}
 
 	@AfterEach
 	public void resetAlgo() {
 		facade.resetAll();
-		((VneRoamAlgorithm) algo).dispose();
+		((VneGipsAlgorithm) algo).dispose();
 	}
 
 	//

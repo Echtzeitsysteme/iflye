@@ -1,4 +1,4 @@
-package examples.roam;
+package examples.gips;
 
 import java.util.Set;
 
@@ -15,11 +15,11 @@ import model.VirtualNetwork;
 
 /**
  * Runnable example for the VNE fake ILP algorithm implementation for the use by
- * Roam.
+ * GIPS.
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneFakeIlpAlgorithmExampleRoamOneTier {
+public class VneFakeIlpAlgorithmExampleGipsOneTier {
 
 	/**
 	 * Main method to start the example. String array of arguments will be ignored.

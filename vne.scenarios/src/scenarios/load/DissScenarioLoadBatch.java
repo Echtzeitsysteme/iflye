@@ -64,7 +64,7 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
 		 */
 
 		// Save metrics to CSV file
-		// Reload substrate network from model facade (needed for Roam-based
+		// Reload substrate network from model facade (needed for GIPS-based
 		// algorithms.)
 		sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNet.getName());
 		CsvUtil.appendCsvLine("batch-all", csvPath, sNet);
