@@ -88,10 +88,12 @@ public class VneGipsAlgorithmRejectionTest extends AAlgorithmTest {
 	}
 
 	@Test
-	public void testOneLinkInVnetTooLarge() {
+	public void testAllLinksInVnetTooLarge() {
 		sNet = setUpSubNet(2, 2);
-		vNet = setUpVirtNet(2);
-		((VirtualLink) facade.getLinkById("virt_ln_1")).setBandwidth(100);
+		vNet = setUpVirtNet(4);
+		for (int i = 0; i < 8; i++) {
+			((VirtualLink) facade.getLinkById("virt_ln_" + i)).setBandwidth(100);
+		}
 		vNet = (VirtualNetwork) facade.getNetworkById("virt");
 		embedAndCheckReject();
 	}

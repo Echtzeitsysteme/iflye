@@ -25,8 +25,8 @@ import model.VirtualSwitch;
 import test.algorithms.generic.AAlgorithmMultipleVnsTest;
 
 /**
- * Test class for the VNE GIPS algorithm implementation for minimizing the
- * total communication cost objective C.
+ * Test class for the VNE GIPS algorithm implementation for minimizing the total
+ * communication cost objective C.
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
@@ -218,12 +218,13 @@ public class VneGipsAlgorithmTotalCommunicationObjectiveCTest extends AAlgorithm
 		assertDoesNotThrow(facade::validateModel);
 	}
 
-	// TODO: Flaky?
 	@Test
 	public void testMultipleVnsAfterEachOtherOneTierLarge() {
 		// Setup
 		oneTierSetupThreeServers("sub", 10);
 		facade.createAllPathsForNetwork("sub");
+		// Remove pre-built network because it isn't needed in this test
+		facade.removeNetworkFromRoot("virt");
 
 		for (int i = 0; i < 15; i++) {
 			facade.addNetworkToRoot("virt" + i, true);
@@ -249,6 +250,8 @@ public class VneGipsAlgorithmTotalCommunicationObjectiveCTest extends AAlgorithm
 		// Setup
 		twoTierSetupFourServers("sub", 8);
 		facade.createAllPathsForNetwork("sub");
+		// Remove pre-built network because it isn't needed in this test
+		facade.removeNetworkFromRoot("virt");
 
 		for (int i = 0; i < 15; i++) {
 			facade.addNetworkToRoot("virt" + i, true);
@@ -269,7 +272,6 @@ public class VneGipsAlgorithmTotalCommunicationObjectiveCTest extends AAlgorithm
 		}
 	}
 
-	// TODO: Flaky?
 	@Test
 	public void testMultipleVnsAfterEachOtherOntoOneServer() {
 		// Setup
@@ -390,7 +392,7 @@ public class VneGipsAlgorithmTotalCommunicationObjectiveCTest extends AAlgorithm
 
 		// Actual test starts here
 		facade.addNetworkToRoot("virt2", true);
-		facade.addServerToNetwork("virt2" + "_srv1", "virt", 1, 1, 1, 1);
+		facade.addServerToNetwork("virt2" + "_srv1", "virt2", 1, 1, 1, 1);
 		VirtualNetwork vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
 
 		initAlgo(sNet, Set.of(vNet2));
