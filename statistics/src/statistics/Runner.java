@@ -19,7 +19,7 @@ public class Runner {
 	/**
 	 * Number of experiments (= runs).
 	 */
-	private static final int NUM_OF_EXPS = 3;
+	private static final int NUM_OF_EXPS = 5;
 
 	/**
 	 * Private constructor ensures no object instantiation.
@@ -55,13 +55,13 @@ public class Runner {
 		final String outputName = expName + "_stats.csv";
 
 		// Currently, the number of metrics is hard-coded against CsvUtil.java
-		double[] outputMean = new double[22];
-		double[] outputStdDev = new double[22];
+		double[] outputMean = new double[20];
+		double[] outputStdDev = new double[20];
 
 		// Iterate over all lines of the files
 		for (int v = 0; v < data.get(0).size(); v++) {
 			// Iterate over all metrics
-			for (int i = 0; i < 22; i++) {
+			for (int i = 0; i < 20; i++) {
 				final Double[] values = new Double[data.size()];
 
 				// Iterate over the data sets (= files)
@@ -93,11 +93,11 @@ public class Runner {
 		//
 
 		final Map<String, Double[]> timeSums = new HashMap<>();
-		timeSums.put("time_total", new Double[3]);
-		timeSums.put("time_pm", new Double[3]);
-		timeSums.put("time_ilp", new Double[3]);
-		timeSums.put("time_deploy", new Double[3]);
-		timeSums.put("time_rest", new Double[3]);
+		timeSums.put("time_total", new Double[NUM_OF_EXPS]);
+		timeSums.put("time_pm", new Double[NUM_OF_EXPS]);
+		timeSums.put("time_ilp", new Double[NUM_OF_EXPS]);
+		timeSums.put("time_deploy", new Double[NUM_OF_EXPS]);
+		timeSums.put("time_rest", new Double[NUM_OF_EXPS]);
 
 		for (final String key : timeSums.keySet()) {
 			for (int i = 0; i < timeSums.get(key).length; i++) {

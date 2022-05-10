@@ -1,5 +1,5 @@
 # Environment variables/config for the program
-export GRB_LICENSE_FILE="/home/maxkratz/gruobi.lic"
+export GRB_LICENSE_FILE="/home/maxkratz/gurobi.lic"
 export GUROBI_HOME="/opt/gurobi951/linux64/"
 export LD_LIBRARY_PATH="/opt/gurobi951/linux64/lib/"
 PATH=$PATH:~/opt/gurobi951/linux64/bin/:~/opt/ibm/ILOG/CPLEX_Studio201/cplex/bin/x86-64_linux/

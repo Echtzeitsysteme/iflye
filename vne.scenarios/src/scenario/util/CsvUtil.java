@@ -122,7 +122,7 @@ public class CsvUtil {
 	 * @param sNet    Substrate network to export metrics for.
 	 */
 	public static void appendCsvLine(final String lastVnr, final String csvPath, final SubstrateNetwork sNet) {
-		final String[] content = new String[20];
+		final String[] content = new String[22];
 		content[0] = String.valueOf(csvCounter++); // line counter
 		content[1] = String.valueOf(java.time.LocalDateTime.now()); // time stamp
 		content[2] = String.valueOf(lastVnr); // name of the last embedded virtual network
@@ -141,13 +141,21 @@ public class CsvUtil {
 		content[15] = String.valueOf(new TotalCommunicationCostObjectiveD(sNet).getValue());
 		content[16] = String.valueOf(new TotalTafCommunicationCostMetric(sNet).getValue());
 		content[17] = String.valueOf(new OperatingCostMetric(sNet).getValue());
-		content[18] = String.valueOf(GlobalMetricsManager.getMemory().getValue(0)); // Memory start
-																					// execute
-		content[19] = String.valueOf(GlobalMetricsManager.getMemory().getValue(1)); // Memory before ILP
-		content[20] = String.valueOf(GlobalMetricsManager.getMemory().getValue(2)); // Memory end
-																					// execute
-		content[21] = String.valueOf(GlobalMetricsManager.getMemoryPid()); // Maximum amount of memory
-																			// (RAM) consumed
+		if (GlobalMetricsManager.getMemory() != null) {
+			// Memory start execute
+			content[18] = String.valueOf(GlobalMetricsManager.getMemory().getValue(0));
+			// Memory before ILP
+			content[19] = String.valueOf(GlobalMetricsManager.getMemory().getValue(1));
+			// Memory end execute
+			content[20] = String.valueOf(GlobalMetricsManager.getMemory().getValue(2));
+			// Maximum amount of memory (RAM) consumed
+			content[21] = String.valueOf(GlobalMetricsManager.getMemoryPid());
+		} else {
+			for (int i = 18; i <= 21; i++) {
+				content[i] = String.valueOf(-1);
+			}
+		}
+
 		writeCsvLine(csvPath, formatNormal, content);
 	}
 
@@ -166,14 +174,14 @@ public class CsvUtil {
 			final CSVParser parser = new CSVParser(new FileReader(csvPath), formatNormal);
 			final List<CSVRecord> recs = parser.getRecords();
 			for (int i = 1; i < recs.size(); i++) {
-				final Double[] val = new Double[22];
+				final Double[] val = new Double[20];
 				final CSVRecord rec = recs.get(i);
-				for (int j = 3; j <= 23; j++) {
+				for (int j = 3; j <= 21; j++) {
 					val[j - 3] = Double.valueOf(rec.get(j));
 				}
 
 				// Sum time metrics up
-				val[21] = val[0] // time_pm
+				val[19] = val[0] // time_pm
 						+ val[1] // time_ilp
 						+ val[2] // time_deploy
 						+ val[3]; // time_rest

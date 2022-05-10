@@ -127,24 +127,26 @@ public abstract class AAlgorithmTest {
 	protected void checkAllElementsEmbeddedOnSubstrateNetwork(final SubstrateNetwork sNet,
 			final Set<VirtualNetwork> vNets) {
 		final Iterator<VirtualNetwork> it = vNets.iterator();
+		// Note: We have to pull the latest network objects from the facade!
+		final SubstrateNetwork localSubNet = (SubstrateNetwork) facade.getNetworkById(sNet.getName());
 		while (it.hasNext()) {
-			final VirtualNetwork vNet = it.next();
-			assertEquals(sNet, vNet.getHost());
+			final VirtualNetwork vNet = (VirtualNetwork) facade.getNetworkById(it.next().getName());
+			assertEquals(localSubNet, vNet.getHost());
 
 			for (final Node n : facade.getAllServersOfNetwork(vNet.getName())) {
-				assertEquals(sNet, ((VirtualServer) n).getHost().getNetwork());
+				assertEquals(localSubNet, ((VirtualServer) n).getHost().getNetwork());
 			}
 
 			for (final Node n : facade.getAllSwitchesOfNetwork(vNet.getName())) {
-				assertEquals(sNet, ((VirtualSwitch) n).getHost().getNetwork());
+				assertEquals(localSubNet, ((VirtualSwitch) n).getHost().getNetwork());
 			}
 
 			for (final Link l : facade.getAllLinksOfNetwork(vNet.getName())) {
 				final VirtualLink vl = (VirtualLink) l;
 				if (vl.getHost() instanceof SubstratePath) {
-					assertEquals(sNet, ((SubstratePath) vl.getHost()).getNetwork());
+					assertEquals(localSubNet, ((SubstratePath) vl.getHost()).getNetwork());
 				} else if (vl.getHost() instanceof SubstrateServer) {
-					assertEquals(sNet, ((SubstrateServer) vl.getHost()).getNetwork());
+					assertEquals(localSubNet, ((SubstrateServer) vl.getHost()).getNetwork());
 				} else {
 					fail();
 				}

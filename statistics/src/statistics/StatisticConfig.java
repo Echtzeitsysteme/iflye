@@ -1,13 +1,21 @@
 package statistics;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  * Configuration of the statistic module.
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public interface StatisticConfig {
+public class StatisticConfig {
+
+	/**
+	 * Private constructor ensures no instantiation.
+	 */
+	private StatisticConfig() {
+	}
 
 	/**
 	 * If true, the names of the virtual networks will start at 1 instead of 0 for
@@ -23,7 +31,8 @@ public interface StatisticConfig {
 	/**
 	 * Rounding decimal format setting for the time sums.
 	 */
-	public static final DecimalFormat ROUND_TIMESUMS_FORMAT = new DecimalFormat("0.00");
+	public static final DecimalFormat ROUND_TIMESUMS_FORMAT = ((DecimalFormat) NumberFormat
+			.getNumberInstance(new Locale("en", "US")));
 
 	/**
 	 * If true, the time-based total values (time_total, time_total_stddev) of the
@@ -41,5 +50,12 @@ public interface StatisticConfig {
 	 * *_stats.csv.
 	 */
 	public static final DecimalFormat ROUND_TIMETOTALSTDDEV_FORMAT = new DecimalFormat("0.0000");
+
+	/*
+	 * Apply pattern to time sums format
+	 */
+	static {
+		ROUND_TIMESUMS_FORMAT.applyPattern("0.00");
+	}
 
 }

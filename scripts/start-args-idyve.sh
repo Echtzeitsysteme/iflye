@@ -17,7 +17,7 @@ function run {
 }
 
 # Set env vars
-source env.sh
+source env-idyve.sh
 
 # Config
 export JAR="idyve.jar"

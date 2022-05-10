@@ -109,6 +109,11 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 		final VirtualLink vLn3 = (VirtualLink) facade.getLinkById("virt_ln3");
 		final VirtualLink vLn4 = (VirtualLink) facade.getLinkById("virt_ln4");
 
+		assertNotNull(vLn1.getHost());
+		assertNotNull(vLn2.getHost());
+		assertNotNull(vLn3.getHost());
+		assertNotNull(vLn4.getHost());
+
 		String sourceName = "";
 		String targetName = "";
 
@@ -186,12 +191,16 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 
 		// Test switch placement
 		final VirtualSwitch virtSw = (VirtualSwitch) facade.getSwitchById("virt_sw");
+		assertNotNull(virtSw.getHost());
 		assertEquals("sub_csw1", virtSw.getHost().getName());
 
 		// Test server placements
 		final VirtualServer vSrv1 = (VirtualServer) facade.getServerById("virt_srv1");
 		final VirtualServer vSrv2 = (VirtualServer) facade.getServerById("virt_srv2");
 		final VirtualServer vSrv3 = (VirtualServer) facade.getServerById("virt_srv3");
+		assertNotNull(vSrv1.getHost());
+		assertNotNull(vSrv2.getHost());
+		assertNotNull(vSrv3.getHost());
 		final String serverHost1 = vSrv1.getHost().getName();
 		final String serverHost2 = vSrv2.getHost().getName();
 		final String serverHost3 = vSrv3.getHost().getName();
@@ -210,31 +219,37 @@ public abstract class AAlgorithmTwoTierTest extends AAlgorithmTest {
 
 		// Link 1
 		final SubstratePath pLn1 = (SubstratePath) vLn1.getHost();
+		assertNotNull(pLn1);
 		assertEquals(serverHost1, pLn1.getSource().getName());
 		assertEquals("sub_csw1", pLn1.getTarget().getName());
 
 		// Link 2
 		final SubstratePath pLn2 = (SubstratePath) vLn2.getHost();
+		assertNotNull(pLn2);
 		assertEquals(serverHost2, pLn2.getSource().getName());
 		assertEquals("sub_csw1", pLn2.getTarget().getName());
 
 		// Link 3
 		final SubstratePath pLn3 = (SubstratePath) vLn3.getHost();
+		assertNotNull(pLn3);
 		assertEquals(serverHost3, pLn3.getSource().getName());
 		assertEquals("sub_csw1", pLn3.getTarget().getName());
 
 		// Link 4
 		final SubstratePath pLn4 = (SubstratePath) vLn4.getHost();
+		assertNotNull(pLn4);
 		assertEquals("sub_csw1", pLn4.getSource().getName());
 		assertEquals(serverHost1, pLn4.getTarget().getName());
 
 		// Link 5
 		final SubstratePath pLn5 = (SubstratePath) vLn5.getHost();
+		assertNotNull(pLn5);
 		assertEquals("sub_csw1", pLn5.getSource().getName());
 		assertEquals(serverHost2, pLn5.getTarget().getName());
 
 		// Link 6
 		final SubstratePath pLn6 = (SubstratePath) vLn6.getHost();
+		assertNotNull(pLn6);
 		assertEquals("sub_csw1", pLn6.getSource().getName());
 		assertEquals(serverHost3, pLn6.getTarget().getName());
 	}
