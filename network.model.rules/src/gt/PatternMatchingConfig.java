@@ -19,7 +19,7 @@ public class PatternMatchingConfig {
 	 * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
 	 */
 	public enum PatternMatcher {
-		HIPE, DEMOCLES, VIATRA;
+		HIPE, DEMOCLES;
 	}
 
 	/**

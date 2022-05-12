@@ -13,7 +13,6 @@ import gt.PatternMatchingConfig;
 import gt.PatternMatchingDelta;
 import gt.emoflon.apps.EmoflonGtDemoclesApp;
 import gt.emoflon.apps.EmoflonGtHiPEApp;
-import gt.emoflon.apps.EmoflonGtViatraApp;
 import model.Element;
 import model.Root;
 import model.SubstrateElement;
@@ -72,9 +71,6 @@ public class EmoflonGt implements IncrementalPatternMatcher {
 			break;
 		case DEMOCLES:
 			emoflonPatternMatcherApp = new EmoflonGtDemoclesApp(root);
-			break;
-		case VIATRA:
-			emoflonPatternMatcherApp = new EmoflonGtViatraApp(root);
 			break;
 		default:
 			throw new UnsupportedOperationException();
