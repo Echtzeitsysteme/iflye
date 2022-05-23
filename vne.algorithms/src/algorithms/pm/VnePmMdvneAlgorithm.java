@@ -741,10 +741,10 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 			return CostUtility.getTotalCommunicationCostNodeAB();
 		case TOTAL_COMMUNICATION_COST_B:
 			return CostUtility.getTotalCommunicationCostNodeAB();
-		case TOTAL_COMMUNICATION_COST_C:
-			return CostUtility.getTotalCommunicationCostNodeC(virt, sub);
-		case TOTAL_COMMUNICATION_COST_D:
-			return CostUtility.getTotalCommunicationCostNodeD(virt, sub);
+		case TOTAL_COMMUNICATION_OBJECTIVE_C:
+			return CostUtility.getTotalCommunicationCostObjectiveNodeC(virt, sub);
+		case TOTAL_COMMUNICATION_OBJECTIVE_D:
+			return CostUtility.getTotalCommunicationCostObjectiveNodeD(virt, sub);
 		default:
 			throw new UnsupportedOperationException();
 		}
@@ -758,9 +758,9 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 			return CostUtility.getTotalCommunicationCostLinkA(virt, sub);
 		case TOTAL_COMMUNICATION_COST_B:
 			return CostUtility.getTotalCommunicationCostLinkBCD(virt, sub);
-		case TOTAL_COMMUNICATION_COST_C:
+		case TOTAL_COMMUNICATION_OBJECTIVE_C:
 			return CostUtility.getTotalCommunicationCostLinkBCD(virt, sub);
-		case TOTAL_COMMUNICATION_COST_D:
+		case TOTAL_COMMUNICATION_OBJECTIVE_D:
 			return CostUtility.getTotalCommunicationCostLinkBCD(virt, sub);
 		default:
 			throw new UnsupportedOperationException();
