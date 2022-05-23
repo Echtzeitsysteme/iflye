@@ -132,3 +132,8 @@ doc/javadoc/
 network.model/text/description.txt
 
 examples/model.xmi
+
+# Current workaround (need to copy src-gen from gips-examples into this repository)
+org.emoflon.gips.gipsl.examples.mdvne/
+
+*.lp

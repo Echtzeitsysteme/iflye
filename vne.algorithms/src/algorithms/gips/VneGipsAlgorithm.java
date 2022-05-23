@@ -1,5 +1,6 @@
 package algorithms.gips;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,7 +28,7 @@ public class VneGipsAlgorithm extends AbstractAlgorithm {
 	/**
 	 * Default model saving path. Must be used for GIPS to load the model.
 	 */
-	final private static String MODEL_FILE_PATH = "model-gips-algo-in.xmi";
+	final public static String MODEL_FILE_PATH = "model-gips-algo-in.xmi";
 
 	/**
 	 * Constructor that gets the substrate as well as the virtual network.
@@ -91,6 +92,9 @@ public class VneGipsAlgorithm extends AbstractAlgorithm {
 			return;
 		}
 		instance = null;
+
+		final File out = new File(VneGipsAlgorithm.MODEL_FILE_PATH);
+		out.delete();
 	}
 
 }
