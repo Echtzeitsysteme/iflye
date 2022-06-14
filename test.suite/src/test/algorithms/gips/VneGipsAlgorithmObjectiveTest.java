@@ -41,7 +41,7 @@ public class VneGipsAlgorithmObjectiveTest extends AAlgorithmTest {
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		// The algorithm is only able to use the total communication objective C because
-		// it is hard-coded in RSLANG
+		// it is hard-coded in GIPSL
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
 		algo = VneGipsAlgorithm.prepare(sNet, vNets);
 	}
@@ -90,7 +90,6 @@ public class VneGipsAlgorithmObjectiveTest extends AAlgorithmTest {
 		embedAndCheckCostValue(120 - 3);
 	}
 
-	// TODO: Flaky?
 	@Test
 	public void testAllOnOneRackLarge() {
 		sNet = setUpSubNet(10, 4);
