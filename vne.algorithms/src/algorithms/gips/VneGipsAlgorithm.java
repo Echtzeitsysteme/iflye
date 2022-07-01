@@ -54,6 +54,12 @@ public class VneGipsAlgorithm extends AbstractAlgorithm {
 		if (gipsSuccess) {
 			// Propagate solution to iflye model facade
 			ModelFacade.getInstance().loadModel(MODEL_FILE_PATH);
+
+			// Current workaround: Embed all virtual networks "by hand" if Roam run was
+			// successful
+			for (final VirtualNetwork v : vNets) {
+				facade.embedNetworkToNetwork(sNet.getName(), v.getName());
+			}
 		}
 		return gipsSuccess;
 	}
