@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="main/java/|test/java/" kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/gurobi/gurobi-9.5.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gurobi/gurobi-javadoc-9.5.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-16">
 		<attributes>
 			<attribute name="module" value="true"/>
@@ -9,7 +11,5 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="lib" path="lib/cplex/cplex-20.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="lib" path="lib/gurobi/gurobi-9.5.1.jar"/>
-	<classpathentry kind="lib" path="lib/gurobi/gurobi-javadoc-9.5.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
