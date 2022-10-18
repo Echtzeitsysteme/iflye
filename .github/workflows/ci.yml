@@ -1,0 +1,123 @@
+name: iflye CI
+on:
+  push:
+    # Run pipeline for commits on branch 'main', 'feature/<stuff>', 'hotfix/<stuff>', and 'testing/<stuff>'
+    branches:
+      - main
+      - 'feature/**'
+      - 'hotfix/**'
+      - 'testing/**'
+    # Run pipeline for release tags
+    tags:
+      - 'v*.*.*'
+
+env:
+  ECLIPSE_ARCHIVE: eclipse-emoflon-linux-user-ci
+  ECLIPSE_REPO: eMoflon/emoflon-eclipse-build
+  ECLIPSE_TAG: latest
+  TEST_PROJECT: test.suite
+  JAR_NAME: iflye-testrunner
+
+jobs:
+  # Build Eclipse projects and create a "fat JAR"
+  build:
+    runs-on: [ubuntu-20.04]
+    steps:
+      - name: Start message
+        run: echo "Started CI build."
+      - name: Install correct Java version
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: '17'
+      - name: Install dependencies
+        run: sudo apt-get install -yq grep coreutils wget curl
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Get Eclipse archive
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          repo: ${{ env.ECLIPSE_REPO }}
+          version: ${{ env.ECLIPSE_TAG }}
+          file: ${{ env.ECLIPSE_ARCHIVE }}.zip
+          target: ${{ env.ECLIPSE_ARCHIVE }}.zip
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Unzip Eclipse from archive
+        run: unzip -qq -o $ECLIPSE_ARCHIVE.zip
+
+      # Import projects into Eclipse workspace        
+      - name: Setup Eclipse workspace
+        run: |
+          export START_PWD=$PWD
+          mkdir -p ./ws
+          cd eclipse
+          ./eclipse -noSplash -consoleLog -data $START_PWD/ws -application com.seeq.eclipse.importprojects.headlessimport -importProject $START_PWD
+
+      # Build trice
+      - name: Build projects in Eclipse
+        run: |
+          export START_PWD=$PWD
+          cd eclipse
+          xvfb-run --auto-servernum --server-args="-ac" ./eclipse -noSplash -consoleLog -data $START_PWD/ws -application org.eclipse.jdt.apt.core.aptBuild
+          xvfb-run --auto-servernum --server-args="-ac" ./eclipse -noSplash -consoleLog -data $START_PWD/ws -application org.eclipse.jdt.apt.core.aptBuild
+          xvfb-run --auto-servernum --server-args="-ac" ./eclipse -noSplash -consoleLog -data $START_PWD/ws -application org.eclipse.jdt.apt.core.aptBuild
+
+      - name: Export ANT XML file
+        run: |
+          export START_PWD=$PWD
+          cd eclipse
+          xvfb-run --auto-servernum --server-args="-ac" ./eclipse -noSplash -consoleLog -application org.emoflon.jar.build.JarAntBuilderApp -project $TEST_PROJECT -data $START_PWD/ws -antPath $JAR_NAME.xml -jarPath $JAR_NAME.jar -launchPath GlobalTestRunner.launch
+      - name: Export JAR file using ANT
+        run: |
+          export START_PWD=$PWD
+          cd $START_PWD/$TEST_PROJECT/
+          ant -f $JAR_NAME.xml
+      - name: Upload JAR file
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.JAR_NAME }}.jar
+          path: ${{ env.TEST_PROJECT }}/${{ env.JAR_NAME }}.jar
+
+  # Download "fat JAR" and run all tests
+  test:
+    needs: [build]
+    runs-on: [ubuntu-20.04]
+    steps:
+      - name: Start message
+        run: echo "Started CI test."
+      - name: Install correct Java version
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: '17'
+      - name: Download JAR file
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ env.JAR_NAME }}.jar
+      # Currently, this workaround is needed for HiPE
+      - name: Extract HiPE network file
+        run: |
+          mkdir -p ./bin/network/model/rules/hipe/engine/ ./bin/network/model/rules/racka/hipe/engine/ ./bin/network/model/rules/rackb/hipe/engine/ ./bin/network/model/rules/vnet/hipe/engine/
+          unzip -o $JAR_NAME.jar "network/model/rules/hipe/engine/hipe-network.xmi"
+          unzip -o $JAR_NAME.jar "network/model/rules/racka/hipe/engine/hipe-network.xmi"
+          unzip -o $JAR_NAME.jar "network/model/rules/rackb/hipe/engine/hipe-network.xmi"
+          unzip -o $JAR_NAME.jar "network/model/rules/vnet/hipe/engine/hipe-network.xmi"
+          rsync -a ./network ./bin
+          rm -rf ./network
+
+      - name: Run tests
+        run: |
+          java -jar $JAR_NAME.jar "$PWD/$JAR_NAME.jar"
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          JUNIT_FILES: build/reports/*.xml
+      - name: Upload test reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: |
+            build/reports/*.xml
+            report.html
