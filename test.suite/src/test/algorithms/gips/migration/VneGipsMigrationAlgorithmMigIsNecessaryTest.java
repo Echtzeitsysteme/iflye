@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
 import algorithms.gips.VneGipsMigrationAlgorithm;
+import facade.ModelFacade;
+import model.Network;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 import test.algorithms.generic.AAlgorithmTest;
@@ -29,7 +31,7 @@ public class VneGipsMigrationAlgorithmMigIsNecessaryTest extends AAlgorithmTest 
 	SubstrateNetwork sNet;
 
 	/**
-	 * Virtual network.
+	 * Virtual network to embed.
 	 */
 	VirtualNetwork vNet;
 
@@ -114,17 +116,19 @@ public class VneGipsMigrationAlgorithmMigIsNecessaryTest extends AAlgorithmTest 
 	//
 
 	private void checkAndValidate() {
-//		sNet = (SubstrateNetwork) facade.getNetworkById("sub");
-//		vNet = (VirtualNetwork) facade.getNetworkById("virt");
-
 		initAlgo(sNet, Set.of(vNet));
 		assertTrue(algo.execute());
 
 		// Get new network objects because the model was reloaded from file
 		sNet = (SubstrateNetwork) facade.getNetworkById(sNet.getName());
-		vNet = (VirtualNetwork) facade.getNetworkById(vNet.getName());
-		assertEquals(sNet, vNet.getHost());
-		assertTrue(sNet.getGuests().contains(vNet));
+
+		for (final Network net : ModelFacade.getInstance().getAllNetworks()) {
+			if (net instanceof VirtualNetwork vNet) {
+				assertEquals(sNet, vNet.getHost());
+				assertTrue(sNet.getGuests().contains(vNet));
+			}
+		}
+
 		facade.validateModel();
 	}
 
