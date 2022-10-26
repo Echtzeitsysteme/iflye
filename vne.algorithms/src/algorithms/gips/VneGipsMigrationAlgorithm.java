@@ -10,6 +10,7 @@ import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
 import facade.ModelFacade;
+import model.Network;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
@@ -49,6 +50,16 @@ public class VneGipsMigrationAlgorithm extends AbstractAlgorithm {
 		}
 
 		// TODO: Time measurement
+
+		// Remove all old embeddings
+		for (final Network net : ModelFacade.getInstance().getAllNetworks()) {
+			if (net instanceof VirtualNetwork vNet) {
+				if (vNet.getHost() != null || vNet.getHostServer() != null) {
+					ModelFacade.getInstance().removeNetworkEmbedding(vNet.getName());
+				}
+			}
+		}
+
 		ModelFacade.getInstance().persistModel(MODEL_FILE_PATH);
 		final boolean gipsSuccess = MdvneMigrationGipsIflyeAdapter.execute(MODEL_FILE_PATH);
 		if (gipsSuccess) {
