@@ -20,4 +20,5 @@ Export-Package: algorithms,
  algorithms.pm.stages,
  algorithms.simple
 Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt
-Import-Package: org.emoflon.gips.gipsl.examples.mdvne
+Import-Package: org.emoflon.gips.gipsl.examples.mdvne,
+ org.emoflon.gips.gipsl.examples.mdvne.migration

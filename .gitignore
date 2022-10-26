@@ -135,5 +135,6 @@ examples/model.xmi
 
 # Current workaround (need to copy src-gen from gips-examples into this repository)
 org.emoflon.gips.gipsl.examples.mdvne/
+org.emoflon.gips.gipsl.examples.mdvne.migration/
 
 *.lp
