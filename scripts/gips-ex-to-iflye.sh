@@ -9,3 +9,6 @@ MDVNE_PROJECT_NAME="org.emoflon.gips.gipsl.examples.mdvne"
 
 rm -rf ../$MDVNE_PROJECT_NAME/src-gen
 rsync -a --progress --stats ../../gips-examples/$MDVNE_PROJECT_NAME/src-gen ../$MDVNE_PROJECT_NAME
+
+rm -rf ../$MDVNE_PROJECT_NAME.migration/src-gen
+rsync -a --progress --stats ../../gips-examples/$MDVNE_PROJECT_NAME.migration/src-gen ../$MDVNE_PROJECT_NAME.migration
