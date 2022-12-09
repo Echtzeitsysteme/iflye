@@ -4,12 +4,14 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.emoflon.gips.gipsl.examples.mdvne.MdvneGipsIflyeAdapter;
 
 import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
 import facade.ModelFacade;
+import model.Root;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
@@ -49,12 +51,17 @@ public class VneGipsAlgorithm extends AbstractAlgorithm {
 		}
 
 		// TODO: Time measurement
-		ModelFacade.getInstance().persistModel(MODEL_FILE_PATH);
-		final boolean gipsSuccess = MdvneGipsIflyeAdapter.execute(MODEL_FILE_PATH);
-		if (gipsSuccess) {
-			// Propagate solution to iflye model facade
-			ModelFacade.getInstance().loadModel(MODEL_FILE_PATH);
-		}
+//		ModelFacade.getInstance().persistModel(MODEL_FILE_PATH);
+//		final ResourceSet model = ModelFacade.getInstance().getRoot().eResource().getResourceSet();
+//		final Root root = ModelFacade.getInstance().getRoot();
+		
+		final ResourceSet model = ModelFacade.getInstance().getResourceSet();
+		final boolean gipsSuccess = MdvneGipsIflyeAdapter.execute(model);
+		
+//		if (gipsSuccess) {
+//			// Propagate solution to iflye model facade
+//			ModelFacade.getInstance().loadModel(MODEL_FILE_PATH);
+//		}
 		return gipsSuccess;
 	}
 

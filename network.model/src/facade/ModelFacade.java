@@ -29,6 +29,7 @@ import facade.pathgen.IPathGen;
 import facade.pathgen.Yen;
 import model.Link;
 import model.ModelFactory;
+import model.ModelPackage;
 import model.Network;
 import model.Node;
 import model.Root;
@@ -91,6 +92,16 @@ public class ModelFacade {
 	public static synchronized ModelFacade getInstance() {
 		if (ModelFacade.instance == null) {
 			ModelFacade.instance = new ModelFacade();
+//			ModelFacade.instance.resourceSet = new ResourceSetImpl();
+			
+			// TODO: Init resource set
+			final Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
+			reg.getExtensionToFactoryMap().put("xmi", new SmartEMFResourceFactoryImpl("../"));
+			ModelFacade.instance.resourceSet.getPackageRegistry().put(ModelPackage.eINSTANCE.getNsURI(), ModelPackage.eINSTANCE);
+			ModelFacade.instance.resourceSet.createResource(URI.createURI("model.xmi"));
+			
+//			ModelFacade.instance.resourceSet.getResources().get(0).getContents().add(ModelFacade.instance.root);
+			ModelFacade.instance.resourceSet.getResources().get(0).getContents().add(ModelFactory.eINSTANCE.createRoot());
 		}
 		return ModelFacade.instance;
 	}
@@ -98,13 +109,27 @@ public class ModelFacade {
 	/**
 	 * Root (entry point of the model).
 	 */
-	private Root root = ModelFactory.eINSTANCE.createRoot();
+//	private Root root = ModelFactory.eINSTANCE.createRoot();
 
 	/*
 	 * Look-up data structures.
 	 */
 	private Map<String, SubstratePath> paths = new HashMap<>();
 	private Map<String, Link> links = new HashMap<>();
+	
+	/**
+	 * TODO!
+	 */
+	private ResourceSet resourceSet = new ResourceSetImpl();
+	
+	/**
+	 * Returns the current model instance as resource set.
+	 * 
+	 * @return Current model instance as resource set.
+	 */
+	public ResourceSet getResourceSet() {
+		return resourceSet;
+	}
 
 	/**
 	 * Returns the root node.
@@ -112,7 +137,8 @@ public class ModelFacade {
 	 * @return Root node.
 	 */
 	public Root getRoot() {
-		return root;
+//		return root;
+		return (Root) ModelFacade.instance.resourceSet.getResources().get(0).getContents().get(0);
 	}
 
 	/**
@@ -121,7 +147,7 @@ public class ModelFacade {
 	 * @return Collection of all networks from the model.
 	 */
 	public Collection<Network> getAllNetworks() {
-		return root.getNetworks();
+		return getRoot().getNetworks();
 	}
 
 	/**
@@ -188,7 +214,7 @@ public class ModelFacade {
 	public Network getNetworkById(final String id) {
 		checkStringValid(id);
 
-		return root.getNetworks().stream().filter(n -> n.getName().equals(id)).collect(Collectors.toList()).get(0);
+		return getRoot().getNetworks().stream().filter(n -> n.getName().equals(id)).collect(Collectors.toList()).get(0);
 	}
 
 	/**
@@ -234,7 +260,7 @@ public class ModelFacade {
 	private Node getNodeById(final String id) {
 		checkStringValid(id);
 
-		List<Network> nets = root.getNetworks();
+		List<Network> nets = getRoot().getNetworks();
 		List<Node> nodes = new ArrayList<>();
 		nets.stream().forEach(net -> {
 			net.getNodes().stream().filter(n -> n instanceof Node).filter(n -> n.getName().equals(id))
@@ -305,8 +331,8 @@ public class ModelFacade {
 		}
 
 		net.setName(id);
-		net.setRoot(root);
-		return root.getNetworks().add(net);
+		net.setRoot(getRoot());
+		return getRoot().getNetworks().add(net);
 	}
 
 	/**
@@ -794,7 +820,7 @@ public class ModelFacade {
 	 * networks of the root node.
 	 */
 	public void resetAll() {
-		root.getNetworks().clear();
+		getRoot().getNetworks().clear();
 		generatedMetaPaths.clear();
 		visitedNodes.clear();
 		linksUntilNode.clear();
@@ -802,7 +828,8 @@ public class ModelFacade {
 		links.clear();
 		paths.clear();
 		pathSourceMap.clear();
-		root = ModelFactory.eINSTANCE.createRoot();
+//		root = ModelFactory.eINSTANCE.createRoot();
+		// TODO
 	}
 
 	/**
@@ -966,7 +993,7 @@ public class ModelFacade {
 		// ^null is okay if all paths are absolute
 		final Resource r = rs.createResource(absPath);
 		// Fetch model contents from eMoflon
-		r.getContents().add(root);
+		r.getContents().add(getRoot());
 		try {
 			r.save(null);
 		} catch (final IOException e) {
@@ -994,12 +1021,13 @@ public class ModelFacade {
 		rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new SmartEMFResourceFactoryImpl(null));
 		// ^null is okay if all paths are absolute
 		final Resource res = rs.getResource(absPath, true);
-		root = (Root) res.getContents().get(0);
-
+//		root = (Root) res.getContents().get(0);
+		// TODO
+		
 		// Restore other look-up data structures
 		this.links.clear();
 		this.paths.clear();
-		for (final Network n : root.getNetworks()) {
+		for (final Network n : getRoot().getNetworks()) {
 			// Links
 			for (final Link l : n.getLinks()) {
 				this.links.put(l.getName(), l);
@@ -1282,7 +1310,7 @@ public class ModelFacade {
 			}
 		}
 
-		root.getNetworks().remove(net);
+		getRoot().getNetworks().remove(net);
 	}
 
 	/**
@@ -1510,7 +1538,7 @@ public class ModelFacade {
 	 * values.
 	 */
 	public void validateModel() {
-		for (final Network net : root.getNetworks()) {
+		for (final Network net : getRoot().getNetworks()) {
 			if (net instanceof SubstrateNetwork) {
 				validateSubstrateNetwork((SubstrateNetwork) net);
 			} else if (net instanceof VirtualNetwork) {
