@@ -11,7 +11,6 @@ import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
 import facade.ModelFacade;
-import model.Root;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
@@ -50,18 +49,9 @@ public class VneGipsAlgorithm extends AbstractAlgorithm {
 					"The VNE GIPS algorithm can only be used with the total communication cost C.");
 		}
 
-		// TODO: Time measurement
-//		ModelFacade.getInstance().persistModel(MODEL_FILE_PATH);
-//		final ResourceSet model = ModelFacade.getInstance().getRoot().eResource().getResourceSet();
-//		final Root root = ModelFacade.getInstance().getRoot();
-		
+		// TODO: Time measurement		
 		final ResourceSet model = ModelFacade.getInstance().getResourceSet();
 		final boolean gipsSuccess = MdvneGipsIflyeAdapter.execute(model);
-		
-//		if (gipsSuccess) {
-//			// Propagate solution to iflye model facade
-//			ModelFacade.getInstance().loadModel(MODEL_FILE_PATH);
-//		}
 		return gipsSuccess;
 	}
 
