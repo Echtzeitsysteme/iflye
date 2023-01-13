@@ -93,17 +93,22 @@ public class ModelFacade {
 		if (ModelFacade.instance == null) {
 			ModelFacade.instance = new ModelFacade();
 //			ModelFacade.instance.resourceSet = new ResourceSetImpl();
-			
-			// TODO: Init resource set
-			final Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
-			reg.getExtensionToFactoryMap().put("xmi", new SmartEMFResourceFactoryImpl("../"));
-			ModelFacade.instance.resourceSet.getPackageRegistry().put(ModelPackage.eINSTANCE.getNsURI(), ModelPackage.eINSTANCE);
-			ModelFacade.instance.resourceSet.createResource(URI.createURI("model.xmi"));
-			
-//			ModelFacade.instance.resourceSet.getResources().get(0).getContents().add(ModelFacade.instance.root);
-			ModelFacade.instance.resourceSet.getResources().get(0).getContents().add(ModelFactory.eINSTANCE.createRoot());
+
+			initRs();
 		}
 		return ModelFacade.instance;
+	}
+
+	private static synchronized void initRs() {
+		// TODO: Init resource set
+		final Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
+		reg.getExtensionToFactoryMap().put("xmi", new SmartEMFResourceFactoryImpl("../"));
+		ModelFacade.instance.resourceSet.getPackageRegistry().put(ModelPackage.eINSTANCE.getNsURI(),
+				ModelPackage.eINSTANCE);
+		ModelFacade.instance.resourceSet.createResource(URI.createURI("model.xmi"));
+
+//					ModelFacade.instance.resourceSet.getResources().get(0).getContents().add(ModelFacade.instance.root);
+		ModelFacade.instance.resourceSet.getResources().get(0).getContents().add(ModelFactory.eINSTANCE.createRoot());
 	}
 
 	/**
@@ -116,12 +121,12 @@ public class ModelFacade {
 	 */
 	private Map<String, SubstratePath> paths = new HashMap<>();
 	private Map<String, Link> links = new HashMap<>();
-	
+
 	/**
 	 * TODO!
 	 */
 	private ResourceSet resourceSet = new ResourceSetImpl();
-	
+
 	/**
 	 * Returns the current model instance as resource set.
 	 * 
@@ -137,7 +142,6 @@ public class ModelFacade {
 	 * @return Root node.
 	 */
 	public Root getRoot() {
-//		return root;
 		return (Root) ModelFacade.instance.resourceSet.getResources().get(0).getContents().get(0);
 	}
 
@@ -830,6 +834,7 @@ public class ModelFacade {
 		pathSourceMap.clear();
 //		root = ModelFactory.eINSTANCE.createRoot();
 		// TODO
+		initRs();
 	}
 
 	/**
@@ -1023,7 +1028,7 @@ public class ModelFacade {
 		final Resource res = rs.getResource(absPath, true);
 //		root = (Root) res.getContents().get(0);
 		// TODO
-		
+
 		// Restore other look-up data structures
 		this.links.clear();
 		this.paths.clear();
