@@ -6,8 +6,9 @@ Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt
 Bundle-Version: 0.0.3.qualifier
 Bundle-SymbolicName: network.model.rules.racka;singleton:=true
 Bundle-ActivationPolicy: lazy
-Import-Package: org.apache.log4j,org.apache.commons.logging
-Bundle-RequiredExecutionEnvironment: JavaSE-16
+Import-Package: org.apache.log4j,
+ org.apache.commons.logging
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.emoflon.ibex.common,
  org.emoflon.ibex.gt,
  org.emoflon.ibex.patternmodel,
@@ -19,3 +20,4 @@ Export-Package: gt.emoflon,
  network.model.rules.racka.api,
  network.model.rules.racka.api.matches,
  network.model.rules.racka.api.rules
+

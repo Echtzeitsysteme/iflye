@@ -5,7 +5,7 @@ Bundle-SymbolicName: network.model;singleton:=true
 Bundle-Version: 0.0.3.qualifier
 Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-16
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: network.model
 Require-Bundle: org.eclipse.emf.ecore,
  org.eclipse.emf.ecore.xmi,
@@ -18,3 +18,4 @@ Export-Package: facade,
  model,
  model.converter,
  model.impl
+
