@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.emoflon.gips.gipsl.examples.mdvne.MdvneGipsIflyeAdapter;
 import org.emoflon.gips.gipsl.examples.mdvne.migration.MdvneMigrationGipsIflyeAdapter;
 
 import algorithms.AbstractAlgorithm;
@@ -25,11 +27,6 @@ public class VneGipsMigrationAlgorithm extends AbstractAlgorithm {
 	 * Algorithm instance (singleton).
 	 */
 	private static VneGipsMigrationAlgorithm instance;
-
-	/**
-	 * Default model saving path. Must be used for GIPS to load the model.
-	 */
-	final public static String MODEL_FILE_PATH = "model-gips-algo-in.xmi";
 
 	/**
 	 * Constructor that gets the substrate as well as the virtual network.
@@ -60,12 +57,8 @@ public class VneGipsMigrationAlgorithm extends AbstractAlgorithm {
 			}
 		}
 
-		ModelFacade.getInstance().persistModel(MODEL_FILE_PATH);
-		final boolean gipsSuccess = MdvneMigrationGipsIflyeAdapter.execute(MODEL_FILE_PATH);
-		if (gipsSuccess) {
-			// Propagate solution to iflye model facade
-			ModelFacade.getInstance().loadModel(MODEL_FILE_PATH);
-		}
+		final ResourceSet model = ModelFacade.getInstance().getResourceSet();
+		final boolean gipsSuccess = MdvneGipsIflyeAdapter.execute(model);
 		return gipsSuccess;
 	}
 
@@ -99,13 +92,11 @@ public class VneGipsMigrationAlgorithm extends AbstractAlgorithm {
 	 * Resets the algorithm instance.
 	 */
 	public void dispose() {
+		MdvneGipsIflyeAdapter.resetInit();
 		if (instance == null) {
 			return;
 		}
 		instance = null;
-
-		final File out = new File(VneGipsMigrationAlgorithm.MODEL_FILE_PATH);
-		out.delete();
 	}
 
 }

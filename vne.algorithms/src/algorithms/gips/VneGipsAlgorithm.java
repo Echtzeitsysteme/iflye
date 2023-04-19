@@ -1,9 +1,9 @@
 package algorithms.gips;
 
-import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.emoflon.gips.gipsl.examples.mdvne.MdvneGipsIflyeAdapter;
 
 import algorithms.AbstractAlgorithm;
@@ -26,11 +26,6 @@ public class VneGipsAlgorithm extends AbstractAlgorithm {
 	private static VneGipsAlgorithm instance;
 
 	/**
-	 * Default model saving path. Must be used for GIPS to load the model.
-	 */
-	final public static String MODEL_FILE_PATH = "model-gips-algo-in.xmi";
-
-	/**
 	 * Constructor that gets the substrate as well as the virtual network.
 	 *
 	 * @param sNet  Substrate network to work with.
@@ -48,13 +43,9 @@ public class VneGipsAlgorithm extends AbstractAlgorithm {
 					"The VNE GIPS algorithm can only be used with the total communication cost C.");
 		}
 
-		// TODO: Time measurement
-		ModelFacade.getInstance().persistModel(MODEL_FILE_PATH);
-		final boolean gipsSuccess = MdvneGipsIflyeAdapter.execute(MODEL_FILE_PATH);
-		if (gipsSuccess) {
-			// Propagate solution to iflye model facade
-			ModelFacade.getInstance().loadModel(MODEL_FILE_PATH);
-		}
+		// TODO: Time measurement		
+		final ResourceSet model = ModelFacade.getInstance().getResourceSet();
+		final boolean gipsSuccess = MdvneGipsIflyeAdapter.execute(model);
 		return gipsSuccess;
 	}
 
@@ -88,13 +79,11 @@ public class VneGipsAlgorithm extends AbstractAlgorithm {
 	 * Resets the algorithm instance.
 	 */
 	public void dispose() {
+		MdvneGipsIflyeAdapter.resetInit();
 		if (instance == null) {
 			return;
 		}
 		instance = null;
-
-		final File out = new File(VneGipsAlgorithm.MODEL_FILE_PATH);
-		out.delete();
 	}
 
 }

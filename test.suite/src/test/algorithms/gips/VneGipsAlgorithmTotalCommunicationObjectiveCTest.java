@@ -40,6 +40,7 @@ public class VneGipsAlgorithmTotalCommunicationObjectiveCTest extends AAlgorithm
 
 	@AfterEach
 	public void resetAlgo() {
+		facade.resetAll();
 		if (algo != null) {
 			((VneGipsAlgorithm) algo).dispose();
 		}
