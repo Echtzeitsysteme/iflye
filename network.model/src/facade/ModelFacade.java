@@ -100,6 +100,8 @@ public class ModelFacade {
 	}
 
 	private static synchronized void initRs() {
+		ModelFacade.instance.resourceSet = new ResourceSetImpl();
+		
 		// TODO: Init resource set
 		final Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
 		reg.getExtensionToFactoryMap().put("xmi", new SmartEMFResourceFactoryImpl("../"));
@@ -125,7 +127,7 @@ public class ModelFacade {
 	/**
 	 * TODO!
 	 */
-	private ResourceSet resourceSet = new ResourceSetImpl();
+	private ResourceSet resourceSet;
 
 	/**
 	 * Returns the current model instance as resource set.
