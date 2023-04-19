@@ -92,6 +92,7 @@ public class VneGipsMigrationAlgorithm extends AbstractAlgorithm {
 	 * Resets the algorithm instance.
 	 */
 	public void dispose() {
+		MdvneGipsIflyeAdapter.resetInit();
 		if (instance == null) {
 			return;
 		}
