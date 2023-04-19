@@ -92,31 +92,35 @@ public class ModelFacade {
 	public static synchronized ModelFacade getInstance() {
 		if (ModelFacade.instance == null) {
 			ModelFacade.instance = new ModelFacade();
-//			ModelFacade.instance.resourceSet = new ResourceSetImpl();
-
-			initRs();
+			initEmptyRs();
 		}
 		return ModelFacade.instance;
 	}
 
-	private static synchronized void initRs() {
+	/**
+	 * Initializes an empty resource set (model).
+	 */
+	private static synchronized void initEmptyRs() {
 		ModelFacade.instance.resourceSet = new ResourceSetImpl();
-		
-		// TODO: Init resource set
 		final Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
 		reg.getExtensionToFactoryMap().put("xmi", new SmartEMFResourceFactoryImpl("../"));
 		ModelFacade.instance.resourceSet.getPackageRegistry().put(ModelPackage.eINSTANCE.getNsURI(),
 				ModelPackage.eINSTANCE);
 		ModelFacade.instance.resourceSet.createResource(URI.createURI("model.xmi"));
-
-//					ModelFacade.instance.resourceSet.getResources().get(0).getContents().add(ModelFacade.instance.root);
 		ModelFacade.instance.resourceSet.getResources().get(0).getContents().add(ModelFactory.eINSTANCE.createRoot());
 	}
-
+	
 	/**
-	 * Root (entry point of the model).
+	 * Initializes the resource set (model) from a given file path.
 	 */
-//	private Root root = ModelFactory.eINSTANCE.createRoot();
+	private static synchronized void initRsFromFile(final URI absPath) {
+		ModelFacade.instance.resourceSet = new ResourceSetImpl();
+		final Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
+		reg.getExtensionToFactoryMap().put("xmi", new SmartEMFResourceFactoryImpl("../"));
+		ModelFacade.instance.resourceSet.getPackageRegistry().put(ModelPackage.eINSTANCE.getNsURI(),
+				ModelPackage.eINSTANCE);
+		ModelFacade.instance.resourceSet.getResource(absPath, true);
+	}
 
 	/*
 	 * Look-up data structures.
@@ -125,7 +129,7 @@ public class ModelFacade {
 	private Map<String, Link> links = new HashMap<>();
 
 	/**
-	 * TODO!
+	 * Resource set which contains the model.
 	 */
 	private ResourceSet resourceSet;
 
@@ -834,9 +838,7 @@ public class ModelFacade {
 		links.clear();
 		paths.clear();
 		pathSourceMap.clear();
-//		root = ModelFactory.eINSTANCE.createRoot();
-		// TODO
-		initRs();
+		initEmptyRs();
 	}
 
 	/**
@@ -1023,13 +1025,7 @@ public class ModelFacade {
 	public void loadModel(final String path) {
 		checkStringValid(path);
 		final URI absPath = URI.createFileURI(System.getProperty("user.dir") + "/" + path);
-
-		final ResourceSet rs = new ResourceSetImpl();
-		rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new SmartEMFResourceFactoryImpl(null));
-		// ^null is okay if all paths are absolute
-		final Resource res = rs.getResource(absPath, true);
-//		root = (Root) res.getContents().get(0);
-		// TODO
+		initRsFromFile(absPath);
 
 		// Restore other look-up data structures
 		this.links.clear();
