@@ -4,9 +4,9 @@ Bundle-Name: ilp
 Bundle-SymbolicName: ilp
 Bundle-Version: 0.0.3.qualifier
 Bundle-ClassPath: ilp.jar,
- lib/gurobi/gurobi-10.0.0.jar,
- lib/gurobi/gurobi-javadoc-10.0.0.jar,
- lib/cplex/cplex-22.1.jar
+ lib/cplex/cplex-22.1.1.jar,
+ lib/gurobi/gurobi-10.0.1.jar,
+ lib/gurobi/gurobi-javadoc-10.0.1.jar
 Automatic-Module-Name: ilp
 Bundle-RequiredExecutionEnvironment: JavaSE-16
 Export-Package: gurobi,
