@@ -5,8 +5,8 @@
 
 ## Installation (development)
 
-* Install [AdoptOpenJDK 16 (HotSpot JVM)](https://adoptopenjdk.net/releases.html?variant=openjdk16&jvmVariant=hotspot) or newer.
-* Install eMoflon::IBeX as described [here](https://github.com/eMoflon/emoflon-ibex#how-to-develop).
+* Install [Temurin JDK17](https://adoptium.net/) or newer.
+* Install [GIPS](https://gips.dev) as described [here](https://github.com/Echtzeitsysteme/gips#installation-development) or use the [pre-built Eclipse](https://github.com/Echtzeitsysteme/gips-eclipse-build).
 * Install [Gurobi](https://www.gurobi.com/) in version `10.0.1` and activate a license for your computer.
     * Currently, Gurobi is the default ILP solver used in iflye.
 * Install [IBM ILOG CPLEX](https://www.ibm.com/products/ilog-cplex-optimization-studio) in version `22.1.1`.
@@ -20,6 +20,8 @@ GUROBI_HOME=/opt/gurobi1001/linux64/
 LD_LIBRARY_PATH=/opt/gurobi1001/linux64/lib/
 PATH=/opt/gurobi1001/linux64/bin/:/opt/ibm/ILOG/CPLEX_Studio2211/cplex/bin/x86-64_linux/:$PATH
 ```
+
+### Project setup (manual)
 * Clone this Git repository to your local machine and import it into Eclipse: *File -> Import -> General -> Existing Projects into Workspace*. Import all projects.
 * Clone the [GIPS examples repo](https://github.com/Echtzeitsysteme/gips-examples) to your local machine and import it into Eclipse: *File -> Import -> General -> Existing Projects into Workspace*. Import (at least) the following projects:
     * `network.model`
@@ -29,6 +31,9 @@ PATH=/opt/gurobi1001/linux64/bin/:/opt/ibm/ILOG/CPLEX_Studio2211/cplex/bin/x86-6
     * Build the projects *network.model*, *network.model.rules*, *network.model.rules.racka*, *network.model.rules.rackb*, and *network.model.rules.vnet* with the black eMoflon hammer symbol.
 
 A good start point to verify your installation is to run the included unit tests, refer to the [test section](#tests).
+
+### Project setup (PSF)
+* As an alternative to the previous project setup section, you can use this [PSF file](./projectSet.psf) for the import of all necessary projects.
 
 ### Code-Style
 

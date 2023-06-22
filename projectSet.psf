@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<psf version="2.0">
+<provider id="org.eclipse.egit.core.GitProvider">
+<project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,examples"/>
+<project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,ilp"/>
+<project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,network.generators"/>
+<project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,network.metrics"/>
+<project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,network.model.rules"/>
+<project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,network.model.rules.racka"/>
+<project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,network.model.rules.rackb"/>
+<project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,network.model.rules.vnet"/>
+<project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,network.visualization"/>
+<project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,statistics"/>
+<project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,test.suite"/>
+<project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,vne.algorithms"/>
+<project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,vne.scenarios"/>
+<project reference="1.0,https://github.com/Echtzeitsysteme/gips-examples.git,main,network.model"/>
+<project reference="1.0,https://github.com/Echtzeitsysteme/gips-examples.git,main,org.emoflon.gips.gipsl.examples.mdvne"/>
+<project reference="1.0,https://github.com/Echtzeitsysteme/gips-examples.git,main,org.emoflon.gips.gipsl.examples.mdvne.migration"/>
+</provider>
+</psf>
