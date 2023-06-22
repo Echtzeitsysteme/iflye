@@ -21,6 +21,10 @@ LD_LIBRARY_PATH=/opt/gurobi1001/linux64/lib/
 PATH=/opt/gurobi1001/linux64/bin/:/opt/ibm/ILOG/CPLEX_Studio2211/cplex/bin/x86-64_linux/:$PATH
 ```
 * Clone this Git repository to your local machine and import it into Eclipse: *File -> Import -> General -> Existing Projects into Workspace*. Import all projects.
+* Clone the [GIPS examples repo](https://github.com/Echtzeitsysteme/gips-examples) to your local machine and import it into Eclipse: *File -> Import -> General -> Existing Projects into Workspace*. Import (at least) the following projects:
+    * `network.model`
+    * `org.emoflon.gips.gipsl.examples.mdvne`
+    * `org.emoflon.gips.gipsl.examples.mdvne.migration`
 * Inside the runtime workspace, build all projects (*Project -> Clean... -> Clean all projects*) to trigger code generation.
     * Build the projects *network.model*, *network.model.rules*, *network.model.rules.racka*, *network.model.rules.rackb*, and *network.model.rules.vnet* with the black eMoflon hammer symbol.
 
