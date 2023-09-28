@@ -37,14 +37,8 @@ public class IlpSolverSetupTest {
 	}
 
 	@Test
-	public void testGurobiSetup() {
-		IlpSolverConfig.solver = Solver.GUROBI;
-		genericIlpTest();
-	}
-
-	@Test
-	public void testCplexSetup() {
-		IlpSolverConfig.solver = Solver.CPLEX;
+	public void testEmoflonIlpSetup() {
+		IlpSolverConfig.solver = Solver.EMOFLON_ILP;
 		genericIlpTest();
 	}
 
