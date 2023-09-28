@@ -6,5 +6,5 @@ package ilp.wrapper.config;
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public enum Solver {
-	GUROBI, CPLEX;
+	EMOFLON_ILP;
 }

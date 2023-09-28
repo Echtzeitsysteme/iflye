@@ -3,18 +3,11 @@ Bundle-ManifestVersion: 2
 Bundle-Name: ilp
 Bundle-SymbolicName: ilp
 Bundle-Version: 0.0.3.qualifier
-Bundle-ClassPath: ilp.jar,
- lib/cplex/cplex-22.1.1.jar,
- lib/gurobi/gurobi-10.0.3.jar,
- lib/gurobi/gurobi-javadoc-10.0.3.jar
 Automatic-Module-Name: ilp
 Bundle-RequiredExecutionEnvironment: JavaSE-16
-Export-Package: gurobi;version="10.0.3",
- ilog.concert,
- ilog.cplex,
- ilp.solver.examples,
- ilp.solver.tests,
- ilp.wrapper,
+Export-Package: ilp.wrapper,
  ilp.wrapper.config,
  ilp.wrapper.impl
+Require-Bundle: org.emoflon.ilp,
+ org.emoflon.ilp.dependencies
 Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt

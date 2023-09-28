@@ -1,8 +1,7 @@
 package ilp.wrapper.config;
 
 import ilp.wrapper.IncrementalIlpSolver;
-import ilp.wrapper.impl.IncrementalCplexSolver;
-import ilp.wrapper.impl.IncrementalGurobiSolver;
+import ilp.wrapper.impl.EmoflonIlpSolver;
 
 /**
  * General configuration class for all ILP solvers.
@@ -25,7 +24,7 @@ public class IlpSolverConfig {
 	/**
 	 * Configuration for the ILP solver to use.
 	 */
-	public static Solver solver = Solver.GUROBI;
+	public static Solver solver = Solver.EMOFLON_ILP;
 
 	/**
 	 * Timeout for the ILP solver.
@@ -67,10 +66,9 @@ public class IlpSolverConfig {
 	 */
 	public static IncrementalIlpSolver getIlpSolver() {
 		switch (IlpSolverConfig.solver) {
-		case GUROBI:
-			return new IncrementalGurobiSolver(IlpSolverConfig.TIME_OUT, IlpSolverConfig.RANDOM_SEED);
-		case CPLEX:
-			return new IncrementalCplexSolver(IlpSolverConfig.TIME_OUT, IlpSolverConfig.RANDOM_SEED);
+		case EMOFLON_ILP:
+			// TODO: Necessary arguments
+			return new EmoflonIlpSolver();
 		}
 		throw new UnsupportedOperationException("Solver type not implemented.");
 	}
