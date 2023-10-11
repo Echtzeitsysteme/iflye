@@ -794,8 +794,8 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 			config.setSolver(SolverType.GLPK);
 			break;
 		}
-//		config.setTimeoutEnabled(true);
-//		config.setTimeout(IlpSolverConfig.TIME_OUT);
+		config.setTimeoutEnabled(true);
+		config.setTimeout(IlpSolverConfig.TIME_OUT);
 		config.setRandomSeedEnabled(true);
 		config.setRandomSeed(IlpSolverConfig.RANDOM_SEED);
 
