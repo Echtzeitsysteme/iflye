@@ -17,6 +17,11 @@ public class IlpSolverConfig {
 	 * If true, enables the output of the ILP solvers.
 	 */
 	public static final boolean ENABLE_ILP_OUTPUT = true;
+	
+	/**
+	 * Configuration for the ILP solver to use.
+	 */
+	public static SolverType solver = SolverType.GLPK;
 
 	/**
 	 * Timeout for the ILP solver.

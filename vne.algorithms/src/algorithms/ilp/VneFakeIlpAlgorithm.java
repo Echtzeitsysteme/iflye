@@ -73,22 +73,13 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 		protected Problem problem = new Problem();
 		private Map<String, BinaryVariable> vars = new HashMap<>();
 
-		/**
-		 * Mappings for the SOS1 constraints. Each virtual element IDs is a key and the
-		 * corresponding value is a list of virtual to substrate element ID mappings.
-		 *
-		 * Example: vlink1 -> {vlink1spath1, vlink1spath2, vlink2sserver3,
-		 * vlink2sserver7}
-		 */
-//		final Map<String, List<String>> sosMappings = new HashMap<>();
-
 		public IlpDeltaGenerator() {
 			this.problem.setObjective();
 		}
 
 		/**
-		 * Adds a SOS1 mapping to the collection. This method immediately returns, if
-		 * the algorithm configuration option for SOS1 constraints is disabled.
+		 * Adds a SOS1 mapping to the problem. This method immediately returns, if the
+		 * algorithm configuration option for SOS1 constraints is disabled.
 		 *
 		 * @param v  Virtual element ID.
 		 * @param vs Virtual to substrate element ID mapping.
@@ -100,17 +91,12 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 				return;
 			}
 
-//			if (!sosMappings.containsKey(v)) {
-//				sosMappings.put(v, new LinkedList<String>());
-//			}
-//			sosMappings.get(v).add(vs);
-
 			if (!problem.hasConstraintWithName(v)) {
 				final SOS1Constraint sos = new SOS1Constraint();
-				// TODO
-			} else {
-				// TODO
+				sos.setName("sos1_" + v);
+				problem.add(sos);
 			}
+			((SOS1Constraint) problem.getConstraintByName("sos1_" + v)).addVariable(vars.get(vs));
 		}
 
 		/**
@@ -123,7 +109,6 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 			variablesToMatch.put("rej" + vNet.getName(), match);
 			final BinaryVariable v = new BinaryVariable("rej" + vNet.getName());
 			this.vars.put("rej" + vNet.getName(), v);
-//			obj.addTerm(v, getNetRejCost(vNet));
 			problem.getObjective().addTerm(v, getNetRejCost(vNet));
 		}
 
@@ -148,16 +133,11 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 				return;
 			}
 
-//			delta.addVariable(varName, getCost(vLink, (SubstrateNode) match.getSubstrate()));
-//			delta.setVariableWeightForConstraint("vl" + match.getVirtual().getName(), 1, varName);
-//			delta.addLessOrEqualsConstraint("req" + varName, 0, new int[] { 2, -1, -1 },
-//					new String[] { varName, sourceVarName, targetVarName });
 			variablesToMatch.put(varName, match);
 			final BinaryVariable v = new BinaryVariable(varName);
 			this.vars.put(varName, v);
-//			obj.addTerm(v, getCost(vLink, (SubstrateNode) match.getSubstrate()));
 			problem.getObjective().addTerm(v, getCost(vLink, (SubstrateNode) match.getSubstrate()));
-			
+
 			((LinearConstraint) problem.getConstraintByName("vl" + match.getVirtual().getName())).addTerm(v, 1);
 
 			final List<Term> cTerms = new ArrayList<Term>();
@@ -168,6 +148,7 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 			cTerms.add(sourceVar);
 			cTerms.add(targetVar);
 			final LinearConstraint c = new LinearConstraint(cTerms, Operator.LESS_OR_EQUAL, 0);
+			c.setName("req" + varName);
 			problem.add(c);
 
 			// SOS match
@@ -184,40 +165,25 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 			final SubstratePath sPath = facade.getPathById(match.getSubstrate().getName());
 
 			// If the source node (target node) of the virtual link may not be embedded to
-			// the substrate
-			// paths source node (target node), it's mapping variable is missing in the
-			// solver's model.
-			// Due to the fact that there is no way to properly map the source node (target
-			// node) onto the
-			// substrate source node (target node), the ILP solver does not have to deal
-			// with the
-			// embedding of the link for this particular substrate node, to.
-			// This may e.g. be the case if the virtual node is a server but the substrate
-			// node is a
-			// switch.
+			// the substrate paths source node (target node), it's mapping variable is
+			// missing in the solver's model. Due to the fact that there is no way to
+			// properly map the source node (target node) onto the substrate source node
+			// (target node), the ILP solver does not have to deal with the embedding of the
+			// link for this particular substrate node, to. This may e.g. be the case if the
+			// virtual node is a server but the substrate node is a switch.
 			final String sourceVarName = vLink.getSource().getName() + "_" + sPath.getSource().getName();
 			final String targetVarName = vLink.getTarget().getName() + "_" + sPath.getTarget().getName();
 
-//			if (!delta.hasAddVariable(sourceVarName) || !delta.hasAddVariable(targetVarName)) {
-//				return;
-//			}
 			if (!vars.containsKey(sourceVarName) || !vars.containsKey(targetVarName)) {
 				return;
 			}
 			final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
-			
-//
-//			delta.addVariable(varName, getCost(vLink, sPath));
-//			delta.setVariableWeightForConstraint("vl" + match.getVirtual().getName(), 1, varName);
-//			delta.addLessOrEqualsConstraint("req" + varName, 0, new int[] { 2, -1, -1 },
-//					new String[] { varName, sourceVarName, targetVarName });
-//			forEachLink(sPath,
-//					l -> delta.setVariableWeightForConstraint("sl" + l.getName(), vLink.getBandwidth(), varName));
+
 			variablesToMatch.put(varName, match);
 			final BinaryVariable v = new BinaryVariable(varName);
 			this.vars.put(varName, v);
 			problem.getObjective().addTerm(v, getCost(vLink, sPath));
-			
+
 			((LinearConstraint) problem.getConstraintByName("vl" + match.getVirtual().getName())).addTerm(v, 1);
 
 			final List<Term> cTerms = new ArrayList<Term>();
@@ -228,6 +194,7 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 			cTerms.add(sourceVar);
 			cTerms.add(targetVar);
 			final LinearConstraint c = new LinearConstraint(cTerms, Operator.LESS_OR_EQUAL, 0);
+			c.setName("req" + varName);
 			problem.add(c);
 
 			// For each link
@@ -314,7 +281,6 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 		public void addNewSubstrateLink(final SubstrateLink link) {
 			final LinearConstraint sl = new LinearConstraint(Operator.LESS_OR_EQUAL, link.getResidualBandwidth());
 			sl.setName("sl" + link.getName());
-
 			problem.add(sl);
 		}
 
@@ -326,7 +292,6 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 		public void addNewVirtualServer(final VirtualServer server) {
 			final LinearConstraint vs = new LinearConstraint(Operator.EQUAL, 1);
 			vs.setName("vs" + server.getName());
-//			vs.addTerm(problem.getVariableByName("rej" + server.getNetwork().getName()), 1);
 			vs.addTerm(this.vars.get("rej" + server.getNetwork().getName()), 1);
 			problem.add(vs);
 		}
@@ -339,7 +304,6 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 		public void addNewVirtualSwitch(final VirtualSwitch sw) {
 			final LinearConstraint vs = new LinearConstraint(Operator.EQUAL, 1);
 			vs.setName("vw" + sw.getName());
-//			vs.addTerm(problem.getVariableByName("rej" + sw.getNetwork().getName()), 1);
 			vs.addTerm(this.vars.get("rej" + sw.getNetwork().getName()), 1);
 			problem.add(vs);
 		}
@@ -352,26 +316,15 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 		public void addNewVirtualLink(final VirtualLink link) {
 			final LinearConstraint vl = new LinearConstraint(Operator.EQUAL, 1);
 			vl.setName("vl" + link.getName());
-//			vl.addTerm(problem.getVariableByName("rej" + link.getNetwork().getName()), 1);
 			vl.addTerm(this.vars.get("rej" + link.getNetwork().getName()), 1);
 			problem.add(vl);
 		}
 
-//		/**
-//		 * Applies the delta to the ILP solver object.
-//		 */
-//		public void apply() {
-////			// Before applying the ILP delta, add all SOS1 constraint mappings to it. This
-////			// can't be done beforehand, because the individual mappings may be extended
-////			// while adding more matches.
-////			for (final String key : sosMappings.keySet()) {
-//////				delta.addSosConstraint(key, sosMappings.get(key));
-////				sosMappings.get(key);
-////				final SOS1Constraint sos = new SOS1Constraint();
-////			}
-//			delta.apply(ilpSolver);
-//		}
-
+		/**
+		 * Returns the underlying ILP problem.
+		 * 
+		 * @return ILP problem.
+		 */
 		public Problem getProblem() {
 			return this.problem;
 		}
@@ -383,11 +336,9 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 	 */
 	protected static VneFakeIlpAlgorithm instance;
 
-//	/**
-//	 * Incremental ILP solver to use.
-//	 */
-//	protected IncrementalIlpSolver ilpSolver;
-//	protected Problem problem = new Problem();
+	/**
+	 * eMoflon-ILP solver to use.
+	 */
 	protected Solver solver;
 
 	/**
@@ -449,10 +400,6 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 		if (this.solver != null) {
 			this.solver.terminate();
 		}
-//		if (this.problem != null) {
-//			this.problem = new Problem();
-//		}
-		// TODO
 		instance = null;
 	}
 
@@ -550,18 +497,12 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 	 */
 	protected Set<VirtualNetwork> solveIlp(final Problem problem) {
 		GlobalMetricsManager.startIlpTime();
-//		final Statistics solve = ilpSolver.solve();
 		solver.buildILPProblem(problem);
 		final SolverOutput out = solver.solve();
 		solver.updateValuesFromSolution();
 		GlobalMetricsManager.endIlpTime();
 		Set<VirtualNetwork> rejectedNetworks = new HashSet<>();
-//		if (solve.isFeasible()) {
-//			GlobalMetricsManager.startDeployTime();
-//			rejectedNetworks = updateMappingsAndEmbed(ilpSolver.getMappings());
-//		} else {
-//			throw new IlpSolverException("Problem was infeasible.");
-//		}
+		// Solution found?
 		if (out.getSolCount() > 0) {
 			GlobalMetricsManager.startDeployTime();
 			rejectedNetworks = updateMappingsAndEmbed(getMappings(problem));
@@ -571,14 +512,18 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 		return rejectedNetworks;
 	}
 
+	/**
+	 * Returns the mappings for a given (already solved) ILP problem instance.
+	 * 
+	 * @param problem Already solved ILP problem instance.
+	 * @return Map of mappings (key = ID, value = true -> embed).
+	 */
 	private Map<String, Boolean> getMappings(final Problem problem) {
-//		final Map<String, Boolean> mappings = new HashMap<>();
 		return problem.getVariables().values().stream().collect(Collectors.toMap(v -> {
 			return ((BinaryVariable) v).getName();
 		}, v -> {
 			return ((BinaryVariable) v).getValue() > 0.5;
 		}));
-//		return mappings;
 	}
 
 	/**
@@ -625,9 +570,9 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 	 * ignored networks.
 	 */
 	protected void checkOverallResources() {
-		// Calculate total residual resources for substrate servers Datatype long is
+		// Calculate total residual resources for substrate servers datatype long is
 		// needed, because of the possible large values of substrate server residual
-		// resources (e.g. from the diss scenario).
+		// resources (e.g., from the diss scenario).
 		long subTotalResidualCpu = 0;
 		long subTotalResidualMem = 0;
 		long subTotalResidualSto = 0;
@@ -832,19 +777,37 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 	}
 
 	/**
-	 * Initializes the algorithm by creating a new incremental solver object.
+	 * Initializes the algorithm.
 	 */
 	public void init() {
-		// Create new ILP solver object on every method call.
-//		this.problem = new Problem();
 		final SolverConfig config = new SolverConfig();
-		// TODO: Set up correct config values
-		config.setSolver(SolverType.GUROBI);
-		config.setOutputEnabled(true);
-		config.setOutputPath("./gurobi.lp");
+
+		config.setDebugOutputEnabled(IlpSolverConfig.ENABLE_ILP_OUTPUT);
+		switch (IlpSolverConfig.solver) {
+		case GUROBI:
+			config.setSolver(SolverType.GUROBI);
+			break;
+		case CPLEX:
+			config.setSolver(SolverType.CPLEX);
+			break;
+		case GLPK:
+			config.setSolver(SolverType.GLPK);
+			break;
+		}
+//		config.setTimeoutEnabled(true);
+//		config.setTimeout(IlpSolverConfig.TIME_OUT);
+		config.setRandomSeedEnabled(true);
+		config.setRandomSeed(IlpSolverConfig.RANDOM_SEED);
+
 		this.solver = (new org.emoflon.ilp.SolverHelper(config)).getSolver();
 	}
 
+	/**
+	 * Execute a consumer for each link of a given path object.
+	 * 
+	 * @param sPath     Substrate path to execute an action for each link for.
+	 * @param operation The action to execute.
+	 */
 	public void forEachLink(final SubstratePath sPath, final Consumer<? super Link> operation) {
 		sPath.getLinks().stream().forEach(operation);
 	}
