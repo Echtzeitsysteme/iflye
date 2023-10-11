@@ -9,7 +9,9 @@ Require-Bundle: org.eclipse.emf.ecore,
  network.model,
  vne.algorithms,
  ilp,
- org.emoflon.smartemf
+ org.emoflon.smartemf,
+ org.emoflon.ilp;bundle-version="0.0.1",
+ org.emoflon.ilp.dependencies;bundle-version="0.0.1"
 Automatic-Module-Name: test.singleton.true
 Bundle-RequiredExecutionEnvironment: JavaSE-16
 Import-Package: org.junit.jupiter.api

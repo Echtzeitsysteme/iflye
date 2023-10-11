@@ -21,7 +21,7 @@ public class IlpSolverConfig {
 	/**
 	 * Configuration for the ILP solver to use.
 	 */
-	public static SolverType solver = SolverType.GLPK;
+	public static SolverType solver = SolverType.GUROBI;
 
 	/**
 	 * Timeout for the ILP solver.

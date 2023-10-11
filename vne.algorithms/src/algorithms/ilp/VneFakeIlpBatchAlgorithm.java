@@ -3,6 +3,8 @@ package algorithms.ilp;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.emoflon.ilp.Problem;
+
 import gt.PatternMatchingDelta;
 import metrics.manager.GlobalMetricsManager;
 import model.SubstrateNetwork;
@@ -96,9 +98,9 @@ public class VneFakeIlpBatchAlgorithm extends VneFakeIlpAlgorithm {
 		final PatternMatchingDelta delta = createFakeMatches();
 		GlobalMetricsManager.endPmTime();
 
-		delta2Ilp(delta);
+		final Problem problem = delta2Ilp(delta);
 		GlobalMetricsManager.measureMemory();
-		final Set<VirtualNetwork> rejectedNetworks = solveIlp();
+		final Set<VirtualNetwork> rejectedNetworks = solveIlp(problem);
 
 		rejectedNetworks.addAll(ignoredVnets);
 		embedNetworks(rejectedNetworks);
