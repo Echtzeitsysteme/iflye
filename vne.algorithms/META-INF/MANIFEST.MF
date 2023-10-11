@@ -11,7 +11,9 @@ Require-Bundle: org.eclipse.emf.ecore,
  network.model.rules.rackb,
  network.model.rules.vnet,
  network.metrics,
- org.emoflon.smartemf
+ org.emoflon.smartemf,
+ org.emoflon.ilp;bundle-version="0.0.1",
+ org.emoflon.ilp.dependencies;bundle-version="0.0.1"
 Export-Package: algorithms,
  algorithms.gips,
  algorithms.heuristics,

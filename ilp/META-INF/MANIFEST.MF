@@ -15,6 +15,7 @@ Export-Package: gurobi;version="10.0.3",
  ilp.solver.examples,
  ilp.solver.tests,
  ilp.wrapper,
- ilp.wrapper.config,
- ilp.wrapper.impl
+ ilp.wrapper.config
+Require-Bundle: org.emoflon.ilp;bundle-version="0.0.1",
+ org.emoflon.ilp.dependencies;bundle-version="0.0.1"
 Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt
