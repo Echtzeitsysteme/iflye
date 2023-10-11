@@ -75,7 +75,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 	 */
 	public class IlpDeltaGenerator {
 		protected Problem problem = new Problem();
-		private Map<String, BinaryVariable> vars = new HashMap<>();
+		protected Map<String, BinaryVariable> vars = new HashMap<>();
 
 		public IlpDeltaGenerator() {
 			this.problem.setObjective();

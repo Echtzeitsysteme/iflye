@@ -4,6 +4,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.emoflon.ilp.Problem;
+import org.emoflon.ilp.SolverConfig;
+import org.emoflon.ilp.SolverConfig.SolverType;
+
 import algorithms.AlgorithmConfig;
 import algorithms.pm.VnePmMdvneAlgorithm;
 import gt.IncrementalPatternMatcher;
@@ -84,8 +88,8 @@ public class VnePmMdvneAlgorithmPipelineStageRackB extends VnePmMdvneAlgorithm {
 		if (instance == null) {
 			return;
 		}
-		if (this.ilpSolver != null) {
-			this.ilpSolver.dispose();
+		if (this.solver != null) {
+			this.solver.terminate();
 		}
 		if (this.patternMatcher != null) {
 			this.patternMatcher.dispose();
@@ -129,9 +133,9 @@ public class VnePmMdvneAlgorithmPipelineStageRackB extends VnePmMdvneAlgorithm {
 		GlobalMetricsManager.endPmTime();
 
 		// Uses the "normal" delta to ILP translator of the super class
-		delta2Ilp(deltaTwo);
+		final Problem problem = delta2Ilp(deltaTwo);
 		GlobalMetricsManager.measureMemory();
-		final Set<VirtualNetwork> rejectedNetworksTwo = solveIlp();
+		final Set<VirtualNetwork> rejectedNetworksTwo = solveIlp(problem);
 
 		rejectedNetworksTwo.addAll(ignoredVnets);
 		embedNetworks(rejectedNetworksTwo);
@@ -150,8 +154,26 @@ public class VnePmMdvneAlgorithmPipelineStageRackB extends VnePmMdvneAlgorithm {
 	 */
 	@Override
 	public void init() {
-		// Create new ILP solver object on every method call.
-		ilpSolver = IlpSolverConfig.getIlpSolver();
+		final SolverConfig config = new SolverConfig();
+
+		config.setDebugOutputEnabled(IlpSolverConfig.ENABLE_ILP_OUTPUT);
+		switch (IlpSolverConfig.solver) {
+		case GUROBI:
+			config.setSolver(SolverType.GUROBI);
+			break;
+		case CPLEX:
+			config.setSolver(SolverType.CPLEX);
+			break;
+		case GLPK:
+			config.setSolver(SolverType.GLPK);
+			break;
+		}
+		config.setTimeoutEnabled(true);
+		config.setTimeout(IlpSolverConfig.TIME_OUT);
+		config.setRandomSeedEnabled(true);
+		config.setRandomSeed(IlpSolverConfig.RANDOM_SEED);
+
+		this.solver = (new org.emoflon.ilp.SolverHelper(config)).getSolver();
 
 		if (patternMatcher == null) {
 			patternMatcher = new EmoflonGtFactory().create();

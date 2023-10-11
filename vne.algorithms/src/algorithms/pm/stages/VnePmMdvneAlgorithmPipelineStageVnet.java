@@ -5,6 +5,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.emoflon.ilp.BinaryVariable;
+import org.emoflon.ilp.Problem;
+import org.emoflon.ilp.SolverConfig;
+import org.emoflon.ilp.SolverConfig.SolverType;
+import org.emoflon.ilp.LinearConstraint;
+import org.emoflon.ilp.Operator;
+
 import algorithms.AlgorithmConfig;
 import algorithms.pm.VnePmMdvneAlgorithm;
 import gt.IncrementalPatternMatcher;
@@ -53,12 +60,19 @@ public class VnePmMdvneAlgorithmPipelineStageVnet extends VnePmMdvneAlgorithm {
 		public void addNetworkToServerMatch(final Match match) {
 			final VirtualNetwork vnet = (VirtualNetwork) match.getVirtual();
 			final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
-			delta.addVariable(varName, getCost(vnet, (SubstrateServer) match.getSubstrate()));
-			delta.setVariableWeightForConstraint("vsnet" + match.getVirtual().getName(), 1, varName);
+			final BinaryVariable v = new BinaryVariable(varName);
+			problem.getObjective().addTerm(v, getCost(vnet, (SubstrateServer) match.getSubstrate()));
+			((LinearConstraint) problem.getConstraintByName("vsnet" + match.getVirtual().getName())).addTerm(v, 1);
 
-			delta.setVariableWeightForConstraint("cpu" + match.getSubstrate().getName(), vnet.getCpu(), varName);
-			delta.setVariableWeightForConstraint("mem" + match.getSubstrate().getName(), vnet.getMemory(), varName);
-			delta.setVariableWeightForConstraint("sto" + match.getSubstrate().getName(), vnet.getStorage(), varName);
+			((LinearConstraint) problem.getConstraintByName("cpu" + match.getSubstrate().getName())).addTerm(v,
+					vnet.getCpu());
+			((LinearConstraint) problem.getConstraintByName("mem" + match.getSubstrate().getName())).addTerm(v,
+					vnet.getMemory());
+			((LinearConstraint) problem.getConstraintByName("sto" + match.getSubstrate().getName())).addTerm(v,
+					vnet.getStorage());
+
+			this.vars.put(varName, v);
+
 			variablesToMatch.put(varName, match);
 
 			// SOS match
@@ -71,8 +85,10 @@ public class VnePmMdvneAlgorithmPipelineStageVnet extends VnePmMdvneAlgorithm {
 		 * @param vnet VirtualNetwork to get information from.
 		 */
 		public void addNewVirtualNetwork(final VirtualNetwork vnet) {
-			delta.addEqualsConstraint("vsnet" + vnet.getName(), 1);
-			delta.setVariableWeightForConstraint("vsnet" + vnet.getName(), 1, "rej" + vnet.getName());
+			final LinearConstraint vn = new LinearConstraint(Operator.EQUAL, 1);
+			vn.setName("vsnet" + vnet.getName());
+			vn.addTerm(this.vars.get("rej" + vnet.getName()), 1);
+			problem.add(vn);
 		}
 
 	}
@@ -133,8 +149,8 @@ public class VnePmMdvneAlgorithmPipelineStageVnet extends VnePmMdvneAlgorithm {
 		if (instance == null) {
 			return;
 		}
-		if (this.ilpSolver != null) {
-			this.ilpSolver.dispose();
+		if (this.solver != null) {
+			this.solver.terminate();
 		}
 		if (this.patternMatcher != null) {
 			this.patternMatcher.dispose();
@@ -176,9 +192,9 @@ public class VnePmMdvneAlgorithmPipelineStageVnet extends VnePmMdvneAlgorithm {
 		final PatternMatchingDelta delta = patternMatcherVnet.run();
 		GlobalMetricsManager.endPmTime();
 
-		delta2Ilp(delta);
+		final Problem problem = delta2Ilp(delta);
 		GlobalMetricsManager.measureMemory();
-		final Set<VirtualNetwork> rejectedNetworks = solveIlp();
+		final Set<VirtualNetwork> rejectedNetworks = solveIlp(problem);
 
 		rejectedNetworks.addAll(ignoredVnets);
 		embedNetworks(rejectedNetworks);
@@ -205,7 +221,7 @@ public class VnePmMdvneAlgorithmPipelineStageVnet extends VnePmMdvneAlgorithm {
 	 * @param delta Pattern matching delta to translate into an ILP formulation.
 	 */
 	@Override
-	protected void delta2Ilp(final PatternMatchingDelta delta) {
+	protected Problem delta2Ilp(final PatternMatchingDelta delta) {
 		final IlpDeltaGeneratorVnet gen = new IlpDeltaGeneratorVnet();
 
 		// add new elements
@@ -218,7 +234,7 @@ public class VnePmMdvneAlgorithmPipelineStageVnet extends VnePmMdvneAlgorithm {
 				.forEach(gen::addNetworkToServerMatch);
 
 		// apply delta in ILP generator
-		gen.apply();
+		return gen.getProblem();
 	}
 
 	/*
@@ -314,8 +330,26 @@ public class VnePmMdvneAlgorithmPipelineStageVnet extends VnePmMdvneAlgorithm {
 	 */
 	@Override
 	public void init() {
-		// Create new ILP solver object on every method call.
-		ilpSolver = IlpSolverConfig.getIlpSolver();
+		final SolverConfig config = new SolverConfig();
+
+		config.setDebugOutputEnabled(IlpSolverConfig.ENABLE_ILP_OUTPUT);
+		switch (IlpSolverConfig.solver) {
+		case GUROBI:
+			config.setSolver(SolverType.GUROBI);
+			break;
+		case CPLEX:
+			config.setSolver(SolverType.CPLEX);
+			break;
+		case GLPK:
+			config.setSolver(SolverType.GLPK);
+			break;
+		}
+		config.setTimeoutEnabled(true);
+		config.setTimeout(IlpSolverConfig.TIME_OUT);
+		config.setRandomSeedEnabled(true);
+		config.setRandomSeed(IlpSolverConfig.RANDOM_SEED);
+
+		this.solver = (new org.emoflon.ilp.SolverHelper(config)).getSolver();
 
 		if (patternMatcher == null) {
 			patternMatcher = new EmoflonGtFactory().create();
