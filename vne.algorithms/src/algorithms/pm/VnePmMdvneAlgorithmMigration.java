@@ -3,6 +3,8 @@ package algorithms.pm;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.emoflon.ilp.Problem;
+
 import algorithms.AlgorithmConfig;
 import facade.ModelFacade;
 import gt.PatternMatchingDelta;
@@ -107,9 +109,9 @@ public class VnePmMdvneAlgorithmMigration extends VnePmMdvneAlgorithm {
 		// Add current delta to the global one
 		globalDelta.addOther(delta);
 
-		delta2Ilp(delta);
+		final Problem problem = delta2Ilp(delta);
 		GlobalMetricsManager.measureMemory();
-		Set<VirtualNetwork> rejectedNetworks = solveIlp();
+		Set<VirtualNetwork> rejectedNetworks = solveIlp(problem);
 		rejectedDespiteMigration.addAll(rejectedNetworks);
 
 		// Check if embedding migration routing must be started
@@ -157,9 +159,9 @@ public class VnePmMdvneAlgorithmMigration extends VnePmMdvneAlgorithm {
 			// add deltaIncr to delta
 			delta.addOther(deltaIncr);
 
-			delta2Ilp(delta);
+			final Problem problem = delta2Ilp(delta);
 			rejectedNetworks.clear();
-			rejectedNetworks.addAll(solveIlp());
+			rejectedNetworks.addAll(solveIlp(problem));
 
 			rejectedDespiteMigration.addAll(rejectedNetworks);
 			rejectedDespiteMigration.retainAll(rejectedNetworks);
