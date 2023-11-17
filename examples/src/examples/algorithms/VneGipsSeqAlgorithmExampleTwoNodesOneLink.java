@@ -39,7 +39,7 @@ public class VneGipsSeqAlgorithmExampleTwoNodesOneLink {
 		ModelFacade.getInstance().addServerToNetwork("vsrv1", "virt", 1, 1, 1, 0);
 		ModelFacade.getInstance().addSwitchToNetwork("vsw1", "virt", 0);
 		ModelFacade.getInstance().addLinkToNetwork("vl1", "virt", 1, "vsrv1", "vsw1");
-//		ModelFacade.getInstance().addLinkToNetwork("vl1", "virt", 1, "vsw1", "vsrv1");
+		ModelFacade.getInstance().addLinkToNetwork("vl2", "virt", 1, "vsw1", "vsrv1");
 		
 		ModelFacade.getInstance().validateModel();
 
