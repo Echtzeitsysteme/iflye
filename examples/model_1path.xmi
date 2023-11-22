@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<network.model:Root
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:network.model="platform:/resource/network.model/model/Model.ecore">
+  <networks
+      xsi:type="network.model:SubstrateNetwork"
+      name="sub">
+    <nodes xsi:type="network.model:SubstrateServer"
+        name="srv1"
+        outgoingLinks="//@networks.0/@links.0"
+        incomingLinks="//@networks.0/@links.1"
+        cpu="1"
+        memory="1"
+        storage="1"
+        paths="//@networks.0/@paths.0"
+        outgoingPaths="//@networks.0/@paths.0"
+        residualCpu="1"
+        residualMemory="1"
+        residualStorage="1"/>
+    <nodes xsi:type="network.model:SubstrateServer"
+        name="srv2"
+        outgoingLinks="//@networks.0/@links.1"
+        incomingLinks="//@networks.0/@links.0"
+        cpu="1"
+        memory="1"
+        storage="1"
+        paths="//@networks.0/@paths.0"
+        incomingPaths="//@networks.0/@paths.0"
+        residualCpu="1"
+        residualMemory="1"
+        residualStorage="1"/>
+    <links xsi:type="network.model:SubstrateLink"
+        name="sl1"
+        bandwidth="10"
+        source="//@networks.0/@nodes.0"
+        target="//@networks.0/@nodes.1"
+        residualBandwidth="10"
+        paths="//@networks.0/@paths.0"/>
+    <links xsi:type="network.model:SubstrateLink"
+        name="sl2"
+        bandwidth="10"
+        source="//@networks.0/@nodes.1"
+        target="//@networks.0/@nodes.0"
+        residualBandwidth="10"/>
+    <paths name="path-srv1-srv2"
+        source="//@networks.0/@nodes.0"
+        target="//@networks.0/@nodes.1"
+        nodes="//@networks.0/@nodes.0 //@networks.0/@nodes.1"
+        links="//@networks.0/@links.0"
+        bandwidth="10"
+        hops="1"
+        residualBandwidth="10"/>
+  </networks>
+  <networks
+      xsi:type="network.model:VirtualNetwork"
+      name="virt">
+    <nodes xsi:type="network.model:VirtualServer"
+        name="vsrv1"
+        outgoingLinks="//@networks.1/@links.0"
+        cpu="1"
+        memory="1"
+        storage="1"/>
+    <nodes xsi:type="network.model:VirtualServer"
+        name="vsrv2"
+        incomingLinks="//@networks.1/@links.0"
+        cpu="1"
+        memory="1"
+        storage="1"/>
+    <links xsi:type="network.model:VirtualLink"
+        name="vl1"
+        bandwidth="1"
+        source="//@networks.1/@nodes.0"
+        target="//@networks.1/@nodes.1"/>
+  </networks>
+</network.model:Root>

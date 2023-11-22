@@ -31,22 +31,25 @@ public class VneGipsSeqAlgorithmExampleTwoNodesOneLinkOntoPath {
 
 //		GlobalMetricsManager.startRuntime();
 
-		// Substrate network = two tier network
-		ModelFacade.getInstance().addNetworkToRoot("sub", false);
-		ModelFacade.getInstance().addServerToNetwork("srv1", "sub", 1, 1, 1, 0);
-		ModelFacade.getInstance().addServerToNetwork("srv2", "sub", 1, 1, 1, 0);
-		ModelFacade.getInstance().addLinkToNetwork("sl1", "sub", 10, "srv1", "srv2");
-		ModelFacade.getInstance().addLinkToNetwork("sl2", "sub", 10, "srv2", "srv1");
-		ModelFacade.getInstance().createAllPathsForNetwork("sub");
-		
-		// Virtual network = one tier network
-		ModelFacade.getInstance().addNetworkToRoot("virt", true);
-		ModelFacade.getInstance().addServerToNetwork("vsrv1", "virt", 1, 1, 1, 0);
-		ModelFacade.getInstance().addServerToNetwork("vsrv2", "virt", 1, 1, 1, 0);
-		ModelFacade.getInstance().addLinkToNetwork("vl1", "virt", 1, "vsrv1", "vsrv2");
-		ModelFacade.getInstance().addLinkToNetwork("vl2", "virt", 1, "vsrv2", "vsrv1");
-		
-		ModelFacade.getInstance().validateModel();
+//		// Substrate network = two tier network
+//		ModelFacade.getInstance().addNetworkToRoot("sub", false);
+//		ModelFacade.getInstance().addServerToNetwork("srv1", "sub", 1, 1, 1, 0);
+//		ModelFacade.getInstance().addServerToNetwork("srv2", "sub", 1, 1, 1, 0);
+//		ModelFacade.getInstance().addLinkToNetwork("sl1", "sub", 10, "srv1", "srv2");
+//		ModelFacade.getInstance().addLinkToNetwork("sl2", "sub", 10, "srv2", "srv1");
+//		ModelFacade.getInstance().createAllPathsForNetwork("sub");
+//
+//		// Virtual network = one tier network
+//		ModelFacade.getInstance().addNetworkToRoot("virt", true);
+//		ModelFacade.getInstance().addServerToNetwork("vsrv1", "virt", 1, 1, 1, 0);
+//		ModelFacade.getInstance().addServerToNetwork("vsrv2", "virt", 1, 1, 1, 0);
+//		ModelFacade.getInstance().addLinkToNetwork("vl1", "virt", 1, "vsrv1", "vsrv2");
+////		ModelFacade.getInstance().addLinkToNetwork("vl2", "virt", 1, "vsrv2", "vsrv1");
+//
+//		ModelFacade.getInstance().validateModel();
+////		ModelFacade.getInstance().persistModel();
+
+		ModelFacade.getInstance().loadModel("./model_1path.xmi");
 
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
@@ -57,8 +60,9 @@ public class VneGipsSeqAlgorithmExampleTwoNodesOneLinkOntoPath {
 
 //		GlobalMetricsManager.stopRuntime();
 
+//		ModelFacade.getInstance().persistModel();
 		ModelFacade.getInstance().validateModel();
-		
+
 		// Save model to file
 		ModelFacade.getInstance().persistModel();
 		System.out.println("=> Execution finished.");

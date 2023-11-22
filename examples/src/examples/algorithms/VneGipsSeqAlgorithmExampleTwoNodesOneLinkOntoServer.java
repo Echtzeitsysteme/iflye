@@ -34,13 +34,15 @@ public class VneGipsSeqAlgorithmExampleTwoNodesOneLinkOntoServer {
 		ModelFacade.getInstance().addNetworkToRoot("sub", false);
 		ModelFacade.getInstance().addServerToNetwork("s1", "sub", 10, 10, 10, 0);
 
+		ModelFacade.getInstance().addServerToNetwork("s2", "sub", 10, 10, 10, 0);
+
 		// Virtual network = one tier network
 		ModelFacade.getInstance().addNetworkToRoot("virt", true);
 		ModelFacade.getInstance().addServerToNetwork("vsrv1", "virt", 1, 1, 1, 0);
 		ModelFacade.getInstance().addSwitchToNetwork("vsw1", "virt", 0);
 		ModelFacade.getInstance().addLinkToNetwork("vl1", "virt", 1, "vsrv1", "vsw1");
 		ModelFacade.getInstance().addLinkToNetwork("vl2", "virt", 1, "vsw1", "vsrv1");
-		
+
 		ModelFacade.getInstance().validateModel();
 
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
@@ -53,7 +55,7 @@ public class VneGipsSeqAlgorithmExampleTwoNodesOneLinkOntoServer {
 //		GlobalMetricsManager.stopRuntime();
 
 		ModelFacade.getInstance().validateModel();
-		
+
 		// Save model to file
 		ModelFacade.getInstance().persistModel();
 		System.out.println("=> Execution finished.");
