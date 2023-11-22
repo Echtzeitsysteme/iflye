@@ -15,7 +15,7 @@ import model.VirtualNetwork;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneGipsSeqAlgorithmExampleTwoNodesOneLink {
+public class VneGipsSeqAlgorithmExampleTwoNodesOneLinkOntoServer {
 
 	/**
 	 * Main method to start the example. String array of arguments will be ignored.
