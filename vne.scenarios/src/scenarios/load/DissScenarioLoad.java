@@ -17,6 +17,7 @@ import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Embedding;
 import algorithms.AlgorithmConfig.Objective;
 import algorithms.gips.VneGipsAlgorithm;
+import algorithms.gips.VneGipsSeqAlgorithm;
 import algorithms.heuristics.TafAlgorithm;
 import algorithms.ilp.VneFakeIlpAlgorithm;
 import algorithms.ilp.VneFakeIlpBatchAlgorithm;
@@ -161,7 +162,7 @@ public class DissScenarioLoad {
 	 * <ol>
 	 * <li>#0: Algorithm "pm", "pm-migration", "pm-pipeline2-vnet",
 	 * "pm-pipeline2-racka", "pm-pipeline2-rackb", "pm-pipeline3a", "pm-pipeline3b",
-	 * "ilp", "ilp-batch", "gips" or "taf" (required)</li>
+	 * "ilp", "ilp-batch", "gips", "gips-seq" or "taf" (required)</li>
 	 * <li>#1: Objective "total-path", "total-comm-a", "total-comm-b",
 	 * "total-obj-c", "total-obj-d", "total-taf-comm" (required)</li>
 	 * <li>#2: Embedding "emoflon", "emoflon_wo_update" or "manual" [only relevant
@@ -410,6 +411,8 @@ public class DissScenarioLoad {
 			return VneFakeIlpBatchAlgorithm.prepare(sNet, vNets);
 		case "gips":
 			return VneGipsAlgorithm.prepare(sNet, vNets);
+		case "gips-seq":
+			return VneGipsSeqAlgorithm.prepare(sNet, vNets);
 		case "taf":
 			ModelFacadeConfig.IGNORE_BW = true;
 			return new TafAlgorithm(sNet, vNets);
