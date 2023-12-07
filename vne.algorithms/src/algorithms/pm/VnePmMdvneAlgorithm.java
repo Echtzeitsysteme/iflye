@@ -330,6 +330,16 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 		 * @return ILP problem.
 		 */
 		public Problem getProblem() {
+			// Add variables from the index structure
+			this.vars.forEach((k, v) -> {
+				this.problem.getVariables().put(k, v);
+			});
+
+			// Remove all constraints with an empty LHS since they aren't needed
+			final var constraintsToRemove = this.problem.getConstraints().stream()
+					.filter(c -> c.getLhsTerms().isEmpty()).toList();
+			constraintsToRemove.forEach(c -> this.problem.remove(c));
+
 			return this.problem;
 		}
 
