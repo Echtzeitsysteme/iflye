@@ -36,7 +36,9 @@ public class VnePmMdvneAlgorithmTotalCommunicationCostBTest extends AAlgorithmMu
 
 	@AfterEach
 	public void resetAlgo() {
-		((VnePmMdvneAlgorithm) algo).dispose();
+		if (algo != null) {
+			((VnePmMdvneAlgorithm) algo).dispose();
+		}
 	}
 
 	/**

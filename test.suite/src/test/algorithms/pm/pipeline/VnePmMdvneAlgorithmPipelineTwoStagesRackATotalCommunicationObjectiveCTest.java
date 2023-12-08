@@ -3,6 +3,7 @@ package test.algorithms.pm.pipeline;
 import java.util.Set;
 
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
@@ -28,6 +29,7 @@ public class VnePmMdvneAlgorithmPipelineTwoStagesRackATotalCommunicationObjectiv
 
 	@Override
 	@Disabled
+	@Test
 	public void testAllOnOneServer() {
 		// This test is disabled, because the pipeline stage rack A can not embed a
 		// virtual network onto
@@ -35,6 +37,8 @@ public class VnePmMdvneAlgorithmPipelineTwoStagesRackATotalCommunicationObjectiv
 	}
 
 	@Override
+	@Disabled
+	@Test
 	public void testPreferenceOfFilledServers() {
 		// From the parent test case: Test expects that all virtual networks are placed
 		// on the same
