@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
@@ -41,22 +42,27 @@ public class VneGipsSeqAlgorithmObjectiveTest extends VneGipsAlgorithmObjectiveT
 	@AfterEach
 	public void resetAlgo() {
 		facade.resetAll();
-		((VneGipsSeqAlgorithm) algo).dispose();
+		if (algo != null) {
+			((VneGipsSeqAlgorithm) algo).dispose();
+		}
 	}
-	
+
 	//
 	// Tests
 	//
-	
+
 	@Disabled
+	@Test
 	public void testAllOnOneRackLarge() {
 	}
-	
+
 	@Disabled
+	@Test
 	public void testAllOnOneServerLarge() {
 	}
-	
+
 	@Disabled
+	@Test
 	public void testAllOnMultipleRacksLarge() {
 	}
 
