@@ -6,8 +6,8 @@ authors:
     given-names: Maximilian
     orcid: https://orcid.org/0000-0001-7396-7763
 title: Incremental Fast Lightweight (y) virtual network Embedding
-version: 0.0.3
-date-released: 2021-12-23
+version: 0.0.4
+date-released: 2022-12-11
 repository-code: "https://github.com/Echtzeitsysteme/iflye"
 keywords:
   - "virtual network embedding"
