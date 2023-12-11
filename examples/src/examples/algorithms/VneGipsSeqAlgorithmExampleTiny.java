@@ -5,7 +5,7 @@ import java.util.Set;
 import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
-import algorithms.gips.VneGipsAlgorithm;
+import algorithms.gips.VneGipsSeqAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.OneTierNetworkGenerator;
@@ -19,7 +19,7 @@ import model.VirtualNetwork;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneGipsAlgorithmExampleTiny {
+public class VneGipsSeqAlgorithmExampleTiny {
 
 	/**
 	 * Main method to start the example. String array of arguments will be ignored.
@@ -40,7 +40,8 @@ public class VneGipsAlgorithmExampleTiny {
 		subGen.createNetwork("sub", false);
 
 		// Virtual network = one tier network
-		final OneTierConfig virtualConfig = new OneTierConfig(2, 1, false, 10, 1, 1, 1);
+//		final OneTierConfig virtualConfig = new OneTierConfig(2, 1, false, 10, 1, 1, 1);
+		final OneTierConfig virtualConfig = new OneTierConfig(2, 1, false, 2, 1, 1, 1);
 		final OneTierNetworkGenerator virtGen = new OneTierNetworkGenerator(virtualConfig);
 		virtGen.createNetwork("virt", true);
 
@@ -48,18 +49,20 @@ public class VneGipsAlgorithmExampleTiny {
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
 		// Create and execute algorithm
-		final AbstractAlgorithm algo = VneGipsAlgorithm.prepare(sNet, Set.of(vNet));
+		final AbstractAlgorithm algo = VneGipsSeqAlgorithm.prepare(sNet, Set.of(vNet));
 		algo.execute();
 
-		GlobalMetricsManager.stopRuntime();
+//		GlobalMetricsManager.stopRuntime();
+		
+		ModelFacade.getInstance().validateModel();
 
 		// Save model to file
 		ModelFacade.getInstance().persistModel();
 		System.out.println("=> Execution finished.");
 
-		// Time measurements
-		System.out.println("=> Elapsed time (total): " + GlobalMetricsManager.getRuntime().getValue() / 1_000_000_000
-				+ " seconds");
+//		// Time measurements
+//		System.out.println("=> Elapsed time (total): " + GlobalMetricsManager.getRuntime().getValue() / 1_000_000_000
+//				+ " seconds");
 		System.exit(0);
 	}
 
