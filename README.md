@@ -12,6 +12,7 @@
 * Install [IBM ILOG CPLEX](https://www.ibm.com/products/ilog-cplex-optimization-studio) in version `22.1.1`.
     * CPLEX is an alternative ILP solver in **iflye**. You do not need it explicitely, but if you did not install and configure it properly, at least one test case will fail.
     * Please notice: CPLEX does not support SOS1 constraints with equal weights (as usually desired by the PM-/ILP-based algorithms in this projects). Therefore, the adapter implementation ignores all SOS1 constraint creations.
+* Import all projects related to [eMoflon-ILP](https://github.com/eMoflon/emoflon-ilp) into your development workspace. Build the project using the Maven Eclipse integration.
 * Launch a runtime workspace (while using a runtime Eclipse) as stated in the [eMoflon::IBeX installation steps](https://github.com/eMoflon/emoflon-ibex?tab=readme-ov-file#how-to-develop).
     * Additionally, the runtime workspace needs some environment variables to access the Gurobi and the CPLEX solver. Do not forget to adapt them to your individual setup:
 ```
