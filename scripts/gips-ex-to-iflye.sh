@@ -12,3 +12,6 @@ rsync -a --progress --stats ../../gips-examples/$MDVNE_PROJECT_NAME/src-gen ../$
 
 rm -rf ../$MDVNE_PROJECT_NAME.migration/src-gen
 rsync -a --progress --stats ../../gips-examples/$MDVNE_PROJECT_NAME.migration/src-gen ../$MDVNE_PROJECT_NAME.migration
+
+rm -rf ../$MDVNE_PROJECT_NAME.seq/src-gen
+rsync -a --progress --stats ../../gips-examples/$MDVNE_PROJECT_NAME.seq/src-gen ../$MDVNE_PROJECT_NAME.seq
