@@ -64,6 +64,42 @@ if [ $a = "gips" ]; then
     rm -r ./org
 fi
 
+# GIPS-migration workaround for all needed xmi files
+if [ $a = "gips-mig" ]; then
+    echo "=> Applying GIPS-migration hipe-network.xmi workaround."
+
+    # Extract hipe-network.xmi file
+    unzip -o $JAR "org/emoflon/gips/gipsl/examples/mdvne/migration/hipe/*/hipe-network.xmi"
+    unzip -o $JAR "org/emoflon/gips/gipsl/examples/mdvne/migration/api/*/gips-model.xmi"
+    unzip -o $JAR "org/emoflon/gips/gipsl/examples/mdvne/migration/api/ibex-patterns.xmi"
+
+    mkdir -p ../org.emoflon.gips.gipsl.examples.mdvne.migration/src-gen/
+    mkdir -p C%3A/Users/mkratz/git/gips-examples/org.emoflon.gips.gipsl.examples.mdvne.migration/src-gen
+
+    rsync -a ./org ./bin
+    rsync -a ./org ../org.emoflon.gips.gipsl.examples.mdvne.migration/src-gen
+    rsync -a ./org ./C%3A/Users/mkratz/git/gips-examples/org.emoflon.gips.gipsl.examples.mdvne.migration/src-gen
+    rm -r ./org
+fi
+
+# GIPS-sequence workaround for all needed xmi files
+if [ $a = "gips-seq" ]; then
+    echo "=> Applying GIPS-seq hipe-network.xmi workaround."
+
+    # Extract hipe-network.xmi file
+    unzip -o $JAR "org/emoflon/gips/gipsl/examples/mdvne/seq/hipe/*/hipe-network.xmi"
+    unzip -o $JAR "org/emoflon/gips/gipsl/examples/mdvne/seq/api/*/gips-model.xmi"
+    unzip -o $JAR "org/emoflon/gips/gipsl/examples/mdvne/seq/api/ibex-patterns.xmi"
+
+    mkdir -p ../org.emoflon.gips.gipsl.examples.mdvne.seq/src-gen/
+    mkdir -p C%3A/Users/mkratz/git/gips-examples/org.emoflon.gips.gipsl.examples.mdvne.seq/src-gen
+
+    rsync -a ./org ./bin
+    rsync -a ./org ../org.emoflon.gips.gipsl.examples.mdvne.seq/src-gen
+    rsync -a ./org ./C%3A/Users/mkratz/git/gips-examples/org.emoflon.gips.gipsl.examples.mdvne.seq/src-gen
+    rm -r ./org
+fi
+
 for ((i=1;i<=$r;i++));
 do
     # Without memory measurement
@@ -78,3 +114,4 @@ done
 echo "#"
 echo "# => Arg script done."
 echo "#"
+

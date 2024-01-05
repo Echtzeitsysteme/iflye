@@ -8,31 +8,35 @@
 * Install [Temurin JDK17](https://adoptium.net/) or newer.
 * Install [GIPS](https://gips.dev) as described [here](https://github.com/Echtzeitsysteme/gips#installation-development) or use the [pre-built Eclipse](https://github.com/Echtzeitsysteme/gips-eclipse-build).
 * Install [Gurobi](https://www.gurobi.com/) in version `10.0.3` and activate a license for your computer.
-    * Currently, Gurobi is the default ILP solver used in iflye.
+    * Currently, Gurobi is the default ILP solver used in **iflye**.
 * Install [IBM ILOG CPLEX](https://www.ibm.com/products/ilog-cplex-optimization-studio) in version `22.1.1`.
-    * CPLEX is an alternative ILP solver in iflye. You do not need it explicitely, but if you did not install and configure it properly, at least one test case will fail.
+    * CPLEX is an alternative ILP solver in **iflye**. You do not need it explicitely, but if you did not install and configure it properly, at least one test case will fail.
     * Please notice: CPLEX does not support SOS1 constraints with equal weights (as usually desired by the PM-/ILP-based algorithms in this projects). Therefore, the adapter implementation ignores all SOS1 constraint creations.
-* Launch a runtime workspace (while using a runtime Eclipse) as stated in the eMoflon::IBeX installation steps.
+* Launch a runtime workspace (while using a runtime Eclipse) as stated in the [eMoflon::IBeX installation steps](https://github.com/eMoflon/emoflon-ibex?tab=readme-ov-file#how-to-develop).
     * Additionally, the runtime workspace needs some environment variables to access the Gurobi and the CPLEX solver. Do not forget to adapt them to your individual setup:
 ```
-GRB_LICENSE_FILE=/home/maxkratz/gurobi.lic
+GRB_LICENSE_FILE=/home/mkratz/gurobi.lic
 GUROBI_HOME=/opt/gurobi1003/linux64/
 LD_LIBRARY_PATH=/opt/gurobi1003/linux64/lib/
 PATH=/opt/gurobi1003/linux64/bin/:/opt/ibm/ILOG/CPLEX_Studio2211/cplex/bin/x86-64_linux/:$PATH
 ```
 
 ### Project setup (manual)
+
 * Clone this Git repository to your local machine and import it into Eclipse: *File -> Import -> General -> Existing Projects into Workspace*. Import all projects.
 * Clone the [GIPS examples repo](https://github.com/Echtzeitsysteme/gips-examples) to your local machine and import it into Eclipse: *File -> Import -> General -> Existing Projects into Workspace*. Import (at least) the following projects:
     * `network.model`
     * `org.emoflon.gips.gipsl.examples.mdvne`
     * `org.emoflon.gips.gipsl.examples.mdvne.migration`
+    * `org.emoflon.gips.gipsl.examples.mdvne.seq`
 * Inside the runtime workspace, build all projects (*Project -> Clean... -> Clean all projects*) to trigger code generation.
     * Build the projects *network.model*, *network.model.rules*, *network.model.rules.racka*, *network.model.rules.rackb*, and *network.model.rules.vnet* with the black eMoflon hammer symbol.
+    * Build the GIPS projects mentioned above with the black eMoflon hammer symbol.
 
 A good start point to verify your installation is to run the included unit tests, refer to the [test section](#tests).
 
 ### Project setup (PSF)
+
 * As an alternative to the previous project setup section, you can use this [PSF file](./projectSet.psf) for the import of all necessary projects.
 
 ### Code-Style
@@ -60,7 +64,6 @@ After finishing the installation steps, you may run simulations, e.g., from the 
 There are some examples for network generators as well as embedding algorithms.
 All examples contain a `public static void main(final String[] args)` method as entry point and can be run as *Java appication* from within the Eclipse workspace.
 
-
 ### CLI usage
 
 You may want to run the whole program as one exported file, e.g., on a server via the CLI for measurement purposes.
@@ -68,7 +71,7 @@ To export the whole project as executable JAR file, follow this step:
 * *File -> Export... -> Java/Runnable JAR file -> Next -> (Chose your launch configuration) -> (Chose the export destination) -> Library handling: Package required libraries into generated JAR -> Finish*
 
 Depending on your launch configuration, you can start the JAR file with additional arguments.
-Example:
+Example:  
 `$ java -jar iflye.jar --algorithm taf --objective total-taf-comm --snetfile resources/two-tier-12-pods/snet.json --vnetfile resources/two-tier-12-pods/vnets.json --csvpath metrics.csv`
 
 For larger simulations, you may want to increase the Java heap space.
@@ -76,7 +79,6 @@ Example with 32 GiB:
 `$ java -Xmx32g -jar iflye.jar $parameters`
 
 In the subfolder [scripts/](scripts/) are some basic Bash scripts to run parameter sweeps as well as CLI argument parsing into the scenario.
-
 
 ### Scenario loader
 

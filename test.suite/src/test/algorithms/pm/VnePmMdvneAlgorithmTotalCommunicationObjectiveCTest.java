@@ -37,7 +37,9 @@ public class VnePmMdvneAlgorithmTotalCommunicationObjectiveCTest extends AAlgori
 
 	@AfterEach
 	public void resetAlgo() {
-		((VnePmMdvneAlgorithm) algo).dispose();
+		if (algo != null) {
+			((VnePmMdvneAlgorithm) algo).dispose();
+		}
 	}
 
 	/**
