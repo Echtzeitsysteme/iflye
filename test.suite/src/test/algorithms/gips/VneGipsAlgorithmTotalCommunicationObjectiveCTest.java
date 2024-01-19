@@ -427,7 +427,7 @@ public class VneGipsAlgorithmTotalCommunicationObjectiveCTest extends AAlgorithm
 
 		// Actual test starts here
 		facade.addNetworkToRoot("virt2", true);
-		facade.addSwitchToNetwork("virt2" + "_sw1", "virt", 0);
+		facade.addSwitchToNetwork("virt2" + "_sw1", "virt2", 0);
 		VirtualNetwork vNet2 = (VirtualNetwork) facade.getNetworkById("virt2");
 
 		initAlgo(sNet, Set.of(vNet2));
