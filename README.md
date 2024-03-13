@@ -7,7 +7,7 @@
 
 * Install [Temurin JDK17](https://adoptium.net/) or newer.
 * Install [GIPS](https://gips.dev) as described [here](https://github.com/Echtzeitsysteme/gips#installation-development) or use the [pre-built Eclipse](https://github.com/Echtzeitsysteme/gips-eclipse-build).
-* Install [Gurobi](https://www.gurobi.com/) in version `10.0.3` and activate a license for your computer.
+* Install [Gurobi](https://www.gurobi.com/) in version `11.0.0` and activate a license for your computer.
     * Currently, Gurobi is the default ILP solver used in **iflye**.
 * Install [IBM ILOG CPLEX](https://www.ibm.com/products/ilog-cplex-optimization-studio) in version `22.1.1`.
     * CPLEX is an alternative ILP solver in **iflye**. You do not need it explicitely, but if you did not install and configure it properly, at least one test case will fail.
@@ -16,9 +16,9 @@
     * Additionally, the runtime workspace needs some environment variables to access the Gurobi and the CPLEX solver. Do not forget to adapt them to your individual setup:
 ```
 GRB_LICENSE_FILE=/home/mkratz/gurobi.lic
-GUROBI_HOME=/opt/gurobi1003/linux64/
-LD_LIBRARY_PATH=/opt/gurobi1003/linux64/lib/
-PATH=/opt/gurobi1003/linux64/bin/:/opt/ibm/ILOG/CPLEX_Studio2211/cplex/bin/x86-64_linux/:$PATH
+GUROBI_HOME=/opt/gurobi1100/linux64/
+LD_LIBRARY_PATH=/opt/gurobi1100/linux64/lib/
+PATH=/opt/gurobi1100/linux64/bin/:/opt/ibm/ILOG/CPLEX_Studio2211/cplex/bin/x86-64_linux/:$PATH
 ```
 
 ### Project setup (manual)
