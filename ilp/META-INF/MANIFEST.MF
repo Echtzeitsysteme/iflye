@@ -5,11 +5,11 @@ Bundle-SymbolicName: ilp
 Bundle-Version: 0.0.3.qualifier
 Bundle-ClassPath: ilp.jar,
  lib/cplex/cplex-22.1.1.jar,
- lib/gurobi/gurobi-11.0.0.jar,
- lib/gurobi/gurobi-javadoc-11.0.0.jar
+ lib/gurobi/gurobi-11.0.1.jar,
+ lib/gurobi/gurobi-javadoc-11.0.1.jar
 Automatic-Module-Name: ilp
 Bundle-RequiredExecutionEnvironment: JavaSE-16
-Export-Package: com.gurobi.gurobi;version="11.0.0",
+Export-Package: com.gurobi.gurobi;version="11.0.1",
  ilog.concert,
  ilog.cplex,
  ilp.solver.examples,
