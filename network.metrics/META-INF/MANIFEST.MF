@@ -1,6 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: network.metrics
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-SymbolicName: network.metrics; singleton:=true
 Bundle-Version: 0.0.3.qualifier
 Require-Bundle: org.eclipse.emf.ecore,
