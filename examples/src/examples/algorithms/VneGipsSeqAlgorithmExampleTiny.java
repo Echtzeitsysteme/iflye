@@ -53,7 +53,7 @@ public class VneGipsSeqAlgorithmExampleTiny {
 		algo.execute();
 
 //		GlobalMetricsManager.stopRuntime();
-		
+
 		ModelFacade.getInstance().validateModel();
 
 		// Save model to file

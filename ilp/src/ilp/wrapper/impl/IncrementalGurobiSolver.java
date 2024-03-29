@@ -21,6 +21,7 @@ import com.gurobi.gurobi.GRBException;
 import com.gurobi.gurobi.GRBLinExpr;
 import com.gurobi.gurobi.GRBModel;
 import com.gurobi.gurobi.GRBVar;
+
 import ilp.wrapper.IlpSolverException;
 import ilp.wrapper.IncrementalIlpSolver;
 import ilp.wrapper.SolverStatus;

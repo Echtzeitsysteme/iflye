@@ -43,7 +43,7 @@ public class VneGipsAlgorithm extends AbstractAlgorithm {
 					"The VNE GIPS algorithm can only be used with the total communication cost C.");
 		}
 
-		// TODO: Time measurement		
+		// TODO: Time measurement
 		final ResourceSet model = ModelFacade.getInstance().getResourceSet();
 		final boolean gipsSuccess = MdvneGipsIflyeAdapter.execute(model);
 		return gipsSuccess;
