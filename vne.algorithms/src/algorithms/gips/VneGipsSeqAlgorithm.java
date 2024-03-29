@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.emoflon.gips.gipsl.examples.mdvne.seq.MdvneGipsIflyeAdapter;
+import org.emoflon.gips.gipsl.examples.mdvne.seq.MdvneSeqGipsIflyeAdapter;
 
 import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
@@ -43,9 +43,9 @@ public class VneGipsSeqAlgorithm extends AbstractAlgorithm {
 					"The VNE GIPS algorithm can only be used with the total communication cost C.");
 		}
 
-		// TODO: Time measurement		
+		// TODO: Time measurement
 		final ResourceSet model = ModelFacade.getInstance().getResourceSet();
-		final boolean gipsSuccess = MdvneGipsIflyeAdapter.execute(model);
+		final boolean gipsSuccess = MdvneSeqGipsIflyeAdapter.execute(model);
 		return gipsSuccess;
 	}
 
@@ -79,7 +79,7 @@ public class VneGipsSeqAlgorithm extends AbstractAlgorithm {
 	 * Resets the algorithm instance.
 	 */
 	public void dispose() {
-		MdvneGipsIflyeAdapter.resetInit();
+		MdvneSeqGipsIflyeAdapter.resetInit();
 		if (instance == null) {
 			return;
 		}
