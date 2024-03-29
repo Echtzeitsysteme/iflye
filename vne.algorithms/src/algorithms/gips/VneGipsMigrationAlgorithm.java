@@ -1,11 +1,9 @@
 package algorithms.gips;
 
-import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.emoflon.gips.gipsl.examples.mdvne.MdvneGipsIflyeAdapter;
 import org.emoflon.gips.gipsl.examples.mdvne.migration.MdvneMigrationGipsIflyeAdapter;
 
 import algorithms.AbstractAlgorithm;
@@ -58,7 +56,7 @@ public class VneGipsMigrationAlgorithm extends AbstractAlgorithm {
 		}
 
 		final ResourceSet model = ModelFacade.getInstance().getResourceSet();
-		final boolean gipsSuccess = MdvneGipsIflyeAdapter.execute(model);
+		final boolean gipsSuccess = MdvneMigrationGipsIflyeAdapter.execute(model);
 		return gipsSuccess;
 	}
 
@@ -92,7 +90,7 @@ public class VneGipsMigrationAlgorithm extends AbstractAlgorithm {
 	 * Resets the algorithm instance.
 	 */
 	public void dispose() {
-		MdvneGipsIflyeAdapter.resetInit();
+		MdvneMigrationGipsIflyeAdapter.resetInit();
 		if (instance == null) {
 			return;
 		}
