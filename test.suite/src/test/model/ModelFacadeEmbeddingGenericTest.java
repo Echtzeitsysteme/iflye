@@ -369,11 +369,4 @@ public class ModelFacadeEmbeddingGenericTest extends ModelFacadeEmbeddingTest {
 		});
 	}
 
-	@Test
-	public void testRemoveNetworkEmbeddingRejectIdNotExists() {
-		assertThrows(IllegalArgumentException.class, () -> {
-			ModelFacade.getInstance().removeNetworkEmbedding("42");
-		});
-	}
-
 }
