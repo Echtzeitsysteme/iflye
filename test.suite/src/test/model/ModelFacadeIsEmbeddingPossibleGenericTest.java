@@ -38,27 +38,27 @@ public class ModelFacadeIsEmbeddingPossibleGenericTest extends ModelFacadeEmbedd
 	}
 
 	@Test
-	public void testEmbedServerToServerRejectCpu() {
+	public void testEmbedServerToServerCpuIgnore() {
 		ModelFacade.getInstance().addServerToNetwork("1", "sub", 1, 1, 1, 0);
 		ModelFacade.getInstance().addServerToNetwork("2", "virt", 2, 1, 1, 0);
 
-		assertFalse(ModelFacade.getInstance().isEmbeddingPossibleGeneric("1", "2", false));
+		assertTrue(ModelFacade.getInstance().isEmbeddingPossibleGeneric("1", "2", true));
 	}
 
 	@Test
-	public void testEmbedServerToServerRejectMemory() {
+	public void testEmbedServerToServerMemoryIgnore() {
 		ModelFacade.getInstance().addServerToNetwork("1", "sub", 1, 1, 1, 0);
 		ModelFacade.getInstance().addServerToNetwork("2", "virt", 1, 2, 1, 0);
 
-		assertFalse(ModelFacade.getInstance().isEmbeddingPossibleGeneric("1", "2", false));
+		assertTrue(ModelFacade.getInstance().isEmbeddingPossibleGeneric("1", "2", true));
 	}
 
 	@Test
-	public void testEmbedServerToServerRejectStorage() {
+	public void testEmbedServerToServerStorageIgnore() {
 		ModelFacade.getInstance().addServerToNetwork("1", "sub", 1, 1, 1, 0);
 		ModelFacade.getInstance().addServerToNetwork("2", "virt", 1, 1, 2, 0);
 
-		assertFalse(ModelFacade.getInstance().isEmbeddingPossibleGeneric("1", "2", false));
+		assertTrue(ModelFacade.getInstance().isEmbeddingPossibleGeneric("1", "2", true));
 	}
 
 	@Test
@@ -158,6 +158,30 @@ public class ModelFacadeIsEmbeddingPossibleGenericTest extends ModelFacadeEmbedd
 	/*
 	 * Negative tests.
 	 */
+
+	@Test
+	public void testEmbedServerToServerRejectCpu() {
+		ModelFacade.getInstance().addServerToNetwork("1", "sub", 1, 1, 1, 0);
+		ModelFacade.getInstance().addServerToNetwork("2", "virt", 2, 1, 1, 0);
+
+		assertFalse(ModelFacade.getInstance().isEmbeddingPossibleGeneric("1", "2", false));
+	}
+
+	@Test
+	public void testEmbedServerToServerRejectMemory() {
+		ModelFacade.getInstance().addServerToNetwork("1", "sub", 1, 1, 1, 0);
+		ModelFacade.getInstance().addServerToNetwork("2", "virt", 1, 2, 1, 0);
+
+		assertFalse(ModelFacade.getInstance().isEmbeddingPossibleGeneric("1", "2", false));
+	}
+
+	@Test
+	public void testEmbedServerToServerRejectStorage() {
+		ModelFacade.getInstance().addServerToNetwork("1", "sub", 1, 1, 1, 0);
+		ModelFacade.getInstance().addServerToNetwork("2", "virt", 1, 1, 2, 0);
+
+		assertFalse(ModelFacade.getInstance().isEmbeddingPossibleGeneric("1", "2", false));
+	}
 
 	@Test
 	public void testEmbedLinkToPathRejectBw() {
