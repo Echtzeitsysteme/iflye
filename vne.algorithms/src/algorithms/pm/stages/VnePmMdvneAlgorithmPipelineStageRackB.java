@@ -205,6 +205,10 @@ public class VnePmMdvneAlgorithmPipelineStageRackB extends VnePmMdvneAlgorithm {
 			}
 		}
 
+		// Workaround to fix the residual bandwidth of other paths possibly affected by
+		// virtual link to substrate path embeddings
+		facade.updateAllPathsResidualBandwidth(sNet.getName());
+
 		return rejectedNetworks;
 	}
 
