@@ -54,6 +54,10 @@ public class VneGipsMigrationAlgorithm extends AbstractAlgorithm {
 				}
 			}
 		}
+		
+		// Sanity check
+		ModelFacade.getInstance().validateModel();
+		ModelFacade.getInstance().updateAllPathsResidualBandwidth(sNet.getName());
 
 		final ResourceSet model = ModelFacade.getInstance().getResourceSet();
 		final boolean gipsSuccess = MdvneMigrationGipsIflyeAdapter.execute(model);
