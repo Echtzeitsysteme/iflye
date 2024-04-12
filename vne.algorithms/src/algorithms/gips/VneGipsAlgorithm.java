@@ -46,6 +46,10 @@ public class VneGipsAlgorithm extends AbstractAlgorithm {
 		// TODO: Time measurement
 		final ResourceSet model = ModelFacade.getInstance().getResourceSet();
 		final boolean gipsSuccess = MdvneGipsIflyeAdapter.execute(model);
+
+		// Workaround to fix the residual bandwidth of other paths possibly affected by
+		// virtual link to substrate path embeddings
+		ModelFacade.getInstance().updateAllPathsResidualBandwidth(sNet.getName());
 		return gipsSuccess;
 	}
 
