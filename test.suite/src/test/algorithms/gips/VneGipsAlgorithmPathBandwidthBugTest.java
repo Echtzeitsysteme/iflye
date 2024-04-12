@@ -34,5 +34,5 @@ public class VneGipsAlgorithmPathBandwidthBugTest extends AVneAlgorithmPathBandw
 			((VneGipsAlgorithm) algo).dispose();
 		}
 	}
-	
+
 }

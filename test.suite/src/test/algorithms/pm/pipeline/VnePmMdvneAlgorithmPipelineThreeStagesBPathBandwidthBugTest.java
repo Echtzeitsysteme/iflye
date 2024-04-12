@@ -3,10 +3,7 @@ package test.algorithms.pm.pipeline;
 import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 
-import algorithms.AlgorithmConfig;
-import algorithms.AlgorithmConfig.Objective;
 import algorithms.pm.VnePmMdvneAlgorithmPipelineThreeStagesB;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;

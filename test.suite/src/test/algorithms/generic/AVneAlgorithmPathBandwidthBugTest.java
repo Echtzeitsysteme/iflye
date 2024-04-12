@@ -41,7 +41,7 @@ public abstract class AVneAlgorithmPathBandwidthBugTest extends AAlgorithmTest {
 	public abstract void resetAlgo();
 
 	@BeforeEach
-	public void resetModel() {
+	public void reset() {
 		facade.resetAll();
 	}
 
