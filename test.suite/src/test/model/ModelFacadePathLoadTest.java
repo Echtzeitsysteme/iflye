@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +27,7 @@ import model.SubstratePath;
 public class ModelFacadePathLoadTest {
 
 	private final String referenceModelFile = "resources/pathLoadModel.xmi";
+	private final String referenceModelFileWoPaths = "resources/pathLoadModel_noPaths.xmi";
 
 	@BeforeEach
 	public void resetModel() {
@@ -130,6 +132,34 @@ public class ModelFacadePathLoadTest {
 
 		assertNotNull(ModelFacade.getInstance().getPathsFromSourceToTarget(getNode("sw"), getNode("srv2")));
 		assertEquals(1, ModelFacade.getInstance().getPathsFromSourceToTarget(getNode("sw"), getNode("srv2")).size());
+	}
+
+	@Test
+	public void testPathLookupDataClear() {
+		// Load a model file which contains paths
+		ModelFacade.getInstance().loadModel(referenceModelFile);
+
+		// Check existing of paths beforehand
+		assertNotNull(ModelFacade.getInstance().getAllPathsOfNetwork("net"));
+		assertFalse(ModelFacade.getInstance().getAllPathsOfNetwork("net").isEmpty());
+		assertNotNull(ModelFacade.getInstance().getPathFromSourceToTarget(getNode("srv1"), getNode("srv2")));
+		assertEquals(1, ModelFacade.getInstance().getPathsFromSourceToTarget(getNode("srv1"), getNode("srv2")).size());
+
+		// Save old nodes for later look ups
+		final SubstrateNode srv1old = getNode("srv1");
+		final SubstrateNode srv2old = getNode("srv2");
+
+		// Now load a model without any paths
+		ModelFacade.getInstance().loadModel(referenceModelFileWoPaths);
+
+		// Check non-existance of any paths (method will use the lookup data structure)
+		assertNotNull(ModelFacade.getInstance().getAllPathsOfNetwork("net"));
+		// Newer nodes must not be contained
+		assertTrue(ModelFacade.getInstance().getAllPathsOfNetwork("net").isEmpty());
+		assertNull(ModelFacade.getInstance().getPathFromSourceToTarget(getNode("srv1"), getNode("srv2")));
+
+		// Old nodes must also not be contained
+		assertNull(ModelFacade.getInstance().getPathFromSourceToTarget(srv1old, srv2old));
 	}
 
 	/**
