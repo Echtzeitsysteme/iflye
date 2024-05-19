@@ -39,6 +39,9 @@ PATH=C:\gurobi1102\win64\bin;C:\Program Files\IBM\ILOG\CPLEX_Studio2211\cplex\bi
 * Inside the runtime workspace, build all projects (*Project -> Clean... -> Clean all projects*) to trigger code generation.
     * Build the projects *network.model*, *network.model.rules*, *network.model.rules.racka*, *network.model.rules.rackb*, and *network.model.rules.vnet* with the black eMoflon hammer symbol.
     * Build the GIPS projects mentioned above with the black eMoflon hammer symbol.
+* Run the script [gips-ex-to-iflye.sh](./scripts/gips-ex-to-iflye.sh) (Linux/macOS) or [gips-ex-to-iflye.bat](./scripts/gips-ex-to-iflye.bat).
+    * This script copies some of the build-artifacts of the GIPS-based projects to the correct location so that they can be loaded by the engine at runtime.
+    * You have to re-run the script every time you changed the GIPSL-specification of the projects `org.emoflon.gips.gipsl.examples.mdvne*`.
 
 A good start point to verify your installation is to run the included unit tests, refer to the [test section](#tests).
 
