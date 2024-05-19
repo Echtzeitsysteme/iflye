@@ -15,10 +15,17 @@
 * Launch a runtime workspace (while using a runtime Eclipse) as stated in the [eMoflon::IBeX installation steps](https://github.com/eMoflon/emoflon-ibex?tab=readme-ov-file#how-to-develop).
     * Additionally, the runtime workspace needs some environment variables to access the Gurobi and the CPLEX solver. Do not forget to adapt them to your individual setup:
 ```
+# Linux/macOS
 GRB_LICENSE_FILE=/home/mkratz/gurobi.lic
 GUROBI_HOME=/opt/gurobi1102/linux64/
 LD_LIBRARY_PATH=/opt/gurobi1102/linux64/lib/
 PATH=/opt/gurobi1102/linux64/bin/:/opt/ibm/ILOG/CPLEX_Studio2211/cplex/bin/x86-64_linux/:$PATH
+
+# Windows
+GRB_LICENSE_FILE=C:\Users\mkratz\gurobi.lic
+GUROBI_HOME=C:\gurobi1102\win64
+LD_LIBRARY_PATH=C:\gurobi1102\win64\lib
+PATH=C:\gurobi1102\win64\bin;C:\Program Files\IBM\ILOG\CPLEX_Studio2211\cplex\bin\x64_win64\
 ```
 
 ### Project setup (manual)
@@ -32,6 +39,9 @@ PATH=/opt/gurobi1102/linux64/bin/:/opt/ibm/ILOG/CPLEX_Studio2211/cplex/bin/x86-6
 * Inside the runtime workspace, build all projects (*Project -> Clean... -> Clean all projects*) to trigger code generation.
     * Build the projects *network.model*, *network.model.rules*, *network.model.rules.racka*, *network.model.rules.rackb*, and *network.model.rules.vnet* with the black eMoflon hammer symbol.
     * Build the GIPS projects mentioned above with the black eMoflon hammer symbol.
+* Run the script [gips-ex-to-iflye.sh](./scripts/gips-ex-to-iflye.sh) (Linux/macOS) or [gips-ex-to-iflye.bat](./scripts/gips-ex-to-iflye.bat).
+    * This script copies some of the build-artifacts of the GIPS-based projects to the correct location so that they can be loaded by the engine at runtime.
+    * You have to re-run the script every time you changed the GIPSL-specification of the projects `org.emoflon.gips.gipsl.examples.mdvne*`.
 
 A good start point to verify your installation is to run the included unit tests, refer to the [test section](#tests).
 
