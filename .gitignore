@@ -139,3 +139,5 @@ org.emoflon.gips.gipsl.examples.mdvne.migration/
 org.emoflon.gips.gipsl.examples.mdvne.seq/
 
 *.lp
+
+models/
