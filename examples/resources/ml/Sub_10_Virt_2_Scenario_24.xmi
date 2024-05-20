@@ -214,94 +214,94 @@
     <paths network="//@networks.0" source="//@networks.0/@nodes.13" target="//@networks.0/@nodes.3" nodes="//@networks.0/@nodes.13 //@networks.0/@nodes.3" links="//@networks.0/@links.27" name="path-sub_srv_9-sub_rsw_1" bandwidth="1000" hops="1" residualBandwidth="1000" />
     <paths network="//@networks.0" source="//@networks.0/@nodes.3" target="//@networks.0/@nodes.13" nodes="//@networks.0/@nodes.3 //@networks.0/@nodes.13" links="//@networks.0/@links.26" name="path-sub_rsw_1-sub_srv_9" bandwidth="1000" hops="1" residualBandwidth="1000" />
   </networks>
-  <networks xsi:type="model:VirtualNetwork" root="/" name="v0" cpu="4" memory="240" storage="140">
-    <nodes xsi:type="model:VirtualServer" network="//@networks.1" name="v0_srv_0" depth="1" cpu="2" memory="120" storage="70" outgoingLinks="//@networks.1/@links.0" incomingLinks="//@networks.1/@links.1" />
-    <nodes xsi:type="model:VirtualServer" network="//@networks.1" name="v0_srv_1" depth="1" cpu="2" memory="120" storage="70" outgoingLinks="//@networks.1/@links.2" incomingLinks="//@networks.1/@links.3" />
+  <networks xsi:type="model:VirtualNetwork" root="/" name="v0" cpu="54" memory="46" storage="276">
+    <nodes xsi:type="model:VirtualServer" network="//@networks.1" name="v0_srv_0" depth="1" cpu="27" memory="23" storage="138" outgoingLinks="//@networks.1/@links.0" incomingLinks="//@networks.1/@links.1" />
+    <nodes xsi:type="model:VirtualServer" network="//@networks.1" name="v0_srv_1" depth="1" cpu="27" memory="23" storage="138" outgoingLinks="//@networks.1/@links.2" incomingLinks="//@networks.1/@links.3" />
     <nodes xsi:type="model:VirtualSwitch" network="//@networks.1" name="v0_sw_0" depth="0" incomingLinks="//@networks.1/@links.0 //@networks.1/@links.2" outgoingLinks="//@networks.1/@links.1 //@networks.1/@links.3" />
-    <links xsi:type="model:VirtualLink" network="//@networks.1" source="//@networks.1/@nodes.0" target="//@networks.1/@nodes.2" name="v0_ln_0" bandwidth="453" />
-    <links xsi:type="model:VirtualLink" network="//@networks.1" source="//@networks.1/@nodes.2" target="//@networks.1/@nodes.0" name="v0_ln_1" bandwidth="453" />
-    <links xsi:type="model:VirtualLink" network="//@networks.1" source="//@networks.1/@nodes.1" target="//@networks.1/@nodes.2" name="v0_ln_2" bandwidth="453" />
-    <links xsi:type="model:VirtualLink" network="//@networks.1" source="//@networks.1/@nodes.2" target="//@networks.1/@nodes.1" name="v0_ln_3" bandwidth="453" />
+    <links xsi:type="model:VirtualLink" network="//@networks.1" source="//@networks.1/@nodes.0" target="//@networks.1/@nodes.2" name="v0_ln_0" bandwidth="214" />
+    <links xsi:type="model:VirtualLink" network="//@networks.1" source="//@networks.1/@nodes.2" target="//@networks.1/@nodes.0" name="v0_ln_1" bandwidth="214" />
+    <links xsi:type="model:VirtualLink" network="//@networks.1" source="//@networks.1/@nodes.1" target="//@networks.1/@nodes.2" name="v0_ln_2" bandwidth="214" />
+    <links xsi:type="model:VirtualLink" network="//@networks.1" source="//@networks.1/@nodes.2" target="//@networks.1/@nodes.1" name="v0_ln_3" bandwidth="214" />
   </networks>
-  <networks xsi:type="model:VirtualNetwork" root="/" name="v1" cpu="14" memory="54" storage="496">
-    <nodes xsi:type="model:VirtualServer" network="//@networks.2" name="v1_srv_0" depth="1" cpu="7" memory="27" storage="248" outgoingLinks="//@networks.2/@links.0" incomingLinks="//@networks.2/@links.1" />
-    <nodes xsi:type="model:VirtualServer" network="//@networks.2" name="v1_srv_1" depth="1" cpu="7" memory="27" storage="248" outgoingLinks="//@networks.2/@links.2" incomingLinks="//@networks.2/@links.3" />
+  <networks xsi:type="model:VirtualNetwork" root="/" name="v1" cpu="44" memory="726" storage="466">
+    <nodes xsi:type="model:VirtualServer" network="//@networks.2" name="v1_srv_0" depth="1" cpu="22" memory="363" storage="233" outgoingLinks="//@networks.2/@links.0" incomingLinks="//@networks.2/@links.1" />
+    <nodes xsi:type="model:VirtualServer" network="//@networks.2" name="v1_srv_1" depth="1" cpu="22" memory="363" storage="233" outgoingLinks="//@networks.2/@links.2" incomingLinks="//@networks.2/@links.3" />
     <nodes xsi:type="model:VirtualSwitch" network="//@networks.2" name="v1_sw_0" depth="0" incomingLinks="//@networks.2/@links.0 //@networks.2/@links.2" outgoingLinks="//@networks.2/@links.1 //@networks.2/@links.3" />
-    <links xsi:type="model:VirtualLink" network="//@networks.2" source="//@networks.2/@nodes.0" target="//@networks.2/@nodes.2" name="v1_ln_0" bandwidth="261" />
-    <links xsi:type="model:VirtualLink" network="//@networks.2" source="//@networks.2/@nodes.2" target="//@networks.2/@nodes.0" name="v1_ln_1" bandwidth="261" />
-    <links xsi:type="model:VirtualLink" network="//@networks.2" source="//@networks.2/@nodes.1" target="//@networks.2/@nodes.2" name="v1_ln_2" bandwidth="261" />
-    <links xsi:type="model:VirtualLink" network="//@networks.2" source="//@networks.2/@nodes.2" target="//@networks.2/@nodes.1" name="v1_ln_3" bandwidth="261" />
+    <links xsi:type="model:VirtualLink" network="//@networks.2" source="//@networks.2/@nodes.0" target="//@networks.2/@nodes.2" name="v1_ln_0" bandwidth="631" />
+    <links xsi:type="model:VirtualLink" network="//@networks.2" source="//@networks.2/@nodes.2" target="//@networks.2/@nodes.0" name="v1_ln_1" bandwidth="631" />
+    <links xsi:type="model:VirtualLink" network="//@networks.2" source="//@networks.2/@nodes.1" target="//@networks.2/@nodes.2" name="v1_ln_2" bandwidth="631" />
+    <links xsi:type="model:VirtualLink" network="//@networks.2" source="//@networks.2/@nodes.2" target="//@networks.2/@nodes.1" name="v1_ln_3" bandwidth="631" />
   </networks>
-  <networks xsi:type="model:VirtualNetwork" root="/" name="v2" cpu="22" memory="60" storage="394">
-    <nodes xsi:type="model:VirtualServer" network="//@networks.3" name="v2_srv_0" depth="1" cpu="11" memory="30" storage="197" outgoingLinks="//@networks.3/@links.0" incomingLinks="//@networks.3/@links.1" />
-    <nodes xsi:type="model:VirtualServer" network="//@networks.3" name="v2_srv_1" depth="1" cpu="11" memory="30" storage="197" outgoingLinks="//@networks.3/@links.2" incomingLinks="//@networks.3/@links.3" />
+  <networks xsi:type="model:VirtualNetwork" root="/" name="v2" cpu="52" memory="158" storage="204">
+    <nodes xsi:type="model:VirtualServer" network="//@networks.3" name="v2_srv_0" depth="1" cpu="26" memory="79" storage="102" outgoingLinks="//@networks.3/@links.0" incomingLinks="//@networks.3/@links.1" />
+    <nodes xsi:type="model:VirtualServer" network="//@networks.3" name="v2_srv_1" depth="1" cpu="26" memory="79" storage="102" outgoingLinks="//@networks.3/@links.2" incomingLinks="//@networks.3/@links.3" />
     <nodes xsi:type="model:VirtualSwitch" network="//@networks.3" name="v2_sw_0" depth="0" incomingLinks="//@networks.3/@links.0 //@networks.3/@links.2" outgoingLinks="//@networks.3/@links.1 //@networks.3/@links.3" />
-    <links xsi:type="model:VirtualLink" network="//@networks.3" source="//@networks.3/@nodes.0" target="//@networks.3/@nodes.2" name="v2_ln_0" bandwidth="396" />
-    <links xsi:type="model:VirtualLink" network="//@networks.3" source="//@networks.3/@nodes.2" target="//@networks.3/@nodes.0" name="v2_ln_1" bandwidth="396" />
-    <links xsi:type="model:VirtualLink" network="//@networks.3" source="//@networks.3/@nodes.1" target="//@networks.3/@nodes.2" name="v2_ln_2" bandwidth="396" />
-    <links xsi:type="model:VirtualLink" network="//@networks.3" source="//@networks.3/@nodes.2" target="//@networks.3/@nodes.1" name="v2_ln_3" bandwidth="396" />
+    <links xsi:type="model:VirtualLink" network="//@networks.3" source="//@networks.3/@nodes.0" target="//@networks.3/@nodes.2" name="v2_ln_0" bandwidth="797" />
+    <links xsi:type="model:VirtualLink" network="//@networks.3" source="//@networks.3/@nodes.2" target="//@networks.3/@nodes.0" name="v2_ln_1" bandwidth="797" />
+    <links xsi:type="model:VirtualLink" network="//@networks.3" source="//@networks.3/@nodes.1" target="//@networks.3/@nodes.2" name="v2_ln_2" bandwidth="797" />
+    <links xsi:type="model:VirtualLink" network="//@networks.3" source="//@networks.3/@nodes.2" target="//@networks.3/@nodes.1" name="v2_ln_3" bandwidth="797" />
   </networks>
-  <networks xsi:type="model:VirtualNetwork" root="/" name="v3" cpu="50" memory="94" storage="190">
-    <nodes xsi:type="model:VirtualServer" network="//@networks.4" name="v3_srv_0" depth="1" cpu="25" memory="47" storage="95" outgoingLinks="//@networks.4/@links.0" incomingLinks="//@networks.4/@links.1" />
-    <nodes xsi:type="model:VirtualServer" network="//@networks.4" name="v3_srv_1" depth="1" cpu="25" memory="47" storage="95" outgoingLinks="//@networks.4/@links.2" incomingLinks="//@networks.4/@links.3" />
+  <networks xsi:type="model:VirtualNetwork" root="/" name="v3" cpu="32" memory="196" storage="362">
+    <nodes xsi:type="model:VirtualServer" network="//@networks.4" name="v3_srv_0" depth="1" cpu="16" memory="98" storage="181" outgoingLinks="//@networks.4/@links.0" incomingLinks="//@networks.4/@links.1" />
+    <nodes xsi:type="model:VirtualServer" network="//@networks.4" name="v3_srv_1" depth="1" cpu="16" memory="98" storage="181" outgoingLinks="//@networks.4/@links.2" incomingLinks="//@networks.4/@links.3" />
     <nodes xsi:type="model:VirtualSwitch" network="//@networks.4" name="v3_sw_0" depth="0" incomingLinks="//@networks.4/@links.0 //@networks.4/@links.2" outgoingLinks="//@networks.4/@links.1 //@networks.4/@links.3" />
-    <links xsi:type="model:VirtualLink" network="//@networks.4" source="//@networks.4/@nodes.0" target="//@networks.4/@nodes.2" name="v3_ln_0" bandwidth="352" />
-    <links xsi:type="model:VirtualLink" network="//@networks.4" source="//@networks.4/@nodes.2" target="//@networks.4/@nodes.0" name="v3_ln_1" bandwidth="352" />
-    <links xsi:type="model:VirtualLink" network="//@networks.4" source="//@networks.4/@nodes.1" target="//@networks.4/@nodes.2" name="v3_ln_2" bandwidth="352" />
-    <links xsi:type="model:VirtualLink" network="//@networks.4" source="//@networks.4/@nodes.2" target="//@networks.4/@nodes.1" name="v3_ln_3" bandwidth="352" />
+    <links xsi:type="model:VirtualLink" network="//@networks.4" source="//@networks.4/@nodes.0" target="//@networks.4/@nodes.2" name="v3_ln_0" bandwidth="101" />
+    <links xsi:type="model:VirtualLink" network="//@networks.4" source="//@networks.4/@nodes.2" target="//@networks.4/@nodes.0" name="v3_ln_1" bandwidth="101" />
+    <links xsi:type="model:VirtualLink" network="//@networks.4" source="//@networks.4/@nodes.1" target="//@networks.4/@nodes.2" name="v3_ln_2" bandwidth="101" />
+    <links xsi:type="model:VirtualLink" network="//@networks.4" source="//@networks.4/@nodes.2" target="//@networks.4/@nodes.1" name="v3_ln_3" bandwidth="101" />
   </networks>
-  <networks xsi:type="model:VirtualNetwork" root="/" name="v4" cpu="12" memory="878" storage="562">
-    <nodes xsi:type="model:VirtualServer" network="//@networks.5" name="v4_srv_0" depth="1" cpu="6" memory="439" storage="281" outgoingLinks="//@networks.5/@links.0" incomingLinks="//@networks.5/@links.1" />
-    <nodes xsi:type="model:VirtualServer" network="//@networks.5" name="v4_srv_1" depth="1" cpu="6" memory="439" storage="281" outgoingLinks="//@networks.5/@links.2" incomingLinks="//@networks.5/@links.3" />
+  <networks xsi:type="model:VirtualNetwork" root="/" name="v4" cpu="38" memory="826" storage="390">
+    <nodes xsi:type="model:VirtualServer" network="//@networks.5" name="v4_srv_0" depth="1" cpu="19" memory="413" storage="195" outgoingLinks="//@networks.5/@links.0" incomingLinks="//@networks.5/@links.1" />
+    <nodes xsi:type="model:VirtualServer" network="//@networks.5" name="v4_srv_1" depth="1" cpu="19" memory="413" storage="195" outgoingLinks="//@networks.5/@links.2" incomingLinks="//@networks.5/@links.3" />
     <nodes xsi:type="model:VirtualSwitch" network="//@networks.5" name="v4_sw_0" depth="0" incomingLinks="//@networks.5/@links.0 //@networks.5/@links.2" outgoingLinks="//@networks.5/@links.1 //@networks.5/@links.3" />
-    <links xsi:type="model:VirtualLink" network="//@networks.5" source="//@networks.5/@nodes.0" target="//@networks.5/@nodes.2" name="v4_ln_0" bandwidth="185" />
-    <links xsi:type="model:VirtualLink" network="//@networks.5" source="//@networks.5/@nodes.2" target="//@networks.5/@nodes.0" name="v4_ln_1" bandwidth="185" />
-    <links xsi:type="model:VirtualLink" network="//@networks.5" source="//@networks.5/@nodes.1" target="//@networks.5/@nodes.2" name="v4_ln_2" bandwidth="185" />
-    <links xsi:type="model:VirtualLink" network="//@networks.5" source="//@networks.5/@nodes.2" target="//@networks.5/@nodes.1" name="v4_ln_3" bandwidth="185" />
+    <links xsi:type="model:VirtualLink" network="//@networks.5" source="//@networks.5/@nodes.0" target="//@networks.5/@nodes.2" name="v4_ln_0" bandwidth="603" />
+    <links xsi:type="model:VirtualLink" network="//@networks.5" source="//@networks.5/@nodes.2" target="//@networks.5/@nodes.0" name="v4_ln_1" bandwidth="603" />
+    <links xsi:type="model:VirtualLink" network="//@networks.5" source="//@networks.5/@nodes.1" target="//@networks.5/@nodes.2" name="v4_ln_2" bandwidth="603" />
+    <links xsi:type="model:VirtualLink" network="//@networks.5" source="//@networks.5/@nodes.2" target="//@networks.5/@nodes.1" name="v4_ln_3" bandwidth="603" />
   </networks>
-  <networks xsi:type="model:VirtualNetwork" root="/" name="v5" cpu="30" memory="668" storage="478">
-    <nodes xsi:type="model:VirtualServer" network="//@networks.6" name="v5_srv_0" depth="1" cpu="15" memory="334" storage="239" outgoingLinks="//@networks.6/@links.0" incomingLinks="//@networks.6/@links.1" />
-    <nodes xsi:type="model:VirtualServer" network="//@networks.6" name="v5_srv_1" depth="1" cpu="15" memory="334" storage="239" outgoingLinks="//@networks.6/@links.2" incomingLinks="//@networks.6/@links.3" />
+  <networks xsi:type="model:VirtualNetwork" root="/" name="v5" cpu="22" memory="430" storage="518">
+    <nodes xsi:type="model:VirtualServer" network="//@networks.6" name="v5_srv_0" depth="1" cpu="11" memory="215" storage="259" outgoingLinks="//@networks.6/@links.0" incomingLinks="//@networks.6/@links.1" />
+    <nodes xsi:type="model:VirtualServer" network="//@networks.6" name="v5_srv_1" depth="1" cpu="11" memory="215" storage="259" outgoingLinks="//@networks.6/@links.2" incomingLinks="//@networks.6/@links.3" />
     <nodes xsi:type="model:VirtualSwitch" network="//@networks.6" name="v5_sw_0" depth="0" incomingLinks="//@networks.6/@links.0 //@networks.6/@links.2" outgoingLinks="//@networks.6/@links.1 //@networks.6/@links.3" />
-    <links xsi:type="model:VirtualLink" network="//@networks.6" source="//@networks.6/@nodes.0" target="//@networks.6/@nodes.2" name="v5_ln_0" bandwidth="149" />
-    <links xsi:type="model:VirtualLink" network="//@networks.6" source="//@networks.6/@nodes.2" target="//@networks.6/@nodes.0" name="v5_ln_1" bandwidth="149" />
-    <links xsi:type="model:VirtualLink" network="//@networks.6" source="//@networks.6/@nodes.1" target="//@networks.6/@nodes.2" name="v5_ln_2" bandwidth="149" />
-    <links xsi:type="model:VirtualLink" network="//@networks.6" source="//@networks.6/@nodes.2" target="//@networks.6/@nodes.1" name="v5_ln_3" bandwidth="149" />
+    <links xsi:type="model:VirtualLink" network="//@networks.6" source="//@networks.6/@nodes.0" target="//@networks.6/@nodes.2" name="v5_ln_0" bandwidth="973" />
+    <links xsi:type="model:VirtualLink" network="//@networks.6" source="//@networks.6/@nodes.2" target="//@networks.6/@nodes.0" name="v5_ln_1" bandwidth="973" />
+    <links xsi:type="model:VirtualLink" network="//@networks.6" source="//@networks.6/@nodes.1" target="//@networks.6/@nodes.2" name="v5_ln_2" bandwidth="973" />
+    <links xsi:type="model:VirtualLink" network="//@networks.6" source="//@networks.6/@nodes.2" target="//@networks.6/@nodes.1" name="v5_ln_3" bandwidth="973" />
   </networks>
-  <networks xsi:type="model:VirtualNetwork" root="/" name="v6" cpu="8" memory="842" storage="438">
-    <nodes xsi:type="model:VirtualServer" network="//@networks.7" name="v6_srv_0" depth="1" cpu="4" memory="421" storage="219" outgoingLinks="//@networks.7/@links.0" incomingLinks="//@networks.7/@links.1" />
-    <nodes xsi:type="model:VirtualServer" network="//@networks.7" name="v6_srv_1" depth="1" cpu="4" memory="421" storage="219" outgoingLinks="//@networks.7/@links.2" incomingLinks="//@networks.7/@links.3" />
+  <networks xsi:type="model:VirtualNetwork" root="/" name="v6" cpu="30" memory="186" storage="380">
+    <nodes xsi:type="model:VirtualServer" network="//@networks.7" name="v6_srv_0" depth="1" cpu="15" memory="93" storage="190" outgoingLinks="//@networks.7/@links.0" incomingLinks="//@networks.7/@links.1" />
+    <nodes xsi:type="model:VirtualServer" network="//@networks.7" name="v6_srv_1" depth="1" cpu="15" memory="93" storage="190" outgoingLinks="//@networks.7/@links.2" incomingLinks="//@networks.7/@links.3" />
     <nodes xsi:type="model:VirtualSwitch" network="//@networks.7" name="v6_sw_0" depth="0" incomingLinks="//@networks.7/@links.0 //@networks.7/@links.2" outgoingLinks="//@networks.7/@links.1 //@networks.7/@links.3" />
-    <links xsi:type="model:VirtualLink" network="//@networks.7" source="//@networks.7/@nodes.0" target="//@networks.7/@nodes.2" name="v6_ln_0" bandwidth="495" />
-    <links xsi:type="model:VirtualLink" network="//@networks.7" source="//@networks.7/@nodes.2" target="//@networks.7/@nodes.0" name="v6_ln_1" bandwidth="495" />
-    <links xsi:type="model:VirtualLink" network="//@networks.7" source="//@networks.7/@nodes.1" target="//@networks.7/@nodes.2" name="v6_ln_2" bandwidth="495" />
-    <links xsi:type="model:VirtualLink" network="//@networks.7" source="//@networks.7/@nodes.2" target="//@networks.7/@nodes.1" name="v6_ln_3" bandwidth="495" />
+    <links xsi:type="model:VirtualLink" network="//@networks.7" source="//@networks.7/@nodes.0" target="//@networks.7/@nodes.2" name="v6_ln_0" bandwidth="821" />
+    <links xsi:type="model:VirtualLink" network="//@networks.7" source="//@networks.7/@nodes.2" target="//@networks.7/@nodes.0" name="v6_ln_1" bandwidth="821" />
+    <links xsi:type="model:VirtualLink" network="//@networks.7" source="//@networks.7/@nodes.1" target="//@networks.7/@nodes.2" name="v6_ln_2" bandwidth="821" />
+    <links xsi:type="model:VirtualLink" network="//@networks.7" source="//@networks.7/@nodes.2" target="//@networks.7/@nodes.1" name="v6_ln_3" bandwidth="821" />
   </networks>
-  <networks xsi:type="model:VirtualNetwork" root="/" name="v7" cpu="28" memory="908" storage="394">
-    <nodes xsi:type="model:VirtualServer" network="//@networks.8" name="v7_srv_0" depth="1" cpu="14" memory="454" storage="197" outgoingLinks="//@networks.8/@links.0" incomingLinks="//@networks.8/@links.1" />
-    <nodes xsi:type="model:VirtualServer" network="//@networks.8" name="v7_srv_1" depth="1" cpu="14" memory="454" storage="197" outgoingLinks="//@networks.8/@links.2" incomingLinks="//@networks.8/@links.3" />
+  <networks xsi:type="model:VirtualNetwork" root="/" name="v7" cpu="32" memory="1020" storage="200">
+    <nodes xsi:type="model:VirtualServer" network="//@networks.8" name="v7_srv_0" depth="1" cpu="16" memory="510" storage="100" outgoingLinks="//@networks.8/@links.0" incomingLinks="//@networks.8/@links.1" />
+    <nodes xsi:type="model:VirtualServer" network="//@networks.8" name="v7_srv_1" depth="1" cpu="16" memory="510" storage="100" outgoingLinks="//@networks.8/@links.2" incomingLinks="//@networks.8/@links.3" />
     <nodes xsi:type="model:VirtualSwitch" network="//@networks.8" name="v7_sw_0" depth="0" incomingLinks="//@networks.8/@links.0 //@networks.8/@links.2" outgoingLinks="//@networks.8/@links.1 //@networks.8/@links.3" />
-    <links xsi:type="model:VirtualLink" network="//@networks.8" source="//@networks.8/@nodes.0" target="//@networks.8/@nodes.2" name="v7_ln_0" bandwidth="490" />
-    <links xsi:type="model:VirtualLink" network="//@networks.8" source="//@networks.8/@nodes.2" target="//@networks.8/@nodes.0" name="v7_ln_1" bandwidth="490" />
-    <links xsi:type="model:VirtualLink" network="//@networks.8" source="//@networks.8/@nodes.1" target="//@networks.8/@nodes.2" name="v7_ln_2" bandwidth="490" />
-    <links xsi:type="model:VirtualLink" network="//@networks.8" source="//@networks.8/@nodes.2" target="//@networks.8/@nodes.1" name="v7_ln_3" bandwidth="490" />
+    <links xsi:type="model:VirtualLink" network="//@networks.8" source="//@networks.8/@nodes.0" target="//@networks.8/@nodes.2" name="v7_ln_0" bandwidth="391" />
+    <links xsi:type="model:VirtualLink" network="//@networks.8" source="//@networks.8/@nodes.2" target="//@networks.8/@nodes.0" name="v7_ln_1" bandwidth="391" />
+    <links xsi:type="model:VirtualLink" network="//@networks.8" source="//@networks.8/@nodes.1" target="//@networks.8/@nodes.2" name="v7_ln_2" bandwidth="391" />
+    <links xsi:type="model:VirtualLink" network="//@networks.8" source="//@networks.8/@nodes.2" target="//@networks.8/@nodes.1" name="v7_ln_3" bandwidth="391" />
   </networks>
-  <networks xsi:type="model:VirtualNetwork" root="/" name="v8" cpu="38" memory="218" storage="370">
-    <nodes xsi:type="model:VirtualServer" network="//@networks.9" name="v8_srv_0" depth="1" cpu="19" memory="109" storage="185" outgoingLinks="//@networks.9/@links.0" incomingLinks="//@networks.9/@links.1" />
-    <nodes xsi:type="model:VirtualServer" network="//@networks.9" name="v8_srv_1" depth="1" cpu="19" memory="109" storage="185" outgoingLinks="//@networks.9/@links.2" incomingLinks="//@networks.9/@links.3" />
+  <networks xsi:type="model:VirtualNetwork" root="/" name="v8" cpu="28" memory="890" storage="412">
+    <nodes xsi:type="model:VirtualServer" network="//@networks.9" name="v8_srv_0" depth="1" cpu="14" memory="445" storage="206" outgoingLinks="//@networks.9/@links.0" incomingLinks="//@networks.9/@links.1" />
+    <nodes xsi:type="model:VirtualServer" network="//@networks.9" name="v8_srv_1" depth="1" cpu="14" memory="445" storage="206" outgoingLinks="//@networks.9/@links.2" incomingLinks="//@networks.9/@links.3" />
     <nodes xsi:type="model:VirtualSwitch" network="//@networks.9" name="v8_sw_0" depth="0" incomingLinks="//@networks.9/@links.0 //@networks.9/@links.2" outgoingLinks="//@networks.9/@links.1 //@networks.9/@links.3" />
-    <links xsi:type="model:VirtualLink" network="//@networks.9" source="//@networks.9/@nodes.0" target="//@networks.9/@nodes.2" name="v8_ln_0" bandwidth="317" />
-    <links xsi:type="model:VirtualLink" network="//@networks.9" source="//@networks.9/@nodes.2" target="//@networks.9/@nodes.0" name="v8_ln_1" bandwidth="317" />
-    <links xsi:type="model:VirtualLink" network="//@networks.9" source="//@networks.9/@nodes.1" target="//@networks.9/@nodes.2" name="v8_ln_2" bandwidth="317" />
-    <links xsi:type="model:VirtualLink" network="//@networks.9" source="//@networks.9/@nodes.2" target="//@networks.9/@nodes.1" name="v8_ln_3" bandwidth="317" />
+    <links xsi:type="model:VirtualLink" network="//@networks.9" source="//@networks.9/@nodes.0" target="//@networks.9/@nodes.2" name="v8_ln_0" bandwidth="802" />
+    <links xsi:type="model:VirtualLink" network="//@networks.9" source="//@networks.9/@nodes.2" target="//@networks.9/@nodes.0" name="v8_ln_1" bandwidth="802" />
+    <links xsi:type="model:VirtualLink" network="//@networks.9" source="//@networks.9/@nodes.1" target="//@networks.9/@nodes.2" name="v8_ln_2" bandwidth="802" />
+    <links xsi:type="model:VirtualLink" network="//@networks.9" source="//@networks.9/@nodes.2" target="//@networks.9/@nodes.1" name="v8_ln_3" bandwidth="802" />
   </networks>
-  <networks xsi:type="model:VirtualNetwork" root="/" name="v9" cpu="34" memory="724" storage="482">
-    <nodes xsi:type="model:VirtualServer" network="//@networks.10" name="v9_srv_0" depth="1" cpu="17" memory="362" storage="241" outgoingLinks="//@networks.10/@links.0" incomingLinks="//@networks.10/@links.1" />
-    <nodes xsi:type="model:VirtualServer" network="//@networks.10" name="v9_srv_1" depth="1" cpu="17" memory="362" storage="241" outgoingLinks="//@networks.10/@links.2" incomingLinks="//@networks.10/@links.3" />
+  <networks xsi:type="model:VirtualNetwork" root="/" name="v9" cpu="8" memory="514" storage="544">
+    <nodes xsi:type="model:VirtualServer" network="//@networks.10" name="v9_srv_0" depth="1" cpu="4" memory="257" storage="272" outgoingLinks="//@networks.10/@links.0" incomingLinks="//@networks.10/@links.1" />
+    <nodes xsi:type="model:VirtualServer" network="//@networks.10" name="v9_srv_1" depth="1" cpu="4" memory="257" storage="272" outgoingLinks="//@networks.10/@links.2" incomingLinks="//@networks.10/@links.3" />
     <nodes xsi:type="model:VirtualSwitch" network="//@networks.10" name="v9_sw_0" depth="0" incomingLinks="//@networks.10/@links.0 //@networks.10/@links.2" outgoingLinks="//@networks.10/@links.1 //@networks.10/@links.3" />
-    <links xsi:type="model:VirtualLink" network="//@networks.10" source="//@networks.10/@nodes.0" target="//@networks.10/@nodes.2" name="v9_ln_0" bandwidth="220" />
-    <links xsi:type="model:VirtualLink" network="//@networks.10" source="//@networks.10/@nodes.2" target="//@networks.10/@nodes.0" name="v9_ln_1" bandwidth="220" />
-    <links xsi:type="model:VirtualLink" network="//@networks.10" source="//@networks.10/@nodes.1" target="//@networks.10/@nodes.2" name="v9_ln_2" bandwidth="220" />
-    <links xsi:type="model:VirtualLink" network="//@networks.10" source="//@networks.10/@nodes.2" target="//@networks.10/@nodes.1" name="v9_ln_3" bandwidth="220" />
+    <links xsi:type="model:VirtualLink" network="//@networks.10" source="//@networks.10/@nodes.0" target="//@networks.10/@nodes.2" name="v9_ln_0" bandwidth="306" />
+    <links xsi:type="model:VirtualLink" network="//@networks.10" source="//@networks.10/@nodes.2" target="//@networks.10/@nodes.0" name="v9_ln_1" bandwidth="306" />
+    <links xsi:type="model:VirtualLink" network="//@networks.10" source="//@networks.10/@nodes.1" target="//@networks.10/@nodes.2" name="v9_ln_2" bandwidth="306" />
+    <links xsi:type="model:VirtualLink" network="//@networks.10" source="//@networks.10/@nodes.2" target="//@networks.10/@nodes.1" name="v9_ln_3" bandwidth="306" />
   </networks>
 </model:Root>
