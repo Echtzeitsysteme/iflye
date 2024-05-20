@@ -25,6 +25,8 @@ public class MlAlgorithmExample {
 	public static void main(final String[] args) {
 		final int successCounter = run();
 		System.out.println("Successful runs: " + successCounter + "/" + 10);
+		
+		ModelFacade.getInstance().persistModel("resources/ml/ml-algo-example-solved.xmi");
 	}
 
 	private static int run() {

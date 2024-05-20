@@ -143,3 +143,5 @@ org.emoflon.gips.gipsl.examples.mdvne.seq/
 models/
 
 vne.algorithms/lib/bridge-0.0.1-SNAPSHOT-jar-with-dependencies.jar
+
+examples/resources/ml/ml-algo-example-solved.xmi
