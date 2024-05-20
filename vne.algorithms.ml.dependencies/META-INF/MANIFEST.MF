@@ -10,7 +10,11 @@ Bundle-SymbolicName: vne.algorithms.ml.dependencies
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: .,
- bridge
+ bridge,
+ example,
+ mlmodel,
+ transform.encoding,
+ transform.label
 Require-Bundle: network.model;bundle-version="0.0.3",
  org.emoflon.smartemf;bundle-version="1.0.0",
  network.generators;bundle-version="0.0.3",
