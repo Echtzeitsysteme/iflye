@@ -18,6 +18,7 @@ Export-Package: algorithms,
  algorithms.gips,
  algorithms.heuristics,
  algorithms.ilp,
+ algorithms.ml,
  algorithms.pm,
  algorithms.pm.stages,
  algorithms.simple
