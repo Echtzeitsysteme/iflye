@@ -3,14 +3,12 @@ Bundle-ManifestVersion: 2
 Bundle-ClassPath: lib/commons-lang3-3.14.0.jar,
  lib/commons-lang3-3.14.0-javadoc.jar,
  lib/commons-lang3-3.14.0-sources.jar,
- lib/bridge-0.0.1-SNAPSHOT-jar-with-dependencies.jar,
  .
 Bundle-Name: Dependencies
 Bundle-SymbolicName: vne.algorithms.ml.dependencies
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: .,
- bridge,
  example,
  mlmodel,
  transform.encoding,
