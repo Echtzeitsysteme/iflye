@@ -20,5 +20,7 @@ Require-Bundle: ilp,
  network.model,
  vne.algorithms,
  network.metrics,
- network.generators
+ network.generators,
+ vne.algorithms.ml.dependencies
 Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt
+Import-Package: mlmodel

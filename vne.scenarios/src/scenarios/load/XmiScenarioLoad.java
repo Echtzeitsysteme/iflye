@@ -48,10 +48,13 @@ import metrics.embedding.TotalTafCommunicationCostMetric;
 import metrics.manager.GlobalMetricsManager;
 import metrics.memory.MemoryMetric;
 import metrics.memory.MemoryPidMetric;
+import mlmodel.ModelPrediction;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 import model.converter.BasicModelConverter;
 import scenario.util.CsvUtil;
+import transform.encoding.NodeAttributesEncoding;
+import transform.label.MultiClassLabel;
 
 /**
  * Runnable (incremental) scenario for VNE algorithms that reads specified XMI
@@ -80,6 +83,11 @@ public class XmiScenarioLoad {
 	 * Substrate network to use.
 	 */
 	protected static SubstrateNetwork sNet;
+
+	/**
+	 * TODO
+	 */
+	protected static ModelPrediction mlmodel = null;
 
 	/**
 	 * TODO
@@ -160,6 +168,13 @@ public class XmiScenarioLoad {
 		printMetrics();
 
 		System.exit(0);
+	}
+
+	private static void setUpMlModel() {
+		mlmodel = new ModelPrediction();
+		mlmodel.setInEncoding(new NodeAttributesEncoding());
+		mlmodel.setStandardizeInputVector(true);
+		mlmodel.setEmbeddingLabel(new MultiClassLabel());
 	}
 
 	/**
@@ -289,7 +304,8 @@ public class XmiScenarioLoad {
 			return new TafAlgorithm(sNet, vNets);
 		case "ml":
 			ModelFacadeConfig.IGNORE_BW = true;
-			return new MlVneAlgorithm(sNet, vNets);
+			setUpMlModel();
+			return MlVneAlgorithm.prepare(sNet, vNets, mlmodel);
 		default:
 			throw new IllegalArgumentException("Configured algorithm not known.");
 		}
