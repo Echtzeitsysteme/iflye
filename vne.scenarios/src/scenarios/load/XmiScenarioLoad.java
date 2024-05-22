@@ -163,9 +163,9 @@ public class XmiScenarioLoad {
 		 */
 
 		// Save model to file
+		printMetrics();
 		ModelFacade.getInstance().persistModel();
 		System.out.println("=> Execution finished.");
-		printMetrics();
 
 		System.exit(0);
 	}
