@@ -29,9 +29,21 @@ public class StatisticConfig {
 	public static final boolean ROUND_TIMESUMS = true;
 
 	/**
+	 * If true, every value (despite the time sums) of the *_stats.csv will be
+	 * rounded.
+	 */
+	public static final boolean ROUND_EVERYTHING = true;
+
+	/**
 	 * Rounding decimal format setting for the time sums.
 	 */
 	public static final DecimalFormat ROUND_TIMESUMS_FORMAT = ((DecimalFormat) NumberFormat
+			.getNumberInstance(new Locale("en", "US")));
+
+	/**
+	 * Rounding decimal format setting for all values that are not time sums.
+	 */
+	public static final DecimalFormat ROUND_EVERYTHING_FORMAT = ((DecimalFormat) NumberFormat
 			.getNumberInstance(new Locale("en", "US")));
 
 	/**

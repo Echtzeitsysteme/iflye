@@ -136,6 +136,16 @@ public class StatisticUtils {
 	}
 
 	/**
+	 * Rounds the given double value according to the modules configuration.
+	 * 
+	 * @param value Input value.
+	 * @return Output value (rounded if configured).
+	 */
+	static double roundEverything(final double value) {
+		return round(value, StatisticConfig.ROUND_EVERYTHING, StatisticConfig.ROUND_EVERYTHING_FORMAT);
+	}
+
+	/**
 	 * Actual rounding method.
 	 *
 	 * @param value  Input double value.
@@ -145,7 +155,8 @@ public class StatisticUtils {
 	 */
 	private static double round(final double value, final boolean round, final DecimalFormat format) {
 		return round //
-				? Double.valueOf(format.format(value)) //
+				// replace "," (from thousands)
+				? Double.valueOf(format.format(value).replace(",", "")) //
 				: value;
 	}
 

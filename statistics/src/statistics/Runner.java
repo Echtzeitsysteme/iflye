@@ -74,11 +74,14 @@ public class Runner {
 				outputStdDev[i] = StatisticUtils.stdDev(values);
 
 				// If the metric is the last one -> Check if rounding of time_total and
-				// time_total_stddev is
-				// necessary
+				// time_total_stddev is necessary
 				if (i == 21) {
 					outputMean[i] = StatisticUtils.roundTimetotal(outputMean[i]);
 					outputStdDev[i] = StatisticUtils.roundTimetotalstddev(outputStdDev[i]);
+				} else {
+					// If configured, all metrics will be rounded according to the configuration.
+					outputMean[i] = StatisticUtils.roundEverything(outputMean[i]);
+					outputStdDev[i] = StatisticUtils.roundEverything(outputStdDev[i]);
 				}
 			}
 
