@@ -31,6 +31,7 @@ import algorithms.pm.VnePmMdvneAlgorithmPipelineThreeStagesB;
 import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesRackA;
 import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesRackB;
 import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesVnet;
+import algorithms.random.RandomVneAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import metrics.MetricConsts;
@@ -306,6 +307,9 @@ public class XmiScenarioLoad {
 			ModelFacadeConfig.IGNORE_BW = true;
 			setUpMlModel();
 			return MlVneAlgorithm.prepare(sNet, vNets, mlmodel);
+		case "random":
+			ModelFacadeConfig.IGNORE_BW = true;
+			return new RandomVneAlgorithm(sNet, vNets);
 		default:
 			throw new IllegalArgumentException("Configured algorithm not known.");
 		}

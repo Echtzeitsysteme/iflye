@@ -30,7 +30,7 @@ public class RandomVneAlgorithm extends AbstractAlgorithm {
 	/**
 	 * Pseudo random number generator with a seed.
 	 */
-	final private Random randGen = new Random(0);
+	final private Random randGen = new Random(1);
 
 	private int retries = 10;
 
