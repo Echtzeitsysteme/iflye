@@ -69,6 +69,8 @@ public class VneGipsSeqAlgorithm extends AbstractAlgorithm {
 			throw new IllegalArgumentException("Provided set of virtual networks was empty.");
 		}
 
+		VneGipsAlgorithmUtils.checkGivenVnets(vNets);
+
 		if (instance == null) {
 			instance = new VneGipsSeqAlgorithm(sNet, vNets);
 		}
