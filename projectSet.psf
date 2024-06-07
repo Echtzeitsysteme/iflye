@@ -11,7 +11,7 @@
 <project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,network.model.rules.vnet"/>
 <project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,network.visualization"/>
 <project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,statistics"/>
-<project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,test.suite"/>
+<project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,test.suite.iflye"/>
 <project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,vne.algorithms"/>
 <project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,vne.scenarios"/>
 <project reference="1.0,https://github.com/Echtzeitsysteme/gips-examples.git,main,network.model"/>
