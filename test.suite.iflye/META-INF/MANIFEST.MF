@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: test.suite
-Bundle-SymbolicName: test.suite;singleton:=true
+Bundle-Name: test.suite.iflye
+Bundle-SymbolicName: test.suite.iflye;singleton:=true
 Bundle-Version: 0.0.3.qualifier
 Require-Bundle: org.eclipse.emf.ecore,
  network.metrics,

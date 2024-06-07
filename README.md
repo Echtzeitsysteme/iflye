@@ -103,11 +103,11 @@ Feel free to check out some examples in [vne.scenarios/resources/*/](vne.scenari
 
 ## Tests
 
-Various test cases to test the framework as well as some of the implemented VNE algorithms are implemented in the project [test.suite](test.suite/).
+Various test cases to test the framework as well as some of the implemented VNE algorithms are implemented in the project [test.suite.iflye](test.suite.iflye/).
 To start them, follow this step:
-* *Right click on test.suite -> Run As... -> JUnit Test*
+* *Right click on test.suite.iflye -> Run As... -> JUnit Test*
 
-Please notice: The test [IlpSolverSetupTest](test.suite/src/test/ilp/IlpSolverSetupTest.java) will check your Gurobi/CPLEX installation and configuration. If this test fails, at least one of the two ILP solvers is not configured properly.
+Please notice: The test [IlpSolverSetupTest](test.suite.iflye/src/test/ilp/IlpSolverSetupTest.java) will check your Gurobi/CPLEX installation and configuration. If this test fails, at least one of the two ILP solvers is not configured properly.
 
 
 ## Visualization
