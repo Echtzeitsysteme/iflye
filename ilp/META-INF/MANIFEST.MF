@@ -8,7 +8,7 @@ Bundle-ClassPath: ilp.jar,
  lib/gurobi/gurobi-11.0.2.jar,
  lib/gurobi/gurobi-javadoc-11.0.2.jar
 Automatic-Module-Name: ilp
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: com.gurobi.gurobi;version="11.0.2",
  ilog.concert,
  ilog.cplex,

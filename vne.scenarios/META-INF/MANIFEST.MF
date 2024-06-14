@@ -10,7 +10,7 @@ Bundle-ClassPath: scenarios.jar,
  lib/commons-csv/commons-csv-1.9.0.jar,
  lib/commons-csv/commons-csv-1.9.0-sources.jar
 Automatic-Module-Name: vne.scenarios
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: org.apache.commons.cli,
  org.apache.commons.csv,
  scenario.util,
