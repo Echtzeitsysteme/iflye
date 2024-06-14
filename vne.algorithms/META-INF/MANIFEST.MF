@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: vne.algorithms
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-SymbolicName: vne.algorithms; singleton:=true
 Bundle-Version: 0.0.3.qualifier
 Require-Bundle: org.eclipse.emf.ecore,

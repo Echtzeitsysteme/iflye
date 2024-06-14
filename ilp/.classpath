@@ -4,7 +4,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/gurobi/gurobi-11.0.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gurobi/gurobi-javadoc-11.0.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/cplex/cplex-22.1.1.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-21">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
