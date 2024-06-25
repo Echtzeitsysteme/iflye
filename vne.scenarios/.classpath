@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io/commons-io-2.16.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io/commons-io-2.16.1-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io/commons-io-2.16.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-codec/commons-codec-1.17.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-codec/commons-codec-1.17.0-javadoc.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-codec/commons-codec-1.17.0-sources.jar"/>
