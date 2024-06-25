@@ -4,9 +4,9 @@ Bundle-Name: vne.scenarios
 Bundle-SymbolicName: vne.scenarios
 Bundle-Version: 0.0.3.qualifier
 Bundle-ClassPath: scenarios.jar,
- lib/commons-cli/commons-cli-1.5.0.jar,
- lib/commons-cli/commons-cli-1.5.0-javadoc.jar,
- lib/commons-cli/commons-cli-1.5.0-sources.jar,
+ lib/commons-cli/commons-cli-1.8.0.jar,
+ lib/commons-cli/commons-cli-1.8.0-javadoc.jar,
+ lib/commons-cli/commons-cli-1.8.0-sources.jar,
  lib/commons-csv/commons-csv-1.9.0.jar,
  lib/commons-csv/commons-csv-1.9.0-sources.jar
 Automatic-Module-Name: vne.scenarios
