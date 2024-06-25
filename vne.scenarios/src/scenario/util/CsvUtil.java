@@ -51,7 +51,7 @@ public class CsvUtil {
 	/**
 	 * CSV file header format for normal runs (simulation).
 	 */
-	private static CSVFormat formatNormal = CSVFormat.Builder.create().setHeader(//
+	private static CSVFormat formatNormal = CSVFormat.DEFAULT.builder().setHeader(//
 			"counter", //
 			"timestamp", //
 			"lastVNR", //
@@ -78,7 +78,7 @@ public class CsvUtil {
 	/**
 	 * CSV file header format for mean and standard derivation (after simulation).
 	 */
-	private static CSVFormat formatStats = CSVFormat.Builder.create().setHeader(//
+	private static CSVFormat formatStats = CSVFormat.DEFAULT.builder().setHeader(//
 			"counter", //
 			"time_pm", "time_pm_stddev", //
 			"time_ilp", "time_ilp_stddev", //
@@ -106,7 +106,7 @@ public class CsvUtil {
 	 * CSV file header format for summing up the time of an experiment (after
 	 * simulation).
 	 */
-	private static CSVFormat formatTimeSum = CSVFormat.Builder.create().setHeader( //
+	private static CSVFormat formatTimeSum = CSVFormat.DEFAULT.builder().setHeader(//
 			"time_total", "time_total_stddev", //
 			"time_pm", "time_pm_stddev", //
 			"time_ilp", "time_ilp_stddev", //
