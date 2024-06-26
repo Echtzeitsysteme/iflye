@@ -5,7 +5,7 @@
 
 ## Installation (development)
 
-* Install [Temurin JDK17](https://adoptium.net/) or newer.
+* Install [Temurin JDK21](https://adoptium.net/temurin/releases/) or newer.
 * Install [GIPS](https://gips.dev) as described [here](https://github.com/Echtzeitsysteme/gips#installation-development) or use the [pre-built Eclipse](https://github.com/Echtzeitsysteme/gips-eclipse-build).
 * Install [Gurobi](https://www.gurobi.com/) in version `11.0.2` and activate a license for your computer.
     * Currently, Gurobi is the default ILP solver used in **iflye**.
@@ -34,12 +34,13 @@ PATH=C:\gurobi1102\win64\bin;C:\Program Files\IBM\ILOG\CPLEX_Studio2211\cplex\bi
 * Clone the [GIPS examples repo](https://github.com/Echtzeitsysteme/gips-examples) to your local machine and import it into Eclipse: *File -> Import -> General -> Existing Projects into Workspace*. Import (at least) the following projects:
     * `network.model`
     * `org.emoflon.gips.gipsl.examples.mdvne`
+    * `org.emoflon.gips.gipsl.examples.mdvne.bwignore`
     * `org.emoflon.gips.gipsl.examples.mdvne.migration`
     * `org.emoflon.gips.gipsl.examples.mdvne.seq`
 * Inside the runtime workspace, build all projects (*Project -> Clean... -> Clean all projects*) to trigger code generation.
     * Build the projects *network.model*, *network.model.rules*, *network.model.rules.racka*, *network.model.rules.rackb*, and *network.model.rules.vnet* with the black eMoflon hammer symbol.
     * Build the GIPS projects mentioned above with the black eMoflon hammer symbol.
-* Run the script [gips-ex-to-iflye.sh](./scripts/gips-ex-to-iflye.sh) (Linux/macOS) or [gips-ex-to-iflye.bat](./scripts/gips-ex-to-iflye.bat).
+* Run the script [gips-ex-to-iflye.sh](./scripts/gips-ex-to-iflye.sh) (Linux/macOS) or [gips-ex-to-iflye.bat](./scripts/gips-ex-to-iflye.bat) (Windows).
     * This script copies some of the build-artifacts of the GIPS-based projects to the correct location so that they can be loaded by the engine at runtime.
     * You have to re-run the script every time you changed the GIPSL-specification of the projects `org.emoflon.gips.gipsl.examples.mdvne*`.
 

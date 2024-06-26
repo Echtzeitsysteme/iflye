@@ -16,6 +16,7 @@
 <project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,vne.scenarios"/>
 <project reference="1.0,https://github.com/Echtzeitsysteme/gips-examples.git,main,network.model"/>
 <project reference="1.0,https://github.com/Echtzeitsysteme/gips-examples.git,main,org.emoflon.gips.gipsl.examples.mdvne"/>
+<project reference="1.0,https://github.com/Echtzeitsysteme/gips-examples.git,main,org.emoflon.gips.gipsl.examples.mdvne.bwignore"/>
 <project reference="1.0,https://github.com/Echtzeitsysteme/gips-examples.git,main,org.emoflon.gips.gipsl.examples.mdvne.migration"/>
 <project reference="1.0,https://github.com/Echtzeitsysteme/gips-examples.git,main,org.emoflon.gips.gipsl.examples.mdvne.seq"/>
 </provider>
