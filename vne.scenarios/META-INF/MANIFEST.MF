@@ -7,8 +7,15 @@ Bundle-ClassPath: scenarios.jar,
  lib/commons-cli/commons-cli-1.8.0.jar,
  lib/commons-cli/commons-cli-1.8.0-javadoc.jar,
  lib/commons-cli/commons-cli-1.8.0-sources.jar,
- lib/commons-csv/commons-csv-1.9.0.jar,
- lib/commons-csv/commons-csv-1.9.0-sources.jar
+ lib/commons-csv/commons-csv-1.11.0.jar,
+ lib/commons-csv/commons-csv-1.11.0-sources.jar,
+ lib/commons-csv/commons-csv-1.11.0-javadoc.jar,
+ lib/commons-codec/commons-codec-1.17.0.jar,
+ lib/commons-codec/commons-codec-1.17.0-javadoc.jar,
+ lib/commons-codec/commons-codec-1.17.0-sources.jar,
+ lib/commons-io/commons-io-2.16.1.jar,
+ lib/commons-io/commons-io-2.16.1-javadoc.jar,
+ lib/commons-io/commons-io-2.16.1-sources.jar
 Automatic-Module-Name: vne.scenarios
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: org.apache.commons.cli,

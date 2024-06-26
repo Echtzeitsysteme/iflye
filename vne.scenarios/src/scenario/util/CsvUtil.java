@@ -51,7 +51,7 @@ public class CsvUtil {
 	/**
 	 * CSV file header format for normal runs (simulation).
 	 */
-	private static CSVFormat formatNormal = CSVFormat.DEFAULT.withHeader(//
+	private static CSVFormat formatNormal = CSVFormat.DEFAULT.builder().setHeader(//
 			"counter", //
 			"timestamp", //
 			"lastVNR", //
@@ -73,12 +73,12 @@ public class CsvUtil {
 			"memory_start", //
 			"memory_ilp", //
 			"memory_end", //
-			"memory_pid_max");
+			"memory_pid_max").build();
 
 	/**
 	 * CSV file header format for mean and standard derivation (after simulation).
 	 */
-	private static CSVFormat formatStats = CSVFormat.DEFAULT.withHeader(//
+	private static CSVFormat formatStats = CSVFormat.DEFAULT.builder().setHeader(//
 			"counter", //
 			"time_pm", "time_pm_stddev", //
 			"time_ilp", "time_ilp_stddev", //
@@ -100,19 +100,19 @@ public class CsvUtil {
 			"memory_end", "memory_end_stddev", //
 			"memory_pid_max", "memory_pid_max_stddev", //
 			"time_total", "time_total_stddev" //
-	);
+	).build();
 
 	/**
 	 * CSV file header format for summing up the time of an experiment (after
 	 * simulation).
 	 */
-	private static CSVFormat formatTimeSum = CSVFormat.DEFAULT.withHeader( //
+	private static CSVFormat formatTimeSum = CSVFormat.DEFAULT.builder().setHeader(//
 			"time_total", "time_total_stddev", //
 			"time_pm", "time_pm_stddev", //
 			"time_ilp", "time_ilp_stddev", //
 			"time_deploy", "time_deploy_stddev", //
 			"time_rest", "time_rest_stddev" //
-	);
+	).build();
 
 	/**
 	 * Appends the current state of the metrics to the CSV file.
@@ -170,8 +170,9 @@ public class CsvUtil {
 	public static List<Double[]> loadCsvFile(final String csvPath) {
 		final List<Double[]> metrics = new LinkedList<>();
 
+		CSVParser parser = null;
 		try {
-			final CSVParser parser = new CSVParser(new FileReader(csvPath), formatNormal);
+			parser = new CSVParser(new FileReader(csvPath), formatNormal);
 			final List<CSVRecord> recs = parser.getRecords();
 			for (int i = 1; i < recs.size(); i++) {
 				final Double[] val = new Double[20];
@@ -190,6 +191,14 @@ public class CsvUtil {
 			}
 		} catch (final IOException e) {
 			e.printStackTrace();
+		} finally {
+			if (parser != null) {
+				try {
+					parser.close();
+				} catch (final IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 
 		return metrics;
