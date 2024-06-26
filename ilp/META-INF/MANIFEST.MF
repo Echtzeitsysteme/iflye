@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ilp
 Bundle-SymbolicName: ilp
-Bundle-Version: 0.0.3.qualifier
+Bundle-Version: 0.0.5.qualifier
 Bundle-ClassPath: ilp.jar,
  lib/cplex/cplex-22.1.1.jar,
  lib/gurobi/gurobi-11.0.2.jar,

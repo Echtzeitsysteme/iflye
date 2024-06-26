@@ -3,7 +3,7 @@ Automatic-Module-Name: network.model.rules.vnet
 Bundle-ManifestVersion: 2
 Bundle-Name: network.model.rules.vnet
 Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt
-Bundle-Version: 0.0.3.qualifier
+Bundle-Version: 0.0.5.qualifier
 Bundle-SymbolicName: network.model.rules.vnet;singleton:=true
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.log4j,

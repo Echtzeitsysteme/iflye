@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: vne.scenarios
 Bundle-SymbolicName: vne.scenarios
-Bundle-Version: 0.0.3.qualifier
+Bundle-Version: 0.0.5.qualifier
 Bundle-ClassPath: scenarios.jar,
  lib/commons-cli/commons-cli-1.8.0.jar,
  lib/commons-cli/commons-cli-1.8.0-javadoc.jar,

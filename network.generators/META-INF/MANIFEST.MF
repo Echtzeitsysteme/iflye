@@ -4,7 +4,7 @@ Bundle-Name: network.generators
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-SymbolicName: network.generators; singleton:=true
 Automatic-Module-Name: network.generators
-Bundle-Version: 0.0.3.qualifier
+Bundle-Version: 0.0.5.qualifier
 Require-Bundle: org.eclipse.emf.ecore
 Export-Package: generators,
  generators.config
