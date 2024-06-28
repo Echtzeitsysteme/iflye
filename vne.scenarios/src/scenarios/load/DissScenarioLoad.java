@@ -152,11 +152,12 @@ public class DissScenarioLoad {
 		 * Evaluation.
 		 */
 
+		// Print metrics before saving the model
+		printMetrics();
+
 		// Save model to file
 		ModelFacade.getInstance().persistModel();
 		System.out.println("=> Execution finished.");
-		printMetrics();
-
 		System.exit(0);
 	}
 

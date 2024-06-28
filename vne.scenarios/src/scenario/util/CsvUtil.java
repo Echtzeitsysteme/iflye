@@ -1,6 +1,7 @@
 package scenario.util;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -237,6 +238,23 @@ public class CsvUtil {
 			return;
 		}
 
+		if (format == null) {
+			throw new IllegalArgumentException("Given CSV format was null");
+		}
+
+		if (content == null || content.length == 0) {
+			throw new IllegalArgumentException("Given content was null or empty.");
+		}
+
+		// Create parent folder if it does not exist
+		final int lastSlash = csvPath.lastIndexOf('/');
+		final String parentPath = csvPath.substring(0, lastSlash);
+		final File parentFolder = new File(parentPath);
+		if (!parentFolder.exists()) {
+			parentFolder.mkdir();
+		}
+
+		// Write CSV line itself
 		try {
 			BufferedWriter out;
 			// If file does not exist, write header to it

@@ -141,3 +141,7 @@ org.emoflon.gips.gipsl.examples.mdvne.seq/
 *.lp
 
 org.emoflon.gips.gipsl.examples.mdvne.bwignore/
+
+vne.scenarios/model.xmi
+
+vne.scenarios/metrics/
