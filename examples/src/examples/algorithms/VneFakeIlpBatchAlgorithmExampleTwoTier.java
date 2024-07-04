@@ -1,4 +1,4 @@
-package examples.gips;
+package examples.algorithms;
 
 import java.util.Set;
 
@@ -16,12 +16,11 @@ import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
 /**
- * Runnable example for the VNE fake ILP algorithm implementation for the use by
- * GIPS.
+ * Runnable example for the VNE fake ILP algorithm implementation.
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneFakeIlpAlgorithmExampleGipsTwoTier {
+public class VneFakeIlpBatchAlgorithmExampleTwoTier {
 
 	/**
 	 * Main method to start the example. String array of arguments will be ignored.
@@ -51,6 +50,7 @@ public class VneFakeIlpAlgorithmExampleGipsTwoTier {
 		virtGen.createNetwork("virt", true);
 
 		ModelFacade.getInstance().persistModel("model-before.xmi");
+		ModelFacade.getInstance().loadModel("model-before.xmi");
 
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");

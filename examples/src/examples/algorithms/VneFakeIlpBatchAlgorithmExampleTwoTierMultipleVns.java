@@ -1,4 +1,4 @@
-package examples.gips;
+package examples.algorithms;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -22,7 +22,7 @@ import model.VirtualNetwork;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneFakeIlpAlgorithmExampleGipsTwoTierMultipleVns {
+public class VneFakeIlpBatchAlgorithmExampleTwoTierMultipleVns {
 
 	/**
 	 * Main method to start the example. String array of arguments will be ignored.
@@ -57,6 +57,7 @@ public class VneFakeIlpAlgorithmExampleGipsTwoTierMultipleVns {
 		}
 
 		ModelFacade.getInstance().persistModel("model-before.xmi");
+		ModelFacade.getInstance().loadModel("model-before.xmi");
 
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final Set<VirtualNetwork> virtNets = new HashSet<>();
