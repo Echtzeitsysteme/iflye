@@ -1,7 +1,7 @@
 # Environment variables/config for the program
 export GRB_LICENSE_FILE="/home/mkratz/gurobi.lic"
 export GUROBI_HOME="/opt/gurobi1103/linux64/"
-export LD_LIBRARY_PATH="/opt/gurobi1103/linux64/lib/"
+export LD_LIBRARY_PATH="LD_LIBRARY_PATH=/opt/gurobi1103/linux64/lib/:/opt/ibm/ILOG/CPLEX_Studio2211/cplex/bin/x86-64_linux/"
 PATH=$PATH:~/opt/gurobi1103/linux64/bin/:~/opt/ibm/ILOG/CPLEX_Studio2211/cplex/bin/x86-64_linux/
 
 # Legacy ENVs used by Cardygan-ILP
