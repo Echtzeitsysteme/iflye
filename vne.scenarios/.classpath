@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-cli/commons-cli-1.9.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-cli/commons-cli-1.9.0-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-cli/commons-cli-1.9.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-io/commons-io-2.16.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-io/commons-io-2.16.1-javadoc.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-io/commons-io-2.16.1-sources.jar"/>
@@ -12,9 +15,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/commons-cli/commons-cli-1.8.0.jar"/>
-	<classpathentry kind="lib" path="lib/commons-cli/commons-cli-1.8.0-javadoc.jar"/>
-	<classpathentry kind="lib" path="lib/commons-cli/commons-cli-1.8.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/commons-csv/commons-csv-1.11.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons-csv/commons-csv-1.11.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/commons-csv/commons-csv-1.11.0-javadoc.jar"/>
