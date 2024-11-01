@@ -9,7 +9,7 @@ export OUTPUT="idyve-output/"
 mkdir -p $OUTPUT
 
 # Config
-export DATE=$(date +"%FT%H-%M-%S")
+export DATE=$(date +%Y-%m-%d"_"%H-%M-%S)
 export JAR="idyve.jar"
 export ARGS="mdvne 4 two-tier 2 $OUTPUT 600 0 NEVER"
 

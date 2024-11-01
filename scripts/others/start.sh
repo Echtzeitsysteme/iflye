@@ -6,7 +6,7 @@ set -e
 source env.sh
 
 # Config
-export DATE=$(date +"%FT%H-%M-%S")
+export DATE=$(date +%Y-%m-%d"_"%H-%M-%S)
 export JAR="iflye.jar"
 export ARGS="-a pm -o total-comm-a -e emoflon_wo_update -l 2 -s resources/two-tier-4-pods/snet.json -v resources/40-vnets/vnets.json -c metrics/$DATE.csv -i 600"
 
