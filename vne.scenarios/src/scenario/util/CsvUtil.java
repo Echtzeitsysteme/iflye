@@ -247,11 +247,13 @@ public class CsvUtil {
 		}
 
 		// Create parent folder if it does not exist
-		final int lastSlash = csvPath.lastIndexOf('/');
-		final String parentPath = csvPath.substring(0, lastSlash);
-		final File parentFolder = new File(parentPath);
-		if (!parentFolder.exists()) {
-			parentFolder.mkdir();
+		if (csvPath.contains("/")) {
+			final int lastSlash = csvPath.lastIndexOf('/');
+			final String parentPath = csvPath.substring(0, lastSlash);
+			final File parentFolder = new File(parentPath);
+			if (!parentFolder.exists()) {
+				parentFolder.mkdir();
+			}
 		}
 
 		// Write CSV line itself
