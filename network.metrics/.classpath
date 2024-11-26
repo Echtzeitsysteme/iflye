@@ -8,9 +8,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="lib" path="lib/unix4j/unix4j-base-0.6.jar"/>
-	<classpathentry kind="lib" path="lib/unix4j/unix4j-command-0.6.jar"/>
-	<classpathentry kind="lib" path="lib/unix4j/unix4j-perf-0.6.jar"/>
-	<classpathentry kind="lib" path="lib/unix4j/unix4j-tools-0.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
