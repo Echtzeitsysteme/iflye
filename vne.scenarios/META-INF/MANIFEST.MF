@@ -18,14 +18,13 @@ Bundle-ClassPath: scenarios.jar,
  lib/commons-cli/commons-cli-1.9.0-sources.jar
 Automatic-Module-Name: vne.scenarios
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Export-Package: org.apache.commons.cli,
- org.apache.commons.csv,
- scenario.util,
+Export-Package: scenario.util,
  scenarios.gen,
  scenarios.load
 Require-Bundle: ilp,
  network.model,
  vne.algorithms,
  network.metrics,
- network.generators
+ network.generators,
+ iflye.dependencies
 Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt
