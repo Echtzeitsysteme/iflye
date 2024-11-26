@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="main/java/|test/java/" kind="src" path="src"/>
-	<classpathentry exported="true" kind="lib" path="lib/gurobi/gurobi-12.0.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gurobi/gurobi-javadoc-12.0.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/cplex/cplex-22.1.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-21">
 		<attributes>
 			<attribute name="module" value="true"/>

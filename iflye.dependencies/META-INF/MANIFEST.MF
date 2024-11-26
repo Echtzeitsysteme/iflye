@@ -5,3 +5,10 @@ Bundle-SymbolicName: iflye.dependencies
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Automatic-Module-Name: iflye.dependencies
+Bundle-ClassPath: lib/cplex/cplex-22.1.1.jar,
+ lib/gurobi/gurobi-12.0.0.jar,
+ lib/gurobi/gurobi-javadoc-12.0.0.jar,
+ .
+Export-Package: com.gurobi.gurobi;version="12.0.0",
+ ilog.concert;version="22.1.1",
+ ilog.cplex;version="22.1.1"
