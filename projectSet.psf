@@ -2,6 +2,7 @@
 <psf version="2.0">
 <provider id="org.eclipse.egit.core.GitProvider">
 <project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,examples"/>
+<project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,iflye.dependencies"/>
 <project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,ilp"/>
 <project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,network.generators"/>
 <project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,network.metrics"/>
@@ -14,10 +15,21 @@
 <project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,test.suite.iflye"/>
 <project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,vne.algorithms"/>
 <project reference="1.0,https://github.com/Echtzeitsysteme/iflye.git,main,vne.scenarios"/>
-<project reference="1.0,https://github.com/Echtzeitsysteme/gips-examples.git,main,network.model"/>
-<project reference="1.0,https://github.com/Echtzeitsysteme/gips-examples.git,main,org.emoflon.gips.gipsl.examples.mdvne"/>
-<project reference="1.0,https://github.com/Echtzeitsysteme/gips-examples.git,main,org.emoflon.gips.gipsl.examples.mdvne.bwignore"/>
-<project reference="1.0,https://github.com/Echtzeitsysteme/gips-examples.git,main,org.emoflon.gips.gipsl.examples.mdvne.migration"/>
-<project reference="1.0,https://github.com/Echtzeitsysteme/gips-examples.git,main,org.emoflon.gips.gipsl.examples.mdvne.seq"/>
 </provider>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1720597494604_7" label="iflye" name="iflye">
+<item elementID="=examples" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=ilp" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=network.generators" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=network.metrics" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=network.model.rules.racka" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=network.model.rules.rackb" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=network.model.rules.vnet" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=network.model.rules" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=network.visualization" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=statistics" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=test.suite.iflye" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=vne.algorithms" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=vne.scenarios" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=iflye.dependencies" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
 </psf>

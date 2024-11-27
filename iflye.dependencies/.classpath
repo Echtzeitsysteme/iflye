@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io/commons-io-2.17.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io/commons-io-2.17.0-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io/commons-io-2.17.0-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-csv/commons-csv-1.12.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-csv/commons-csv-1.12.0-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-csv/commons-csv-1.12.0-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-codec/commons-codec-1.17.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-codec/commons-codec-1.17.1-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-codec/commons-codec-1.17.1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-cli/commons-cli-1.9.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-cli/commons-cli-1.9.0-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-cli/commons-cli-1.9.0-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gs/gs-core-2.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gs/gs-core-2.0-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gs/gs-core-2.0-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gs/gs-ui-swing-2.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/unix4j/unix4j-0.6-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/unix4j/unix4j-base-0.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/unix4j/unix4j-base-0.6-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/unix4j/unix4j-base-0.6-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/unix4j/unix4j-command-0.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/unix4j/unix4j-command-0.6-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/unix4j/unix4j-command-0.6-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/unix4j/unix4j-perf-0.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/unix4j/unix4j-tools-0.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/unix4j/unix4j-tools-0.6-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/unix4j/unix4j-tools-0.6-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gurobi/gurobi-12.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gurobi/gurobi-javadoc-12.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cplex/cplex-22.1.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-21">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
