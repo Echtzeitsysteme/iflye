@@ -21,6 +21,11 @@ import model.VirtualNetwork;
 public class VneGipsLookaheadAlgorithm extends AbstractAlgorithm {
 
 	/**
+	 * Relative base path of the GIPS MdVNE project.
+	 */
+	private final static String GIPS_PROJECT_BASE_PATH = "../../gips-examples/org.emoflon.gips.gipsl.examples.mdvne";
+
+	/**
 	 * Algorithm instance (singleton).
 	 */
 	private static VneGipsLookaheadAlgorithm instance;
@@ -55,7 +60,11 @@ public class VneGipsLookaheadAlgorithm extends AbstractAlgorithm {
 
 		// TODO: Time measurement
 		final ResourceSet model = ModelFacade.getInstance().getResourceSet();
-		final boolean gipsSuccess = MdvneGipsLookaheadIflyeAdapter.execute(model, vNetId);
+		final boolean gipsSuccess = MdvneGipsLookaheadIflyeAdapter.execute(model,
+				GIPS_PROJECT_BASE_PATH + "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/api/gips/gips-model.xmi",
+				GIPS_PROJECT_BASE_PATH + "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/api/ibex-patterns.xmi",
+				GIPS_PROJECT_BASE_PATH + "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/hipe/engine/hipe-network.xmi",
+				vNetId);
 
 		// Workaround to fix the residual bandwidth of other paths possibly affected by
 		// virtual link to substrate path embeddings
