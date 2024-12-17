@@ -21,6 +21,11 @@ import model.VirtualNetwork;
 public class VneGipsSeqAlgorithm extends AbstractAlgorithm {
 
 	/**
+	 * Relative base path of the GIPS MdVNE project.
+	 */
+	private final static String GIPS_PROJECT_BASE_PATH = "../../gips-examples/org.emoflon.gips.gipsl.examples.mdvne.seq";
+
+	/**
 	 * Algorithm instance (singleton).
 	 */
 	private static VneGipsSeqAlgorithm instance;
@@ -45,7 +50,11 @@ public class VneGipsSeqAlgorithm extends AbstractAlgorithm {
 
 		// TODO: Time measurement
 		final ResourceSet model = ModelFacade.getInstance().getResourceSet();
-		final boolean gipsSuccess = MdvneSeqGipsIflyeAdapter.execute(model);
+		final boolean gipsSuccess = MdvneSeqGipsIflyeAdapter.execute(model,
+				GIPS_PROJECT_BASE_PATH + "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/seq/api/gips/gips-model.xmi",
+				GIPS_PROJECT_BASE_PATH + "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/seq/api/ibex-patterns.xmi",
+				GIPS_PROJECT_BASE_PATH
+						+ "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/seq/hipe/engine/hipe-network.xmi");
 
 		// Workaround to fix the residual bandwidth of other paths possibly affected by
 		// virtual link to substrate path embeddings

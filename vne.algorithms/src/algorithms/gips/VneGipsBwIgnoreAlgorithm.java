@@ -23,6 +23,11 @@ import model.VirtualNetwork;
 public class VneGipsBwIgnoreAlgorithm extends AbstractAlgorithm {
 
 	/**
+	 * Relative base path of the GIPS MdVNE project.
+	 */
+	private final static String GIPS_PROJECT_BASE_PATH = "../../gips-examples/org.emoflon.gips.gipsl.examples.mdvne.bwignore";
+
+	/**
 	 * Algorithm instance (singleton).
 	 */
 	private static VneGipsBwIgnoreAlgorithm instance;
@@ -52,7 +57,13 @@ public class VneGipsBwIgnoreAlgorithm extends AbstractAlgorithm {
 
 		// TODO: Time measurement
 		final ResourceSet model = ModelFacade.getInstance().getResourceSet();
-		final boolean gipsSuccess = MdvneGipsBwIgnoreIflyeAdapter.execute(model);
+		final boolean gipsSuccess = MdvneGipsBwIgnoreIflyeAdapter.execute(model,
+				GIPS_PROJECT_BASE_PATH
+						+ "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/bwignore/api/gips/gips-model.xmi",
+				GIPS_PROJECT_BASE_PATH
+						+ "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/bwignore/api/ibex-patterns.xmi",
+				GIPS_PROJECT_BASE_PATH
+						+ "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/bwignore/hipe/engine/hipe-network.xmi");
 
 		// The following workaround is not necessary because of the global bandwidth
 		// ignoring needed for this VNE algorithm

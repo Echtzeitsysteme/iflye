@@ -22,6 +22,11 @@ import model.VirtualNetwork;
 public class VneGipsMigrationAlgorithm extends AbstractAlgorithm {
 
 	/**
+	 * Relative base path of the GIPS MdVNE project.
+	 */
+	private final static String GIPS_PROJECT_BASE_PATH = "../../gips-examples/org.emoflon.gips.gipsl.examples.mdvne.migration";
+
+	/**
 	 * Algorithm instance (singleton).
 	 */
 	private static VneGipsMigrationAlgorithm instance;
@@ -60,7 +65,13 @@ public class VneGipsMigrationAlgorithm extends AbstractAlgorithm {
 		ModelFacade.getInstance().updateAllPathsResidualBandwidth(sNet.getName());
 
 		final ResourceSet model = ModelFacade.getInstance().getResourceSet();
-		final boolean gipsSuccess = MdvneMigrationGipsIflyeAdapter.execute(model);
+		final boolean gipsSuccess = MdvneMigrationGipsIflyeAdapter.execute(model,
+				GIPS_PROJECT_BASE_PATH
+						+ "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/migration/api/gips/gips-model.xmi",
+				GIPS_PROJECT_BASE_PATH
+						+ "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/migration/api/ibex-patterns.xmi",
+				GIPS_PROJECT_BASE_PATH
+						+ "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/migration/hipe/engine/hipe-network.xmi");
 
 		// Workaround to fix the residual bandwidth of other paths possibly affected by
 		// virtual link to substrate path embeddings
