@@ -9,11 +9,8 @@ import java.util.Set;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeRejectedException;
-import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.ui.view.Viewer;
-
 import facade.ModelFacade;
 import generators.config.GlobalGeneratorConfig;
 import model.Link;
@@ -28,7 +25,7 @@ import model.VirtualSwitch;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class Ui {
+public class NetworkGraph extends SingleGraph {
 	/*
 	 * Configuration parameters.
 	 */
@@ -36,79 +33,79 @@ public class Ui {
 	/**
 	 * X scaling of the placement.
 	 */
-	private static final double SCALE_X = 2;
+	private final double SCALE_X = 2;
 
 	/**
 	 * Y scaling of the placement.
 	 */
-	private static final double SCALE_Y = 5;
+	private final double SCALE_Y = 5;
 
 	/**
 	 * True if links should be displayed bidirectional.
 	 */
-	private static final boolean LINK_BIDIRECTIONAL = true;
+	private final boolean LINK_BIDIRECTIONAL = true;
 
 	/**
 	 * Servers (nodes) loaded from model.
 	 */
-	private final static List<model.Node> servers = new LinkedList<>();
+	private final List<model.Node> servers = new LinkedList<>();
 
 	/**
 	 * Switches (nodes) loaded from model.
 	 */
-	private final static List<model.Node> switches = new LinkedList<>();
+	private final List<model.Node> switches = new LinkedList<>();
 
 	/**
 	 * Links (edges) loaded from model.
 	 */
-	private final static Set<model.Link> links = new HashSet<>();
+	private final Set<model.Link> links = new HashSet<>();
 
 	/**
 	 * Network ID.
 	 */
-	private static String subNetworkId;
+	private String subNetworkId;
 
 	/**
 	 * Server to server mappings.
 	 */
-	private static Map<Node, List<String>> serverToServerMappings = new HashMap<>();
+	private Map<Node, List<String>> serverToServerMappings = new HashMap<>();
 
 	/**
 	 * Switch to server mappings.
 	 */
-	private static Map<Node, List<String>> switchToServerMappings = new HashMap<>();
+	private Map<Node, List<String>> switchToServerMappings = new HashMap<>();
 
 	/**
 	 * Switch to switch mappings.
 	 */
-	private static Map<Node, List<String>> switchMappings = new HashMap<>();
+	private Map<Node, List<String>> switchMappings = new HashMap<>();
 
 	/**
 	 * Set containing all virtual networks.
 	 */
-	private static Set<String> virtualNetworks = new HashSet<>();
+	private Set<String> virtualNetworks = new HashSet<>();
+
+	public NetworkGraph(String id) {
+		super(id);
+	}
 
 	/**
 	 * Main method that starts the visualization process.
 	 *
-	 * @param args First string is the path of the model to load, second string is
-	 *             the name/ID of the network to visualize, and third parameter
-	 *             (0/1) enables automatic shaping.
+	 * @param path      Path to read file from.
+	 * @param networkId Network ID of the network to visualize.
 	 */
-	public static void main(final String[] args) {
-		System.setProperty("org.graphstream.ui", "swing");
-		readModel(args[0], args[1]);
-		// readModel("../examples/model.xmi", "sub");
+	public void render(final String path, final String networkId) {
+		readModel(path, networkId);
 
 		// Create the graph
-		final Graph graph = new SingleGraph("network model visualizer");
-		graph.setAttribute("ui.quality");
-		graph.setAttribute("ui.antialias");
+		this.setAttribute("ui.quality");
+		this.setAttribute("ui.antialias");
 
 		// Add all server nodes to graph
 		double srvCurrX = (-servers.size() + 1) * SCALE_X / 2;
 		for (final model.Node srv : servers) {
-			final Node srvNode = graph.addNode(srv.getName());
+			final Node srvNode = this.addNode(srv.getName());
 			srvNode.setAttribute("ui.label", removeNetworkId(srv.getName()));
 			srvNode.setAttribute("ui.style",
 					"fill-color: rgb(000,155,000);" + "shape: rounded-box; " + "stroke-color: rgb(0,0,0);"
@@ -156,7 +153,7 @@ public class Ui {
 
 		// Add all switch nodes to graph
 		for (final model.Node sw : switches) {
-			final Node swNode = graph.addNode(sw.getName());
+			final Node swNode = this.addNode(sw.getName());
 			swNode.setAttribute("ui.label", removeNetworkId(sw.getName()));
 			swNode.setAttribute("ui.style",
 					"fill-color: rgb(255,255,255); " + "stroke-color: rgb(000,155,000); " + "stroke-width: 4px; "
@@ -181,14 +178,14 @@ public class Ui {
 		for (final model.Link l : links) {
 			if (LINK_BIDIRECTIONAL) {
 				try {
-					graph.addEdge(l.getName(), l.getSource().getName(), l.getTarget().getName(), false);
+					this.addEdge(l.getName(), l.getSource().getName(), l.getTarget().getName(), false);
 				} catch (final EdgeRejectedException ex) {
 					// Graphstream rejects 'addEdge' if there already is an undirected edge from a
 					// to b. Using the catch clause, the program does not have to track which edges
 					// were already created.
 				}
 			} else {
-				final Edge lnEdge = graph.addEdge(l.getName(), l.getSource().getName(), l.getTarget().getName(), true);
+				final Edge lnEdge = this.addEdge(l.getName(), l.getSource().getName(), l.getTarget().getName(), true);
 				// lnEdge.setAttribute("ui.label", l.getName());
 			}
 		}
@@ -201,7 +198,7 @@ public class Ui {
 			final double[] coordinates = nodeToCoordinates(key);
 			int counter = 0;
 			for (final String act : serverToServerMappings.get(key)) {
-				final Node srvNode = graph.addNode(act);
+				final Node srvNode = this.addNode(act);
 				srvNode.setAttribute("ui.label", act.substring(act.indexOf("_") + 1));
 				srvNode.setAttribute("ui.style",
 						"fill-color: rgb(155,000,000);" + "shape: rounded-box; " + "stroke-color: rgb(0,0,0);"
@@ -217,7 +214,7 @@ public class Ui {
 			final double[] coordinates = nodeToCoordinates(key);
 			int counter = 0;
 			for (final String act : switchToServerMappings.get(key)) {
-				final Node srvNode = graph.addNode(act);
+				final Node srvNode = this.addNode(act);
 				srvNode.setAttribute("ui.label", act.substring(act.indexOf("_") + 1));
 				srvNode.setAttribute("ui.style",
 						"fill-color: rgb(255,255,255); " + "stroke-color: rgb(155,000,000); " + "stroke-width: 4px; "
@@ -232,7 +229,7 @@ public class Ui {
 			final double[] coordinates = nodeToCoordinates(key);
 			int counter = 0;
 			for (final String act : switchMappings.get(key)) {
-				final Node swNode = graph.addNode(act);
+				final Node swNode = this.addNode(act);
 				swNode.setAttribute("ui.label", act.substring(act.indexOf("_") + 1));
 				swNode.setAttribute("ui.style",
 						"fill-color: rgb(255,255,255); " + "stroke-color: rgb(155,000,000); " + "stroke-width: 4px; "
@@ -248,7 +245,7 @@ public class Ui {
 			for (final Link l : ModelFacade.getInstance().getAllLinksOfNetwork(actNetId)) {
 				if (LINK_BIDIRECTIONAL) {
 					try {
-						final Edge lnEdge = graph.addEdge(l.getName(), l.getSource().getName(), l.getTarget().getName(),
+						final Edge lnEdge = this.addEdge(l.getName(), l.getSource().getName(), l.getTarget().getName(),
 								false);
 						lnEdge.setAttribute("ui.style", "fill-color: rgb(155,000,000); shape: cubic-curve;");
 					} catch (final EdgeRejectedException ex) {
@@ -257,17 +254,11 @@ public class Ui {
 						// were already created.
 					}
 				} else {
-					final Edge lnEdge = graph.addEdge(l.getName(), l.getSource().getName(), l.getTarget().getName(),
+					final Edge lnEdge = this.addEdge(l.getName(), l.getSource().getName(), l.getTarget().getName(),
 							true);
 					lnEdge.setAttribute("ui.style", "fill-color: rgb(155,000,000); shape: cubic-curve;");
 				}
 			}
-		}
-
-		final Viewer viewer = graph.display();
-
-		if ("0".equals(args[2])) {
-			viewer.disableAutoLayout();
 		}
 	}
 
@@ -277,7 +268,7 @@ public class Ui {
 	 * @param node Input node to extract coordinates for.
 	 * @return Array of doubles with the coordinates.
 	 */
-	private static double[] nodeToCoordinates(final Node node) {
+	private double[] nodeToCoordinates(final Node node) {
 		final Object[] coordinatesObj = (Object[]) node.getAttribute("xyz");
 		final double[] coordinates = new double[3];
 		for (int i = 0; i < coordinatesObj.length; i++) {
@@ -296,8 +287,8 @@ public class Ui {
 	 * @param path      Path to read file from.
 	 * @param networkId Network ID of the network to visualize.
 	 */
-	private static void readModel(final String path, final String networkId) {
-		Ui.subNetworkId = networkId;
+	private void readModel(final String path, final String networkId) {
+		this.subNetworkId = networkId;
 		ModelFacade.getInstance().loadModel(path);
 
 		// Servers
@@ -316,8 +307,25 @@ public class Ui {
 	 * @param name Input name.
 	 * @return Given name without the saved substrate network ID.
 	 */
-	private static String removeNetworkId(final String name) {
-		return name.replace(subNetworkId + GlobalGeneratorConfig.SEPARATOR, "");
+	private String removeNetworkId(final String name) {
+		return name.replace(this.subNetworkId + GlobalGeneratorConfig.SEPARATOR, "");
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.graphstream.graph.Graph#clear()
+	 */
+	@Override
+	public void clear() {
+		super.clear();
+		servers.clear();
+		switches.clear();
+		links.clear();
+		serverToServerMappings.clear();
+		switchToServerMappings.clear();
+		switchMappings.clear();
+		virtualNetworks.clear();
 	}
 
 }
