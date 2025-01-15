@@ -3,13 +3,26 @@ package visualization;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JMenuBar;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+
 import org.graphstream.ui.swing_viewer.DefaultView;
 import org.graphstream.ui.swing_viewer.SwingViewer;
 import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
 
 import facade.ModelFacade;
+import model.VirtualNetwork;
 
 /**
  * Visualization UI based on GraphStream, that can show network topologies based
@@ -25,6 +38,41 @@ public class Application extends JFrame {
 	 * The NetworkGraph to render in the Frame
 	 */
 	private final NetworkGraph graph = new NetworkGraph("Network Viewer");
+	
+	/**
+	 * The viewer where the graph is embedded.
+	 */
+	private SwingViewer graphViewer;
+	
+	/**
+	 * The List for viewing all available networks.
+	 */
+	private final JList<String> networkList = new JList<>();
+	
+	/**
+	 * All available networks to view.
+	 */
+	private List<String> networks = new LinkedList<>();
+	
+	/**
+	 * The path to the currently loaded file.
+	 */
+	private String loadedModelFilePath;
+	
+	/**
+	 * The name of the currently viewed network.
+	 */
+	private String networkId;
+	
+	/**
+	 * If the graph view should be automatically laid out.
+	 */
+	private boolean autoLayout;
+	
+	/**
+	 * If the view is currently ready for rerender. Prevents unintentional rerenders while rendering.
+	 */
+	private boolean ready = false;
 
 	/**
 	 * Main method that starts the visualization process.
@@ -34,7 +82,16 @@ public class Application extends JFrame {
 	 *             (0/1) disables automatic shaping (enabled by default).
 	 */
 	public static void main(final String[] args) {
-		new Application(args[0], args[1], args.length < 3 || !"0".equals(args[2]));
+		new Application(args[0], args.length < 2 ? null : args[1], args.length < 3 || !"0".equals(args[2]));
+	}
+	
+	/**
+	 * Creates a new UI application with an embedded NetworkGraph for visualization.
+	 * 
+	 * @param path       Path to read file from.
+	 */
+	public Application(final String path) {
+		this(path, null);
 	}
 	
 	/**
@@ -57,26 +114,167 @@ public class Application extends JFrame {
 	public Application(final String path, final String networkId, final boolean autoLayout) {
 		System.setProperty("org.graphstream.ui", "swing");
 
-		this.setTitle("Network Viewer: " + networkId);
+		init();
+		initGraph();
+		initToolbar();
+		initNetworkList();
+		
+		loadModelFile(path);
+		refreshNetworkList();
+		setNetworkId(networkId != null ? networkId : networks.getFirst());
+		setAutoLayout(autoLayout);
+
+		this.ready = true;
+		rerender();
+
+		this.setVisible(true);
+	}
+	
+	/**
+	 * Initialize basic Frame attributes.
+	 */
+	private void init() {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setPreferredSize(new Dimension(500, 600));
+		this.setPreferredSize(new Dimension(800, 600));
 		this.setSize(getPreferredSize());
 		this.setBackground(Color.lightGray);
+	}
+	
+	/**
+	 * Initialize the graph view.
+	 */
+	private void initGraph() {
+		this.graphViewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
 
-		ModelFacade.getInstance().loadModel(path);
-		graph.render(ModelFacade.getInstance(), networkId);
-        SwingViewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
-        
-        if (!autoLayout) {
-    		viewer.disableAutoLayout();
-    	} else {
-    		viewer.enableAutoLayout();
-    	}
-
-		View view = viewer.addDefaultView(false);   // false indicates "no JFrame".
+		View view = this.graphViewer.addDefaultView(false);   // false indicates "no JFrame".
 		this.add((DefaultView) view, BorderLayout.CENTER);
+	}
+	
+	/**
+	 * Initialize the toolbar.
+	 */
+	private void initToolbar() {
+	    JButton button = new JButton("Reload");
+	    button.setBounds(150, 200, 220, 50);
+	    this.add(button, BorderLayout.PAGE_START);
+
+	    button.addActionListener((ActionEvent e) -> {
+	    	loadModelFile(this.loadedModelFilePath);
+	    	rerender();
+	    });
+	}
+	
+	/**
+	 * Initialize the network list view.
+	 */
+	private void initNetworkList() {
+		networkList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		networkList.setLayoutOrientation(JList.VERTICAL);
+		networkList.setVisibleRowCount(-1);
+		networkList.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				setNetworkId(networkList.getSelectedValue());
+				rerender();
+			}
+		});
+
+		JScrollPane listScroller = new JScrollPane(networkList);
+		listScroller.setPreferredSize(new Dimension(250, 80));
 		
-		this.setVisible(true);
+		this.add(listScroller, BorderLayout.LINE_START);
+	}
+	
+	/**
+	 * Set the network ID to another value.
+	 * 
+	 * @param networkId
+	 */
+	public void setNetworkId(final String networkId) {
+		if (!networks.contains(networkId)) {
+			throw new RuntimeException("The supplied networkId " + networkId + " is invalid!");
+		}
+
+		this.networkId = networkId;
+	}
+	
+	/**
+	 * Toggle the auto layout of the graph view.
+	 * 
+	 * @param autoLayout
+	 */
+	public void setAutoLayout(final boolean autoLayout) {
+		this.autoLayout = autoLayout;
+	}
+	
+	/**
+	 * Enable the auto layout of the graph view.
+	 */
+	public void enableAutoLayout() {
+		setAutoLayout(true);
+	}
+	
+	/**
+	 * Disable the auto layout of the graph view.
+	 */
+	public void disableAutoLayout() {
+		setAutoLayout(true);
+	}
+	
+	/**
+	 * Load the model from the supplied path.
+	 * 
+	 * @param path The path to the model to load.
+	 */
+	public void loadModelFile(final String path) {
+		this.loadedModelFilePath = path;
+		ModelFacade.getInstance().loadModel(this.loadedModelFilePath);
+		graph.setModel(ModelFacade.getInstance());
+	}
+	
+	/**
+	 * Updates the full UI with all changed configuration values.
+	 */
+	public void rerender() {
+		if (!this.ready) {
+			return;
+		}
+
+		this.ready = false;
+
+		refreshNetworkList();
+		refreshGraph();
+
+		this.setTitle("Network Viewer: " + this.networkId);
+		
+		this.ready = true;
+	}
+	
+	/**
+	 * Refreshes the graph view with updated values.
+	 */
+	public void refreshGraph() {
+		graph.clear();
+		graph.render(this.networkId);
+		
+		if (!this.autoLayout) {
+    		graphViewer.disableAutoLayout();
+    	} else {
+    		graphViewer.enableAutoLayout();
+    	}
+	}
+	
+	/**
+	 * Refreshes the network list view with updated values. Resets the currently selected networkId if necessary.
+	 */
+	public void refreshNetworkList() {
+		networks = ModelFacade.getInstance().getAllNetworks().stream().filter((network) -> !(network instanceof VirtualNetwork)).map((network) -> network.getName()).toList();
+		
+		if (!networks.contains(this.networkId)) {
+			setNetworkId(networks.getFirst());
+		}
+
+		networkList.setListData(networks.toArray(String[]::new));
+		networkList.setSelectedValue(this.networkId, false);
 	}
 
 }
