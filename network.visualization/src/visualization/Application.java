@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -15,9 +16,14 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import org.graphstream.ui.swing_viewer.DefaultView;
 import org.graphstream.ui.swing_viewer.SwingViewer;
@@ -36,6 +42,8 @@ import model.VirtualNetwork;
 public class Application extends JFrame {
 	
 	private static final long serialVersionUID = -2863860255459271789L;
+	
+	private static final String APP_NAME = "Network Explorer";
 
 	/**
 	 * The NetworkGraph to render in the Frame
@@ -85,6 +93,17 @@ public class Application extends JFrame {
 	 *             (0/1) disables automatic shaping (enabled by default).
 	 */
 	public static void main(final String[] args) {
+		try {
+			System.setProperty("org.graphstream.ui", "swing");
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
+	        System.setProperty("com.apple.mrj.application.apple.menu.about.name", APP_NAME);
+	        System.setProperty("apple.awt.application.name", APP_NAME);
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+			// Continue to launch the app without proper design
+			e.printStackTrace();
+		}
+
 		new Application(args.length < 1 ? null : args[0], args.length < 2 ? null : args[1], args.length < 3 || !"0".equals(args[2]));
 	}
 	
@@ -115,9 +134,8 @@ public class Application extends JFrame {
 	 * @param autoLayout If the graph should be automatically laid out
 	 */
 	public Application(final String path, final String networkId, final boolean autoLayout) {
-		System.setProperty("org.graphstream.ui", "swing");
-
 		init();
+		initMenu();
 		initGraph();
 		initToolbar();
 		initNetworkList();
@@ -137,6 +155,7 @@ public class Application extends JFrame {
 		this.ready = true;
 		rerender();
 
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		this.setVisible(true);
 	}
 	
@@ -148,6 +167,30 @@ public class Application extends JFrame {
 		this.setPreferredSize(new Dimension(800, 600));
 		this.setSize(getPreferredSize());
 		this.setBackground(Color.lightGray);
+	}
+	
+	/**
+	 * Initialize the menu bar.
+	 */
+	private void initMenu() {
+		JMenuBar menuBar = new JMenuBar();
+		
+		JMenu menu = new JMenu("File");
+		JMenuItem menuItemOpen = new JMenuItem("Open Model...", KeyEvent.VK_T);
+		menuItemOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.META_MASK));
+		menuItemOpen.addActionListener((ActionEvent e) -> {
+			final String path = selectFile();
+			if (path == null) {
+				return;
+			}
+			
+			loadModelFile(path);
+			rerender();
+		});
+		menu.add(menuItemOpen);
+		menuBar.add(menu);
+
+		this.setJMenuBar(menuBar);
 	}
 	
 	/**
@@ -318,7 +361,7 @@ public class Application extends JFrame {
 		refreshNetworkList();
 		refreshGraph();
 
-		this.setTitle("Network Viewer: " + this.networkId);
+		this.setTitle(this.loadedModelFilePath + " – " + this.networkId);
 		
 		this.ready = true;
 	}
