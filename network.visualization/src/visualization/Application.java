@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -13,6 +14,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -20,6 +23,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
@@ -79,6 +83,16 @@ public class Application extends JFrame {
 	 * If the graph view should be automatically laid out.
 	 */
 	private boolean autoLayout;
+	
+	/**
+	 * The Checkbox to control the autoLayout state.
+	 */
+	private JCheckBox autoLayoutCheckbox;
+	
+	/**
+	 * The Menu item to control the autoLayout state.
+	 */
+	private JMenuItem menuItemAutoLayout;
 	
 	/**
 	 * If the view is currently ready for rerender. Prevents unintentional rerenders while rendering.
@@ -176,7 +190,7 @@ public class Application extends JFrame {
 		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu menu = new JMenu("File");
-		JMenuItem menuItemOpen = new JMenuItem("Open Model...", KeyEvent.VK_T);
+		JMenuItem menuItemOpen = new JMenuItem("Open Model...", KeyEvent.VK_O);
 		menuItemOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.META_MASK));
 		menuItemOpen.addActionListener((ActionEvent e) -> {
 			final String path = selectFile();
@@ -188,6 +202,20 @@ public class Application extends JFrame {
 			rerender();
 		});
 		menu.add(menuItemOpen);
+		JMenuItem menuItemReload = new JMenuItem("Reload", KeyEvent.VK_R);
+		menuItemReload.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0));
+		menuItemReload.addActionListener((ActionEvent e) -> {
+			loadModelFile(this.loadedModelFilePath);
+			rerender();
+		});
+		menu.add(menuItemReload);
+		menuItemAutoLayout = new JCheckBoxMenuItem("Auto Layout");
+		menuItemAutoLayout.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0));
+		menuItemAutoLayout.addItemListener((ItemEvent e) -> {
+			setAutoLayout(e.getStateChange() == ItemEvent.SELECTED);
+			rerender();
+		});
+		menu.add(menuItemAutoLayout);
 		menuBar.add(menu);
 
 		this.setJMenuBar(menuBar);
@@ -207,14 +235,27 @@ public class Application extends JFrame {
 	 * Initialize the toolbar.
 	 */
 	private void initToolbar() {
+		JToolBar toolBar = new JToolBar();
+		toolBar.setFloatable(false);
+
+		autoLayoutCheckbox = new JCheckBox("Auto Layout");
+		autoLayoutCheckbox.addItemListener((ItemEvent e) -> {
+			setAutoLayout(e.getStateChange() == ItemEvent.SELECTED);
+			rerender();
+		});
+	    toolBar.add(autoLayoutCheckbox);
+
 	    JButton button = new JButton("Reload");
 	    button.setBounds(150, 200, 220, 50);
-	    this.add(button, BorderLayout.PAGE_START);
+	    button.setMnemonic(KeyEvent.VK_R);
+	    toolBar.add(button);
 
 	    button.addActionListener((ActionEvent e) -> {
 	    	loadModelFile(this.loadedModelFilePath);
 	    	rerender();
 	    });
+	    
+	    this.add(toolBar, BorderLayout.PAGE_START);
 	}
 	
 	/**
@@ -362,6 +403,8 @@ public class Application extends JFrame {
 		refreshGraph();
 
 		this.setTitle(this.loadedModelFilePath + " – " + this.networkId);
+		this.autoLayoutCheckbox.setSelected(autoLayout);
+		this.menuItemAutoLayout.setSelected(autoLayout);
 		
 		this.ready = true;
 	}
