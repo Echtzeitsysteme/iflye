@@ -1,11 +1,15 @@
 package visualization;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeRejectedException;
@@ -44,64 +48,102 @@ public class NetworkGraph extends SingleGraph {
 	 * True if links should be displayed bidirectional.
 	 */
 	private final boolean LINK_BIDIRECTIONAL = true;
-
+	
 	/**
-	 * Servers (nodes) loaded from model.
+	 * The iflye ModelFacade for model interaction
 	 */
-	private final List<model.Node> servers = new LinkedList<>();
-
-	/**
-	 * Switches (nodes) loaded from model.
-	 */
-	private final List<model.Node> switches = new LinkedList<>();
-
-	/**
-	 * Links (edges) loaded from model.
-	 */
-	private final Set<model.Link> links = new HashSet<>();
+	private ModelFacade model;
 
 	/**
 	 * Network ID.
 	 */
 	private String subNetworkId;
 
-	/**
-	 * Server to server mappings.
-	 */
-	private Map<Node, List<String>> serverToServerMappings = new HashMap<>();
-
-	/**
-	 * Switch to server mappings.
-	 */
-	private Map<Node, List<String>> switchToServerMappings = new HashMap<>();
-
-	/**
-	 * Switch to switch mappings.
-	 */
-	private Map<Node, List<String>> switchMappings = new HashMap<>();
-
-	/**
-	 * Set containing all virtual networks.
-	 */
-	private Set<String> virtualNetworks = new HashSet<>();
-
 	public NetworkGraph(String id) {
 		super(id);
 	}
 
 	/**
-	 * Main method that starts the visualization process.
+	 * Sets the model to use for rendering.
 	 *
-	 * @param path      Path to read file from.
+	 * @param model     The ModelFacade to access the model.
+	 */
+	public void setModel(final ModelFacade model) {
+		this.model = model;
+	}
+	
+	/**
+	 * Sets the networkId to render.
+	 *
 	 * @param networkId Network ID of the network to visualize.
 	 */
-	public void render(final String path, final String networkId) {
-		readModel(path, networkId);
+	public void setNetworkId(final String networkId) {
+		this.subNetworkId = networkId;
+	}
 
+	/**
+	 * Main method that starts the visualization process.
+	 *
+	 * @param model     The ModelFacade to access the model.
+	 * @param networkId Network ID of the network to visualize.
+	 */
+	public void render(final ModelFacade model, final String networkId) {
+		setModel(model);
+		setNetworkId(networkId);
+		render();
+	}
+	
+	/**
+	 * Main method that starts the visualization process.
+	 *
+	 * @param model     The ModelFacade to access the model.
+	 */
+	public void render(final ModelFacade model) {
+		setModel(model);
+		render();
+	}
+
+	/**
+	 * Main method that starts the visualization process.
+	 *
+	 * @param networkId Network ID of the network to visualize.
+	 */
+	public void render(final String networkId) {
+		setNetworkId(networkId);
+		render();
+	}
+	
+	/**
+	 * Main method that starts the visualization process.
+	 */
+	public void render() {
 		// Create the graph
 		this.setAttribute("ui.quality");
 		this.setAttribute("ui.antialias");
+		
+		// Servers 
+		final List<model.Node> servers = new LinkedList<>(this.model.getAllServersOfNetwork(this.subNetworkId));
+		renderServers(servers);
 
+		// Switches
+		final List<model.Node> switches = new LinkedList<>(this.model.getAllSwitchesOfNetwork(this.subNetworkId));
+		renderSwitches(switches);
+
+		// Links
+		final Set<model.Link> links = new HashSet<>(this.model.getAllLinksOfNetwork(this.subNetworkId));
+		renderLinks(links);
+		
+		// Virtual Links
+		final Set<String> virtualNetworks = getEmbeddedVirtualNetworks(servers);
+		renderVirtualLinks(virtualNetworks);
+	}
+	
+	/**
+	 * Place the servers and their respective guest servers/switches on the graph.
+	 * 
+	 * @param servers
+	 */
+	private void renderServers(final List<model.Node> servers) {
 		// Add all server nodes to graph
 		double srvCurrX = (-servers.size() + 1) * SCALE_X / 2;
 		for (final model.Node srv : servers) {
@@ -115,27 +157,64 @@ public class NetworkGraph extends SingleGraph {
 			// Placement of the server
 			srvNode.setAttribute("xyz", srvCurrX, -srv.getDepth() * SCALE_Y, 0);
 
-			// Guest servers
+			// Render Guests
 			final SubstrateServer ssrv = (SubstrateServer) srv;
-			for (final VirtualServer gs : ssrv.getGuestServers()) {
-				if (!serverToServerMappings.containsKey(srvNode)) {
-					serverToServerMappings.put(srvNode, new LinkedList<String>());
-				}
-				serverToServerMappings.get(srvNode).add(gs.getName());
-				virtualNetworks.add(gs.getNetwork().getName());
-			}
-			// Guest switches
-			for (final VirtualSwitch gs : ssrv.getGuestSwitches()) {
-				if (!switchToServerMappings.containsKey(srvNode)) {
-					switchToServerMappings.put(srvNode, new LinkedList<String>());
-				}
-				switchToServerMappings.get(srvNode).add(gs.getName());
-				virtualNetworks.add(gs.getNetwork().getName());
-			}
+			final double[] coordinates = nodeToCoordinates(srvNode);
+
+			renderGuestServers(ssrv.getGuestServers(), coordinates);
+			renderGuestSwitchesOnServer(ssrv.getGuestSwitches(), coordinates);
 
 			srvCurrX += SCALE_X;
 		}
+	}
+	
+	/**
+	 * Place the guest servers of a server on the graph.
+	 * 
+	 * @param guestServers
+	 * @param coordinates
+	 */
+	private void renderGuestServers(final Collection<VirtualServer> guestServers, final double[] coordinates) {
+		int counter = 0;
+		for (final VirtualServer gs : guestServers) {
+			final String act = gs.getName();
+			final Node vsrvNode = this.addNode(act);
+			vsrvNode.setAttribute("ui.label", act.substring(act.indexOf("_") + 1));
+			vsrvNode.setAttribute("ui.style",
+					"fill-color: rgb(155,000,000);" + "shape: rounded-box; " + "stroke-color: rgb(0,0,0);"
+							+ "stroke-width: 1px;" + "stroke-mode: plain;" + "text-size: 8;" + "size: 25px;"
+							+ "text-style: bold;");
+			vsrvNode.setAttribute("xyz", coordinates[0] - 0.75, coordinates[1] - 0.5 * counter, 0);
+			counter++;
+		}
+	}
+	
+	/**
+	 * Place the guest switches of a server on the graph.
+	 * 
+	 * @param guestSwitches
+	 * @param coordinates
+	 */
+	private void renderGuestSwitchesOnServer(final Collection<VirtualSwitch> guestSwitches, final double[] coordinates) {
+		int counter = 0;
+		for (final VirtualSwitch gs : guestSwitches) {
+			final String act = gs.getName();
+			final Node vsrvNode = this.addNode(act);
+			vsrvNode.setAttribute("ui.label", act.substring(act.indexOf("_") + 1));
+			vsrvNode.setAttribute("ui.style",
+					"fill-color: rgb(255,255,255); " + "stroke-color: rgb(155,000,000); " + "stroke-width: 4px; "
+							+ "stroke-mode: plain; " + "text-size: 8; " + "size: 25px; " + "text-style: bold;");
+			vsrvNode.setAttribute("xyz", coordinates[0] - 0.75, coordinates[1] - 0.5 * counter, 0);
+			counter++;
+		}
+	}
 
+	/**
+	 * Place the switches and their respective guest switches on the graph.
+	 * 
+	 * @param switches
+	 */
+	private void renderSwitches(final List <model.Node> switches) {
 		// Calculate switch positions
 		final Map<Integer, Double> xMap = new HashMap<>();
 		final Map<Integer, Integer> depthCounters = new HashMap<>();
@@ -166,14 +245,39 @@ public class NetworkGraph extends SingleGraph {
 
 			// Guest switches
 			final SubstrateSwitch ssw = (SubstrateSwitch) sw;
-			for (final VirtualSwitch gs : ssw.getGuestSwitches()) {
-				if (!switchMappings.containsKey(swNode)) {
-					switchMappings.put(swNode, new LinkedList<String>());
-				}
-				switchMappings.get(swNode).add(gs.getName());
-			}
+			final double[] coordinates = nodeToCoordinates(swNode);
+			renderGuestSwitches(ssw.getGuestSwitches(), coordinates);
 		}
+	}
+	
+	/**
+	 * Place the guest switches of a native switch on the graph.
+	 * 
+	 * @param guestSwitches
+	 * @param coordinates
+	 */
+	private void renderGuestSwitches(final Collection<VirtualSwitch> guestSwitches, final double[] coordinates) {
+		int counter = 0;
+		for (final VirtualSwitch gs : guestSwitches) {
+			final String act = gs.getName();
+			final Node vswNode = this.addNode(act);
+			vswNode.setAttribute("ui.label", act.substring(act.indexOf("_") + 1));
+			vswNode.setAttribute("ui.style",
+					"fill-color: rgb(255,255,255); " + "stroke-color: rgb(155,000,000); "
+							+ "stroke-width: 4px; " + "stroke-mode: plain; " + "text-size: 8; " + "size: 25px; "
+							+ "text-style: bold;");
 
+			vswNode.setAttribute("xyz", coordinates[0] - 0.75, coordinates[1] - 0.5 * counter, 0);
+			counter++;
+		}
+	}
+
+	/**
+	 * Place the links between a network as edges on the graph.
+	 * 
+	 * @param links
+	 */
+	private void renderLinks(final Set<model.Link> links) {
 		// Add all link edges
 		for (final model.Link l : links) {
 			if (LINK_BIDIRECTIONAL) {
@@ -189,60 +293,38 @@ public class NetworkGraph extends SingleGraph {
 				// lnEdge.setAttribute("ui.label", l.getName());
 			}
 		}
-
-		/*
-		 * Guest visualization
-		 */
-		// Server to server mappings
-		for (final Node key : serverToServerMappings.keySet()) {
-			final double[] coordinates = nodeToCoordinates(key);
-			int counter = 0;
-			for (final String act : serverToServerMappings.get(key)) {
-				final Node srvNode = this.addNode(act);
-				srvNode.setAttribute("ui.label", act.substring(act.indexOf("_") + 1));
-				srvNode.setAttribute("ui.style",
-						"fill-color: rgb(155,000,000);" + "shape: rounded-box; " + "stroke-color: rgb(0,0,0);"
-								+ "stroke-width: 1px;" + "stroke-mode: plain;" + "text-size: 8;" + "size: 25px;"
-								+ "text-style: bold;");
-				srvNode.setAttribute("xyz", coordinates[0] - 0.75, coordinates[1] - 0.5 * counter, 0);
-				counter++;
-			}
-		}
-
-		// Switch to server mappings
-		for (final Node key : switchToServerMappings.keySet()) {
-			final double[] coordinates = nodeToCoordinates(key);
-			int counter = 0;
-			for (final String act : switchToServerMappings.get(key)) {
-				final Node srvNode = this.addNode(act);
-				srvNode.setAttribute("ui.label", act.substring(act.indexOf("_") + 1));
-				srvNode.setAttribute("ui.style",
-						"fill-color: rgb(255,255,255); " + "stroke-color: rgb(155,000,000); " + "stroke-width: 4px; "
-								+ "stroke-mode: plain; " + "text-size: 8; " + "size: 25px; " + "text-style: bold;");
-				srvNode.setAttribute("xyz", coordinates[0] - 0.75, coordinates[1] - 0.5 * counter, 0);
-				counter++;
-			}
-		}
-
-		// Switch to switch mappings
-		for (final Node key : switchMappings.keySet()) {
-			final double[] coordinates = nodeToCoordinates(key);
-			int counter = 0;
-			for (final String act : switchMappings.get(key)) {
-				final Node swNode = this.addNode(act);
-				swNode.setAttribute("ui.label", act.substring(act.indexOf("_") + 1));
-				swNode.setAttribute("ui.style",
-						"fill-color: rgb(255,255,255); " + "stroke-color: rgb(155,000,000); " + "stroke-width: 4px; "
-								+ "stroke-mode: plain; " + "text-size: 8; " + "size: 25px; " + "text-style: bold;");
-
-				swNode.setAttribute("xyz", coordinates[0] - 0.75, coordinates[1] - 0.5 * counter, 0);
-				counter++;
-			}
-		}
-
-		// Links
-		for (final String actNetId : virtualNetworks) {
-			for (final Link l : ModelFacade.getInstance().getAllLinksOfNetwork(actNetId)) {
+	}
+	
+	/**
+	 * Get all the networks that are embedded on components of this network.
+	 * 
+	 * @param servers
+	 * @return
+	 */
+	private Set<String> getEmbeddedVirtualNetworks(final List<model.Node> servers) {
+		return servers
+				.stream()
+				.flatMap((srv) -> {
+					final SubstrateServer ssrv = (SubstrateServer) srv;
+					
+					return Stream
+							.concat(
+								ssrv.getGuestServers().stream().map((gs) -> gs.getNetwork().getName()),
+								ssrv.getGuestSwitches().stream().map((gs) -> gs.getNetwork().getName())
+							)
+							.distinct();
+				})
+				.collect(Collectors.toSet());
+	}
+	
+	/**
+	 * Place the links of a virtual network on the graph.
+	 * 
+	 * @param virtualNetworks
+	 */
+	private void renderVirtualLinks(final Set<String> virtualNetworks) {
+		for (final String virtualNetworkId : virtualNetworks) {
+			for (final Link l : this.model.getAllLinksOfNetwork(virtualNetworkId)) {
 				if (LINK_BIDIRECTIONAL) {
 					try {
 						final Edge lnEdge = this.addEdge(l.getName(), l.getSource().getName(), l.getTarget().getName(),
@@ -263,42 +345,17 @@ public class NetworkGraph extends SingleGraph {
 	}
 
 	/**
-	 * Extracts the coordinates for a given node.
+	 * Extracts the coordinates for a given node as double[].
 	 *
 	 * @param node Input node to extract coordinates for.
 	 * @return Array of doubles with the coordinates.
 	 */
 	private double[] nodeToCoordinates(final Node node) {
 		final Object[] coordinatesObj = (Object[]) node.getAttribute("xyz");
-		final double[] coordinates = new double[3];
-		for (int i = 0; i < coordinatesObj.length; i++) {
-			if (coordinatesObj[i] instanceof Integer) {
-				coordinates[i] = ((Integer) coordinatesObj[i]).doubleValue();
-			} else {
-				coordinates[i] = (double) coordinatesObj[i];
-			}
-		}
-		return coordinates;
-	}
-
-	/**
-	 * Reads a model with given network ID from given file path.
-	 *
-	 * @param path      Path to read file from.
-	 * @param networkId Network ID of the network to visualize.
-	 */
-	private void readModel(final String path, final String networkId) {
-		this.subNetworkId = networkId;
-		ModelFacade.getInstance().loadModel(path);
-
-		// Servers
-		servers.addAll(ModelFacade.getInstance().getAllServersOfNetwork(networkId));
-
-		// Switches
-		switches.addAll(ModelFacade.getInstance().getAllSwitchesOfNetwork(networkId));
-
-		// Links
-		links.addAll(ModelFacade.getInstance().getAllLinksOfNetwork(networkId));
+		
+		return Arrays.stream(coordinatesObj)
+	        .mapToDouble(num -> num instanceof Integer ? ((Integer) num).doubleValue() : (double) num)
+	        .toArray();
 	}
 
 	/**
@@ -309,23 +366,6 @@ public class NetworkGraph extends SingleGraph {
 	 */
 	private String removeNetworkId(final String name) {
 		return name.replace(this.subNetworkId + GlobalGeneratorConfig.SEPARATOR, "");
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.graphstream.graph.Graph#clear()
-	 */
-	@Override
-	public void clear() {
-		super.clear();
-		servers.clear();
-		switches.clear();
-		links.clear();
-		serverToServerMappings.clear();
-		switchToServerMappings.clear();
-		switchMappings.clear();
-		virtualNetworks.clear();
 	}
 
 }

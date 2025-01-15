@@ -9,6 +9,8 @@ import org.graphstream.ui.swing_viewer.SwingViewer;
 import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
 
+import facade.ModelFacade;
+
 /**
  * Visualization UI based on GraphStream, that can show network topologies based
  * on models read from XMI files.
@@ -61,7 +63,8 @@ public class Application extends JFrame {
 		this.setSize(getPreferredSize());
 		this.setBackground(Color.lightGray);
 
-		graph.render(path, networkId);
+		ModelFacade.getInstance().loadModel(path);
+		graph.render(ModelFacade.getInstance(), networkId);
         SwingViewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         
         if (!autoLayout) {
