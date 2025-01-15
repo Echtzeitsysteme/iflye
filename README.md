@@ -32,6 +32,7 @@ PATH=C:\gurobi1200\win64\bin;C:\Program Files\IBM\ILOG\CPLEX_Studio2211\cplex\bi
 
 * Clone this Git repository to your local machine and import it into Eclipse: *File -> Import -> General -> Existing Projects into Workspace*. Import all projects.
 * Clone the [GIPS examples repo](https://github.com/Echtzeitsysteme/gips-examples) to your local machine and import it into Eclipse: *File -> Import -> General -> Existing Projects into Workspace*. Import (at least) the following projects:
+    * `gips.examples.dependencies`
     * `network.model`
     * `org.emoflon.gips.gipsl.examples.mdvne`
     * `org.emoflon.gips.gipsl.examples.mdvne.bwignore`
@@ -40,9 +41,6 @@ PATH=C:\gurobi1200\win64\bin;C:\Program Files\IBM\ILOG\CPLEX_Studio2211\cplex\bi
 * Inside the runtime workspace, build all projects (*Project -> Clean... -> Clean all projects*) to trigger code generation.
     * Build the projects *network.model*, *network.model.rules*, *network.model.rules.racka*, *network.model.rules.rackb*, and *network.model.rules.vnet* with the black eMoflon hammer symbol.
     * Build the GIPS projects mentioned above with the black eMoflon hammer symbol.
-* Run the script [gips-ex-to-iflye.sh](./scripts/gips-ex-to-iflye.sh) (Linux/macOS) or [gips-ex-to-iflye.bat](./scripts/gips-ex-to-iflye.bat) (Windows).
-    * This script copies some of the build-artifacts of the GIPS-based projects to the correct location so that they can be loaded by the engine at runtime.
-    * You have to re-run the script every time you changed the GIPSL-specification of the projects `org.emoflon.gips.gipsl.examples.mdvne*`.
 
 A good start point to verify your installation is to run the included unit tests, refer to the [test section](#tests).
 
@@ -55,7 +53,7 @@ A good start point to verify your installation is to run the included unit tests
 This project uses the built-in code-style and code-formatter of Eclipse.
 Before contributing, please set-up your Eclipse code-style settings as follows:
 
-* _Window_ -> _Preferences_ -> _Java_ 
+* _Window_ -> _Preferences_ -> _Java_
     * -> _Code Style_ -> _Clean Up_ -> _Active profile:_ -> "Eclipse [built-in]" (default)
     * -> _Code Style_ -> _Formatter_ -> _Active profile:_ -> "Eclipse [built-in]" (default)
     * -> _Code Style_ -> _Organize Imports: -> "java, javax, org, com" (default)
