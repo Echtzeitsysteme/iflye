@@ -6,10 +6,13 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JMenuBar;
@@ -82,7 +85,7 @@ public class Application extends JFrame {
 	 *             (0/1) disables automatic shaping (enabled by default).
 	 */
 	public static void main(final String[] args) {
-		new Application(args[0], args.length < 2 ? null : args[1], args.length < 3 || !"0".equals(args[2]));
+		new Application(args.length < 1 ? null : args[0], args.length < 2 ? null : args[1], args.length < 3 || !"0".equals(args[2]));
 	}
 	
 	/**
@@ -118,8 +121,15 @@ public class Application extends JFrame {
 		initGraph();
 		initToolbar();
 		initNetworkList();
+
+		final String selection = determineFilePath(path);
+		if (selection == null) {
+			System.exit(0);
+			return;
+		}
 		
-		loadModelFile(path);
+		loadModelFile(selection);
+
 		refreshNetworkList();
 		setNetworkId(networkId != null ? networkId : networks.getFirst());
 		setAutoLayout(autoLayout);
@@ -221,14 +231,78 @@ public class Application extends JFrame {
 	}
 	
 	/**
+	 * Opens a FileChooser to select a file. Current path is last loaded model file path or falling back to current dir.
+	 * 
+	 * @return
+	 */
+	public String selectFile() {
+		final String currentDirectory = this.loadedModelFilePath != null ? this.loadedModelFilePath : System.getProperty("user.dir");
+		
+		return selectFile(currentDirectory);
+	}
+	
+	/**
+	 * Opens a FileChooser to select a file at the specified location.
+	 * 
+	 * @param currentDirectoryPath
+	 * @return
+	 */
+	public String selectFile(final String currentDirectoryPath) {
+		JFileChooser fileChooser = new JFileChooser(currentDirectoryPath);
+		int returnVal = fileChooser.showOpenDialog(this);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+
+            return file.getPath();
+        }
+        
+        return null;
+	}
+	
+	/**
+	 * Select a file path based on the supplied path.
+	 * 
+	 * @param path
+	 * @return
+	 */
+	private String determineFilePath(final String path) {
+		if (path == null) {
+			return selectFile();
+		}
+		
+		File f = new File(path);
+		if (!f.exists()) {
+			return selectFile();
+		}
+		
+		if (f.isDirectory()) {
+			return selectFile(path);
+		}
+			
+		return path;
+	}
+	
+	/**
 	 * Load the model from the supplied path.
 	 * 
 	 * @param path The path to the model to load.
 	 */
 	public void loadModelFile(final String path) {
-		this.loadedModelFilePath = path;
+		this.loadedModelFilePath = relativizePath(path);
 		ModelFacade.getInstance().loadModel(this.loadedModelFilePath);
 		graph.setModel(ModelFacade.getInstance());
+	}
+	
+	/**
+	 * Converts a path into a path relative to the current working directory.
+	 * Necessary for loading models with the ModelFacade.
+	 * 
+	 * @param path
+	 * @return
+	 */
+	private String relativizePath(final String path) {
+		return Paths.get(System.getProperty("user.dir")).relativize(Paths.get(path).toAbsolutePath()).toString();
 	}
 	
 	/**
