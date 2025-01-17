@@ -37,7 +37,7 @@ public class ModelFacadePathLoadTest {
 	@Test
 	public void testGetAllPathsFromFile() {
 		// Pre-test: no paths present
-		assertThrows(IndexOutOfBoundsException.class, () -> {
+		assertThrows(IllegalArgumentException.class, () -> {
 			ModelFacade.getInstance().getAllPathsOfNetwork("net");
 		});
 
@@ -65,12 +65,12 @@ public class ModelFacadePathLoadTest {
 	@Test
 	public void testGetPathByIdFromFile() {
 		// Pre-test: no paths present
-		assertNull(ModelFacade.getInstance().getPathById("path-srv1-sw-srv2"));
-		assertNull(ModelFacade.getInstance().getPathById("path-srv2-sw-srv1"));
-		assertNull(ModelFacade.getInstance().getPathById("path-srv1-sw"));
-		assertNull(ModelFacade.getInstance().getPathById("path-sw-srv1"));
-		assertNull(ModelFacade.getInstance().getPathById("path-srv2-sw"));
-		assertNull(ModelFacade.getInstance().getPathById("path-sw-srv2"));
+		assertThrows(IllegalArgumentException.class, () -> ModelFacade.getInstance().getPathById("path-srv1-sw-srv2"));
+		assertThrows(IllegalArgumentException.class, () -> ModelFacade.getInstance().getPathById("path-srv2-sw-srv1"));
+		assertThrows(IllegalArgumentException.class, () -> ModelFacade.getInstance().getPathById("path-srv1-sw"));
+		assertThrows(IllegalArgumentException.class, () -> ModelFacade.getInstance().getPathById("path-sw-srv1"));
+		assertThrows(IllegalArgumentException.class, () -> ModelFacade.getInstance().getPathById("path-srv2-sw"));
+		assertThrows(IllegalArgumentException.class, () -> ModelFacade.getInstance().getPathById("path-sw-srv2"));
 
 		// Load the model file
 		ModelFacade.getInstance().loadModel(referenceModelFile);

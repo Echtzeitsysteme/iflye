@@ -43,7 +43,7 @@ public class ModelFacadePathResidualBandwidthIgnoreTest {
 		ModelFacadeConfig.IGNORE_BW = true;
 
 		// Pre-test: no paths present
-		assertThrows(IndexOutOfBoundsException.class, () -> {
+		assertThrows(IllegalArgumentException.class, () -> {
 			ModelFacade.getInstance().getAllPathsOfNetwork("net");
 		});
 
