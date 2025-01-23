@@ -64,7 +64,7 @@ public class VneGipsAlgorithmMultipleSnetsTest extends AAlgorithmTest {
 	}
 
 	@Test
-	public void testInitWillSnetNull() {
+	public void testInitWithSnetNull() {
 		facade.addNetworkToRoot("sub2", false);
 		this.sNetA = null;
 		this.sNetB = null;
