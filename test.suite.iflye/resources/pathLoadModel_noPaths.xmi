@@ -7,16 +7,16 @@
   <networks
       xsi:type="network.model:SubstrateNetwork"
       name="net">
-    <nodes xsi:type="network.model:SubstrateSwitch"
+    <nodess xsi:type="network.model:SubstrateSwitch"
         name="sw"
         outgoingLinks="//@networks.0/@links.2 //@networks.0/@links.3"
         incomingLinks="//@networks.0/@links.0 //@networks.0/@links.1"/>
-    <nodes xsi:type="network.model:SubstrateServer"
+    <nodess xsi:type="network.model:SubstrateServer"
         name="srv1"
         depth="1"
         outgoingLinks="//@networks.0/@links.0"
         incomingLinks="//@networks.0/@links.2"/>
-    <nodes xsi:type="network.model:SubstrateServer"
+    <nodess xsi:type="network.model:SubstrateServer"
         name="srv2"
         depth="1"
         outgoingLinks="//@networks.0/@links.1"
@@ -24,26 +24,26 @@
     <links xsi:type="network.model:SubstrateLink"
         name="ln1"
         bandwidth="1"
-        source="//@networks.0/@nodes.1"
-        target="//@networks.0/@nodes.0"
+        source="//@networks.0/@nodess.1"
+        target="//@networks.0/@nodess.0"
         residualBandwidth="1"/>
     <links xsi:type="network.model:SubstrateLink"
         name="ln2"
         bandwidth="2"
-        source="//@networks.0/@nodes.2"
-        target="//@networks.0/@nodes.0"
+        source="//@networks.0/@nodess.2"
+        target="//@networks.0/@nodess.0"
         residualBandwidth="2"/>
     <links xsi:type="network.model:SubstrateLink"
         name="ln3"
         bandwidth="1"
-        source="//@networks.0/@nodes.0"
-        target="//@networks.0/@nodes.1"
+        source="//@networks.0/@nodess.0"
+        target="//@networks.0/@nodess.1"
         residualBandwidth="1"/>
     <links xsi:type="network.model:SubstrateLink"
         name="ln4"
         bandwidth="2"
-        source="//@networks.0/@nodes.0"
-        target="//@networks.0/@nodes.2"
+        source="//@networks.0/@nodess.0"
+        target="//@networks.0/@nodess.2"
         residualBandwidth="2"/>
   </networks>
 </network.model:Root>
