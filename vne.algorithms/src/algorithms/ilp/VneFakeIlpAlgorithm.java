@@ -513,7 +513,7 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 		long subTotalResidualMem = 0;
 		long subTotalResidualSto = 0;
 
-		for (final Node n : sNet.getNodes()) {
+		for (final Node n : sNet.getNodess()) {
 			if (n instanceof SubstrateServer) {
 				final SubstrateServer ssrv = (SubstrateServer) n;
 				subTotalResidualCpu += ssrv.getResidualCpu();
@@ -528,7 +528,7 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 			long virtTotalMem = 0;
 			long virtTotalSto = 0;
 
-			for (final Node n : vNet.getNodes()) {
+			for (final Node n : vNet.getNodess()) {
 				if (n instanceof VirtualServer) {
 					final VirtualServer vsrv = (VirtualServer) n;
 					virtTotalCpu += vsrv.getCpu();
@@ -621,7 +621,7 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 	 */
 	protected void addElementsToSolver(final IlpDeltaGenerator gen) {
 		// Substrate network
-		for (final Node n : sNet.getNodes()) {
+		for (final Node n : sNet.getNodess()) {
 			if (n instanceof SubstrateServer) {
 				gen.addNewSubstrateServer((SubstrateServer) n);
 			} else if (n instanceof SubstrateSwitch) {
@@ -643,7 +643,7 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 				continue;
 			}
 
-			for (final Node n : vNet.getNodes()) {
+			for (final Node n : vNet.getNodess()) {
 				if (n instanceof VirtualServer) {
 					gen.addNewVirtualServer((VirtualServer) n);
 				} else if (n instanceof VirtualSwitch) {

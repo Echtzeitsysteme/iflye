@@ -24,11 +24,11 @@ rule serverMatchPositive() {
 	}
 	
 	substrateNetwork: SubstrateNetwork {
-		-nodes -> substrateNode
+		-nodess -> substrateNode
 	}
 	
 	virtualNetwork: VirtualNetwork {
-		-nodes -> virtualNode
+		-nodess -> virtualNode
 	}
 	
 	# virtualNode.cpu <= substrateNode.residualCpu
@@ -64,11 +64,11 @@ rule switchNodeMatchPositive() {
 	}
 	
 	substrateNetwork: SubstrateNetwork {
-		-nodes -> substrateNode
+		-nodess -> substrateNode
 	}
 	
 	virtualNetwork: VirtualNetwork {
-		-nodes -> virtualSwitch
+		-nodess -> virtualSwitch
 	}
 }
 
@@ -128,7 +128,7 @@ rule linkServerMatchPositive() {
 	}
 	
 	substrateNetwork: SubstrateNetwork {
-		-nodes -> substrateServer
+		-nodess -> substrateServer
 	}
 	
 	virtualNetwork: VirtualNetwork {

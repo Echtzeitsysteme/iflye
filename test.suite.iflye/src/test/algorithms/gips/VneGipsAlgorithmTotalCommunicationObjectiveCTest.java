@@ -167,16 +167,16 @@ public class VneGipsAlgorithmTotalCommunicationObjectiveCTest extends AAlgorithm
 
 		// Test expects that all virtual networks are placed on the same substrate
 		// server
-		final SubstrateElement ref = ((VirtualServer) vNet.getNodes().get(1)).getHost();
+		final SubstrateElement ref = ((VirtualServer) vNet.getNodess().get(1)).getHost();
 
-		vNet.getNodes().forEach(n -> {
+		vNet.getNodess().forEach(n -> {
 			if (n instanceof VirtualServer) {
 				final VirtualServer vsrv = (VirtualServer) n;
 				assertEquals(ref, vsrv.getHost());
 			}
 		});
 
-		vNet2.getNodes().forEach(n -> {
+		vNet2.getNodess().forEach(n -> {
 			if (n instanceof VirtualServer) {
 				final VirtualServer vsrv = (VirtualServer) n;
 				assertEquals(ref, vsrv.getHost());

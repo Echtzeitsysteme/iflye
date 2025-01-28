@@ -97,7 +97,7 @@ public class ModelFacadeNetworkRemovalTest {
 			assertNull(vl.getHost());
 		});
 
-		vNet.getNodes().forEach(n -> {
+		vNet.getNodess().forEach(n -> {
 			// Virtual servers
 			if (n instanceof VirtualServer) {
 				final VirtualServer vsrv = (VirtualServer) n;
@@ -151,7 +151,7 @@ public class ModelFacadeNetworkRemovalTest {
 			assertEquals(1, sp.getResidualBandwidth());
 		});
 
-		sNet.getNodes().forEach(n -> {
+		sNet.getNodess().forEach(n -> {
 			// Servers
 			if (n instanceof SubstrateServer) {
 				final SubstrateServer ssrv = (SubstrateServer) n;

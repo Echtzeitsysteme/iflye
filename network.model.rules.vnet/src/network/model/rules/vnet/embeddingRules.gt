@@ -21,7 +21,7 @@ rule vnetToServer() {
 	}
 	
 	substrateNetwork: SubstrateNetwork {
-		-nodes -> substrateNode
+		-nodess -> substrateNode
 	}
 	
 	virtualNetwork: VirtualNetwork {
@@ -30,10 +30,10 @@ rule vnetToServer() {
 		forEach links->l <VirtualLink> {
 			++ substrateNode - guestLinks->l
 		}
-		forEach nodes->srv <VirtualServer> {
+		forEach nodess->srv <VirtualServer> {
 			++ substrateNode - guestServers->srv
 		}
-		forEach nodes->sw <VirtualSwitch> {
+		forEach nodess->sw <VirtualSwitch> {
 			++ substrateNode - guestSwitches->sw
 		}
 	}

@@ -104,7 +104,7 @@ public class VneGipsAlgorithmRejectionTest extends AAlgorithmTest {
 		vNet = setUpVirtNet(2);
 
 		// Check test preconditions
-		assertTrue(sNet.getNodes().isEmpty());
+		assertTrue(sNet.getNodess().isEmpty());
 		assertTrue(sNet.getPaths().isEmpty());
 		assertTrue(sNet.getLinks().isEmpty());
 
@@ -132,7 +132,7 @@ public class VneGipsAlgorithmRejectionTest extends AAlgorithmTest {
 		sNet.getPaths().forEach(p -> {
 			assertTrue(p.getGuestLinks().isEmpty());
 		});
-		sNet.getNodes().forEach(n -> {
+		sNet.getNodess().forEach(n -> {
 			if (n instanceof SubstrateSwitch) {
 				final SubstrateSwitch sw = (SubstrateSwitch) n;
 				assertTrue(sw.getGuestSwitches().isEmpty());
@@ -152,7 +152,7 @@ public class VneGipsAlgorithmRejectionTest extends AAlgorithmTest {
 				final VirtualLink vl = (VirtualLink) l;
 				assertNull(vl.getHost());
 			});
-			vNet.getNodes().forEach(n -> {
+			vNet.getNodess().forEach(n -> {
 				if (n instanceof VirtualSwitch) {
 					final VirtualSwitch sw = (VirtualSwitch) n;
 					assertNull(sw.getHost());

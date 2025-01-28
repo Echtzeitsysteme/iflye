@@ -82,7 +82,7 @@ public class ModelFacadeValidationTest {
 		createSubstrateNetwork();
 
 		final SubstrateServer ssrv = (SubstrateServer) ModelFacade.getInstance().getRoot().getNetworks().get(0)
-				.getNodes().get(1);
+				.getNodess().get(1);
 		ssrv.setResidualStorage(0);
 
 		assertThrows(InternalError.class, () -> {
@@ -95,7 +95,7 @@ public class ModelFacadeValidationTest {
 		createSubstrateNetwork();
 
 		final SubstrateServer ssrv = (SubstrateServer) ModelFacade.getInstance().getRoot().getNetworks().get(0)
-				.getNodes().get(1);
+				.getNodess().get(1);
 		ssrv.setResidualMemory(0);
 
 		assertThrows(InternalError.class, () -> {
@@ -108,7 +108,7 @@ public class ModelFacadeValidationTest {
 		createSubstrateNetwork();
 
 		final SubstrateServer ssrv = (SubstrateServer) ModelFacade.getInstance().getRoot().getNetworks().get(0)
-				.getNodes().get(1);
+				.getNodess().get(1);
 		ssrv.setResidualStorage(0);
 
 		assertThrows(InternalError.class, () -> {
@@ -136,7 +136,7 @@ public class ModelFacadeValidationTest {
 		embedVirtToSub();
 
 		final SubstrateServer ssrv = (SubstrateServer) ModelFacade.getInstance().getRoot().getNetworks().get(0)
-				.getNodes().get(1);
+				.getNodess().get(1);
 		ssrv.getGuestServers().clear();
 
 		assertThrows(InternalError.class, () -> {
@@ -151,7 +151,7 @@ public class ModelFacadeValidationTest {
 		embedVirtToSub();
 
 		final SubstrateSwitch ssw = (SubstrateSwitch) ModelFacade.getInstance().getRoot().getNetworks().get(0)
-				.getNodes().get(2);
+				.getNodess().get(2);
 		ssw.getGuestSwitches().clear();
 
 		assertThrows(InternalError.class, () -> {
@@ -184,7 +184,7 @@ public class ModelFacadeValidationTest {
 		createVirtualNetwork();
 		embedVirtToSub();
 
-		final VirtualServer vsrv = (VirtualServer) ModelFacade.getInstance().getRoot().getNetworks().get(1).getNodes()
+		final VirtualServer vsrv = (VirtualServer) ModelFacade.getInstance().getRoot().getNetworks().get(1).getNodess()
 				.get(1);
 		vsrv.setHost(null);
 
@@ -199,7 +199,7 @@ public class ModelFacadeValidationTest {
 		createVirtualNetwork();
 		embedVirtToSub();
 
-		final VirtualSwitch vsw = (VirtualSwitch) ModelFacade.getInstance().getRoot().getNetworks().get(1).getNodes()
+		final VirtualSwitch vsw = (VirtualSwitch) ModelFacade.getInstance().getRoot().getNetworks().get(1).getNodess()
 				.get(2);
 		vsw.setHost(null);
 
