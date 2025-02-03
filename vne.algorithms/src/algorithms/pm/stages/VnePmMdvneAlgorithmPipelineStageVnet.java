@@ -233,7 +233,7 @@ public class VnePmMdvneAlgorithmPipelineStageVnet extends VnePmMdvneAlgorithm {
 	 */
 	protected void addElementsToSolver(final IlpDeltaGeneratorVnet gen) {
 		// Substrate network
-		for (final Node n : sNet.getNodes()) {
+		for (final Node n : sNet.getNodess()) {
 			if (n instanceof SubstrateServer) {
 				gen.addNewSubstrateServer((SubstrateServer) n);
 			} else if (n instanceof SubstrateSwitch) {
@@ -350,7 +350,7 @@ public class VnePmMdvneAlgorithmPipelineStageVnet extends VnePmMdvneAlgorithm {
 	public double getNetCost(final VirtualNetwork net, final SubstrateNode sub) {
 		double cost = 0;
 
-		for (final Node n : net.getNodes()) {
+		for (final Node n : net.getNodess()) {
 			cost += getNodeCost((VirtualNode) n, sub);
 		}
 

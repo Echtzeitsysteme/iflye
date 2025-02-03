@@ -86,7 +86,7 @@ public class ModelFacadeCreationTest {
 		final String id = "sw_1";
 		ModelFacade.getInstance().addNetworkToRoot("net", false);
 		ModelFacade.getInstance().addSwitchToNetwork(id, "net", 0);
-		assertEquals(1, ModelFacade.getInstance().getNetworkById("net").getNodes().size());
+		assertEquals(1, ModelFacade.getInstance().getNetworkById("net").getNodess().size());
 		assertTrue(ModelFacade.getInstance().getSwitchById(id) instanceof SubstrateSwitch);
 	}
 
@@ -95,7 +95,7 @@ public class ModelFacadeCreationTest {
 		final String id = "sw_1";
 		ModelFacade.getInstance().addNetworkToRoot("net", true);
 		ModelFacade.getInstance().addSwitchToNetwork(id, "net", 0);
-		assertEquals(1, ModelFacade.getInstance().getNetworkById("net").getNodes().size());
+		assertEquals(1, ModelFacade.getInstance().getNetworkById("net").getNodess().size());
 		assertTrue(ModelFacade.getInstance().getSwitchById(id) instanceof VirtualSwitch);
 	}
 
@@ -114,7 +114,7 @@ public class ModelFacadeCreationTest {
 		final String id = "srv_1";
 		ModelFacade.getInstance().addNetworkToRoot("net", false);
 		ModelFacade.getInstance().addServerToNetwork(id, "net", 0, 0, 0, 0);
-		assertEquals(1, ModelFacade.getInstance().getNetworkById("net").getNodes().size());
+		assertEquals(1, ModelFacade.getInstance().getNetworkById("net").getNodess().size());
 		assertTrue(ModelFacade.getInstance().getServerById(id) instanceof SubstrateServer);
 	}
 
@@ -123,7 +123,7 @@ public class ModelFacadeCreationTest {
 		final String id = "srv_1";
 		ModelFacade.getInstance().addNetworkToRoot("net", true);
 		ModelFacade.getInstance().addServerToNetwork(id, "net", 0, 0, 0, 0);
-		assertEquals(1, ModelFacade.getInstance().getNetworkById("net").getNodes().size());
+		assertEquals(1, ModelFacade.getInstance().getNetworkById("net").getNodess().size());
 		assertTrue(ModelFacade.getInstance().getServerById(id) instanceof VirtualServer);
 	}
 

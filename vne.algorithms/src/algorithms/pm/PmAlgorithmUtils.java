@@ -37,7 +37,7 @@ public class PmAlgorithmUtils {
 			// whole virtual
 			// network object again (otherwise the removal of the virtual network fails)
 			if (vNet.getHost() == null) {
-				final Node n = vNet.getNodes().get(0);
+				final Node n = vNet.getNodess().get(0);
 
 				if (n instanceof VirtualSwitch) {
 					if (((VirtualSwitch) n).getHost() != null) {

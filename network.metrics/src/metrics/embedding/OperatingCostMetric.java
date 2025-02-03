@@ -35,7 +35,7 @@ public class OperatingCostMetric implements IMetric {
 	public OperatingCostMetric(final SubstrateNetwork sNet) {
 		double value = 0;
 
-		for (final Node n : sNet.getNodes()) {
+		for (final Node n : sNet.getNodess()) {
 			// Server costs
 			if (n instanceof SubstrateServer) {
 				final SubstrateServer ssrv = (SubstrateServer) n;

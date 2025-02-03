@@ -367,7 +367,7 @@ public class CostUtility {
 		final double bwFactor = 10;
 		final double srvFactor = 10;
 
-		for (final Node n : vNet.getNodes()) {
+		for (final Node n : vNet.getNodess()) {
 			if (n instanceof VirtualServer) {
 				final VirtualServer vsrv = (VirtualServer) n;
 				cost += srvFactor * (vsrv.getCpu() + vsrv.getMemory() + vsrv.getStorage());

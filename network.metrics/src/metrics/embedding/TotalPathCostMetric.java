@@ -75,7 +75,7 @@ public class TotalPathCostMetric implements IMetric {
 			}
 
 			// Nodes
-			for (final Node n : guest.getNodes()) {
+			for (final Node n : guest.getNodess()) {
 				if (n instanceof VirtualServer) {
 					// Virtual server to substrate server cost
 					cost += 1;

@@ -195,7 +195,7 @@ public class VnePmMdvneAlgorithmMigration extends VnePmMdvneAlgorithm {
 
 		for (final VirtualNetwork vn : sNet.getGuests()) {
 			long aRes = 0;
-			for (final Node n : vn.getNodes()) {
+			for (final Node n : vn.getNodess()) {
 				if (n instanceof VirtualServer) {
 					final VirtualServer vsrv = (VirtualServer) n;
 					aRes += vsrv.getCpu();

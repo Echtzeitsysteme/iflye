@@ -51,7 +51,7 @@ public class RandomVneAlgorithm extends AbstractAlgorithm {
 		// Check pre-conditions
 		checkPreConditions();
 
-		retries = sNet.getNodes().size() * 2;
+		retries = sNet.getNodess().size() * 2;
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class RandomVneAlgorithm extends AbstractAlgorithm {
 			embeddedIds.add(vNet.getName());
 		}
 
-		for (final Node vnode : vNet.getNodes()) {
+		for (final Node vnode : vNet.getNodess()) {
 			if (vnode instanceof VirtualServer vserver) {
 				// Get random substrate server
 				SubstrateServer sserver = (SubstrateServer) subServers.get(rand(subServers.size()));
