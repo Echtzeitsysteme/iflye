@@ -235,9 +235,8 @@ public class Ui {
 				final Node swNode = graph.addNode(act);
 				swNode.setAttribute("ui.label", act.substring(act.indexOf("_") + 1));
 				swNode.setAttribute("ui.style",
-						"fill-color: rgb(255,255,255); " + "shape: rounded-box; " + "stroke-color: rgb(155,000,000); "
-								+ "stroke-width: 4px; " + "stroke-mode: plain; " + "text-size: 8; " + "size: 25px; "
-								+ "text-style: bold;");
+						"fill-color: rgb(255,255,255); " + "stroke-color: rgb(155,000,000); " + "stroke-width: 4px; "
+								+ "stroke-mode: plain; " + "text-size: 8; " + "size: 25px; " + "text-style: bold;");
 
 				swNode.setAttribute("xyz", coordinates[0] - 0.75, coordinates[1] - 0.5 * counter, 0);
 				counter++;
