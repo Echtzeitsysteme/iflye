@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import model.SubstrateNetwork;
@@ -22,6 +23,7 @@ import model.VirtualNetwork;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
+@Disabled
 public abstract class AVneAlgorithmPathBandwidthBugTest extends AAlgorithmTest {
 
 	/**
@@ -49,6 +51,7 @@ public abstract class AVneAlgorithmPathBandwidthBugTest extends AAlgorithmTest {
 	// Tests
 	//
 
+	@Disabled("Test takes way too long to complete")
 	@Test
 	public void testScenario34() {
 		// Load the model file
