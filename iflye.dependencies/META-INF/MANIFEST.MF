@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Automatic-Module-Name: iflye.dependencies
 Bundle-ClassPath: .,
- lib/cplex/cplex-22.1.1.jar,
+ lib/cplex/cplex-22.1.2.jar,
  lib/unix4j/unix4j-0.6-javadoc.jar,
  lib/unix4j/unix4j-base-0.6.jar,
  lib/unix4j/unix4j-base-0.6-javadoc.jar,
@@ -37,8 +37,8 @@ Bundle-ClassPath: .,
  lib/gurobi/gurobi-12.0.1.jar,
  lib/gurobi/gurobi-javadoc-12.0.1.jar
 Export-Package: com.gurobi.gurobi;version="12.0.0",
- ilog.concert;version="22.1.1",
- ilog.cplex;version="22.1.1",
+ ilog.concert;version="22.1.2",
+ ilog.cplex;version="22.1.2",
  org.apache.commons.cli;version="1.9.0",
  org.apache.commons.codec;version="1.17.1",
  org.apache.commons.codec.binary;version="1.17.1",
