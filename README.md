@@ -9,7 +9,7 @@
 * Install [GIPS](https://gips.dev) as described [here](https://github.com/Echtzeitsysteme/gips#installation-development) or use the [pre-built Eclipse](https://github.com/Echtzeitsysteme/gips-eclipse-build).
 * Install [Gurobi](https://www.gurobi.com/) in version `12.0.1` and activate a license for your computer.
     * Currently, Gurobi is the default ILP solver used in **iflye**.
-* Install [IBM ILOG CPLEX](https://www.ibm.com/products/ilog-cplex-optimization-studio) in version `22.1.1`.
+* Install [IBM ILOG CPLEX](https://www.ibm.com/products/ilog-cplex-optimization-studio) in version `22.1.2`.
     * CPLEX is an alternative ILP solver in **iflye**. You do not need it explicitely, but if you did not install and configure it properly, at least one test case will fail.
     * Please notice: CPLEX does not support SOS1 constraints with equal weights (as usually desired by the PM-/ILP-based algorithms in this projects). Therefore, the adapter implementation ignores all SOS1 constraint creations.
 * Launch a runtime workspace (while using a runtime Eclipse) as stated in the [eMoflon::IBeX installation steps](https://github.com/eMoflon/emoflon-ibex?tab=readme-ov-file#how-to-develop).
@@ -18,14 +18,14 @@
 # Linux/macOS
 GRB_LICENSE_FILE=/home/mkratz/gurobi.lic
 GUROBI_HOME=/opt/gurobi1201/linux64/
-LD_LIBRARY_PATH=/opt/gurobi1201/linux64/lib/:/opt/ibm/ILOG/CPLEX_Studio2211/cplex/bin/x86-64_linux/
-PATH=/opt/gurobi1201/linux64/bin/:/opt/ibm/ILOG/CPLEX_Studio2211/cplex/bin/x86-64_linux/:$PATH
+LD_LIBRARY_PATH=/opt/gurobi1201/linux64/lib/:/opt/ibm/ILOG/CPLEX_Studio2212/cplex/bin/x86-64_linux/
+PATH=/opt/gurobi1201/linux64/bin/:/opt/ibm/ILOG/CPLEX_Studio2212/cplex/bin/x86-64_linux/:$PATH
 
 # Windows
 GRB_LICENSE_FILE=C:\Users\mkratz\gurobi.lic
 GUROBI_HOME=C:\gurobi1201\win64
-LD_LIBRARY_PATH=C:\gurobi1201\win64\lib;C:\Program Files\IBM\ILOG\CPLEX_Studio2211\cplex\bin\x64_win64\
-PATH=C:\gurobi1201\win64\bin;C:\Program Files\IBM\ILOG\CPLEX_Studio2211\cplex\bin\x64_win64\
+LD_LIBRARY_PATH=C:\gurobi1201\win64\lib;C:\Program Files\IBM\ILOG\CPLEX_Studio2212\cplex\bin\x64_win64\
+PATH=C:\gurobi1201\win64\bin;C:\Program Files\IBM\ILOG\CPLEX_Studio2212\cplex\bin\x64_win64\
 ```
 
 ### Project setup (manual)

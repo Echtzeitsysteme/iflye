@@ -10,7 +10,7 @@ function setup {
 
     # Get resources from scenario project
     if ! [[ "$(find ./resources -maxdepth 3 -type f -iname \*.json)" ]];
-    then 
+    then
         rsync -a ../vne.scenarios/resources .
     fi
 
