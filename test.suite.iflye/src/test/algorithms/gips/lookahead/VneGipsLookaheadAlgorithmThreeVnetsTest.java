@@ -31,7 +31,7 @@ public class VneGipsLookaheadAlgorithmThreeVnetsTest extends AVneGipsLookaheadAl
 
 		facade.addNetworkToRoot("virt2", true);
 		facade.addSwitchToNetwork("vsw2", "virt2", 0);
-		
+
 		facade.addNetworkToRoot("virtv", true);
 		facade.addSwitchToNetwork("vswv", "virtv", 0);
 
@@ -52,7 +52,7 @@ public class VneGipsLookaheadAlgorithmThreeVnetsTest extends AVneGipsLookaheadAl
 
 		facade.addNetworkToRoot("virt2", true);
 		facade.addServerToNetwork("vsrv2", "virt2", 1, 1, 1, 1);
-		
+
 		facade.addNetworkToRoot("virt3", true);
 		facade.addServerToNetwork("vsrv3", "virt3", 1, 1, 1, 1);
 
@@ -79,7 +79,7 @@ public class VneGipsLookaheadAlgorithmThreeVnetsTest extends AVneGipsLookaheadAl
 		facade.addSwitchToNetwork("vsw2", "virt2", 0);
 		facade.addLinkToNetwork("vl3", "virt2", 1, "vsrv2", "vsw2");
 		facade.addLinkToNetwork("vl4", "virt2", 1, "vsw2", "vsrv2");
-		
+
 		facade.addNetworkToRoot("virt3", true);
 		facade.addServerToNetwork("vsrv3", "virt3", 1, 1, 1, 1);
 		facade.addSwitchToNetwork("vsw3", "virt3", 0);
