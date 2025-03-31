@@ -94,54 +94,18 @@ public class IncrementalCplexSolver implements IncrementalIlpSolver {
 
 	@Override
 	public void addSosConstraint(final SosConstraint constraint) {
-		/*
-		 * TODO: Fix this.
-		 *
-		 * The order is specified by assigning weights to each variable. The order of
-		 * the variables in the model (such as in the MPS or LP format data file, or the
-		 * column index in a Callable Library application) is not used in SOS branching.
-		 * If there is no ordered relationship among the variables (such that weights
-		 * cannot be specified or would not be meaningful), other formulations should be
-		 * used instead of a special ordered set.
-		 *
-		 * https://www.ibm.com/docs/en/icos/12.9.0?topic=sos-what-is-special-ordered-set
-		 */
-
+		// SOS1 constraints with equal weights are not supported by CPLEX.
+		//
+		// "Members of an SOS should be given unique weights that in turn define the
+		// order of the variables in the set. (These unique weights are also called
+		// reference row values.) Each of those ways of declaring SOS members allows you
+		// to specify weights."
+		//
+		// Source: https://www.ibm.com/docs/en/icos/22.1.2?topic=sos-declaring-members
+		//
 		System.out.println("=> WARNING: SOS1 constraints are currently not supported by the CPLEX implementation!");
 		return;
-
-//		// All weights has to be 1
-//		final double[] weights = new double[constraint.getVars().size()];
-//		for (int i = 0; i < weights.length; i++) {
-//			weights[i] = 1;
-//		}
-//
-//		// Get all actual variable objects
-//		final IloNumVar[] vars = new IloNumVar[constraint.getVars().size()];
-//		for (int i = 0; i < vars.length; i++) {
-//			vars[i] = getVariable(constraint.getVars().get(i).getName());
-//		}
-//
-//		try {
-//			cplex.addSOS1(vars, weights);
-//		} catch (final IloException e) {
-//			throw new IlpSolverException(e);
-//		}
 	}
-
-//	/**
-//	 * Returns the CPLEX variable for a given name.
-//	 *
-//	 * @param name Name to get the variable for.
-//	 * @return CPLEX variable for name.
-//	 */
-//	private IloNumVar getVariable(final String name) {
-//		if (variables.containsKey(name)) {
-//			return variables.get(name);
-//		} else {
-//			throw new IlpSolverException("Variable with the name=" + name + " does not exist.");
-//		}
-//	}
 
 	@Override
 	public void addSosConstraints(final SosConstraint[] constraints) {

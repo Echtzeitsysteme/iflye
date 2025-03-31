@@ -54,8 +54,6 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
 	 */
 	private GRBModel model;
 
-	// TODO: Change HashMap to UnifiedMap (Eclipse collections).
-
 	/**
 	 * All variables.
 	 */
@@ -119,7 +117,6 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
 			grbLinExpr.addTerms(weights, grbVars);
 			final GRBConstr addConstr = model.addConstr(grbLinExpr, chr, right, name);
 			for (final GRBVar grbVar : grbVars) {
-				// TODO: Change HashSet to UnifiedSet (Eclipse collection).
 				varConstraints.computeIfAbsent(grbVar, k -> new HashSet<>()).add(addConstr);
 				constraintVars.computeIfAbsent(addConstr, k -> new HashSet<>()).add(grbVar);
 			}
@@ -159,12 +156,10 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
 				for (final String var : constrs[i].getVarnames()) {
 					final GRBVar key = getVariable(var);
 					if (!varConstraints.containsKey(key)) {
-						// TODO: Change HashSet to UnifiedSet (Eclipse collection).
 						varConstraints.putIfAbsent(key, new HashSet<>());
 					}
 					varConstraints.get(key).add(constr);
 					if (!constraintVars.containsKey(constr)) {
-						// TODO: Change HashSet to UnifiedSet (Eclipse collection).
 						constraintVars.putIfAbsent(constr, new HashSet<>());
 					}
 					constraintVars.get(constr).add(key);

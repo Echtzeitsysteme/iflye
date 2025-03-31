@@ -47,8 +47,8 @@ public class VneGipsAlgorithmTotalCommunicationObjectiveCTest extends AAlgorithm
 	}
 
 	/**
-	 * TODO: Currently, the VNE GIPS algorithm can only embed all virtual networks
-	 * from the model. Because of this limitation, this test case must be disabled.
+	 * Currently, the VNE GIPS algorithm can only embed all virtual networks from
+	 * the model. Because of this limitation, this test case must be disabled.
 	 */
 	@Override
 	@Disabled
