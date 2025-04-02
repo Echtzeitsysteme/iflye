@@ -208,8 +208,6 @@ public class TafAlgorithmTest extends AAlgorithmTest {
 		final TafAlgorithm taf = new TafAlgorithm(sNet, Set.of(vNet));
 		assertTrue(taf.execute());
 
-		// TODO:
-
 		// Test switch placement
 		final VirtualSwitch virtSw = (VirtualSwitch) ModelFacade.getInstance().getSwitchById("virt_sw");
 		assertEquals("sub_csw1", virtSw.getHost().getName());

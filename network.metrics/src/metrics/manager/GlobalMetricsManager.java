@@ -194,12 +194,6 @@ public class GlobalMetricsManager {
 	 *         MiB.
 	 */
 	public static double getMemoryPid() {
-		// TODO: Remove this temporary fix
-		// if (MetricConfig.ENABLE_MEMORY) {
-		// return new MemoryPidMetric().getValue();
-		// } else {
-		// return -1;
-		// }
 		return new MemoryPidMetric().getValue();
 	}
 

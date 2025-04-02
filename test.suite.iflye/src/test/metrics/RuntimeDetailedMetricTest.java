@@ -7,6 +7,6 @@ package test.metrics;
  */
 public class RuntimeDetailedMetricTest extends AMetricTest {
 
-	// TODO.
+	// TODO: Implement tests for this metric.
 
 }

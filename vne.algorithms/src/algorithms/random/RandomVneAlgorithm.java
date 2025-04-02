@@ -55,12 +55,13 @@ public class RandomVneAlgorithm extends AbstractAlgorithm {
 	}
 
 	/**
-	 * TODO
+	 * Creates a new instance of the random VNE algorithm with the given parameters.
 	 * 
-	 * @param sNet
-	 * @param vNets
-	 * @param randomSeed
-	 * @param retries
+	 * @param sNet       Substrate network to embed all virtual networks into.
+	 * @param vNets      Set of virtual networks to embed into the substrate
+	 *                   network.
+	 * @param randomSeed Random seed.
+	 * @param retries    Number of retries.
 	 */
 	public RandomVneAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets, final int randomSeed,
 			final int retries) {
@@ -160,9 +161,6 @@ public class RandomVneAlgorithm extends AbstractAlgorithm {
 		// If at least one element could not be embedded, all other embeddings must be
 		// removed.
 		if (!success) {
-//			embeddedIds.forEach(id -> {
-//				// TODO: Generic un-embedding
-//			});
 			facade.unembedVirtualNetwork((VirtualNetwork) facade.getNetworkById(vNet.getName()));
 		}
 
@@ -170,31 +168,31 @@ public class RandomVneAlgorithm extends AbstractAlgorithm {
 	}
 
 	/**
-	 * TODO
+	 * Returns a random number from start to end.
 	 * 
-	 * @param start Inclusive
-	 * @param end   Exclusive
-	 * @return
+	 * @param start Inclusive lower bound.
+	 * @param end   Exclusive upper bound.
+	 * @return Random number from start to end.
 	 */
 	private int rand(final int start, final int end) {
 		return randGen.nextInt(start, end);
 	}
 
 	/**
-	 * TODO
+	 * Returns a random number from 0 to end (exclusive).
 	 * 
-	 * @param end
-	 * @return
+	 * @param end Exclusive upper bound.
+	 * @return Random number from 0 to end.
 	 */
 	private int rand(final int end) {
 		return rand(0, end);
 	}
 
 	/**
-	 * TODO
+	 * Finds a possible host for the virtual node to be embedded into.
 	 * 
-	 * @param vNode
-	 * @return
+	 * @param vNode Virtual node to find a host for.
+	 * @return Possible host for the given virtual node.
 	 */
 	private SubstrateNode findHost(final VirtualNode vNode) {
 		if (vNode instanceof VirtualServer vsrv) {

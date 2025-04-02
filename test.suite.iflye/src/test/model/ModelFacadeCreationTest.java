@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import facade.ModelFacade;
@@ -221,9 +222,10 @@ public class ModelFacadeCreationTest {
 		assertEquals(73, ModelFacade.getInstance().getLinkById("4").getBandwidth());
 	}
 
+	@Disabled
 	@Test
 	public void testGetPathById() {
-		// TODO
+		// TODO: Implement tests for the getter `testGetPathById`.
 	}
 
 	@Test

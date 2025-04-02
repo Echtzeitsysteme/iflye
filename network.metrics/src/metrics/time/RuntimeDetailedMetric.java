@@ -13,7 +13,7 @@ package metrics.time;
  */
 public class RuntimeDetailedMetric extends RuntimeMetric {
 
-	// TODO: Documentation.
+	// TODO: Documentation for the whole class is missing.
 
 	private long pmStart = 0;
 	private long ilpStart = 0;

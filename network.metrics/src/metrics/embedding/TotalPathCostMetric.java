@@ -68,10 +68,8 @@ public class TotalPathCostMetric implements IMetric {
 					cost += 1;
 				}
 				// TODO: The paper also mentions virtual links embedded on substrate switches.
-				// This is
-				// currently not supported by the ModelFacade. If it will get supported in the
-				// future, add
-				// it to this cost function.
+				// This is currently not supported by the ModelFacade. If it will get supported
+				// in the future, add it to this cost function.
 			}
 
 			// Nodes
