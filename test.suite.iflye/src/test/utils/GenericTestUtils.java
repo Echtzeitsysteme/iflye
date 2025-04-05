@@ -28,7 +28,8 @@ public class GenericTestUtils {
 	public static void vneFakeIlpEmbedding(SubstrateNetwork sNet, Set<VirtualNetwork> vNets) {
 		final Embedding oldEmbeddingMechanism = AlgorithmConfig.emb;
 		AlgorithmConfig.emb = Embedding.MANUAL;
-		final AbstractAlgorithm algo = VneFakeIlpAlgorithm.prepare(sNet, vNets);
+		final AbstractAlgorithm algo = new VneFakeIlpAlgorithm();
+		algo.prepare(sNet, vNets);
 		assertTrue(algo.execute());
 		AlgorithmConfig.emb = oldEmbeddingMechanism;
 	}

@@ -48,7 +48,8 @@ public class VnePmMdvneAlgorithmExampleRejectUpdate {
 
 		SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
-		AbstractAlgorithm algo = VnePmMdvneAlgorithmMigration.prepare(sNet, Set.of(vNet));
+		AbstractAlgorithm algo = new VnePmMdvneAlgorithmMigration();
+		algo.prepare(sNet, Set.of(vNet));
 		algo.execute();
 
 		/*
@@ -57,7 +58,8 @@ public class VnePmMdvneAlgorithmExampleRejectUpdate {
 		virtGen.createNetwork("virt2", true);
 		sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt2");
-		algo = VnePmMdvneAlgorithmMigration.prepare(sNet, Set.of(vNet));
+		algo = new VnePmMdvneAlgorithmMigration();
+		algo.prepare(sNet, Set.of(vNet));
 		algo.execute();
 
 		/*
@@ -66,7 +68,8 @@ public class VnePmMdvneAlgorithmExampleRejectUpdate {
 		virtGen.createNetwork("virt3", true);
 		sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt3");
-		algo = VnePmMdvneAlgorithmMigration.prepare(sNet, Set.of(vNet));
+		algo = new VnePmMdvneAlgorithmMigration();
+		algo.prepare(sNet, Set.of(vNet));
 		algo.execute();
 
 		// Remove second virtual network to get a scenario in which two substrate
@@ -84,7 +87,8 @@ public class VnePmMdvneAlgorithmExampleRejectUpdate {
 		virtGen.createNetwork("virt4", true);
 		sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt4");
-		algo = VnePmMdvneAlgorithmMigration.prepare(sNet, Set.of(vNet));
+		algo = new VnePmMdvneAlgorithmMigration();
+		algo.prepare(sNet, Set.of(vNet));
 		algo.execute();
 
 		GlobalMetricsManager.stopRuntime();

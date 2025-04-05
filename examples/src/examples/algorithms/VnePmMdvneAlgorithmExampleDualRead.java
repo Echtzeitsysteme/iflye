@@ -40,7 +40,8 @@ public class VnePmMdvneAlgorithmExampleDualRead {
 			final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById(vNetId);
 
 			// Create and execute algorithm
-			final AbstractAlgorithm algo = VnePmMdvneAlgorithm.prepare(sNet, Set.of(vNet));
+			final AbstractAlgorithm algo = new VnePmMdvneAlgorithm();
+			algo.prepare(sNet, Set.of(vNet));
 			algo.execute();
 		}
 

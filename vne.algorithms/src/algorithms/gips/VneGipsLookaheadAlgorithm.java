@@ -1,9 +1,10 @@
 package algorithms.gips;
 
-import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.emoflon.gips.core.milp.SolverOutput;
 import org.emoflon.gips.gipsl.examples.mdvne.MdvneGipsLookaheadIflyeAdapter;
 
 import algorithms.AbstractAlgorithm;
@@ -18,17 +19,12 @@ import model.VirtualNetwork;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneGipsLookaheadAlgorithm extends AbstractAlgorithm {
+public class VneGipsLookaheadAlgorithm extends AbstractAlgorithm implements GipsAlgorithm {
 
 	/**
 	 * Relative base path of the GIPS MdVNE project.
 	 */
 	private final static String GIPS_PROJECT_BASE_PATH = "../../gips-examples/org.emoflon.gips.gipsl.examples.mdvne";
-
-	/**
-	 * Algorithm instance (singleton).
-	 */
-	private static VneGipsLookaheadAlgorithm instance;
 
 	/**
 	 * The ID of the virtual network to embed.
@@ -44,10 +40,15 @@ public class VneGipsLookaheadAlgorithm extends AbstractAlgorithm {
 	 * @param vNets  Set of virtual networks to work with.
 	 * @param vNetId ID of the virtual network to embed.
 	 */
-	public VneGipsLookaheadAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets,
-			final String vNetId) {
-		super(sNet, vNets);
-		this.vNetId = vNetId;
+	public VneGipsLookaheadAlgorithm() {
+		this(ModelFacade.getInstance());
+	}
+
+	/**
+	 * Constructor.
+	 */
+	public VneGipsLookaheadAlgorithm(final ModelFacade modelFacade) {
+		super(modelFacade);
 	}
 
 	@Override
@@ -99,8 +100,7 @@ public class VneGipsLookaheadAlgorithm extends AbstractAlgorithm {
 	 * @param vNetId ID of the virtual network to embed.
 	 * @return Instance of this algorithm implementation.
 	 */
-	public static VneGipsLookaheadAlgorithm prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets,
-			final String vNetId) {
+	public void prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets, final String vNetId) {
 		if (sNet == null || vNets == null) {
 			throw new IllegalArgumentException("One of the provided network objects was null.");
 		}
@@ -109,16 +109,19 @@ public class VneGipsLookaheadAlgorithm extends AbstractAlgorithm {
 			throw new IllegalArgumentException("Provided set of virtual networks was empty.");
 		}
 
-		VneGipsAlgorithmUtils.checkGivenVnets(vNets);
+		VneGipsAlgorithmUtils.checkGivenVnets(getModelFacade(), vNets);
+		super.prepare(sNet, vNets);
+		this.vNetId = vNetId;
+	}
 
-		if (instance == null) {
-			instance = new VneGipsLookaheadAlgorithm(sNet, vNets, vNetId);
-		}
-		instance.sNet = sNet;
-		instance.vNets = new HashSet<>();
-		instance.vNets.addAll(vNets);
+	@Override
+	public SolverOutput getSolverOutput() {
+		return null;
+	}
 
-		return instance;
+	@Override
+	public Map<String, String> getMatches() {
+		return null;
 	}
 
 	/**
@@ -126,14 +129,11 @@ public class VneGipsLookaheadAlgorithm extends AbstractAlgorithm {
 	 */
 	public void dispose() {
 		MdvneGipsLookaheadIflyeAdapter.resetInit();
-		if (instance == null) {
-			return;
-		}
-		instance = null;
 	}
 
-	public static AbstractAlgorithm prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		return prepare(sNet, vNets, null);
+	@Override
+	public void prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
+		prepare(sNet, vNets, null);
 	}
 
 }

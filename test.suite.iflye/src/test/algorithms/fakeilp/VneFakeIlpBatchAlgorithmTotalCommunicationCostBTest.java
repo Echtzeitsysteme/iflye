@@ -22,7 +22,8 @@ public class VneFakeIlpBatchAlgorithmTotalCommunicationCostBTest
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_B;
 		AlgorithmConfig.emb = Embedding.MANUAL;
-		algo = VneFakeIlpBatchAlgorithm.prepare(sNet, vNets);
+		algo = new VneFakeIlpBatchAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 }

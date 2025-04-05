@@ -31,7 +31,8 @@ public class TafAlgorithmFatTreeTest extends AAlgorithmTest {
 
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		algo = new TafAlgorithm(sNet, vNets);
+		algo = new TafAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 	@BeforeEach
@@ -65,7 +66,8 @@ public class TafAlgorithmFatTreeTest extends AAlgorithmTest {
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-		final TafAlgorithm taf = new TafAlgorithm(sNet, Set.of(vNet));
+		final TafAlgorithm taf = new TafAlgorithm();
+		taf.prepare(sNet, Set.of(vNet));
 		assertTrue(taf.execute());
 	}
 
@@ -86,7 +88,8 @@ public class TafAlgorithmFatTreeTest extends AAlgorithmTest {
 			final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 			final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt" + i);
 
-			final TafAlgorithm taf = new TafAlgorithm(sNet, Set.of(vNet));
+			final TafAlgorithm taf = new TafAlgorithm();
+			taf.prepare(sNet, Set.of(vNet));
 			assertTrue(taf.execute());
 		}
 	}
@@ -108,7 +111,8 @@ public class TafAlgorithmFatTreeTest extends AAlgorithmTest {
 			final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 			final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt" + i);
 
-			final TafAlgorithm taf = new TafAlgorithm(sNet, Set.of(vNet));
+			final TafAlgorithm taf = new TafAlgorithm();
+			taf.prepare(sNet, Set.of(vNet));
 			assertTrue(taf.execute());
 		}
 	}
@@ -128,7 +132,8 @@ public class TafAlgorithmFatTreeTest extends AAlgorithmTest {
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-		final TafAlgorithm taf = new TafAlgorithm(sNet, Set.of(vNet));
+		final TafAlgorithm taf = new TafAlgorithm();
+		taf.prepare(sNet, Set.of(vNet));
 		assertTrue(taf.execute());
 	}
 
@@ -147,7 +152,8 @@ public class TafAlgorithmFatTreeTest extends AAlgorithmTest {
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-		final TafAlgorithm taf = new TafAlgorithm(sNet, Set.of(vNet));
+		final TafAlgorithm taf = new TafAlgorithm();
+		taf.prepare(sNet, Set.of(vNet));
 		assertTrue(taf.execute());
 	}
 
@@ -166,7 +172,8 @@ public class TafAlgorithmFatTreeTest extends AAlgorithmTest {
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-		final TafAlgorithm taf = new TafAlgorithm(sNet, Set.of(vNet));
+		final TafAlgorithm taf = new TafAlgorithm();
+		taf.prepare(sNet, Set.of(vNet));
 		assertTrue(taf.execute());
 	}
 
@@ -190,7 +197,8 @@ public class TafAlgorithmFatTreeTest extends AAlgorithmTest {
 			final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 			final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt" + i);
 
-			final TafAlgorithm taf = new TafAlgorithm(sNet, Set.of(vNet));
+			final TafAlgorithm taf = new TafAlgorithm();
+			taf.prepare(sNet, Set.of(vNet));
 
 			if (i < 16) {
 				assertTrue(taf.execute());

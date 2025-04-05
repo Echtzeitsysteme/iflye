@@ -50,7 +50,8 @@ public class VneFakeIlpAlgorithmExampleOneServer {
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
 		// Create and execute algorithm
-		final AbstractAlgorithm algo = VneFakeIlpBatchAlgorithm.prepare(sNet, Set.of(vNet));
+		final AbstractAlgorithm algo = new VneFakeIlpBatchAlgorithm();
+		algo.prepare(sNet, Set.of(vNet));
 		algo.execute();
 
 		// Save model to file

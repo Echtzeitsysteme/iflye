@@ -37,7 +37,8 @@ public class VnePmMdvneAlgorithmMigrationTest extends AAlgorithmTest {
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		AlgorithmConfig.obj = Objective.TOTAL_PATH_COST;
-		algo = VnePmMdvneAlgorithmMigration.prepare(sNet, vNets);
+		algo = new VnePmMdvneAlgorithmMigration();
+		algo.prepare(sNet, vNets);
 	}
 
 	@BeforeEach

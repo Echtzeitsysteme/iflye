@@ -32,7 +32,8 @@ public class VnePmMdvneAlgorithmTotalCommunicationObjectiveCTest extends AAlgori
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
-		algo = VnePmMdvneAlgorithm.prepare(sNet, vNets);
+		algo = new VnePmMdvneAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 	@AfterEach

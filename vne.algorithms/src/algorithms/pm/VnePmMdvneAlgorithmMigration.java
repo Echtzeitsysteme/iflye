@@ -9,7 +9,6 @@ import gt.PatternMatchingDelta;
 import gt.emoflon.EmoflonGtFactory;
 import metrics.manager.GlobalMetricsManager;
 import model.Node;
-import model.SubstrateNetwork;
 import model.VirtualNetwork;
 import model.VirtualServer;
 
@@ -49,37 +48,15 @@ public class VnePmMdvneAlgorithmMigration extends VnePmMdvneAlgorithm {
 	 * @param sNet  Substrate network to work with.
 	 * @param vNets Set of virtual networks to work with.
 	 */
-	private VnePmMdvneAlgorithmMigration(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		super(sNet, vNets);
+	public VnePmMdvneAlgorithmMigration() {
+		this(ModelFacade.getInstance());
 	}
 
 	/**
-	 * Initializes a new instance of the VNE pattern matching algorithm with
-	 * migration functionality.
-	 *
-	 * @param sNet  Substrate network to work with.
-	 * @param vNets Set of virtual networks to work with.
-	 * @return Instance of this algorithm implementation.
+	 * Constructor.
 	 */
-	public static VnePmMdvneAlgorithm prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		if (sNet == null || vNets == null) {
-			throw new IllegalArgumentException("One of the provided network objects was null.");
-		}
-
-		if (vNets.size() == 0) {
-			throw new IllegalArgumentException("Provided set of virtual networks was empty.");
-		}
-
-		if (instance == null) {
-			instance = new VnePmMdvneAlgorithmMigration(sNet, vNets);
-		}
-		setSnet(sNet);
-		final Set<VirtualNetwork> vNetsInt = new HashSet<>();
-		vNetsInt.addAll(vNets);
-		setVnets(vNetsInt);
-
-		instance.checkPreConditions();
-		return instance;
+	public VnePmMdvneAlgorithmMigration(final ModelFacade modelFacade) {
+		super(modelFacade);
 	}
 
 	@Override

@@ -54,7 +54,8 @@ public class VneFakeIlpBatchAlgorithmMigrationTest extends AAlgorithmTest {
 		// Total communication cost A is needed for this test
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_A;
 		AlgorithmConfig.emb = Embedding.MANUAL;
-		algo = VneFakeIlpBatchAlgorithm.prepare(sNet, vNets);
+		algo = new VneFakeIlpBatchAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 	@Test

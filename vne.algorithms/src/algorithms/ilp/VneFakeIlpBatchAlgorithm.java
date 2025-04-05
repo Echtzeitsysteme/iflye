@@ -1,8 +1,8 @@
 package algorithms.ilp;
 
-import java.util.HashSet;
 import java.util.Set;
 
+import facade.ModelFacade;
 import gt.PatternMatchingDelta;
 import metrics.manager.GlobalMetricsManager;
 import model.SubstrateNetwork;
@@ -29,8 +29,15 @@ public class VneFakeIlpBatchAlgorithm extends VneFakeIlpAlgorithm {
 	 * @param sNet  Substrate network to work with.
 	 * @param vNets Set of virtual networks to work with.
 	 */
-	protected VneFakeIlpBatchAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		super(sNet, vNets);
+	public VneFakeIlpBatchAlgorithm() {
+		this(ModelFacade.getInstance());
+	}
+
+	/**
+	 * Constructor.
+	 */
+	public VneFakeIlpBatchAlgorithm(final ModelFacade modelFacade) {
+		super(modelFacade);
 	}
 
 	/**
@@ -40,7 +47,8 @@ public class VneFakeIlpBatchAlgorithm extends VneFakeIlpAlgorithm {
 	 * @param vNets Set of virtual networks to work with.
 	 * @return Instance of this algorithm implementation.
 	 */
-	public static VneFakeIlpAlgorithm prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
+	@Override
+	public void prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		if (sNet == null || vNets == null) {
 			throw new IllegalArgumentException("One of the provided network objects was null.");
 		}
@@ -49,16 +57,13 @@ public class VneFakeIlpBatchAlgorithm extends VneFakeIlpAlgorithm {
 			throw new IllegalArgumentException("Provided set of virtual networks was empty.");
 		}
 
-		if (instance == null) {
-			instance = new VneFakeIlpBatchAlgorithm(sNet, vNets);
-		}
-		setSnet(sNet);
-		final Set<VirtualNetwork> vNetsInt = new HashSet<>();
-		vNetsInt.addAll(vNets);
-		setVnets(vNetsInt);
+//		setSnet(sNet);
+//		final Set<VirtualNetwork> vNetsInt = new HashSet<>();
+//		vNetsInt.addAll(vNets);
+//		setVnets(vNetsInt);
+		super.prepare(sNet, vNets);
 
-		instance.checkPreConditions();
-		return instance;
+		checkPreConditions();
 	}
 
 	protected void preHook() {
@@ -71,7 +76,7 @@ public class VneFakeIlpBatchAlgorithm extends VneFakeIlpAlgorithm {
 		vNets.forEach(vn -> {
 			if (vn.getHost() != null) {
 				System.out.println("=> Un-embed virtual network " + vn.getName());
-				facade.removeNetworkEmbedding(vn.getName());
+				modelFacade.removeNetworkEmbedding(vn.getName());
 			}
 		});
 	}

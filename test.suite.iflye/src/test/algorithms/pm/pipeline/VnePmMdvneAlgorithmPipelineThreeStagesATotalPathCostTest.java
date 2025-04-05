@@ -20,7 +20,8 @@ public class VnePmMdvneAlgorithmPipelineThreeStagesATotalPathCostTest extends Vn
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		AlgorithmConfig.obj = Objective.TOTAL_PATH_COST;
-		algo = VnePmMdvneAlgorithmPipelineThreeStagesA.prepare(sNet, vNets);
+		algo = new VnePmMdvneAlgorithmPipelineThreeStagesA();
+		algo.prepare(sNet, vNets);
 	}
 
 }

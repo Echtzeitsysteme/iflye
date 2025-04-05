@@ -33,7 +33,8 @@ public class RandomAlgorithmGiveupTest extends AAlgorithmTest {
 
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		algo = new RandomVneAlgorithm(sNet, vNets);
+		algo = new RandomVneAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 	@BeforeEach
@@ -68,7 +69,8 @@ public class RandomAlgorithmGiveupTest extends AAlgorithmTest {
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-		final RandomVneAlgorithm randomVne = new RandomVneAlgorithm(sNet, Set.of(vNet));
+		final RandomVneAlgorithm randomVne = new RandomVneAlgorithm();
+		randomVne.prepare(sNet, Set.of(vNet));
 		assertFalse(randomVne.execute());
 
 		// Test all vServer hosts

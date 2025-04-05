@@ -1,9 +1,10 @@
 package algorithms.gips;
 
-import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.emoflon.gips.core.milp.SolverOutput;
 import org.emoflon.gips.gipsl.examples.mdvne.migration.MdvneMigrationGipsIflyeAdapter;
 
 import algorithms.AbstractAlgorithm;
@@ -19,7 +20,7 @@ import model.VirtualNetwork;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneGipsMigrationAlgorithm extends AbstractAlgorithm {
+public class VneGipsMigrationAlgorithm extends AbstractAlgorithm implements GipsAlgorithm {
 
 	/**
 	 * Relative base path of the GIPS MdVNE project.
@@ -27,18 +28,20 @@ public class VneGipsMigrationAlgorithm extends AbstractAlgorithm {
 	private final static String GIPS_PROJECT_BASE_PATH = "../../gips-examples/org.emoflon.gips.gipsl.examples.mdvne.migration";
 
 	/**
-	 * Algorithm instance (singleton).
-	 */
-	private static VneGipsMigrationAlgorithm instance;
-
-	/**
 	 * Constructor that gets the substrate as well as the virtual network.
 	 *
 	 * @param sNet  Substrate network to work with.
 	 * @param vNets Set of virtual networks to work with.
 	 */
-	public VneGipsMigrationAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		super(sNet, vNets);
+	public VneGipsMigrationAlgorithm() {
+		this(ModelFacade.getInstance());
+	}
+
+	/**
+	 * Constructor.
+	 */
+	public VneGipsMigrationAlgorithm(final ModelFacade modelFacade) {
+		super(modelFacade);
 	}
 
 	@Override
@@ -86,7 +89,8 @@ public class VneGipsMigrationAlgorithm extends AbstractAlgorithm {
 	 * @param vNets Set of virtual networks to work with.
 	 * @return Instance of this algorithm implementation.
 	 */
-	public static VneGipsMigrationAlgorithm prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
+	@Override
+	public void prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		if (sNet == null || vNets == null) {
 			throw new IllegalArgumentException("One of the provided network objects was null.");
 		}
@@ -95,16 +99,18 @@ public class VneGipsMigrationAlgorithm extends AbstractAlgorithm {
 			throw new IllegalArgumentException("Provided set of virtual networks was empty.");
 		}
 
-		VneGipsAlgorithmUtils.checkGivenVnets(vNets);
+		VneGipsAlgorithmUtils.checkGivenVnets(getModelFacade(), vNets);
+		super.prepare(sNet, vNets);
+	}
 
-		if (instance == null) {
-			instance = new VneGipsMigrationAlgorithm(sNet, vNets);
-		}
-		instance.sNet = sNet;
-		instance.vNets = new HashSet<>();
-		instance.vNets.addAll(vNets);
+	@Override
+	public SolverOutput getSolverOutput() {
+		return null;
+	}
 
-		return instance;
+	@Override
+	public Map<String, String> getMatches() {
+		return null;
 	}
 
 	/**
@@ -112,10 +118,6 @@ public class VneGipsMigrationAlgorithm extends AbstractAlgorithm {
 	 */
 	public void dispose() {
 		MdvneMigrationGipsIflyeAdapter.resetInit();
-		if (instance == null) {
-			return;
-		}
-		instance = null;
 	}
 
 }

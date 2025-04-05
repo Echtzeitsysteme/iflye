@@ -26,13 +26,14 @@ public class VneGipsMigrationAlgorithmMultipleSnetsTest extends VneGipsAlgorithm
 		// it is hard-coded in GIPSL
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
 		ModelFacadeConfig.IGNORE_BW = true;
-		algo = VneGipsMigrationAlgorithm.prepare(sNet, vNets);
+		algo = new VneGipsMigrationAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 	@AfterEach
 	public void resetAlgo() {
 		facade.resetAll();
-		((VneGipsMigrationAlgorithm) algo).dispose();
+		algo.dispose();
 	}
 
 }

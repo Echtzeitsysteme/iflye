@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.Set;
 
 import algorithms.AbstractAlgorithm;
+import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import model.Link;
 import model.Node;
@@ -40,18 +41,8 @@ public class RandomVneAlgorithm extends AbstractAlgorithm {
 	 * @param sNet  Substrate network to work with.
 	 * @param vNets Set of virtual networks to work with.
 	 */
-	public RandomVneAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		super(sNet, vNets);
-
-		if (vNets.size() != 1) {
-			throw new IllegalArgumentException(
-					"The random VNE algorithm is only suited for one virtual network at a time.");
-		}
-
-		// Check pre-conditions
-		checkPreConditions();
-
-		retries = sNet.getNodess().size() * 2;
+	public RandomVneAlgorithm() {
+		this(ModelFacade.getInstance());
 	}
 
 	/**
@@ -63,17 +54,46 @@ public class RandomVneAlgorithm extends AbstractAlgorithm {
 	 * @param randomSeed Random seed.
 	 * @param retries    Number of retries.
 	 */
-	public RandomVneAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets, final int randomSeed,
-			final int retries) {
-		this(sNet, vNets);
+	public RandomVneAlgorithm(final int randomSeed, final int retries) {
+		this(ModelFacade.getInstance(), randomSeed, retries);
+	}
+
+	/**
+	 * Constructor.
+	 */
+	public RandomVneAlgorithm(final ModelFacade modelFacade) {
+		super(modelFacade);
+	}
+
+	/**
+	 * Constructor.
+	 */
+	public RandomVneAlgorithm(final ModelFacade modelFacade, final int randomSeed, final int retries) {
+		this(modelFacade);
+
 		randGen.setSeed(randomSeed);
 		this.retries = retries;
 	}
 
 	@Override
+	public void prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
+		if (vNets.size() != 1) {
+			throw new IllegalArgumentException(
+					"The random VNE algorithm is only suited for one virtual network at a time.");
+		}
+
+		super.prepare(sNet, vNets);
+
+		// Check pre-conditions
+		checkPreConditions();
+
+		retries = sNet.getNodess().size() * 2;
+	}
+
+	@Override
 	public boolean execute() {
-		final List<Node> subServers = facade.getAllServersOfNetwork(sNet.getName());
-		final List<Node> subSwitches = facade.getAllSwitchesOfNetwork(sNet.getName());
+		final List<Node> subServers = modelFacade.getAllServersOfNetwork(sNet.getName());
+		final List<Node> subSwitches = modelFacade.getAllSwitchesOfNetwork(sNet.getName());
 		final List<Node> allNodes = new LinkedList<Node>();
 		allNodes.addAll(subSwitches);
 		allNodes.addAll(subServers);
@@ -88,7 +108,7 @@ public class RandomVneAlgorithm extends AbstractAlgorithm {
 		final VirtualNetwork vNet = vNets.iterator().next();
 
 		// Embed virtual network
-		success &= facade.embedNetworkToNetwork(sNet.getName(), vNet.getName());
+		success &= modelFacade.embedNetworkToNetwork(sNet.getName(), vNet.getName());
 		if (success) {
 			embeddedIds.add(vNet.getName());
 		}
@@ -101,7 +121,7 @@ public class RandomVneAlgorithm extends AbstractAlgorithm {
 				boolean serverSuccess = true;
 				for (int i = 0; i < retries; i++) {
 					try {
-						facade.embedServerToServer(sserver.getName(), vserver.getName());
+						modelFacade.embedServerToServer(sserver.getName(), vserver.getName());
 						embeddedIds.add(vserver.getName());
 						serverSuccess = true;
 						break;
@@ -114,7 +134,7 @@ public class RandomVneAlgorithm extends AbstractAlgorithm {
 				success &= serverSuccess;
 			} else if (vnode instanceof VirtualSwitch vswitch) {
 				final SubstrateNode snode = (SubstrateNode) allNodes.get(rand(allNodes.size()));
-				success &= facade.embedSwitchToNode(snode.getName(), vswitch.getName());
+				success &= modelFacade.embedSwitchToNode(snode.getName(), vswitch.getName());
 
 				if (success) {
 					embeddedIds.add(vswitch.getName());
@@ -138,7 +158,7 @@ public class RandomVneAlgorithm extends AbstractAlgorithm {
 				// If both, the source and the target of a virtual link are embedded to the same
 				// substrate node, also use this node for the embedding of the virtual link.
 				if (vsourceHost.equals(vtargetHost)) {
-					success &= facade.embedGeneric(vsourceHost.getName(), vLink.getName());
+					success &= modelFacade.embedGeneric(vsourceHost.getName(), vLink.getName());
 
 					if (success) {
 						embeddedIds.add(vLink.getName());
@@ -146,10 +166,10 @@ public class RandomVneAlgorithm extends AbstractAlgorithm {
 				} else {
 					// If source and target host are not the same node, find the corresponding path
 					// between the two nodes.
-					final SubstratePath sPath = facade.getPathFromSourceToTarget(vsourceHost.getName(),
+					final SubstratePath sPath = modelFacade.getPathFromSourceToTarget(vsourceHost.getName(),
 							vtargetHost.getName());
 					try {
-						facade.embedGeneric(sPath.getName(), vLink.getName());
+						modelFacade.embedGeneric(sPath.getName(), vLink.getName());
 						embeddedIds.add(vLink.getName());
 					} catch (final UnsupportedOperationException ex) {
 						success = false;
@@ -161,7 +181,7 @@ public class RandomVneAlgorithm extends AbstractAlgorithm {
 		// If at least one element could not be embedded, all other embeddings must be
 		// removed.
 		if (!success) {
-			facade.unembedVirtualNetwork((VirtualNetwork) facade.getNetworkById(vNet.getName()));
+			modelFacade.unembedVirtualNetwork((VirtualNetwork) modelFacade.getNetworkById(vNet.getName()));
 		}
 
 		return success;

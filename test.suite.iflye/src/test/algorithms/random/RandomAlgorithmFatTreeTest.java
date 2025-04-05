@@ -29,7 +29,8 @@ public class RandomAlgorithmFatTreeTest extends AAlgorithmTest {
 
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		algo = new RandomVneAlgorithm(sNet, vNets);
+		algo = new RandomVneAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 	@BeforeEach
@@ -63,7 +64,8 @@ public class RandomAlgorithmFatTreeTest extends AAlgorithmTest {
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-		final RandomVneAlgorithm randomVne = new RandomVneAlgorithm(sNet, Set.of(vNet));
+		final RandomVneAlgorithm randomVne = new RandomVneAlgorithm();
+		randomVne.prepare(sNet, Set.of(vNet));
 		assertTrue(randomVne.execute());
 	}
 
@@ -84,7 +86,8 @@ public class RandomAlgorithmFatTreeTest extends AAlgorithmTest {
 			final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 			final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt" + i);
 
-			final RandomVneAlgorithm randomVne = new RandomVneAlgorithm(sNet, Set.of(vNet));
+			final RandomVneAlgorithm randomVne = new RandomVneAlgorithm();
+			randomVne.prepare(sNet, Set.of(vNet));
 			assertTrue(randomVne.execute());
 		}
 	}
@@ -106,7 +109,8 @@ public class RandomAlgorithmFatTreeTest extends AAlgorithmTest {
 			final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 			final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt" + i);
 
-			final RandomVneAlgorithm randomVne = new RandomVneAlgorithm(sNet, Set.of(vNet));
+			final RandomVneAlgorithm randomVne = new RandomVneAlgorithm();
+			randomVne.prepare(sNet, Set.of(vNet));
 			assertTrue(randomVne.execute());
 		}
 	}
@@ -126,7 +130,8 @@ public class RandomAlgorithmFatTreeTest extends AAlgorithmTest {
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-		final RandomVneAlgorithm randomVne = new RandomVneAlgorithm(sNet, Set.of(vNet));
+		final RandomVneAlgorithm randomVne = new RandomVneAlgorithm();
+		randomVne.prepare(sNet, Set.of(vNet));
 		assertTrue(randomVne.execute());
 	}
 
@@ -145,7 +150,8 @@ public class RandomAlgorithmFatTreeTest extends AAlgorithmTest {
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-		final RandomVneAlgorithm randomVne = new RandomVneAlgorithm(sNet, Set.of(vNet));
+		final RandomVneAlgorithm randomVne = new RandomVneAlgorithm();
+		randomVne.prepare(sNet, Set.of(vNet));
 		assertTrue(randomVne.execute());
 	}
 
@@ -164,7 +170,8 @@ public class RandomAlgorithmFatTreeTest extends AAlgorithmTest {
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-		final RandomVneAlgorithm randomVne = new RandomVneAlgorithm(sNet, Set.of(vNet));
+		final RandomVneAlgorithm randomVne = new RandomVneAlgorithm();
+		randomVne.prepare(sNet, Set.of(vNet));
 		assertTrue(randomVne.execute());
 	}
 
@@ -188,7 +195,8 @@ public class RandomAlgorithmFatTreeTest extends AAlgorithmTest {
 			final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 			final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt" + i);
 
-			final RandomVneAlgorithm randomVne = new RandomVneAlgorithm(sNet, Set.of(vNet));
+			final RandomVneAlgorithm randomVne = new RandomVneAlgorithm();
+			randomVne.prepare(sNet, Set.of(vNet));
 
 			if (i < 16) {
 				assertTrue(randomVne.execute());

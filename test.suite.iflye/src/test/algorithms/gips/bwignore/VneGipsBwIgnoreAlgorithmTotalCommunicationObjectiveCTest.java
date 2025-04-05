@@ -26,7 +26,8 @@ public class VneGipsBwIgnoreAlgorithmTotalCommunicationObjectiveCTest
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
 		ModelFacadeConfig.IGNORE_BW = true;
-		algo = VneGipsBwIgnoreAlgorithm.prepare(sNet, vNets);
+		algo = new VneGipsBwIgnoreAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 	@AfterEach

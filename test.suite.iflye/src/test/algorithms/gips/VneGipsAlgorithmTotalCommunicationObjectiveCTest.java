@@ -35,7 +35,8 @@ public class VneGipsAlgorithmTotalCommunicationObjectiveCTest extends AAlgorithm
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
-		algo = VneGipsAlgorithm.prepare(sNet, vNets);
+		algo = new VneGipsAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 	@AfterEach

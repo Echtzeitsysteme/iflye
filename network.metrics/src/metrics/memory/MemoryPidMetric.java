@@ -39,6 +39,12 @@ public class MemoryPidMetric implements IMetric {
 			return;
 		}
 		final File file = new File("/proc/" + getPid() + "/status");
+		if (!file.exists()) {
+			System.err.println("Proc file for MemoryPidMetric is not available!");
+			this.memory = -1;
+			return;
+		}
+
 		final List<String> lines = Unix4j.grep("VmHWM", file).toStringList();
 		final String memComplex = lines.get(0);
 		final String mem = memComplex.replaceAll("\\D+", "");

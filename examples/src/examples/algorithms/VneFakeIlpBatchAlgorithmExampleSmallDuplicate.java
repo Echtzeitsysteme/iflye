@@ -52,9 +52,11 @@ public class VneFakeIlpBatchAlgorithmExampleSmallDuplicate {
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
 		// Create and execute algorithm
-		AbstractAlgorithm algo = VneFakeIlpBatchAlgorithm.prepare(sNet, Set.of(vNet));
+		AbstractAlgorithm algo = new VneFakeIlpBatchAlgorithm();
+		algo.prepare(sNet, Set.of(vNet));
 		algo.execute();
-		algo = VneFakeIlpBatchAlgorithm.prepare(sNet, Set.of(vNet));
+		algo = new VneFakeIlpBatchAlgorithm();
+		algo.prepare(sNet, Set.of(vNet));
 		algo.execute();
 
 		GlobalMetricsManager.stopRuntime();

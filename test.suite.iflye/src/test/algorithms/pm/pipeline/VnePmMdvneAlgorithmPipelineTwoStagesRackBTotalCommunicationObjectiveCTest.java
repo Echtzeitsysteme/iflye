@@ -21,7 +21,8 @@ public class VnePmMdvneAlgorithmPipelineTwoStagesRackBTotalCommunicationObjectiv
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
-		algo = VnePmMdvneAlgorithmPipelineTwoStagesRackB.prepare(sNet, vNets);
+		algo = new VnePmMdvneAlgorithmPipelineTwoStagesRackB();
+		algo.prepare(sNet, vNets);
 	}
 
 }

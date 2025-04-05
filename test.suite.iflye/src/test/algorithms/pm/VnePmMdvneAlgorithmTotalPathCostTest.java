@@ -39,7 +39,8 @@ public class VnePmMdvneAlgorithmTotalPathCostTest extends AAlgorithmMultipleVnsT
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		AlgorithmConfig.obj = Objective.TOTAL_PATH_COST;
-		algo = VnePmMdvneAlgorithm.prepare(sNet, vNets);
+		algo = new VnePmMdvneAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 	@AfterEach

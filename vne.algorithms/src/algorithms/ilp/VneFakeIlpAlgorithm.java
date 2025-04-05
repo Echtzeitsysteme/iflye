@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
+import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import gt.PatternMatchingDelta;
 import gt.PatternMatchingDelta.Match;
@@ -113,7 +114,7 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 		 */
 		public void addLinkServerMatch(final Match match) {
 			final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
-			final VirtualLink vLink = (VirtualLink) facade.getLinkById(match.getVirtual().getName());
+			final VirtualLink vLink = (VirtualLink) modelFacade.getLinkById(match.getVirtual().getName());
 
 			// If the source node (target node) of the virtual link may not be embedded to
 			// the substrate
@@ -147,8 +148,8 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 		 * @param match Match to get information from.
 		 */
 		public void addLinkPathMatch(final Match match) {
-			final VirtualLink vLink = (VirtualLink) facade.getLinkById(match.getVirtual().getName());
-			final SubstratePath sPath = facade.getPathById(match.getSubstrate().getName());
+			final VirtualLink vLink = (VirtualLink) modelFacade.getLinkById(match.getVirtual().getName());
+			final SubstratePath sPath = modelFacade.getPathById(match.getSubstrate().getName());
 
 			// If the source node (target node) of the virtual link may not be embedded to
 			// the substrate
@@ -189,7 +190,7 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 		 * @param match Match to get information from.
 		 */
 		public void addServerMatch(final Match match) {
-			final VirtualServer vServer = (VirtualServer) facade.getServerById(match.getVirtual().getName());
+			final VirtualServer vServer = (VirtualServer) modelFacade.getServerById(match.getVirtual().getName());
 			final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
 			delta.addVariable(varName, getCost(vServer, (SubstrateServer) match.getSubstrate()));
 			delta.setVariableWeightForConstraint("vs" + match.getVirtual().getName(), 1, varName);
@@ -285,11 +286,6 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 	}
 
 	/**
-	 * Algorithm instance (singleton).
-	 */
-	protected static VneFakeIlpAlgorithm instance;
-
-	/**
 	 * Incremental ILP solver to use.
 	 */
 	protected IncrementalIlpSolver ilpSolver;
@@ -312,8 +308,15 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 	 * @param sNet  Substrate network to work with.
 	 * @param vNets Set of virtual networks to work with.
 	 */
-	protected VneFakeIlpAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		super(sNet, vNets);
+	public VneFakeIlpAlgorithm() {
+		this(ModelFacade.getInstance());
+	}
+
+	/**
+	 * Constructor.
+	 */
+	public VneFakeIlpAlgorithm(final ModelFacade modelFacade) {
+		super(modelFacade);
 	}
 
 	/**
@@ -323,7 +326,7 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 	 * @param vNets Set of virtual networks to work with.
 	 * @return Instance of this algorithm implementation.
 	 */
-	public static VneFakeIlpAlgorithm prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
+	public void prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		if (sNet == null || vNets == null) {
 			throw new IllegalArgumentException("One of the provided network objects was null.");
 		}
@@ -332,28 +335,18 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 			throw new IllegalArgumentException("Provided set of virtual networks was empty.");
 		}
 
-		if (instance == null) {
-			instance = new VneFakeIlpAlgorithm(sNet, vNets);
-		}
-		instance.sNet = sNet;
-		instance.vNets = new HashSet<>();
-		instance.vNets.addAll(vNets);
+		super.prepare(sNet, vNets);
 
-		instance.checkPreConditions();
-		return instance;
+		checkPreConditions();
 	}
 
 	/**
 	 * Resets the ILP solver.
 	 */
 	public void dispose() {
-		if (instance == null) {
-			return;
-		}
 		if (this.ilpSolver != null) {
 			this.ilpSolver.dispose();
 		}
-		instance = null;
 	}
 
 	@Override
@@ -396,43 +389,43 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 
 		for (final VirtualNetwork actVNet : this.vNets) {
 			// Virtual servers
-			for (final Node actInnerNode : facade.getAllServersOfNetwork(actVNet.getName())) {
+			for (final Node actInnerNode : modelFacade.getAllServersOfNetwork(actVNet.getName())) {
 				final VirtualServer actVSrv = (VirtualServer) actInnerNode;
 
-				for (final Node actOuterNode : facade.getAllServersOfNetwork(sNet.getName())) {
+				for (final Node actOuterNode : modelFacade.getAllServersOfNetwork(sNet.getName())) {
 					final SubstrateServer actSSrv = (SubstrateServer) actOuterNode;
 					delta.addServerMatchPositive(actVSrv, actSSrv);
 				}
 			}
 
 			// Virtual switches
-			for (final Node actInnerNode : facade.getAllSwitchesOfNetwork(actVNet.getName())) {
+			for (final Node actInnerNode : modelFacade.getAllSwitchesOfNetwork(actVNet.getName())) {
 				final VirtualSwitch actVSw = (VirtualSwitch) actInnerNode;
 
 				// To substrate switches
-				for (final Node actOuterNode : facade.getAllSwitchesOfNetwork(sNet.getName())) {
+				for (final Node actOuterNode : modelFacade.getAllSwitchesOfNetwork(sNet.getName())) {
 					final SubstrateSwitch actSSw = (SubstrateSwitch) actOuterNode;
 					delta.addSwitchMatchPositive(actVSw, actSSw);
 				}
 
 				// To substrate servers
-				for (final Node actOuterNode : facade.getAllServersOfNetwork(sNet.getName())) {
+				for (final Node actOuterNode : modelFacade.getAllServersOfNetwork(sNet.getName())) {
 					final SubstrateServer actSSrv = (SubstrateServer) actOuterNode;
 					delta.addSwitchMatchPositive(actVSw, actSSrv);
 				}
 			}
 
 			// Virtual links
-			for (final Link actInnerLink : facade.getAllLinksOfNetwork(actVNet.getName())) {
+			for (final Link actInnerLink : modelFacade.getAllLinksOfNetwork(actVNet.getName())) {
 				final VirtualLink actVL = (VirtualLink) actInnerLink;
 
 				// To substrate paths
-				for (final SubstratePath actOuterPath : facade.getAllPathsOfNetwork(sNet.getName())) {
+				for (final SubstratePath actOuterPath : modelFacade.getAllPathsOfNetwork(sNet.getName())) {
 					delta.addLinkPathMatchPositive(actVL, actOuterPath);
 				}
 
 				// To substrate servers
-				for (final Node actOuterNode : facade.getAllServersOfNetwork(sNet.getName())) {
+				for (final Node actOuterNode : modelFacade.getAllServersOfNetwork(sNet.getName())) {
 					final SubstrateServer actSSrv = (SubstrateServer) actOuterNode;
 					delta.addLinkServerMatchPositive(actVL, actSSrv);
 				}
@@ -556,10 +549,10 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 	protected void repairSubstrateNetwork() {
 		// Find all networks that were removed in the meantime
 		final Set<VirtualNetwork> removedGuests = sNet.getGuests().stream()
-				.filter(g -> !facade.networkExists(g.getName())).collect(Collectors.toSet());
+				.filter(g -> !modelFacade.networkExists(g.getName())).collect(Collectors.toSet());
 
 		// Remove embedding of all elements of the virtual network
-		removedGuests.forEach(g -> facade.unembedVirtualNetwork(g));
+		removedGuests.forEach(g -> modelFacade.unembedVirtualNetwork(g));
 	}
 
 	/**
@@ -574,12 +567,12 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 	 */
 	protected Set<VirtualNetwork> repairVirtualNetworks() {
 		// Find all virtual networks that are floating
-		final Set<VirtualNetwork> floatingGuests = sNet.getGuests().stream().filter(g -> facade.checkIfFloating(g))
+		final Set<VirtualNetwork> floatingGuests = sNet.getGuests().stream().filter(g -> modelFacade.checkIfFloating(g))
 				.collect(Collectors.toSet());
 
 		// Remove embedding of all elements of the virtual network so they can be
 		// embedded again
-		floatingGuests.forEach(g -> facade.unembedVirtualNetwork(g));
+		floatingGuests.forEach(g -> modelFacade.unembedVirtualNetwork(g));
 		return floatingGuests;
 	}
 
@@ -608,7 +601,7 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 	protected void embedNetworks(final Set<VirtualNetwork> rejectedNetworks) {
 		for (final VirtualNetwork vNet : vNets) {
 			if (!rejectedNetworks.contains(vNet)) {
-				facade.embedNetworkToNetwork(sNet.getName(), vNet.getName());
+				modelFacade.embedNetworkToNetwork(sNet.getName(), vNet.getName());
 			}
 		}
 	}
@@ -693,14 +686,14 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 				final VirtualElement ve = (VirtualElement) m.getVirtual();
 				final SubstrateElement se = (SubstrateElement) m.getSubstrate();
 				if (ve instanceof VirtualServer) {
-					facade.embedServerToServer(se.getName(), ve.getName());
+					modelFacade.embedServerToServer(se.getName(), ve.getName());
 				} else if (ve instanceof VirtualSwitch) {
-					facade.embedSwitchToNode(se.getName(), ve.getName());
+					modelFacade.embedSwitchToNode(se.getName(), ve.getName());
 				} else if (ve instanceof VirtualLink) {
 					if (se instanceof SubstrateServer) {
-						facade.embedLinkToServer(se.getName(), ve.getName());
+						modelFacade.embedLinkToServer(se.getName(), ve.getName());
 					} else if (se instanceof SubstratePath) {
-						facade.embedLinkToPath(se.getName(), ve.getName());
+						modelFacade.embedLinkToPath(se.getName(), ve.getName());
 					}
 				}
 				break;
@@ -730,8 +723,8 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 	 *
 	 * @param sNet Substrate network to set.
 	 */
-	protected static void setSnet(final SubstrateNetwork sNet) {
-		instance.sNet = sNet;
+	protected void setSnet(final SubstrateNetwork sNet) {
+		this.sNet = sNet;
 	}
 
 	/**
@@ -740,8 +733,8 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 	 *
 	 * @param vNets Virtual networks to set.
 	 */
-	protected static void setVnets(final Set<VirtualNetwork> vNets) {
-		instance.vNets = vNets;
+	protected void setVnets(final Set<VirtualNetwork> vNets) {
+		this.vNets = vNets;
 	}
 
 	/*

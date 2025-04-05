@@ -6,6 +6,7 @@ import java.util.Set;
 
 import algorithms.AlgorithmConfig;
 import algorithms.pm.VnePmMdvneAlgorithm;
+import facade.ModelFacade;
 import gt.IncrementalPatternMatcher;
 import gt.PatternMatchingDelta;
 import gt.PatternMatchingDelta.Match;
@@ -15,7 +16,6 @@ import gt.emoflon.EmoflonGtRackAFactory;
 import ilp.wrapper.config.IlpSolverConfig;
 import metrics.manager.GlobalMetricsManager;
 import model.SubstrateElement;
-import model.SubstrateNetwork;
 import model.VirtualElement;
 import model.VirtualNetwork;
 
@@ -29,11 +29,6 @@ import model.VirtualNetwork;
 public class VnePmMdvneAlgorithmPipelineStageRackA extends VnePmMdvneAlgorithm {
 
 	/**
-	 * Algorithm instance (singleton).
-	 */
-	protected static VnePmMdvneAlgorithmPipelineStageRackA instance;
-
-	/**
 	 * Incremental pattern matcher to use for the second pipeline stage.
 	 */
 	protected IncrementalPatternMatcher patternMatcherRack;
@@ -44,36 +39,15 @@ public class VnePmMdvneAlgorithmPipelineStageRackA extends VnePmMdvneAlgorithm {
 	 * @param sNet  Substrate network to work with.
 	 * @param vNets Set of virtual networks to work with.
 	 */
-	protected VnePmMdvneAlgorithmPipelineStageRackA(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		super(sNet, vNets);
+	public VnePmMdvneAlgorithmPipelineStageRackA() {
+		this(ModelFacade.getInstance());
 	}
 
 	/**
-	 * Initializes a new instance of the VNE pattern matching algorithm.
-	 *
-	 * @param sNet  Substrate network to work with.
-	 * @param vNets Set of virtual networks to work with.
-	 * @return Instance of this algorithm implementation.
+	 * Constructor.
 	 */
-	public static VnePmMdvneAlgorithmPipelineStageRackA prepare(final SubstrateNetwork sNet,
-			final Set<VirtualNetwork> vNets) {
-		if (sNet == null || vNets == null) {
-			throw new IllegalArgumentException("One of the provided network objects was null.");
-		}
-
-		if (vNets.size() == 0) {
-			throw new IllegalArgumentException("Provided set of virtual networks was empty.");
-		}
-
-		if (instance == null) {
-			instance = new VnePmMdvneAlgorithmPipelineStageRackA(sNet, vNets);
-		}
-		instance.sNet = sNet;
-		instance.vNets = new HashSet<>();
-		instance.vNets.addAll(vNets);
-
-		instance.checkPreConditions();
-		return instance;
+	public VnePmMdvneAlgorithmPipelineStageRackA(final ModelFacade modelFacade) {
+		super(modelFacade);
 	}
 
 	/**
@@ -81,9 +55,6 @@ public class VnePmMdvneAlgorithmPipelineStageRackA extends VnePmMdvneAlgorithm {
 	 */
 	@Override
 	public void dispose() {
-		if (instance == null) {
-			return;
-		}
 		if (this.ilpSolver != null) {
 			this.ilpSolver.dispose();
 		}
@@ -94,7 +65,6 @@ public class VnePmMdvneAlgorithmPipelineStageRackA extends VnePmMdvneAlgorithm {
 			this.patternMatcherRack.dispose();
 		}
 		super.dispose();
-		instance = null;
 	}
 
 	@Override
@@ -207,7 +177,7 @@ public class VnePmMdvneAlgorithmPipelineStageRackA extends VnePmMdvneAlgorithm {
 
 		// Workaround to fix the residual bandwidth of other paths possibly affected by
 		// virtual link to substrate path embeddings
-		facade.updateAllPathsResidualBandwidth(sNet.getName());
+		modelFacade.updateAllPathsResidualBandwidth(sNet.getName());
 
 		return rejectedNetworks;
 	}

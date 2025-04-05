@@ -1,9 +1,10 @@
 package algorithms.gips;
 
-import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.emoflon.gips.core.milp.SolverOutput;
 import org.emoflon.gips.gipsl.examples.mdvne.seq.MdvneSeqGipsIflyeAdapter;
 
 import algorithms.AbstractAlgorithm;
@@ -18,7 +19,7 @@ import model.VirtualNetwork;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneGipsSeqAlgorithm extends AbstractAlgorithm {
+public class VneGipsSeqAlgorithm extends AbstractAlgorithm implements GipsAlgorithm {
 
 	/**
 	 * Relative base path of the GIPS MdVNE project.
@@ -26,18 +27,20 @@ public class VneGipsSeqAlgorithm extends AbstractAlgorithm {
 	private final static String GIPS_PROJECT_BASE_PATH = "../../gips-examples/org.emoflon.gips.gipsl.examples.mdvne.seq";
 
 	/**
-	 * Algorithm instance (singleton).
-	 */
-	private static VneGipsSeqAlgorithm instance;
-
-	/**
 	 * Constructor that gets the substrate as well as the virtual network.
 	 *
 	 * @param sNet  Substrate network to work with.
 	 * @param vNets Set of virtual networks to work with.
 	 */
-	public VneGipsSeqAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		super(sNet, vNets);
+	public VneGipsSeqAlgorithm() {
+		this(ModelFacade.getInstance());
+	}
+
+	/**
+	 * Constructor.
+	 */
+	public VneGipsSeqAlgorithm(final ModelFacade modelFacade) {
+		super(modelFacade);
 	}
 
 	@Override
@@ -69,7 +72,8 @@ public class VneGipsSeqAlgorithm extends AbstractAlgorithm {
 	 * @param vNets Set of virtual networks to work with.
 	 * @return Instance of this algorithm implementation.
 	 */
-	public static VneGipsSeqAlgorithm prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
+	@Override
+	public void prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		if (sNet == null || vNets == null) {
 			throw new IllegalArgumentException("One of the provided network objects was null.");
 		}
@@ -78,16 +82,18 @@ public class VneGipsSeqAlgorithm extends AbstractAlgorithm {
 			throw new IllegalArgumentException("Provided set of virtual networks was empty.");
 		}
 
-		VneGipsAlgorithmUtils.checkGivenVnets(vNets);
+		VneGipsAlgorithmUtils.checkGivenVnets(getModelFacade(), vNets);
+		super.prepare(sNet, vNets);
+	}
 
-		if (instance == null) {
-			instance = new VneGipsSeqAlgorithm(sNet, vNets);
-		}
-		instance.sNet = sNet;
-		instance.vNets = new HashSet<>();
-		instance.vNets.addAll(vNets);
+	@Override
+	public SolverOutput getSolverOutput() {
+		return null;
+	}
 
-		return instance;
+	@Override
+	public Map<String, String> getMatches() {
+		return null;
 	}
 
 	/**
@@ -95,10 +101,6 @@ public class VneGipsSeqAlgorithm extends AbstractAlgorithm {
 	 */
 	public void dispose() {
 		MdvneSeqGipsIflyeAdapter.resetInit();
-		if (instance == null) {
-			return;
-		}
-		instance = null;
 	}
 
 }

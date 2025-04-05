@@ -55,7 +55,8 @@ public class VneGipsSeqAlgorithmExampleLarge {
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
 		// Create and execute algorithm
-		final AbstractAlgorithm algo = VneGipsSeqAlgorithm.prepare(sNet, Set.of(vNet));
+		final AbstractAlgorithm algo = new VneGipsSeqAlgorithm();
+		algo.prepare(sNet, Set.of(vNet));
 		algo.execute();
 
 		GlobalMetricsManager.stopRuntime();

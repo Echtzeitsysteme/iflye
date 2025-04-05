@@ -23,7 +23,8 @@ public class VnePmMdvneAlgorithmMigrationPathBandwidthBugTest extends AVneAlgori
 		// The algorithm is only able to use the total communication objective C because
 		// it is hard-coded in GIPSL
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
-		algo = VnePmMdvneAlgorithmMigration.prepare(sNet, vNets);
+		algo = new VnePmMdvneAlgorithmMigration();
+		algo.prepare(sNet, vNets);
 	}
 
 	@AfterEach
