@@ -110,7 +110,9 @@ Feel free to check out some examples in [vne.scenarios/resources/*/](vne.scenari
 
 Various test cases to test the framework as well as some of the implemented VNE algorithms are implemented in the project [test.suite.iflye](test.suite.iflye/).
 To start them, follow this step:
-* *Right click on test.suite.iflye -> Run As... -> JUnit Test*
+- *Go to test.suite.iflye/launch -> right click on one of the two launch files -> Run As... -> JUnit Test*
+    - [test.suite.iflye.launch](./test.suite.iflye/launch/test.suite.iflye.launch) - launches all JUnit tests without explicitly setting environment variables. This file fits the use case that you are using an Eclipse runtime workspace with properly set up environment variables in your runtime launch config.
+    - [test.suite.iflye.envs.launch](./test.suite.iflye/launch/test.suite.iflye.envs.launch) - launches all JUnit tests with standard environment variable values. This file fits the use case that you did not set up proper environment variables in your Eclipse runtime workspace.
 
 Please notice: The test [IlpSolverSetupTest](test.suite.iflye/src/test/ilp/IlpSolverSetupTest.java) will check your Gurobi/CPLEX installation and configuration. If this test fails, at least one of the two ILP solvers is not configured properly.
 
