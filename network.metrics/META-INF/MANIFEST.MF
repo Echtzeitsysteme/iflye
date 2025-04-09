@@ -13,5 +13,6 @@ Export-Package: metrics,
  metrics.embedding,
  metrics.manager,
  metrics.memory,
+ metrics.reporter,
  metrics.time
 Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt

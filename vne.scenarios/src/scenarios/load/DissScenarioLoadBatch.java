@@ -1,17 +1,19 @@
 package scenarios.load;
 
+import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import algorithms.AbstractAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
-import metrics.manager.GlobalMetricsManager;
+import metrics.manager.Context;
+import metrics.manager.MetricsManager;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 import model.converter.BasicModelConverter;
-import scenario.util.CsvUtil;
 
 /**
  * Runnable (batch) scenario for VNE algorithms that reads specified files from
@@ -54,11 +56,17 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
 
 		// Create and execute algorithm
 		final AbstractAlgorithm algo = algoFactory.apply(ModelFacade.getInstance());
-		algo.prepare(sNet, vNets);
 
-		GlobalMetricsManager.startRuntime();
-		algo.execute();
-		GlobalMetricsManager.stopRuntime();
+		metricsManager.addTags("series uuid", UUID.randomUUID().toString(), "started", OffsetDateTime.now().toString(),
+				"implementation", algo.getClass().getSimpleName());
+		metricsManager.initialized();
+
+		metricsManager.observe("batch", () -> new Context.VnetEmbeddingContext(sNet, vNets, 0), () -> {
+			// Create and execute algorithm
+			MetricsManager.getInstance().observe("prepare", Context.PrepareStageContext::new,
+					() -> algo.prepare(sNet, vNets));
+			return MetricsManager.getInstance().observe("execute", Context.ExecuteStageContext::new, algo::execute);
+		});
 
 		/*
 		 * End of every embedding.
@@ -68,21 +76,28 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
 		// Reload substrate network from model facade (needed for GIPS-based
 		// algorithms.)
 		sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNet.getName());
-		CsvUtil.appendCsvLine("batch-all", csvPath, sNet);
-		GlobalMetricsManager.resetRuntime();
+		metricsManager.flush();
 
 		// Validate model
 		ModelFacade.getInstance().validateModel();
 
+		// Save model to file
+		if (persistModel) {
+			if (persistModelPath == null) {
+				ModelFacade.getInstance().persistModel();
+			} else {
+				ModelFacade.getInstance().persistModel(persistModelPath);
+			}
+		}
+
 		/*
 		 * Evaluation.
 		 */
+		metricsManager.conclude();
+		metricsManager.close();
+		MetricsManager.closeAll();
 
-		// Save model to file
-		ModelFacade.getInstance().persistModel();
 		System.out.println("=> Execution finished.");
-		printMetrics();
-
 		System.exit(0);
 	}
 
