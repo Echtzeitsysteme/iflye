@@ -91,6 +91,17 @@ public class DissScenarioLoad {
 	protected static Function<ModelFacade, AbstractAlgorithm> algoFactory = null;
 
 	/**
+	 * If the model should be persisted after execution, optionally supply the file
+	 * name.
+	 */
+	protected static boolean persistModel = false;
+
+	/**
+	 * The path to the file where the model should be persisted.
+	 */
+	protected static String persistModelPath;
+
+	/**
 	 * Main method to start the example. String array of arguments will be parsed.
 	 *
 	 * @param args See {@link #parseArgs(String[])}.
@@ -141,6 +152,15 @@ public class DissScenarioLoad {
 
 			// Get next virtual network ID to embed
 			vNetId = IncrementalModelConverter.jsonToModelIncremental(virtNetsPath, true);
+
+			// Save model to file
+			if (persistModel) {
+				if (persistModelPath == null) {
+					ModelFacade.getInstance().persistModel();
+				} else {
+					ModelFacade.getInstance().persistModel(persistModelPath);
+				}
+			}
 		}
 
 		/*
@@ -157,8 +177,6 @@ public class DissScenarioLoad {
 		// Print metrics before saving the model
 		printMetrics();
 
-		// Save model to file
-		ModelFacade.getInstance().persistModel();
 		System.out.println("=> Execution finished.");
 		System.exit(0);
 	}
@@ -270,6 +288,14 @@ public class DissScenarioLoad {
 		final Option ilpObjLog = new Option("x", "ilpobjlog", false, "ILP solver objective logarithm");
 		ilpObjLog.setRequired(false);
 		options.addOption(ilpObjLog);
+
+		// Model: Persist after run
+		final Option modelPersist = new Option("persist-model", true,
+				"If the model should be persisted after execution, optionally supply the file name.");
+		modelPersist.setRequired(false);
+		modelPersist.setOptionalArg(true);
+		modelPersist.setType(String.class);
+		options.addOption(modelPersist);
 
 		final CommandLineParser parser = new DefaultParser();
 		final HelpFormatter formatter = new HelpFormatter();
@@ -387,6 +413,12 @@ public class DissScenarioLoad {
 
 		// #14: ILP solver objective logarithm
 		IlpSolverConfig.OBJ_LOG = cmd.hasOption("ilpobjlog");
+
+		if (cmd.hasOption(modelPersist)) {
+			final String filePath = cmd.getOptionValue(modelPersist, "");
+			persistModel = true;
+			persistModelPath = filePath.isBlank() ? null : filePath;
+		}
 
 		// Print arguments into logs/system outputs
 		System.out.println("=> Arguments: " + Arrays.toString(args));
