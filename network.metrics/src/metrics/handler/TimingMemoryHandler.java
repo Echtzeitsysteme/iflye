@@ -68,6 +68,11 @@ public class TimingMemoryHandler implements HasMetric<Context> {
 			}
 
 			@Override
+			public boolean shouldResetMeter(Meter meter) {
+				return true;
+			}
+
+			@Override
 			public PropertyFormat getNotionPropertyFormat(Meter meter, String key, Object value) {
 				return NotionReporter.PROPERTY_TYPE.DATE;
 			}
@@ -84,6 +89,11 @@ public class TimingMemoryHandler implements HasMetric<Context> {
 			@Override
 			public boolean supportsMeter(Meter meter) {
 				return meter instanceof DistributionSummary && meter.getId().getName().startsWith("memory_");
+			}
+
+			@Override
+			public boolean shouldResetMeter(Meter meter) {
+				return true;
 			}
 
 			@Override
@@ -108,6 +118,11 @@ public class TimingMemoryHandler implements HasMetric<Context> {
 			@Override
 			public boolean supportsMeter(Meter meter) {
 				return meter instanceof Timer && meter.getId().getName().startsWith("time_");
+			}
+
+			@Override
+			public boolean shouldResetMeter(Meter meter) {
+				return true;
 			}
 
 			@Override

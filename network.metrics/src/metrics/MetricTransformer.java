@@ -25,4 +25,15 @@ public interface MetricTransformer {
 	 */
 	public Map<String, Object> toEntry(Meter meter, Map<String, Object> unmodifiableEntry);
 
+	/**
+	 * If the given meter should be reset after the transformation.
+	 * 
+	 * @param meter The meter that was transformed.
+	 * @return True if the meter should be reset after the transformation, false
+	 *         otherwise.
+	 */
+	default public boolean shouldResetMeter(Meter meter) {
+		return false;
+	}
+
 }

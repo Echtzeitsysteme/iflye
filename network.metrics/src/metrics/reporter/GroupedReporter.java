@@ -104,8 +104,6 @@ public abstract class GroupedReporter<T> extends SimpleMeterRegistry implements 
 		for (Map.Entry<T, Map<String, Object>> entry : entries.entrySet()) {
 			flushEntry(entry.getValue(), entry.getKey());
 		}
-
-		this.clear();
 	}
 
 	/**
@@ -127,22 +125,52 @@ public abstract class GroupedReporter<T> extends SimpleMeterRegistry implements 
 			final Map<String, Object> entry = entries.computeIfAbsent(groupKey,
 					_ignored -> new HashMap<>(getInitialEntry(meter)));
 			boolean found = false;
+			boolean reset = false;
 			for (HasMetric<? extends Observation.Context> meterProvider : this.meterProviders) {
 				MetricTransformer meterTransformer = meterProvider.getProvidedMeter(meter);
 				if (meterTransformer != null) {
 					found |= collectEntry(meterTransformer.toEntry(meter, Collections.unmodifiableMap(entry)),
 							meterTransformer, entry, meter);
+					reset |= meterTransformer.shouldResetMeter(meter);
 				}
 			}
 
 			if (!found) {
-				MetricTransformer meterTransformer = new DefaultMetricTransformer();
-				collectEntry(meterTransformer.toEntry(meter, Collections.unmodifiableMap(entry)), meterTransformer,
-						entry, meter);
+				reset |= applyDefaultCollector(meter, entry);
+			}
+
+			if (reset) {
+				resetMeter(meter);
 			}
 		}
 
 		return entries;
+	}
+
+	/**
+	 * Applies the default collector for a meter if no other collector was found.
+	 * 
+	 * @param meter the meter to collect
+	 * @param entry the entry to collect the meter to
+	 * @return true if the meter should be reset, false otherwise
+	 */
+	protected boolean applyDefaultCollector(Meter meter, final Map<String, Object> entry) {
+		MetricTransformer meterTransformer = new DefaultMetricTransformer();
+		collectEntry(meterTransformer.toEntry(meter, Collections.unmodifiableMap(entry)), meterTransformer, entry,
+				meter);
+
+		return meterTransformer.shouldResetMeter(meter);
+	}
+
+	/**
+	 * Removes the meter after grouped collection from the registry and resets its
+	 * state.
+	 * 
+	 * @param meter the meter to reset
+	 * @see #groupEntriesBy()
+	 */
+	protected void resetMeter(Meter meter) {
+		this.remove(meter);
 	}
 
 	/**

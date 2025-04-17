@@ -86,6 +86,11 @@ public class EmbeddedNetworkHandler implements HasMetric<Context.VnetEmbeddingCo
 			}
 
 			@Override
+			public boolean shouldResetMeter(Meter meter) {
+				return true;
+			}
+
+			@Override
 			public Aggregation getAggregationType(Meter meter, String key, Object value) {
 				return TextSummaryReporter.AGGREGATION_TYPE.MAX;
 			}
