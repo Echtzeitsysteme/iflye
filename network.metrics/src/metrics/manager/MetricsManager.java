@@ -3,8 +3,8 @@ package metrics.manager;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -38,32 +38,13 @@ public class MetricsManager implements AutoCloseable {
 	 * The current instance of the {@link MetricsManager} for each thread.
 	 * 
 	 * @see #getInstance()
-	 * @see #wrapWithTags(Function, Tag...)
+	 * @see #wrap(Function, Tag...)
 	 * @see #withTags(Function, Tag...)
 	 * @see #withTags(Function, String...)
 	 * @see #withTags(Function, Iterable)
 	 */
-	protected static final ThreadLocal<Deque<MetricsManager>> instance = new InheritableThreadLocal<>() {
-		@Override
-		public Deque<MetricsManager> childValue(Deque<MetricsManager> parentValue) {
-			if (parentValue == null) {
-				return new ArrayDeque<>();
-			}
-
-			MetricsManager parentManager = parentValue.getFirst();
-			if (parentManager == null) {
-				return new ArrayDeque<>();
-			}
-
-			MetricsManager thisManager = parentManager.withTags(List.of());
-			return new ArrayDeque<>(List.of(thisManager));
-		}
-
-		@Override
-		protected Deque<MetricsManager> initialValue() {
-			return new ArrayDeque<>();
-		}
-	};
+	protected static final ThreadLocal<Deque<MetricsManager>> instance = ThreadLocal
+			.withInitial(() -> new ArrayDeque<>());
 
 	/**
 	 * The background {@link MeterRegistry} to be used for all metrics.
@@ -251,16 +232,32 @@ public class MetricsManager implements AutoCloseable {
 	 * @return A new {@link MetricsManager} with the given tags.
 	 */
 	public MetricsManager withTags(Iterable<? extends Tag> tags) {
+		final MetricsManager metricsManager = this.clone();
+		if (tags != null) {
+			metricsManager.addTags(Tags.of(tags));
+		}
+
+		return metricsManager;
+	}
+
+	/**
+	 * Creates a new {@link MetricsManager} based on this one. The new
+	 * {@link MetricsManager} will have the same {@link MeterRegistry} and
+	 * {@link ObservationRegistry} as this one.
+	 * 
+	 * @return A new {@link MetricsManager} with the given tags.
+	 */
+	public MetricsManager clone() {
 		final MetricsManager metricsManager = new MetricsManager(meterRegistry, observationRegistry);
-		metricsManager.addTags(this.tags.and(tags));
+		metricsManager.addTags(this.tags);
 		metricsManager.reporters.addAll(this.reporters);
 
 		return metricsManager;
 	}
 
 	/**
-	 * Passes a new {@link MetricsManager} with the given tags to the callable. The
-	 * new {@link MetricsManager} will have the same {@link MeterRegistry} and
+	 * Runs the callable in the context of a new {@link MetricsManager} instance.
+	 * The new {@link MetricsManager} will have the same {@link MeterRegistry} and
 	 * {@link ObservationRegistry} as this one, but will have the given tags. The
 	 * return value of the callable will be returned.
 	 * 
@@ -269,14 +266,15 @@ public class MetricsManager implements AutoCloseable {
 	 * @param tags     The tags to be used for all observations that are started by
 	 *                 the new {@link MetricsManager}.
 	 * @return The return value of the callable.
+	 * @throws E Any exception that might occur.
 	 */
-	public <T> T withTags(Function<MetricsManager, T> callable, Tag... tags) {
+	public <T, E extends Throwable> T withTags(Callable<T> callable, Tag... tags) throws E {
 		return this.withTags(callable, Tags.of(tags));
 	}
 
 	/**
-	 * Passes a new {@link MetricsManager} with the given tags to the callable. The
-	 * new {@link MetricsManager} will have the same {@link MeterRegistry} and
+	 * Runs the callable in the context of a new {@link MetricsManager} instance.
+	 * The new {@link MetricsManager} will have the same {@link MeterRegistry} and
 	 * {@link ObservationRegistry} as this one, but will have the given tags. The
 	 * return value of the callable will be returned.
 	 * 
@@ -285,14 +283,15 @@ public class MetricsManager implements AutoCloseable {
 	 * @param tags     The tags to be used for all observations that are started by
 	 *                 the new {@link MetricsManager}.
 	 * @return The return value of the callable.
+	 * @throws E Any exception that might occur.
 	 */
-	public <T> T withTags(Function<MetricsManager, T> callable, String... tags) {
+	public <T, E extends Throwable> T withTags(Callable<T> callable, String... tags) throws E {
 		return this.withTags(callable, Tags.of(tags));
 	}
 
 	/**
-	 * Passes a new {@link MetricsManager} with the given tags to the callable. The
-	 * new {@link MetricsManager} will have the same {@link MeterRegistry} and
+	 * Runs the callable in the context of a new {@link MetricsManager} instance.
+	 * The new {@link MetricsManager} will have the same {@link MeterRegistry} and
 	 * {@link ObservationRegistry} as this one, but will have the given tags. The
 	 * return value of the callable will be returned.
 	 * 
@@ -301,16 +300,19 @@ public class MetricsManager implements AutoCloseable {
 	 * @param tags     The tags to be used for all observations that are started by
 	 *                 the new {@link MetricsManager}.
 	 * @return The return value of the callable.
+	 * @throws E Any exception that might occur.
 	 */
-	public <T> T withTags(Function<MetricsManager, T> callable, Iterable<? extends Tag> tags) {
+	public <T, E extends Throwable> T withTags(Callable<T> callable, Iterable<? extends Tag> tags) throws E {
 		try (final MetricsManager metricsManager = this.withTags(tags)) {
-			final T result = callable.apply(metricsManager);
+			final T result = callable.call();
 			return result;
+		} catch (Throwable e) {
+			throw new RuntimeException(e);
 		}
 	}
 
 	/**
-	 * Passes a new {@link MetricsManager} with the given tags to the callable. The
+	 * Wraps the call of the callable in a new {@link MetricsManager} instance. The
 	 * new {@link MetricsManager} will have the same {@link MeterRegistry} and
 	 * {@link ObservationRegistry} as this one, but will have the given tags. A new
 	 * callable will be returned.
@@ -321,13 +323,12 @@ public class MetricsManager implements AutoCloseable {
 	 *                 the new {@link MetricsManager}.
 	 * @return A new callable.
 	 */
-	public <T, E extends Throwable> Observation.CheckedCallable<T, E> wrapWithTags(
-			Function<MetricsManager, Observation.CheckedCallable<T, E>> callable, Tag... tags) {
-		return this.wrapWithTags(callable, Tags.of(tags));
+	public <T, E extends Throwable> Callable<T> wrap(Callable<T> callable, Tag... tags) {
+		return this.wrap(callable, Tags.of(tags));
 	}
 
 	/**
-	 * Passes a new {@link MetricsManager} with the given tags to the callable. The
+	 * Wraps the call of the callable in a new {@link MetricsManager} instance. The
 	 * new {@link MetricsManager} will have the same {@link MeterRegistry} and
 	 * {@link ObservationRegistry} as this one, but will have the given tags. A new
 	 * callable will be returned.
@@ -338,13 +339,12 @@ public class MetricsManager implements AutoCloseable {
 	 *                 the new {@link MetricsManager}.
 	 * @return A new callable.
 	 */
-	public <T, E extends Throwable> Observation.CheckedCallable<T, E> wrapWithTags(
-			Function<MetricsManager, Observation.CheckedCallable<T, E>> callable, String... tags) {
-		return this.wrapWithTags(callable, Tags.of(tags));
+	public <T, E extends Throwable> Callable<T> wrap(Callable<T> callable, String... tags) {
+		return this.wrap(callable, Tags.of(tags));
 	}
 
 	/**
-	 * Passes a new {@link MetricsManager} with the given tags to the callable. The
+	 * Wraps the call of the callable in a new {@link MetricsManager} instance. The
 	 * new {@link MetricsManager} will have the same {@link MeterRegistry} and
 	 * {@link ObservationRegistry} as this one, but will have the given tags. A new
 	 * callable will be returned.
@@ -355,9 +355,26 @@ public class MetricsManager implements AutoCloseable {
 	 *                 the new {@link MetricsManager}.
 	 * @return A new callable.
 	 */
-	public <T, E extends Throwable> Observation.CheckedCallable<T, E> wrapWithTags(
-			Function<MetricsManager, Observation.CheckedCallable<T, E>> callable, Iterable<? extends Tag> tags) {
-		return () -> this.withTags(callable, tags).call();
+	public <T, E extends Throwable> Callable<T> wrap(Callable<T> callable, Iterable<? extends Tag> tags) {
+		return () -> this.withTags(callable, tags);
+	}
+
+	/**
+	 * Wraps the call of the callable in a new {@link MetricsManager} instance. The
+	 * new {@link MetricsManager} will have the same {@link MeterRegistry},
+	 * {@link ObservationRegistry} and tags as this one. A new callable will be
+	 * returned.
+	 * 
+	 * @param callable The callable to be executed with the new
+	 *                 {@link MetricsManager}.
+	 * @return A new callable.
+	 */
+	public <T> Callable<T> wrap(Callable<T> callable) {
+		return () -> {
+			try (final MetricsManager metricsManager = this.clone()) {
+				return callable.call();
+			}
+		};
 	}
 
 	/**
@@ -593,7 +610,7 @@ public class MetricsManager implements AutoCloseable {
 	 * @return The result of the callable.
 	 * @throws E If the callable throws an exception.
 	 */
-	public <T, E extends Throwable> T observe(String name, Observation.CheckedCallable<T, E> callable) throws E {
+	public <T, E extends Throwable> T observe(String name, Callable<T> callable) throws E {
 		return observe(name, DEFAULT_CONTEXT, callable);
 	}
 
@@ -606,17 +623,20 @@ public class MetricsManager implements AutoCloseable {
 	 * @return The result of the callable.
 	 * @throws E If the callable throws an exception.
 	 */
-	public <T, E extends Throwable> T observe(String name, Supplier<? extends Observation.Context> context,
-			Observation.CheckedCallable<T, E> callable) throws E {
-		final Observation observation = createObservation(name, context);
-		return observation.observeChecked(() -> {
-			final T result = callable.call();
-			if (result != null) {
-				// Put to make result available even if not a VNE metrics Context
-				observation.getContext().put("result", result);
-			}
-			return result;
-		});
+	public <T> T observe(String name, Supplier<? extends Observation.Context> context, Callable<T> callable) {
+		try {
+			final Observation observation = createObservation(name, context);
+			return observation.observeChecked(() -> {
+				final T result = callable.call();
+				if (result != null) {
+					// Put to make result available even if not a VNE metrics Context
+					observation.getContext().put("result", result);
+				}
+				return result;
+			});
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -628,8 +648,7 @@ public class MetricsManager implements AutoCloseable {
 	 * @return The result of the callable.
 	 * @throws E If the callable throws an exception.
 	 */
-	public <T, E extends Throwable> T observe(String name, Observation.CheckedCallable<T, E> callable, Tag... tags)
-			throws E {
+	public <T, E extends Throwable> T observe(String name, Callable<T> callable, Tag... tags) throws E {
 		return this.observe(name, callable, Tags.of(tags));
 	}
 
@@ -644,7 +663,7 @@ public class MetricsManager implements AutoCloseable {
 	 * @throws E If the callable throws an exception.
 	 */
 	public <T, E extends Throwable> T observe(String name, Supplier<? extends Observation.Context> context,
-			Observation.CheckedCallable<T, E> callable, Tag... tags) throws E {
+			Callable<T> callable, Tag... tags) throws E {
 		return this.observe(name, context, callable, Tags.of(tags));
 	}
 
@@ -657,8 +676,7 @@ public class MetricsManager implements AutoCloseable {
 	 * @return The result of the callable.
 	 * @throws E If the callable throws an exception.
 	 */
-	public <T, E extends Throwable> T observe(String name, Observation.CheckedCallable<T, E> callable, String... tags)
-			throws E {
+	public <T, E extends Throwable> T observe(String name, Callable<T> callable, String... tags) throws E {
 		return this.observe(name, callable, Tags.of(tags));
 	}
 
@@ -673,7 +691,7 @@ public class MetricsManager implements AutoCloseable {
 	 * @throws E If the callable throws an exception.
 	 */
 	public <T, E extends Throwable> T observe(String name, Supplier<? extends Observation.Context> context,
-			Observation.CheckedCallable<T, E> callable, String... tags) throws E {
+			Callable<T> callable, String... tags) throws E {
 		return this.observe(name, context, callable, Tags.of(tags));
 	}
 
@@ -686,8 +704,8 @@ public class MetricsManager implements AutoCloseable {
 	 * @return The result of the callable.
 	 * @throws E If the callable throws an exception.
 	 */
-	public <T, E extends Throwable> T observe(String name, Observation.CheckedCallable<T, E> callable,
-			Iterable<? extends Tag> tags) throws E {
+	public <T, E extends Throwable> T observe(String name, Callable<T> callable, Iterable<? extends Tag> tags)
+			throws E {
 		return this.observe(name, DEFAULT_CONTEXT, callable, tags);
 	}
 
@@ -702,7 +720,7 @@ public class MetricsManager implements AutoCloseable {
 	 * @throws E If the callable throws an exception.
 	 */
 	public <T, E extends Throwable> T observe(String name, Supplier<? extends Observation.Context> context,
-			Observation.CheckedCallable<T, E> callable, Iterable<? extends Tag> tags) throws E {
+			Callable<T> callable, Iterable<? extends Tag> tags) throws E {
 		try (final MetricsManager metricsManager = this.withTags(tags)) {
 			return metricsManager.observe(name, context, callable);
 		}
@@ -715,7 +733,7 @@ public class MetricsManager implements AutoCloseable {
 	 * @param runnable The runnable to be observed.
 	 * @throws E If the runnable throws an exception.
 	 */
-	public <T, E extends Throwable> void observe(String name, Observation.CheckedRunnable<E> runnable) throws E {
+	public <T, E extends Throwable> void observe(String name, Runnable runnable) throws E {
 		this.observe(name, DEFAULT_CONTEXT, runnable);
 	}
 
@@ -728,7 +746,7 @@ public class MetricsManager implements AutoCloseable {
 	 * @throws E If the runnable throws an exception.
 	 */
 	public <T, E extends Throwable> void observe(String name, Supplier<? extends Observation.Context> context,
-			Observation.CheckedRunnable<E> runnable) throws E {
+			Runnable runnable) throws E {
 		this.observe(name, context, () -> {
 			runnable.run();
 
@@ -745,8 +763,7 @@ public class MetricsManager implements AutoCloseable {
 	 * @param tags     The tags to be used for the {@link Observation}.
 	 * @throws E If the runnable throws an exception.
 	 */
-	public <T, E extends Throwable> void observe(String name, Observation.CheckedRunnable<E> runnable, Tag... tags)
-			throws E {
+	public <T, E extends Throwable> void observe(String name, Runnable runnable, Tag... tags) throws E {
 		this.observe(name, runnable, Tags.of(tags));
 	}
 
@@ -760,7 +777,7 @@ public class MetricsManager implements AutoCloseable {
 	 * @throws E If the runnable throws an exception.
 	 */
 	public <T, E extends Throwable> void observe(String name, Supplier<? extends Observation.Context> context,
-			Observation.CheckedRunnable<E> runnable, Tag... tags) throws E {
+			Runnable runnable, Tag... tags) throws E {
 		this.observe(name, context, runnable, Tags.of(tags));
 	}
 
@@ -772,8 +789,7 @@ public class MetricsManager implements AutoCloseable {
 	 * @param tags     The tags to be used for the {@link Observation}.
 	 * @throws E If the runnable throws an exception.
 	 */
-	public <T, E extends Throwable> void observe(String name, Observation.CheckedRunnable<E> runnable, String... tags)
-			throws E {
+	public <T, E extends Throwable> void observe(String name, Runnable runnable, String... tags) throws E {
 		this.observe(name, runnable, Tags.of(tags));
 	}
 
@@ -787,7 +803,7 @@ public class MetricsManager implements AutoCloseable {
 	 * @throws E If the runnable throws an exception.
 	 */
 	public <T, E extends Throwable> void observe(String name, Supplier<? extends Observation.Context> context,
-			Observation.CheckedRunnable<E> runnable, String... tags) throws E {
+			Runnable runnable, String... tags) throws E {
 		this.observe(name, context, runnable, Tags.of(tags));
 	}
 
@@ -799,8 +815,8 @@ public class MetricsManager implements AutoCloseable {
 	 * @param tags     The tags to be used for the {@link Observation}.
 	 * @throws E If the runnable throws an exception.
 	 */
-	public <T, E extends Throwable> void observe(String name, Observation.CheckedRunnable<E> runnable,
-			Iterable<? extends Tag> tags) throws E {
+	public <T, E extends Throwable> void observe(String name, Runnable runnable, Iterable<? extends Tag> tags)
+			throws E {
 		this.observe(name, DEFAULT_CONTEXT, runnable, tags);
 	}
 
@@ -814,7 +830,7 @@ public class MetricsManager implements AutoCloseable {
 	 * @throws E If the runnable throws an exception.
 	 */
 	public <T, E extends Throwable> void observe(String name, Supplier<? extends Observation.Context> context,
-			Observation.CheckedRunnable<E> runnable, Iterable<? extends Tag> tags) throws E {
+			Runnable runnable, Iterable<? extends Tag> tags) throws E {
 		try (final MetricsManager metricsManager = this.withTags(tags)) {
 			metricsManager.observe(name, context, runnable);
 		}
@@ -828,8 +844,7 @@ public class MetricsManager implements AutoCloseable {
 	 * @param callable The callable to be observed.
 	 * @return A new callable for observation.
 	 */
-	public <T, E extends Throwable> Observation.CheckedCallable<T, E> wrapObserve(String name,
-			Observation.CheckedCallable<T, E> callable) {
+	public <T, E extends Throwable> Callable<T> wrapObserve(String name, Callable<T> callable) {
 		return () -> this.observe(name, callable);
 	}
 
@@ -842,8 +857,8 @@ public class MetricsManager implements AutoCloseable {
 	 * @param callable The callable to be observed.
 	 * @return A new callable for observation.
 	 */
-	public <T, E extends Throwable> Observation.CheckedCallable<T, E> wrapObserve(String name,
-			Supplier<? extends Observation.Context> context, Observation.CheckedCallable<T, E> callable) {
+	public <T, E extends Throwable> Callable<T> wrapObserve(String name,
+			Supplier<? extends Observation.Context> context, Callable<T> callable) {
 		return () -> this.observe(name, context, callable);
 	}
 
@@ -858,8 +873,7 @@ public class MetricsManager implements AutoCloseable {
 	 * @return A new callable for observation.
 	 * @throws E If the callable throws an exception.
 	 */
-	public <T, E extends Throwable> Observation.CheckedCallable<T, E> wrapObserve(String name,
-			Observation.CheckedCallable<T, E> callable, Tag... tags) throws E {
+	public <T, E extends Throwable> Callable<T> wrapObserve(String name, Callable<T> callable, Tag... tags) throws E {
 		return this.wrapObserve(name, callable, Tags.of(tags));
 	}
 
@@ -875,9 +889,8 @@ public class MetricsManager implements AutoCloseable {
 	 * @return A new callable for observation.
 	 * @throws E If the callable throws an exception.
 	 */
-	public <T, E extends Throwable> Observation.CheckedCallable<T, E> wrapObserve(String name,
-			Supplier<? extends Observation.Context> context, Observation.CheckedCallable<T, E> callable, Tag... tags)
-			throws E {
+	public <T, E extends Throwable> Callable<T> wrapObserve(String name,
+			Supplier<? extends Observation.Context> context, Callable<T> callable, Tag... tags) throws E {
 		return this.wrapObserve(name, context, callable, Tags.of(tags));
 	}
 
@@ -892,8 +905,8 @@ public class MetricsManager implements AutoCloseable {
 	 * @return A new callable for observation.
 	 * @throws E If the callable throws an exception.
 	 */
-	public <T, E extends Throwable> Observation.CheckedCallable<T, E> wrapObserve(String name,
-			Observation.CheckedCallable<T, E> callable, String... tags) throws E {
+	public <T, E extends Throwable> Callable<T> wrapObserve(String name, Callable<T> callable, String... tags)
+			throws E {
 		return this.wrapObserve(name, callable, Tags.of(tags));
 	}
 
@@ -909,9 +922,8 @@ public class MetricsManager implements AutoCloseable {
 	 * @return A new callable for observation.
 	 * @throws E If the callable throws an exception.
 	 */
-	public <T, E extends Throwable> Observation.CheckedCallable<T, E> wrapObserve(String name,
-			Supplier<? extends Observation.Context> context, Observation.CheckedCallable<T, E> callable, String... tags)
-			throws E {
+	public <T, E extends Throwable> Callable<T> wrapObserve(String name,
+			Supplier<? extends Observation.Context> context, Callable<T> callable, String... tags) throws E {
 		return this.wrapObserve(name, context, callable, Tags.of(tags));
 	}
 
@@ -926,8 +938,8 @@ public class MetricsManager implements AutoCloseable {
 	 * @return A new callable for observation.
 	 * @throws E If the callable throws an exception.
 	 */
-	public <T, E extends Throwable> Observation.CheckedCallable<T, E> wrapObserve(String name,
-			Observation.CheckedCallable<T, E> callable, Iterable<? extends Tag> tags) throws E {
+	public <T, E extends Throwable> Callable<T> wrapObserve(String name, Callable<T> callable,
+			Iterable<? extends Tag> tags) throws E {
 		return this.wrapObserve(name, DEFAULT_CONTEXT, callable, tags);
 	}
 
@@ -943,10 +955,10 @@ public class MetricsManager implements AutoCloseable {
 	 * @return A new callable for observation.
 	 * @throws E If the callable throws an exception.
 	 */
-	public <T, E extends Throwable> Observation.CheckedCallable<T, E> wrapObserve(String name,
-			Supplier<? extends Observation.Context> context, Observation.CheckedCallable<T, E> callable,
-			Iterable<? extends Tag> tags) throws E {
-		return this.wrapWithTags((delegated) -> delegated.wrapObserve(name, context, callable), tags);
+	public <T, E extends Throwable> Callable<T> wrapObserve(String name,
+			Supplier<? extends Observation.Context> context, Callable<T> callable, Iterable<? extends Tag> tags)
+			throws E {
+		return this.wrap(() -> getInstance().observe(name, context, callable), tags);
 	}
 
 	/**
