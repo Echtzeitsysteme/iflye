@@ -490,7 +490,7 @@ public class DissScenarioLoad {
 			}
 			try {
 				final String token = Files.readAllLines(path).get(0).trim();
-				metricsManager.addReporter(new NotionReporter(token, seriesDb.isBlank() ? null : seriesDb,
+				metricsManager.addReporter(new NotionReporter.Default(token, seriesDb.isBlank() ? null : seriesDb,
 						metricDb.isBlank() ? null : metricDb));
 			} catch (IOException e) {
 				throw new RuntimeException(

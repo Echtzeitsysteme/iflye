@@ -45,7 +45,7 @@ public class CsvReporter extends GroupByTagsReporter implements Reporter {
 	 * file. New headers will be added if they do not exist in the file. They will
 	 * be written in the order they are added.
 	 */
-	protected List<String> headers = new ArrayList<>(List.of("counter", "timestamp", "lastVNR", "time_total",
+	protected List<String> headers = new ArrayList<>(List.of("level_0.counter", "timestamp", "lastVNR", "time_total",
 			"time_prepare", "time_execute", "time_pm", "time_ilp", "time_deploy", "accepted_vnrs", "total_path_cost",
 			"average_path_length", "total_communication_cost_a", "total_communication_cost_b",
 			"total_communication_cost_c", "total_communication_cost_d", "total_communication_objective_c",
@@ -56,7 +56,8 @@ public class CsvReporter extends GroupByTagsReporter implements Reporter {
 	 * The tags that will be persisted in the CSV file. Tags are filtered by this
 	 * list before writing to the file.
 	 */
-	protected List<String> persistTags = new ArrayList<>(List.of("counter", "lastVNR"));
+	protected List<String> persistTags = new ArrayList<>(List.of("lastVNR", "substrate network", "algorithm",
+			"virtual network", "started", "objective", "series uuid"));
 
 	/**
 	 * Initializes a new CsvReporter with the given output file. The file will be
@@ -200,7 +201,7 @@ public class CsvReporter extends GroupByTagsReporter implements Reporter {
 	 * @return A CSV row as a string.
 	 */
 	private String buildCsvRow(Collection<String> headerKeys, Map<String, Object> row) {
-		return headerKeys.stream().map((key) -> row.getOrDefault(key, (Object) "")).map(Object::toString)
+		return headerKeys.stream().map((key) -> row.getOrDefault(key, "")).map(Object::toString)
 				.collect(Collectors.joining(this.separator));
 	}
 

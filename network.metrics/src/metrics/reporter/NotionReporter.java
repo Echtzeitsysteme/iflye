@@ -19,11 +19,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import metrics.MetricTransformer;
-import metrics.manager.MetricsManager;
-import metrics.Reporter;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Tag;
+import metrics.MetricTransformer;
+import metrics.Reporter;
+import metrics.manager.MetricsManager;
 
 /**
  * NotionReporter is a reporter that sends metrics to a Notion database. It uses
@@ -87,7 +87,9 @@ public class NotionReporter extends GroupByTagsReporter implements Reporter {
 					return "Series Date"; // Renaming the key to a more human-readable format
 				}
 			});
-			this.addPropertyFormat("counter", PROPERTY_TYPE.NUMBER);
+			this.addPropertyFormat("objective", PROPERTY_TYPE.SELECT);
+			this.addPropertyFormat("lastVNR", PROPERTY_TYPE.TEXT);
+			this.addPropertyFormat("series uuid", PROPERTY_TYPE.SELECT);
 		}
 	}
 
@@ -177,6 +179,8 @@ public class NotionReporter extends GroupByTagsReporter implements Reporter {
 				return "{ \"start\": \"" + value + "\" }";
 			case "title":
 				return "[{ \"text\": { \"content\": \"" + value + "\" } }]";
+			case "rich_text":
+				return "[{ \"text\": { \"content\": \"" + value + "\" } }]";
 			case "relation":
 				return "[{ \"id\": \"" + value + "\" }]";
 			case "number":
@@ -221,6 +225,12 @@ public class NotionReporter extends GroupByTagsReporter implements Reporter {
 			@Override
 			public String type(String key, String value) {
 				return "title";
+			}
+		},
+		TEXT {
+			@Override
+			public String type(String key, String value) {
+				return "rich_text";
 			}
 		},
 		RELATION {
@@ -278,7 +288,7 @@ public class NotionReporter extends GroupByTagsReporter implements Reporter {
 				.collect(Collectors.toMap(Tag::getKey, Tag::getValue));
 		final String name = this.getSeriesDate(tags) + ": " + getName(tags);
 
-		tags.put("Name", name);
+		tags.putIfAbsent("Name", name);
 		Collection<String> properties = formatTags(tags).values();
 
 		try {
