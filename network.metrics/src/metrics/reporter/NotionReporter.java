@@ -297,19 +297,25 @@ public class NotionReporter extends GroupByTagsReporter implements Reporter {
 	 * assigned as properties if there was a format defined. If there is an active
 	 * series ID, it will be used to create a relation to the series.
 	 * 
-	 * @param entry the entry to flush
-	 * @param tags  the tags of the entry
+	 * @param entry    the entry to flush
+	 * @param groupKey the group key of the entry
 	 * @see #initialized()
 	 */
 	@Override
-	protected void flushEntry(Map<String, Object> entry, Map<String, String> tags) {
+	protected void flushEntry(GroupedReporter.Entry entry, Map<String, String> groupKey) {
 		if (this.token == null || this.metricDatabaseId == null) {
 			return;
 		}
 
-		final String name = this.getSeriesDate(tags) + ": " + String.valueOf(tags.getOrDefault("lastVNR", "")) + " ("
-				+ getName(tags) + ")";
+		getPersistedTags(entry.tags()).entrySet()
+				.forEach((tag) -> entry.values().putIfAbsent(tag.getKey(), tag.getValue()));
 
+		if (entry.values().isEmpty()) {
+			return;
+		}
+
+		final String name = this.getSeriesDate(entry.tags()) + ": "
+				+ String.valueOf(entry.tags().getOrDefault("lastVNR", "")) + " (" + getName(entry.tags()) + ")";
 		final List<String> properties = new ArrayList<>();
 		if (this.formatTag("Name", name) != null) {
 			properties.add(this.formatTag("Name", name));
@@ -317,7 +323,7 @@ public class NotionReporter extends GroupByTagsReporter implements Reporter {
 		if (this.seriesId != null && this.formatTag("Series", this.seriesId) != null) {
 			properties.add(this.formatTag("Series", this.seriesId));
 		}
-		properties.addAll(entry.values().stream().map((e) -> String.valueOf(e)).toList());
+		properties.addAll(entry.values().values().stream().map((e) -> String.valueOf(e)).toList());
 
 		try {
 			this.postMetric(this.metricDatabaseId, properties);
@@ -342,7 +348,7 @@ public class NotionReporter extends GroupByTagsReporter implements Reporter {
 	 */
 	@Override
 	protected boolean collectEntry(final Map<String, Object> metric, final MetricTransformer meterTransformer,
-			final Map<String, Object> entry, final Meter meter) {
+			final GroupedReporter.Entry entry, final Meter meter) {
 		if (this.token == null || this.metricDatabaseId == null) {
 			// Short-circuiting if there is no connection configured
 			return true;
@@ -358,7 +364,7 @@ public class NotionReporter extends GroupByTagsReporter implements Reporter {
 				continue;
 			}
 
-			entry.put(value.getKey(), format.format(value.getKey(), String.valueOf(value.getValue())));
+			entry.values().put(value.getKey(), format.format(value.getKey(), String.valueOf(value.getValue())));
 			found = true;
 		}
 
@@ -374,9 +380,8 @@ public class NotionReporter extends GroupByTagsReporter implements Reporter {
 	 * @see #formatTags(Map)
 	 * @see #getTags(Meter)
 	 */
-	@Override
-	protected Map<String, String> getInitialEntry(final Meter meter) {
-		return formatTags(getTags(meter));
+	protected Map<String, String> getPersistedTags(final Map<String, String> tags) {
+		return formatTags(tags);
 	}
 
 	/**

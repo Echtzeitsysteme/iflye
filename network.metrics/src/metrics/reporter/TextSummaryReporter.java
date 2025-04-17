@@ -1,15 +1,14 @@
 package metrics.reporter;
 
-import io.micrometer.core.instrument.*;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
+import io.micrometer.core.instrument.Meter;
 import metrics.MetricTransformer;
 
 /**
@@ -326,7 +325,7 @@ public class TextSummaryReporter extends GroupedReporter<String> {
 	 */
 	@Override
 	protected boolean collectEntry(final Map<String, Object> metric, final MetricTransformer meterTransformer,
-			final Map<String, Object> entry, final Meter meter) {
+			final GroupedReporter.Entry entry, final Meter meter) {
 		boolean found = false;
 		for (Map.Entry<String, Object> value : metric.entrySet()) {
 			AggregatingMeter aggregatingMeter = (meterTransformer instanceof AggregatingMeter)
@@ -388,7 +387,7 @@ public class TextSummaryReporter extends GroupedReporter<String> {
 			return this.metricOrder.indexOf(a.getKey()) - this.metricOrder.indexOf(b.getKey());
 		});
 
-		for (Entry<String, Object> metric : metrics) {
+		for (Map.Entry<String, Object> metric : metrics) {
 			this.publish(metric.getKey(), metric.getValue());
 		}
 	}
@@ -481,7 +480,7 @@ public class TextSummaryReporter extends GroupedReporter<String> {
 	 * {@link #conclude()}.
 	 */
 	@Override
-	protected void flushEntry(Map<String, Object> entry, String groupKey) {
+	protected void flushEntry(GroupedReporter.Entry entry, String groupKey) {
 		// noop
 	}
 

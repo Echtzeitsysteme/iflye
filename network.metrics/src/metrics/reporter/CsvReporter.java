@@ -17,7 +17,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import metrics.Reporter;
-import io.micrometer.core.instrument.Meter;
 
 /**
  * A reporter that writes metrics to a CSV file. The CSV file will be created if
@@ -87,9 +86,8 @@ public class CsvReporter extends GroupByTagsReporter implements Reporter {
 	 * @param meter The meter to get the tags from.
 	 * @return A map of tags that will be persisted in the CSV file.
 	 */
-	@Override
-	public Map<String, String> getInitialEntry(Meter meter) {
-		return getTags(meter).entrySet().stream().filter((tag) -> persistTags.contains(tag.getKey()))
+	protected Map<String, String> getPersistedTags(Map<String, String> tags) {
+		return tags.entrySet().stream().filter((tag) -> persistTags.contains(tag.getKey()))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
@@ -99,19 +97,26 @@ public class CsvReporter extends GroupByTagsReporter implements Reporter {
 	 * the file. If the entry contains new headers, they will be added to the file.
 	 * The order of the headers will be preserved.
 	 * 
-	 * @param entry The entry to write to the CSV file.
-	 * @param tags  The tags to write to the CSV file.
+	 * @param entry    The entry to write to the CSV file.
+	 * @param groupKey The key used to group this entry.
 	 * @throws RuntimeException If an error occurs while writing to the file.
 	 */
 	@Override
-	protected void flushEntry(Map<String, Object> entry, Map<String, String> tags) {
-		final boolean hasUpdatedHeader = updateHeaders(entry.keySet());
+	protected void flushEntry(GroupedReporter.Entry entry, Map<String, String> groupKey) {
+		getPersistedTags(entry.tags()).entrySet()
+				.forEach((tag) -> entry.values().putIfAbsent(tag.getKey(), tag.getValue()));
+
+		if (entry.values().isEmpty()) {
+			return;
+		}
+
+		final boolean hasUpdatedHeader = updateHeaders(entry.values().keySet());
 
 		if (hasUpdatedHeader || !outputFile.exists()) {
 			try {
 				// We can't just change the first row but need to rewrite the file
 				final List<String> updatedLines = updateFileEntries();
-				updatedLines.add(buildCsvRow(this.headers, entry));
+				updatedLines.add(buildCsvRow(this.headers, entry.values()));
 				Files.write(this.outputFile.toPath(), updatedLines);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
@@ -119,7 +124,7 @@ public class CsvReporter extends GroupByTagsReporter implements Reporter {
 		} else {
 			try (PrintWriter writer = new PrintWriter(new FileWriter(outputFile, true))) {
 				// Only append the new entry to the file
-				writer.println(buildCsvRow(this.headers, entry));
+				writer.println(buildCsvRow(this.headers, entry.values()));
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}

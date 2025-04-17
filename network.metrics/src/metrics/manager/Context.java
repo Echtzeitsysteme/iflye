@@ -58,22 +58,6 @@ public abstract class Context extends Observation.Context {
 	}
 
 	/**
-	 * @return The number of embeddings found in the current context.
-	 * @throws IllegalStateException If the context is not a child of a
-	 *                               {@link VnetEmbeddingContext}.
-	 */
-	public int getCounter() {
-		Observation.ContextView contextView = this.getParentObservation().getContextView();
-		String msg = "The context " + this.getClass().getSimpleName() + " is required to be a child to "
-				+ Context.class.getSimpleName() + ", was ";
-		if (Objects.requireNonNull(contextView, msg + "NULL") instanceof Context) {
-			return ((Context) contextView).getCounter();
-		}
-
-		throw new IllegalStateException(msg + contextView.getClass().getSimpleName());
-	}
-
-	/**
 	 * @return The metrics manager that initiated the current context.
 	 */
 	public MetricsManager getMetricsManager() {
@@ -124,7 +108,7 @@ public abstract class Context extends Observation.Context {
 	 * A context dedicated to the embedding of a virtual network. Used as a parent
 	 * to all contexts that are related to the embedding of a virtual network.
 	 */
-	public static class VnetEmbeddingContext extends Context {
+	public static abstract class VnetEmbeddingContext extends Context {
 
 		/**
 		 * The virtual network(s) to be embedded in the current context.
@@ -139,19 +123,19 @@ public abstract class Context extends Observation.Context {
 		/**
 		 * The number of embeddings found in the current context.
 		 */
-		protected final int counter;
+		protected final int level;
 
 		/**
 		 * Creates a new {@link VnetEmbeddingContext} with the given parameters.
 		 * 
-		 * @param sNet    The substrate network to be used in the current context.
-		 * @param vNet    The virtual network(s) to be embedded in the current context.
-		 * @param counter The number of embeddings found in the current context.
+		 * @param sNet  The substrate network to be used in the current context.
+		 * @param vNet  The virtual network(s) to be embedded in the current context.
+		 * @param level The level of embedding in a nested environment.
 		 */
-		public VnetEmbeddingContext(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNet, final int counter) {
+		public VnetEmbeddingContext(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNet, final int level) {
 			this.vNet = vNet;
 			this.sNet = sNet;
-			this.counter = counter;
+			this.level = level;
 		}
 
 		/**
@@ -171,11 +155,29 @@ public abstract class Context extends Observation.Context {
 		}
 
 		/**
-		 * {@inheritDoc}
+		 * 
 		 */
-		@Override
-		public int getCounter() {
-			return counter;
+		public int getLevel() {
+			return level;
+		}
+
+	}
+
+	/**
+	 * A context dedicated to the embedding of a virtual network. Used as a parent
+	 * to all contexts that are related to the embedding of a virtual network.
+	 */
+	public static class VnetRootContext extends VnetEmbeddingContext {
+
+		/**
+		 * Creates a new {@link VnetEmbeddingContext} with the given parameters.
+		 * 
+		 * @param sNet    The substrate network to be used in the current context.
+		 * @param vNet    The virtual network(s) to be embedded in the current context.
+		 * @param counter The number of embeddings found in the current context.
+		 */
+		public VnetRootContext(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNet) {
+			super(sNet, vNet, 0);
 		}
 
 	}

@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import org.apache.commons.cli.CommandLine;
@@ -119,8 +118,6 @@ public class DissScenarioLoad {
 	public static void main(final String[] args) throws IOException, InterruptedException {
 		parseArgs(args);
 
-		AtomicInteger counter = new AtomicInteger();
-
 		// Substrate network = read from file
 		final List<String> sNetIds = BasicModelConverter.jsonToModel(subNetPath, false);
 
@@ -152,16 +149,14 @@ public class DissScenarioLoad {
 
 			System.out.println("=> Embedding virtual network " + vNetId);
 
-			boolean success = metricsManager.observe(vNetId,
-					() -> new Context.VnetEmbeddingContext(sNet, Set.of(vNet), counter.get()), () -> {
+			boolean success = metricsManager.observe("algorithm", () -> new Context.VnetRootContext(sNet, Set.of(vNet)),
+					() -> {
 						// Create and execute algorithm
 						MetricsManager.getInstance().observe("prepare", Context.PrepareStageContext::new,
 								() -> algo.prepare(sNet, Set.of(vNet)));
 						return MetricsManager.getInstance().observe("execute", Context.ExecuteStageContext::new,
 								algo::execute);
-					}, Tags.of("lastVNR", vNetId, "counter", String.valueOf(counter.get())));
-
-			counter.getAndIncrement();
+					}, Tags.of("lastVNR", vNetId));
 
 			if (!success && removeUnembeddedVnets) {
 				ModelFacade.getInstance().removeNetworkFromRoot(vNetId);

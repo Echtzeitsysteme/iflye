@@ -8,14 +8,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import metrics.HasMetric;
-import metrics.MetricTransformer;
-import metrics.Reporter;
 import io.micrometer.core.instrument.Measurement;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.micrometer.observation.Observation;
+import metrics.HasMetric;
+import metrics.MetricTransformer;
+import metrics.Reporter;
 
 /**
  * GroupedReporter is a base class for reporters that group metrics by a
@@ -81,6 +81,15 @@ public abstract class GroupedReporter<T> extends SimpleMeterRegistry implements 
 	}
 
 	/**
+	 * The entry class that holds the values and tags of grouped meters.
+	 * 
+	 * @param values the values of the meters
+	 * @param tags   the tags of the meters
+	 */
+	public static record Entry(Map<String, Object> values, Map<String, String> tags) {
+	}
+
+	/**
 	 * Registers a meter provider that is used to transform the metrics.
 	 * 
 	 * @param meterProvider the meter provider to register
@@ -99,9 +108,9 @@ public abstract class GroupedReporter<T> extends SimpleMeterRegistry implements 
 	 */
 	@Override
 	public void flush() {
-		Map<T, Map<String, Object>> entries = groupEntriesBy();
+		Map<T, Entry> entries = groupEntriesBy();
 
-		for (Map.Entry<T, Map<String, Object>> entry : entries.entrySet()) {
+		for (Map.Entry<T, Entry> entry : entries.entrySet()) {
 			flushEntry(entry.getValue(), entry.getKey());
 		}
 	}
@@ -116,21 +125,23 @@ public abstract class GroupedReporter<T> extends SimpleMeterRegistry implements 
 	 * @see #getInitialEntry(Meter)
 	 * @see #collectEntry(Map, MetricTransformer, Map, Meter)
 	 */
-	protected Map<T, Map<String, Object>> groupEntriesBy() {
-		Map<T, Map<String, Object>> entries = new LinkedHashMap<>();
+	protected Map<T, Entry> groupEntriesBy() {
+		Map<T, Entry> entries = new LinkedHashMap<>();
 
 		for (Meter meter : getMeters()) {
 			T groupKey = getGroupKey(meter);
 
-			final Map<String, Object> entry = entries.computeIfAbsent(groupKey,
-					_ignored -> new HashMap<>(getInitialEntry(meter)));
+			final Entry entry = entries.computeIfAbsent(groupKey,
+					_ignored -> new Entry(new HashMap<>(), new HashMap<>()));
+			entry.tags.putAll(getTags(meter));
 			boolean found = false;
 			boolean reset = false;
 			for (HasMetric<? extends Observation.Context> meterProvider : this.meterProviders) {
 				MetricTransformer meterTransformer = meterProvider.getProvidedMeter(meter);
 				if (meterTransformer != null) {
-					found |= collectEntry(meterTransformer.toEntry(meter, Collections.unmodifiableMap(entry)),
-							meterTransformer, entry, meter);
+					final Map<String, Object> meterValues = meterTransformer.toEntry(meter,
+							Collections.unmodifiableMap(entry.values));
+					found |= collectEntry(meterValues, meterTransformer, entry, meter);
 					reset |= meterTransformer.shouldResetMeter(meter);
 				}
 			}
@@ -154,10 +165,11 @@ public abstract class GroupedReporter<T> extends SimpleMeterRegistry implements 
 	 * @param entry the entry to collect the meter to
 	 * @return true if the meter should be reset, false otherwise
 	 */
-	protected boolean applyDefaultCollector(Meter meter, final Map<String, Object> entry) {
+	protected boolean applyDefaultCollector(Meter meter, final Entry entry) {
 		MetricTransformer meterTransformer = new DefaultMetricTransformer();
-		collectEntry(meterTransformer.toEntry(meter, Collections.unmodifiableMap(entry)), meterTransformer, entry,
-				meter);
+		final Map<String, Object> meterValues = meterTransformer.toEntry(meter,
+				Collections.unmodifiableMap(entry.values));
+		collectEntry(meterValues, meterTransformer, entry, meter);
 
 		return meterTransformer.shouldResetMeter(meter);
 	}
@@ -207,22 +219,9 @@ public abstract class GroupedReporter<T> extends SimpleMeterRegistry implements 
 	 * @see #groupEntriesBy()
 	 */
 	protected boolean collectEntry(final Map<String, Object> metric, final MetricTransformer meterTransformer,
-			final Map<String, Object> entry, final Meter meter) {
-		entry.putAll(metric);
+			final Entry entry, final Meter meter) {
+		entry.values.putAll(metric);
 		return true;
-	}
-
-	/**
-	 * Returns the initial entry for the given meter. Default: returns the tags of
-	 * the meter.
-	 * 
-	 * @param meter the meter to get the initial entry for
-	 * @return a map of tags
-	 * @see #getTags(Meter)
-	 * @see #groupEntriesBy()
-	 */
-	protected Map<String, String> getInitialEntry(final Meter meter) {
-		return getTags(meter);
 	}
 
 	/**
@@ -236,6 +235,6 @@ public abstract class GroupedReporter<T> extends SimpleMeterRegistry implements 
 	 * @see #getGroupKey(Meter)
 	 * @see #getInitialEntry(Meter)
 	 */
-	protected abstract void flushEntry(Map<String, Object> entry, T groupKey);
+	protected abstract void flushEntry(Entry entry, T groupKey);
 
 }

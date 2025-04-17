@@ -18,6 +18,7 @@ import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.observation.Observations;
 import metrics.HasMetric;
 import metrics.Reporter;
+import metrics.handler.CounterHandler;
 import metrics.handler.EmbeddedNetworkHandler;
 import metrics.handler.TimingMemoryHandler;
 import metrics.reporter.TextSummaryReporter;
@@ -82,6 +83,7 @@ public class MetricsManager implements AutoCloseable {
 
 			this.addMeter(new TimingMemoryHandler());
 			this.addMeter(new EmbeddedNetworkHandler());
+			this.addMeter(new CounterHandler());
 
 			this.addReporter(new TextSummaryReporter());
 		}

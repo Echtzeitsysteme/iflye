@@ -61,7 +61,7 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
 				"implementation", algo.getClass().getSimpleName());
 		metricsManager.initialized();
 
-		metricsManager.observe("batch", () -> new Context.VnetEmbeddingContext(sNet, vNets, 0), () -> {
+		metricsManager.observe("batch", () -> new Context.VnetRootContext(sNet, vNets), () -> {
 			// Create and execute algorithm
 			MetricsManager.getInstance().observe("prepare", Context.PrepareStageContext::new,
 					() -> algo.prepare(sNet, vNets));
