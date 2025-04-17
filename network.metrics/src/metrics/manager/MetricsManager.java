@@ -3,6 +3,7 @@ package metrics.manager;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -42,8 +43,27 @@ public class MetricsManager implements AutoCloseable {
 	 * @see #withTags(Function, String...)
 	 * @see #withTags(Function, Iterable)
 	 */
-	protected static final ThreadLocal<Deque<MetricsManager>> instance = ThreadLocal
-			.withInitial(() -> new ArrayDeque<>());
+	protected static final ThreadLocal<Deque<MetricsManager>> instance = new InheritableThreadLocal<>() {
+		@Override
+		public Deque<MetricsManager> childValue(Deque<MetricsManager> parentValue) {
+			if (parentValue == null) {
+				return new ArrayDeque<>();
+			}
+
+			MetricsManager parentManager = parentValue.getFirst();
+			if (parentManager == null) {
+				return new ArrayDeque<>();
+			}
+
+			MetricsManager thisManager = parentManager.withTags(List.of());
+			return new ArrayDeque<>(List.of(thisManager));
+		}
+
+		@Override
+		protected Deque<MetricsManager> initialValue() {
+			return new ArrayDeque<>();
+		}
+	};
 
 	/**
 	 * The background {@link MeterRegistry} to be used for all metrics.
@@ -115,7 +135,7 @@ public class MetricsManager implements AutoCloseable {
 	 *         current thread.
 	 */
 	public static MetricsManager getInstance() {
-		return instance.get().getFirst();
+		return instance.get().size() > 0 ? instance.get().getFirst() : null;
 	}
 
 	/**
