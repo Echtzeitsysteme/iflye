@@ -1,6 +1,7 @@
 package metrics.manager;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import io.micrometer.observation.Observation;
@@ -13,6 +14,16 @@ import model.VirtualNetwork;
  * @author Janik Stracke {@literal <janik.stracke@stud.tu-darmstadt.de>}
  */
 public abstract class Context extends Observation.Context {
+
+	/**
+	 * The metrics manager that initiated the current context.
+	 */
+	protected MetricsManager metricsManager;
+
+	/**
+	 * The result of the current context.
+	 */
+	protected Optional<Object> result = Optional.empty();
 
 	/**
 	 * @return The Virtual Network(s) to be embedded in the current context.
@@ -60,6 +71,53 @@ public abstract class Context extends Observation.Context {
 		}
 
 		throw new IllegalStateException(msg + contextView.getClass().getSimpleName());
+	}
+
+	/**
+	 * @return The metrics manager that initiated the current context.
+	 */
+	public MetricsManager getMetricsManager() {
+		return this.metricsManager;
+	}
+
+	/**
+	 * Sets the metrics manager that initiated the current context.
+	 * 
+	 * @param metricsManager The metrics manager that initiated the current context,
+	 *                       must not be null.
+	 */
+	public void setMetricsManager(MetricsManager metricsManager) {
+		this.metricsManager = metricsManager;
+	}
+
+	public <T> Context put(Object key, T object) {
+		super.put(key, object);
+
+		if (key.equals("manager") && object instanceof MetricsManager) {
+			this.setMetricsManager((MetricsManager) object);
+		}
+		if (key.equals("result") && object != null) {
+			this.setResult(object);
+		}
+
+		return this;
+	}
+
+	/**
+	 * @return The result of the current context.
+	 */
+	public Optional<Object> getResult() {
+		return this.result;
+	}
+
+	/**
+	 * Sets the result of the current context.
+	 * 
+	 * @param result The result of the current context, must not be null.
+	 * @throws IllegalArgumentException If the result is null.
+	 */
+	public void setResult(Object result) {
+		this.result = Optional.of(result);
 	}
 
 	/**

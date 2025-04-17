@@ -449,7 +449,8 @@ public class MetricsManager implements AutoCloseable {
 	protected Observation createObservation(String name, Supplier<? extends Observation.Context> context) {
 		Observation observation = Observation.createNotStarted(name, context, observationRegistry);
 		observation.lowCardinalityKeyValues(KeyValues.of(this.tags, Tag::getKey, Tag::getValue));
-		observation.getContext().put("manager", this);
+		observation.getContext().put("manager", this); // Put to make instance available even if not a VNE metrics
+														// Context
 
 		return observation;
 	}
@@ -606,8 +607,15 @@ public class MetricsManager implements AutoCloseable {
 	 */
 	public <T, E extends Throwable> T observe(String name, Supplier<? extends Observation.Context> context,
 			Observation.CheckedCallable<T, E> callable) throws E {
-		Observation observation = createObservation(name, context);
-		return observation.observeChecked(callable);
+		final Observation observation = createObservation(name, context);
+		return observation.observeChecked(() -> {
+			final T result = callable.call();
+			if (result != null) {
+				// Put to make result available even if not a VNE metrics Context
+				observation.getContext().put("result", result);
+			}
+			return result;
+		});
 	}
 
 	/**
