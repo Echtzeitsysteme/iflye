@@ -1,5 +1,6 @@
 package metrics.embedding;
 
+import facade.ModelFacade;
 import metrics.IMetric;
 import model.Node;
 import model.SubstrateNetwork;
@@ -26,7 +27,7 @@ public class ActiveSubstrateSwitchMetric implements IMetric {
 	public ActiveSubstrateSwitchMetric(final SubstrateNetwork sNet) {
 		int value = 0;
 
-		for (final Node n : facade.getAllSwitchesOfNetwork(sNet.getName())) {
+		for (final Node n : ModelFacade.getAllSwitchesOfNetwork(sNet)) {
 			final SubstrateSwitch sw = (SubstrateSwitch) n;
 			if (!sw.getGuestSwitches().isEmpty()) {
 				value++;

@@ -48,7 +48,7 @@ public class TotalCommunicationCostMetricB implements IMetric {
 
 		// Iterate over all virtual networks that are embedded on the substrate network
 		for (final VirtualNetwork vNet : sNet.getGuests()) {
-			final List<Link> guestLinks = facade.getAllLinksOfNetwork(vNet.getName());
+			final List<Link> guestLinks = vNet.getLinks();
 
 			// Iterate over all virtual links
 			for (final Link l : guestLinks) {
