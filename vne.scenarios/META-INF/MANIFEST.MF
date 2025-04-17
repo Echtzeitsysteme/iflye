@@ -26,5 +26,6 @@ Require-Bundle: ilp,
  vne.algorithms,
  network.metrics,
  network.generators,
+ org.emoflon.gips.core,
  iflye.dependencies
 Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt

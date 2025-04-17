@@ -309,7 +309,7 @@ public class MetricsManager implements AutoCloseable {
 			final T result = callable.call();
 			return result;
 		} catch (Throwable e) {
-			throw e instanceof RuntimeException ? (RuntimeException)e : new RuntimeException(e);
+			throw e instanceof RuntimeException ? (RuntimeException) e : new RuntimeException(e);
 		}
 	}
 
@@ -637,7 +637,7 @@ public class MetricsManager implements AutoCloseable {
 				return result;
 			});
 		} catch (Exception e) {
-			throw e instanceof RuntimeException ? (RuntimeException)e : new RuntimeException(e);
+			throw e instanceof RuntimeException ? (RuntimeException) e : new RuntimeException(e);
 		}
 	}
 

@@ -30,6 +30,7 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
 	 */
 	public static void main(final String[] args) {
 		parseArgs(args);
+		metricsManager.addMeter(new GipsIlpHandler());
 
 		// Substrate network = read from file
 		final List<String> sNetIds = BasicModelConverter.jsonToModel(subNetPath, false);
@@ -61,7 +62,7 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
 				"implementation", algo.getClass().getSimpleName());
 		metricsManager.initialized();
 
-		metricsManager.observe("batch", () -> new Context.VnetRootContext(sNet, vNets), () -> {
+		metricsManager.observe("batch", () -> new Context.VnetRootContext(sNet, vNets, algo), () -> {
 			// Create and execute algorithm
 			MetricsManager.getInstance().observe("prepare", Context.PrepareStageContext::new,
 					() -> algo.prepare(sNet, vNets));

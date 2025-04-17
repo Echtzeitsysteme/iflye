@@ -126,15 +126,24 @@ public abstract class Context extends Observation.Context {
 		protected final int level;
 
 		/**
+		 * The algorithm used at this level.
+		 */
+		protected final Object algorithm;
+
+		/**
 		 * Creates a new {@link VnetEmbeddingContext} with the given parameters.
 		 * 
-		 * @param sNet  The substrate network to be used in the current context.
-		 * @param vNet  The virtual network(s) to be embedded in the current context.
-		 * @param level The level of embedding in a nested environment.
+		 * @param sNet      The substrate network to be used in the current context.
+		 * @param vNet      The virtual network(s) to be embedded in the current
+		 *                  context.
+		 * @param algorithm The algorithm used at this level.
+		 * @param level     The level of embedding in a nested environment.
 		 */
-		public VnetEmbeddingContext(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNet, final int level) {
+		public VnetEmbeddingContext(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNet, final Object algorithm,
+				final int level) {
 			this.vNet = vNet;
 			this.sNet = sNet;
+			this.algorithm = algorithm;
 			this.level = level;
 		}
 
@@ -155,7 +164,14 @@ public abstract class Context extends Observation.Context {
 		}
 
 		/**
-		 * 
+		 * @return The algorithm used at this level.
+		 */
+		public Object getAlgorithm() {
+			return this.algorithm;
+		}
+
+		/**
+		 * @return The level how deep this context is nested.
 		 */
 		public int getLevel() {
 			return level;
@@ -172,12 +188,13 @@ public abstract class Context extends Observation.Context {
 		/**
 		 * Creates a new {@link VnetEmbeddingContext} with the given parameters.
 		 * 
-		 * @param sNet    The substrate network to be used in the current context.
-		 * @param vNet    The virtual network(s) to be embedded in the current context.
-		 * @param counter The number of embeddings found in the current context.
+		 * @param sNet      The substrate network to be used in the current context.
+		 * @param vNet      The virtual network(s) to be embedded in the current
+		 *                  context.
+		 * @param algorithm The algorithm used at this level.
 		 */
-		public VnetRootContext(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNet) {
-			super(sNet, vNet, 0);
+		public VnetRootContext(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNet, Object algorithm) {
+			super(sNet, vNet, algorithm, 0);
 		}
 
 	}

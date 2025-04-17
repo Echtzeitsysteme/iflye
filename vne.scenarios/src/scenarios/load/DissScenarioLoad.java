@@ -117,6 +117,7 @@ public class DissScenarioLoad {
 	 */
 	public static void main(final String[] args) throws IOException, InterruptedException {
 		parseArgs(args);
+		metricsManager.addMeter(new GipsIlpHandler());
 
 		// Substrate network = read from file
 		final List<String> sNetIds = BasicModelConverter.jsonToModel(subNetPath, false);
@@ -149,8 +150,8 @@ public class DissScenarioLoad {
 
 			System.out.println("=> Embedding virtual network " + vNetId);
 
-			boolean success = metricsManager.observe("algorithm", () -> new Context.VnetRootContext(sNet, Set.of(vNet)),
-					() -> {
+			boolean success = metricsManager.observe("algorithm",
+					() -> new Context.VnetRootContext(sNet, Set.of(vNet), algo), () -> {
 						// Create and execute algorithm
 						MetricsManager.getInstance().observe("prepare", Context.PrepareStageContext::new,
 								() -> algo.prepare(sNet, Set.of(vNet)));
