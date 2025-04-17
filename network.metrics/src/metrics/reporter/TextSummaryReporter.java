@@ -218,6 +218,22 @@ public class TextSummaryReporter extends GroupedReporter<String> {
 			public Object aggregateValues(final String key, final Object aggregatedValue, final Object value) {
 				return Math.max(((double) aggregatedValue), ((double) value));
 			}
+		},
+		AVG {
+			@Override
+			public Object aggregateValues(final String key, final Object aggregatedValue, final Object value) {
+				if (aggregatedValue instanceof double[]) {
+					double[] v = (double[]) aggregatedValue;
+					return new double[] { v[0] + (double) value, v[1] + 1 };
+				} else {
+					return initialValue(key, value);
+				}
+			}
+
+			@Override
+			public Object initialValue(String key, Object value) {
+				return new double[] { (double) value, 1 };
+			}
 		}
 	}
 
@@ -391,10 +407,42 @@ public class TextSummaryReporter extends GroupedReporter<String> {
 	 * @see MetricFormat
 	 */
 	protected String format(String metric, Object value) {
-		MetricFormat metricFormat = this.metricFormats.getOrDefault(metric, (key, _value) -> key.replace("_", " "));
+		MetricFormat metricFormat = this.metricFormats.getOrDefault(metric, getDefaultFormatter(metric, value));
 		metricFormat = this.metricFormatOverwrites.getOrDefault(metric, metricFormat);
 
 		return this.format.apply(metricFormat.label(metric, value), metricFormat.value(metric, value));
+	}
+
+	/**
+	 * Returns the default formatter for all metrics. Prints the metrics as is,
+	 * except for double arrays, which are assumed to be an average metric and are
+	 * therefore divided by the second value.
+	 * 
+	 * @param metric the key of the metric
+	 * @param value  the value of the metric
+	 * @return the default formatter
+	 */
+	protected MetricFormat getDefaultFormatter(String metric, Object value) {
+		final MetricFormat defaultMetricFormat = (key, _value) -> key.replace("_", " ");
+
+		if (value instanceof double[]) {
+			return new MetricFormat() {
+
+				@Override
+				public String label(String key, Object value) {
+					return defaultMetricFormat.label(key, value);
+				}
+
+				@Override
+				public String value(String key, Object value) {
+					double[] v = (double[]) value;
+					return MetricFormat.super.value(key, v[0] / v[1]);
+				}
+
+			};
+		}
+
+		return defaultMetricFormat;
 	}
 
 	/**
