@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import io.micrometer.core.instrument.Meter;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationHandler;
 
@@ -39,5 +40,13 @@ public interface HasMetric<T extends Observation.Context> extends ObservationHan
 	default public Collection<MetricTransformer> getProvidedMeters() {
 		return List.of();
 	}
+
+	/**
+	 * Set the currently used {@link MeterRegistry} for this {@link HasMetric}.
+	 * 
+	 * @param meterRegistry The {@link MeterRegistry} to be set.
+	 * @throws IllegalArgumentException If the given {@link MeterRegistry} is null.
+	 */
+	public void setMeterRegistry(final MeterRegistry meterRegistry);
 
 }

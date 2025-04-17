@@ -42,16 +42,14 @@ public class EmbeddedNetworkHandler implements HasMetric<Context.VnetEmbeddingCo
 	/**
 	 * The {@link MeterRegistry} to register the metrics to.
 	 */
-	private final MeterRegistry meterRegistry;
+	private MeterRegistry meterRegistry;
 
 	/**
 	 * The map of metrics supported by this handler.
 	 */
 	private final Map<String, Function<SubstrateNetwork, IMetric>> metrics = new HashMap<>();
 
-	public EmbeddedNetworkHandler(MeterRegistry meterRegistry) {
-		this.meterRegistry = meterRegistry;
-
+	public EmbeddedNetworkHandler() {
 		this.metrics.put("accepted_vnrs", (sNet) -> new AcceptedVnrMetric(sNet));
 		this.metrics.put("total_path_cost", (sNet) -> new TotalPathCostMetric(sNet));
 		this.metrics.put("average_path_length", (sNet) -> new AveragePathLengthMetric(sNet));
@@ -137,6 +135,14 @@ public class EmbeddedNetworkHandler implements HasMetric<Context.VnetEmbeddingCo
 	 */
 	private List<Tag> createTags(Context context) {
 		return context.getLowCardinalityKeyValues().stream().map(kv -> Tag.of(kv.getKey(), kv.getValue())).toList();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setMeterRegistry(MeterRegistry meterRegistry) {
+		this.meterRegistry = meterRegistry;
 	}
 
 }

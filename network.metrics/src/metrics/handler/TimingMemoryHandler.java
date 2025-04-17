@@ -34,11 +34,7 @@ public class TimingMemoryHandler implements HasMetric<Context> {
 	/**
 	 * The {@link MeterRegistry} to register the metrics to.
 	 */
-	private final MeterRegistry meterRegistry;
-
-	public TimingMemoryHandler(MeterRegistry meterRegistry) {
-		this.meterRegistry = meterRegistry;
-	}
+	private MeterRegistry meterRegistry;
 
 	/**
 	 * {@inheritDoc}
@@ -212,6 +208,14 @@ public class TimingMemoryHandler implements HasMetric<Context> {
 	 */
 	private List<Tag> createTags(Context context) {
 		return context.getLowCardinalityKeyValues().stream().map(kv -> Tag.of(kv.getKey(), kv.getValue())).toList();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setMeterRegistry(MeterRegistry meterRegistry) {
+		this.meterRegistry = meterRegistry;
 	}
 
 }

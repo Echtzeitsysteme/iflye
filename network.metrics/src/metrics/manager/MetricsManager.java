@@ -99,8 +99,8 @@ public class MetricsManager implements AutoCloseable {
 		public Default() {
 			super();
 
-			this.addMeter(new TimingMemoryHandler(this.meterRegistry));
-			this.addMeter(new EmbeddedNetworkHandler(this.meterRegistry));
+			this.addMeter(new TimingMemoryHandler());
+			this.addMeter(new EmbeddedNetworkHandler());
 
 			this.addReporter(new TextSummaryReporter());
 		}
@@ -187,6 +187,7 @@ public class MetricsManager implements AutoCloseable {
 	 * Adds a new {@link HasMetric} to the {@link MetricsManager}.
 	 */
 	public void addMeter(final HasMetric<? extends Observation.Context> meterProvider) {
+		meterProvider.setMeterRegistry(this.meterRegistry);
 		this.reporters.forEach((reporter) -> reporter.registerMeterProvider(meterProvider));
 		this.meterProviders.add(meterProvider);
 		this.observationRegistry.observationConfig().observationHandler(meterProvider);
