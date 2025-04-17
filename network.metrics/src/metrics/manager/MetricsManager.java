@@ -322,7 +322,7 @@ public class MetricsManager implements AutoCloseable {
 	 */
 	public <T, E extends Throwable> Observation.CheckedCallable<T, E> wrapWithTags(
 			Function<MetricsManager, Observation.CheckedCallable<T, E>> callable, Tag... tags) {
-		return this.withTags(callable, Tags.of(tags));
+		return this.wrapWithTags(callable, Tags.of(tags));
 	}
 
 	/**
@@ -339,7 +339,7 @@ public class MetricsManager implements AutoCloseable {
 	 */
 	public <T, E extends Throwable> Observation.CheckedCallable<T, E> wrapWithTags(
 			Function<MetricsManager, Observation.CheckedCallable<T, E>> callable, String... tags) {
-		return this.withTags(callable, Tags.of(tags));
+		return this.wrapWithTags(callable, Tags.of(tags));
 	}
 
 	/**
@@ -465,11 +465,7 @@ public class MetricsManager implements AutoCloseable {
 	 * @see #stop()
 	 */
 	public Observation.Context start(String name) {
-		Observation observation = createObservation(name);
-		observation.start();
-		observation.openScope();
-
-		return observation.getContext();
+		return this.start(name, DEFAULT_CONTEXT);
 	}
 
 	/**
@@ -699,8 +695,7 @@ public class MetricsManager implements AutoCloseable {
 	public <T, E extends Throwable> T observe(String name, Supplier<? extends Observation.Context> context,
 			Observation.CheckedCallable<T, E> callable, Iterable<? extends Tag> tags) throws E {
 		try (final MetricsManager metricsManager = this.withTags(tags)) {
-			Observation observation = metricsManager.createObservation(name, context);
-			return observation.observeChecked(callable);
+			return metricsManager.observe(name, context, callable);
 		}
 	}
 
@@ -725,8 +720,12 @@ public class MetricsManager implements AutoCloseable {
 	 */
 	public <T, E extends Throwable> void observe(String name, Supplier<? extends Observation.Context> context,
 			Observation.CheckedRunnable<E> runnable) throws E {
-		Observation observation = createObservation(name, context);
-		observation.observeChecked(runnable);
+		this.observe(name, context, () -> {
+			runnable.run();
+
+			// Return for typed callable, ignore value
+			return null;
+		});
 	}
 
 	/**
@@ -808,8 +807,7 @@ public class MetricsManager implements AutoCloseable {
 	public <T, E extends Throwable> void observe(String name, Supplier<? extends Observation.Context> context,
 			Observation.CheckedRunnable<E> runnable, Iterable<? extends Tag> tags) throws E {
 		try (final MetricsManager metricsManager = this.withTags(tags)) {
-			Observation observation = metricsManager.createObservation(name, context);
-			observation.observeChecked(runnable);
+			metricsManager.observe(name, context, runnable);
 		}
 	}
 
@@ -921,7 +919,7 @@ public class MetricsManager implements AutoCloseable {
 	 */
 	public <T, E extends Throwable> Observation.CheckedCallable<T, E> wrapObserve(String name,
 			Observation.CheckedCallable<T, E> callable, Iterable<? extends Tag> tags) throws E {
-		return this.wrapWithTags((delegated) -> delegated.wrapObserve(name, callable), tags);
+		return this.wrapObserve(name, DEFAULT_CONTEXT, callable, tags);
 	}
 
 	/**
