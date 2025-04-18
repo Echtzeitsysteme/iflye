@@ -59,7 +59,7 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
 			vNetIds.forEach(i -> vNets.add((VirtualNetwork) ModelFacade.getInstance().getNetworkById(i)));
 
 			metricsManager.addTags("series uuid", UUID.randomUUID().toString(), "started",
-					OffsetDateTime.now().toString(), "algorithm", algo.getClass().getSimpleName());
+					OffsetDateTime.now().toString(), "algorithm", algo.getAlgorithmName());
 			metricsManager.initialized();
 
 			metricsManager.observe("batch", () -> new Context.VnetRootContext(sNet, vNets, algo), () -> {

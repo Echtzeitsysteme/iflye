@@ -140,7 +140,7 @@ public class DissScenarioLoad {
 			String vNetId = IncrementalModelConverter.jsonToModelIncremental(virtNetsPath, true);
 
 			metricsManager.addTags("series uuid", UUID.randomUUID().toString(), "started",
-					OffsetDateTime.now().toString(), "algorithm", algo.getClass().getSimpleName());
+					OffsetDateTime.now().toString(), "algorithm", algo.getAlgorithmName());
 			metricsManager.initialized();
 
 			while (vNetId != null) {
