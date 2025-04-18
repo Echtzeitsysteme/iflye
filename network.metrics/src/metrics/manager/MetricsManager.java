@@ -20,7 +20,8 @@ import metrics.HasMetric;
 import metrics.Reporter;
 import metrics.handler.CounterHandler;
 import metrics.handler.EmbeddedNetworkHandler;
-import metrics.handler.TimingMemoryHandler;
+import metrics.handler.MemoryHandler;
+import metrics.handler.TimingHandler;
 import metrics.reporter.TextSummaryReporter;
 
 /**
@@ -75,15 +76,16 @@ public class MetricsManager implements AutoCloseable {
 
 	/**
 	 * A Default MetricsManager configuration with a {@link TextSummaryReporter} and
-	 * the {@link TimingMemoryHandler} and {@link EmbeddedNetworkHandler}.
+	 * the {@link TimingHandler} and {@link EmbeddedNetworkHandler}.
 	 */
 	public static class Default extends MetricsManager {
 		public Default() {
 			super();
 
-			this.addMeter(new TimingMemoryHandler());
+			this.addMeter(new TimingHandler());
 			this.addMeter(new EmbeddedNetworkHandler());
 			this.addMeter(new CounterHandler());
+			this.addMeter(new MemoryHandler());
 
 			this.addReporter(new TextSummaryReporter());
 		}

@@ -10,26 +10,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import metrics.HasMetric;
-import metrics.MetricTransformer;
-import metrics.manager.Context;
-import metrics.reporter.NotionReporter;
-import metrics.reporter.TextSummaryReporter;
-import metrics.reporter.NotionReporter.PropertyFormat;
-import metrics.reporter.TextSummaryReporter.Aggregation;
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.observation.Observation;
+import metrics.HasMetric;
+import metrics.MetricTransformer;
+import metrics.manager.Context;
+import metrics.reporter.NotionReporter;
+import metrics.reporter.NotionReporter.PropertyFormat;
+import metrics.reporter.TextSummaryReporter;
+import metrics.reporter.TextSummaryReporter.Aggregation;
 
 /**
- * Handles all metrics related to the timing and memory usage.
+ * Handles all metrics related to the timing.
  * 
  * @author Janik Stracke {@literal <janik.stracke@stud.tu-darmstadt.de>}
  */
-public class TimingMemoryHandler implements HasMetric<Context> {
+public class TimingHandler implements HasMetric<Context> {
 
 	/**
 	 * The {@link MeterRegistry} to register the metrics to.
@@ -73,35 +73,6 @@ public class TimingMemoryHandler implements HasMetric<Context> {
 				return NotionReporter.PROPERTY_TYPE.DATE;
 			}
 		}
-		class MemoryMeter implements TextSummaryReporter.AggregatingMeter, NotionReporter.NotionMeter {
-			@Override
-			public Map<String, Object> toEntry(Meter meter, Map<String, Object> unmodifiableEntry) {
-				DistributionSummary memory = (DistributionSummary) meter;
-				Map<String, Object> entry = new HashMap<>();
-				entry.put(meter.getId().getName(), (Object) memory.max());
-				return entry;
-			}
-
-			@Override
-			public boolean supportsMeter(Meter meter) {
-				return meter instanceof DistributionSummary && meter.getId().getName().startsWith("memory_");
-			}
-
-			@Override
-			public boolean shouldResetMeter(Meter meter) {
-				return true;
-			}
-
-			@Override
-			public Aggregation getAggregationType(Meter meter, String key, Object value) {
-				return TextSummaryReporter.AGGREGATION_TYPE.MAX;
-			}
-
-			@Override
-			public PropertyFormat getNotionPropertyFormat(Meter meter, String key, Object value) {
-				return NotionReporter.PROPERTY_TYPE.NUMBER;
-			}
-		}
 		class TimeMeter implements TextSummaryReporter.AggregatingMeter, NotionReporter.NotionMeter {
 			@Override
 			public Map<String, Object> toEntry(Meter meter, Map<String, Object> unmodifiableEntry) {
@@ -131,7 +102,7 @@ public class TimingMemoryHandler implements HasMetric<Context> {
 				return NotionReporter.PROPERTY_TYPE.NUMBER;
 			}
 		}
-		return List.of(new TimestampMeter(), new MemoryMeter(), new TimeMeter());
+		return List.of(new TimestampMeter(), new TimeMeter());
 	}
 
 	/**
@@ -139,7 +110,6 @@ public class TimingMemoryHandler implements HasMetric<Context> {
 	 */
 	@Override
 	public void onStart(Context context) {
-		context.put("memory", Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
 		context.put(Timer.Sample.class, Timer.start(meterRegistry));
 
 		if (context instanceof Context.VnetEmbeddingContext) {
@@ -154,16 +124,6 @@ public class TimingMemoryHandler implements HasMetric<Context> {
 	@Override
 	public void onStop(Context context) {
 		final String suffix = getSuffix(context);
-
-		long memBefore = context.getOrDefault("memory", 0L);
-		long memAfter = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-		long used = Math.max(0, memAfter - memBefore);
-
-		meterRegistry.summary("memory_" + suffix, createTags(context)).record(used / 1024.0);
-//    	meterRegistry
-//			.summary("memory_"+suffix+".begin", createTags(context)).record(memBefore / 1024.0);
-//    	meterRegistry
-//			.summary("memory_"+suffix+".end", createTags(context)).record(memAfter / 1024.0);
 
 		Timer.Sample sample = context.getRequired(Timer.Sample.class);
 		if (sample != null) {
