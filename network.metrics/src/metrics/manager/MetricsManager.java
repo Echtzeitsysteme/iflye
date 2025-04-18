@@ -21,6 +21,7 @@ import metrics.Reporter;
 import metrics.handler.CounterHandler;
 import metrics.handler.EmbeddedNetworkHandler;
 import metrics.handler.MemoryHandler;
+import metrics.handler.ThreadHandler;
 import metrics.handler.TimingHandler;
 import metrics.reporter.TextSummaryReporter;
 
@@ -86,6 +87,7 @@ public class MetricsManager implements AutoCloseable {
 			this.addMeter(new EmbeddedNetworkHandler());
 			this.addMeter(new CounterHandler());
 			this.addMeter(new MemoryHandler());
+			this.addMeter(new ThreadHandler());
 
 			this.addReporter(new TextSummaryReporter());
 		}
