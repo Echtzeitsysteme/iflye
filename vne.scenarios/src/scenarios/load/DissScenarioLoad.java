@@ -102,6 +102,12 @@ public class DissScenarioLoad {
 	protected static String persistModelPath;
 
 	/**
+	 * If VNets that where not successfully embedded should be removed from the
+	 * model to prevent from blocking further embeddings.
+	 */
+	protected static boolean removeUnembeddedVnets = false;
+
+	/**
 	 * Main method to start the example. String array of arguments will be parsed.
 	 *
 	 * @param args See {@link #parseArgs(String[])}.
@@ -139,8 +145,12 @@ public class DissScenarioLoad {
 			// Create and execute algorithm
 			algo.prepare(sNet, Set.of(vNet));
 			GlobalMetricsManager.startRuntime();
-			algo.execute();
+			boolean success = algo.execute();
 			GlobalMetricsManager.stopRuntime();
+
+			if (!success && removeUnembeddedVnets) {
+				ModelFacade.getInstance().removeNetworkFromRoot(vNetId);
+			}
 
 			// Save metrics to CSV file
 			// Reload substrate network from model facade (needed for GIPS-based
@@ -297,6 +307,12 @@ public class DissScenarioLoad {
 		modelPersist.setType(String.class);
 		options.addOption(modelPersist);
 
+		// Model: Remove unembedded VNets
+		final Option removeUnembeddedVnetsOption = new Option("remove-unembedded-vnets", false,
+				"If VNets that where not successfully embedded should be removed from the model to prevent from blocking further embeddings");
+		removeUnembeddedVnetsOption.setRequired(false);
+		options.addOption(removeUnembeddedVnetsOption);
+
 		final CommandLineParser parser = new DefaultParser();
 		final HelpFormatter formatter = new HelpFormatter();
 		CommandLine cmd = null;
@@ -419,6 +435,8 @@ public class DissScenarioLoad {
 			persistModel = true;
 			persistModelPath = filePath.isBlank() ? null : filePath;
 		}
+
+		removeUnembeddedVnets = cmd.hasOption(removeUnembeddedVnetsOption);
 
 		// Print arguments into logs/system outputs
 		System.out.println("=> Arguments: " + Arrays.toString(args));
