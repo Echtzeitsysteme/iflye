@@ -62,11 +62,6 @@ import model.converter.IncrementalModelConverter;
 public class DissScenarioLoad {
 
 	/**
-	 * Orchestrate the collection and reporting of embedding-related metrics
-	 */
-	protected static MetricsManager metricsManager = new MetricsManager.Default();
-
-	/**
 	 * Substrate network to use.
 	 */
 	protected static SubstrateNetwork sNet;
@@ -115,88 +110,94 @@ public class DissScenarioLoad {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public static void main(final String[] args) throws IOException, InterruptedException {
-		parseArgs(args);
+	public static void main(final String[] args) throws IOException, InterruptedException, ParseException {
+		final MetricsManager metricsManager = new MetricsManager.Default();
+		parseArgs(args, metricsManager);
 		metricsManager.addMeter(new GipsIlpHandler());
-
-		// Substrate network = read from file
-		final List<String> sNetIds = BasicModelConverter.jsonToModel(subNetPath, false);
-
-		if (sNetIds.size() != 1) {
-			throw new UnsupportedOperationException("There is more than one substrate network.");
-		}
-
-		sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNetIds.get(0));
-
-		// Print maximum path length (after possible auto determination)
-		if (ModelFacadeConfig.MAX_PATH_LENGTH_AUTO) {
-			System.out.println("=> Using path length auto determination");
-		}
-		System.out.println("=> Using max path length " + ModelFacadeConfig.MAX_PATH_LENGTH);
-
-		/*
-		 * Every embedding starts here.
-		 */
-
-		String vNetId = IncrementalModelConverter.jsonToModelIncremental(virtNetsPath, true);
 		final AbstractAlgorithm algo = algoFactory.apply(ModelFacade.getInstance());
 
-		metricsManager.addTags("series uuid", UUID.randomUUID().toString(), "started", OffsetDateTime.now().toString(),
-				"algorithm", algo.getClass().getSimpleName());
-		metricsManager.initialized();
+		try {
 
-		while (vNetId != null) {
-			final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById(vNetId);
+			// Substrate network = read from file
+			final List<String> sNetIds = BasicModelConverter.jsonToModel(subNetPath, false);
 
-			System.out.println("=> Embedding virtual network " + vNetId);
-
-			boolean success = metricsManager.observe("algorithm",
-					() -> new Context.VnetRootContext(sNet, Set.of(vNet), algo), () -> {
-						// Create and execute algorithm
-						MetricsManager.getInstance().observe("prepare", Context.PrepareStageContext::new,
-								() -> algo.prepare(sNet, Set.of(vNet)));
-						return MetricsManager.getInstance().observe("execute", Context.ExecuteStageContext::new,
-								algo::execute);
-					}, Tags.of("lastVNR", vNetId, "series group uuid", UUID.randomUUID().toString()));
-
-			if (!success && removeUnembeddedVnets) {
-				ModelFacade.getInstance().removeNetworkFromRoot(vNetId);
+			if (sNetIds.size() != 1) {
+				throw new UnsupportedOperationException("There is more than one substrate network.");
 			}
 
-			// Save metrics to CSV file
-			// Reload substrate network from model facade (needed for GIPS-based
-			// algorithms.)
-			sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNet.getName());
-			metricsManager.flush();
+			sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNetIds.get(0));
 
-			// Get next virtual network ID to embed
-			vNetId = IncrementalModelConverter.jsonToModelIncremental(virtNetsPath, true);
+			// Print maximum path length (after possible auto determination)
+			if (ModelFacadeConfig.MAX_PATH_LENGTH_AUTO) {
+				System.out.println("=> Using path length auto determination");
+			}
+			System.out.println("=> Using max path length " + ModelFacadeConfig.MAX_PATH_LENGTH);
 
-			// Save model to file
-			if (persistModel) {
-				if (persistModelPath == null) {
-					ModelFacade.getInstance().persistModel();
-				} else {
-					ModelFacade.getInstance().persistModel(persistModelPath);
+			/*
+			 * Every embedding starts here.
+			 */
+
+			String vNetId = IncrementalModelConverter.jsonToModelIncremental(virtNetsPath, true);
+
+			metricsManager.addTags("series uuid", UUID.randomUUID().toString(), "started",
+					OffsetDateTime.now().toString(), "algorithm", algo.getClass().getSimpleName());
+			metricsManager.initialized();
+
+			while (vNetId != null) {
+				final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById(vNetId);
+
+				System.out.println("=> Embedding virtual network " + vNetId);
+
+				boolean success = metricsManager.observe("algorithm",
+						() -> new Context.VnetRootContext(sNet, Set.of(vNet), algo), () -> {
+							// Create and execute algorithm
+							MetricsManager.getInstance().observe("prepare", Context.PrepareStageContext::new,
+									() -> algo.prepare(sNet, Set.of(vNet)));
+							return MetricsManager.getInstance().observe("execute", Context.ExecuteStageContext::new,
+									algo::execute);
+						}, Tags.of("lastVNR", vNetId, "series group uuid", UUID.randomUUID().toString()));
+
+				if (!success && removeUnembeddedVnets) {
+					ModelFacade.getInstance().removeNetworkFromRoot(vNetId);
+				}
+
+				// Save metrics to CSV file
+				// Reload substrate network from model facade (needed for GIPS-based
+				// algorithms.)
+				sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNet.getName());
+				metricsManager.flush();
+
+				// Get next virtual network ID to embed
+				vNetId = IncrementalModelConverter.jsonToModelIncremental(virtNetsPath, true);
+
+				// Save model to file
+				if (persistModel) {
+					if (persistModelPath == null) {
+						ModelFacade.getInstance().persistModel();
+					} else {
+						ModelFacade.getInstance().persistModel(persistModelPath);
+					}
 				}
 			}
+
+			/*
+			 * End of every embedding.
+			 */
+
+			// Validate model
+			ModelFacade.getInstance().validateModel();
+
+			/*
+			 * Evaluation.
+			 */
+
+			// Print metrics before saving the model
+			metricsManager.conclude();
+		} finally {
+			algo.dispose();
+			metricsManager.close();
+			MetricsManager.closeAll();
 		}
-
-		/*
-		 * End of every embedding.
-		 */
-
-		// Validate model
-		ModelFacade.getInstance().validateModel();
-
-		/*
-		 * Evaluation.
-		 */
-
-		// Print metrics before saving the model
-		metricsManager.conclude();
-		metricsManager.close();
-		MetricsManager.closeAll();
 
 		System.out.println("=> Execution finished.");
 		System.exit(0);
@@ -232,7 +233,7 @@ public class DissScenarioLoad {
 	 *
 	 * @param args Arguments to parse.
 	 */
-	protected static void parseArgs(final String[] args) {
+	protected static void parseArgs(final String[] args, MetricsManager metricsManager) {
 		final Options options = new Options();
 
 		// Algorithm

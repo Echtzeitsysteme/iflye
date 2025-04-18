@@ -29,74 +29,77 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
 	 * @param args See {@link #parseArgs(String[])}.
 	 */
 	public static void main(final String[] args) {
-		parseArgs(args);
+		final MetricsManager metricsManager = new MetricsManager.Default();
+		parseArgs(args, metricsManager);
 		metricsManager.addMeter(new GipsIlpHandler());
-
-		// Substrate network = read from file
-		final List<String> sNetIds = BasicModelConverter.jsonToModel(subNetPath, false);
-
-		if (sNetIds.size() != 1) {
-			throw new UnsupportedOperationException("There is more than one substrate network.");
-		}
-
-		sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNetIds.get(0));
-
-		// Print maximum path length (after possible auto determination)
-		if (ModelFacadeConfig.MAX_PATH_LENGTH_AUTO) {
-			System.out.println("=> Using path length auto determination");
-		}
-		System.out.println("=> Using max path length " + ModelFacadeConfig.MAX_PATH_LENGTH);
-
-		/*
-		 * Every embedding starts here.
-		 */
-
-		final List<String> vNetIds = BasicModelConverter.jsonToModel(virtNetsPath, true);
-		final Set<VirtualNetwork> vNets = new HashSet<>();
-		vNetIds.forEach(i -> vNets.add((VirtualNetwork) ModelFacade.getInstance().getNetworkById(i)));
-
-		// Create and execute algorithm
 		final AbstractAlgorithm algo = algoFactory.apply(ModelFacade.getInstance());
 
-		metricsManager.addTags("series uuid", UUID.randomUUID().toString(), "started", OffsetDateTime.now().toString(),
-				"implementation", algo.getClass().getSimpleName());
-		metricsManager.initialized();
+		try {
+			// Substrate network = read from file
+			final List<String> sNetIds = BasicModelConverter.jsonToModel(subNetPath, false);
 
-		metricsManager.observe("batch", () -> new Context.VnetRootContext(sNet, vNets, algo), () -> {
-			// Create and execute algorithm
-			MetricsManager.getInstance().observe("prepare", Context.PrepareStageContext::new,
-					() -> algo.prepare(sNet, vNets));
-			return MetricsManager.getInstance().observe("execute", Context.ExecuteStageContext::new, algo::execute);
-		});
-
-		/*
-		 * End of every embedding.
-		 */
-
-		// Save metrics to CSV file
-		// Reload substrate network from model facade (needed for GIPS-based
-		// algorithms.)
-		sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNet.getName());
-		metricsManager.flush();
-
-		// Validate model
-		ModelFacade.getInstance().validateModel();
-
-		// Save model to file
-		if (persistModel) {
-			if (persistModelPath == null) {
-				ModelFacade.getInstance().persistModel();
-			} else {
-				ModelFacade.getInstance().persistModel(persistModelPath);
+			if (sNetIds.size() != 1) {
+				throw new UnsupportedOperationException("There is more than one substrate network.");
 			}
-		}
 
-		/*
-		 * Evaluation.
-		 */
-		metricsManager.conclude();
-		metricsManager.close();
-		MetricsManager.closeAll();
+			sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNetIds.get(0));
+
+			// Print maximum path length (after possible auto determination)
+			if (ModelFacadeConfig.MAX_PATH_LENGTH_AUTO) {
+				System.out.println("=> Using path length auto determination");
+			}
+			System.out.println("=> Using max path length " + ModelFacadeConfig.MAX_PATH_LENGTH);
+
+			/*
+			 * Every embedding starts here.
+			 */
+
+			final List<String> vNetIds = BasicModelConverter.jsonToModel(virtNetsPath, true);
+			final Set<VirtualNetwork> vNets = new HashSet<>();
+			vNetIds.forEach(i -> vNets.add((VirtualNetwork) ModelFacade.getInstance().getNetworkById(i)));
+
+			metricsManager.addTags("series uuid", UUID.randomUUID().toString(), "started",
+					OffsetDateTime.now().toString(), "algorithm", algo.getClass().getSimpleName());
+			metricsManager.initialized();
+
+			metricsManager.observe("batch", () -> new Context.VnetRootContext(sNet, vNets, algo), () -> {
+				// Create and execute algorithm
+				MetricsManager.getInstance().observe("prepare", Context.PrepareStageContext::new,
+						() -> algo.prepare(sNet, vNets));
+				return MetricsManager.getInstance().observe("execute", Context.ExecuteStageContext::new, algo::execute);
+			});
+
+			/*
+			 * End of every embedding.
+			 */
+
+			// Save metrics to CSV file
+			// Reload substrate network from model facade (needed for GIPS-based
+			// algorithms.)
+			sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNet.getName());
+			metricsManager.flush();
+
+			// Validate model
+			ModelFacade.getInstance().validateModel();
+
+			// Save model to file
+			if (persistModel) {
+				if (persistModelPath == null) {
+					ModelFacade.getInstance().persistModel();
+				} else {
+					ModelFacade.getInstance().persistModel(persistModelPath);
+				}
+			}
+
+			/*
+			 * Evaluation.
+			 */
+			metricsManager.conclude();
+		} finally {
+			algo.dispose();
+			metricsManager.close();
+			MetricsManager.closeAll();
+		}
 
 		System.out.println("=> Execution finished.");
 		System.exit(0);
