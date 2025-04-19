@@ -77,6 +77,11 @@ public class DissScenarioLoad {
 	protected static String virtNetsPath;
 
 	/**
+	 * The number of threads to use for the GIPS ILP solver.
+	 */
+	protected static int gipsSolverThreads;
+
+	/**
 	 * File path for the metric CSV output.
 	 */
 	protected static String csvPath = null;
@@ -331,6 +336,13 @@ public class DissScenarioLoad {
 		notionMetricDB.setType(String.class);
 		options.addOption(notionMetricDB);
 
+		// GIPS: Number of threads for the ILP solver
+		final Option gipsSolverThreadsOption = new Option("gips-solver-threads", true,
+				"How many threads should be used by the GIPS ILP solver");
+		gipsSolverThreadsOption.setRequired(false);
+		gipsSolverThreadsOption.setType(Integer.class);
+		options.addOption(gipsSolverThreadsOption);
+
 		// Model: Persist after run
 		final Option modelPersist = new Option("persist-model", true,
 				"If the model should be persisted after execution, optionally supply the file name.");
@@ -439,6 +451,12 @@ public class DissScenarioLoad {
 			}
 		}
 
+		// GIPS: Number of threads for the GIPS ILP Solver
+		gipsSolverThreads = Integer.valueOf(cmd.getOptionValue(gipsSolverThreadsOption, "-1"));
+		if (gipsSolverThreads > 0) {
+			metricsManager.addTags("gips.solver_threads", String.valueOf(gipsSolverThreads));
+		}
+
 		// #8: CSV metric file path
 		if (cmd.getOptionValue("csvpath") != null) {
 			csvPath = cmd.getOptionValue("csvpath");
@@ -537,7 +555,7 @@ public class DissScenarioLoad {
 		case "ilp-batch":
 			return VneFakeIlpBatchAlgorithm::new;
 		case "gips":
-			return VneGipsAlgorithm::new;
+			return (modelFacade) -> new VneGipsAlgorithm(modelFacade, gipsSolverThreads);
 		case "gips-mig":
 			return VneGipsMigrationAlgorithm::new;
 		case "gips-seq":

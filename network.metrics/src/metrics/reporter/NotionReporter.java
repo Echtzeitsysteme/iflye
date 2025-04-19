@@ -93,6 +93,7 @@ public class NotionReporter extends GroupByTagValueReporter implements Reporter 
 			this.addPropertyFormat("series uuid", PROPERTY_TYPE.SELECT);
 			this.addPropertyFormat("exception", PROPERTY_TYPE.MULTI_SELECT);
 			this.addPropertyFormat("series group uuid", PROPERTY_TYPE.SELECT);
+			this.addPropertyFormat("gips.solver_threads", PROPERTY_TYPE.NUMBER);
 		}
 	}
 

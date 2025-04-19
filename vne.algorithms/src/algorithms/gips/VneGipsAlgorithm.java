@@ -50,9 +50,24 @@ public class VneGipsAlgorithm extends AbstractAlgorithm implements GipsAlgorithm
 	 * @param modelFacade The model facade to use.
 	 */
 	public VneGipsAlgorithm(final ModelFacade modelFacade) {
+		this(modelFacade, 0);
+	}
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param modelFacade              the model facade to use
+	 * @param numberOfIlpSolverThreads the number of threads to use for the ILP
+	 *                                 solver
+	 */
+	public VneGipsAlgorithm(final ModelFacade modelFacade, final int numberOfIlpSolverThreads) {
 		super(modelFacade);
 
 		iflyeAdapter = new MdvneGipsIflyeAdapter();
+
+		if (numberOfIlpSolverThreads > 0) {
+			iflyeAdapter.setIlpSolverThreadCount(numberOfIlpSolverThreads);
+		}
 	}
 
 	@Override
