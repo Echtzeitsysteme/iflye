@@ -1,7 +1,9 @@
 package metrics.handler;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Collection;
@@ -52,9 +54,10 @@ public class TimingHandler implements HasMetric<Context> {
 			}
 
 			public OffsetDateTime epochSecondsToOffsetDateTime(double timestamp) {
-				long seconds = (long) (timestamp / 1000);
-				int nanoseconds = (int) ((timestamp - seconds * 1000.0) * 1_000_000.0);
-				LocalDateTime dateTime = LocalDateTime.ofEpochSecond(seconds, nanoseconds, ZoneOffset.UTC);
+				Instant instant = Instant.ofEpochMilli((long) timestamp);
+				ZoneId zoneId = ZoneId.systemDefault(); // Use the system default time zone
+				LocalDateTime dateTime = instant.atZone(zoneId).toLocalDateTime();
+
 				return ZonedDateTime.of(dateTime, ZoneOffset.systemDefault()).toOffsetDateTime();
 			}
 
@@ -133,7 +136,7 @@ public class TimingHandler implements HasMetric<Context> {
 		if (context.containsKey("timestamp")) {
 			OffsetDateTime now = context.getRequired("timestamp");
 			meterRegistry.summary("timestamp", createTags(context))
-					.record(Double.valueOf(now.toEpochSecond() * 1000.0 + now.getNano() / 1_000_000.0));
+					.record(Double.valueOf(now.toInstant().toEpochMilli()));
 		}
 	}
 
