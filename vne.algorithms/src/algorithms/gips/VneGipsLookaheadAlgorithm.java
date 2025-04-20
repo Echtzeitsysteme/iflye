@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.emoflon.gips.core.milp.SolverOutput;
+import org.emoflon.gips.core.util.IMeasurement;
 import org.emoflon.gips.gipsl.examples.mdvne.MdvneGipsIflyeAdapter;
 import org.emoflon.gips.gipsl.examples.mdvne.MdvneGipsLookaheadIflyeAdapter;
 
@@ -139,6 +140,11 @@ public class VneGipsLookaheadAlgorithm extends AbstractAlgorithm implements Gips
 	@Override
 	public Map<String, String> getMatches() {
 		return this.iflyeOutput.matches();
+	}
+
+	@Override
+	public Map<String, IMeasurement> getMeasurements() {
+		return null;
 	}
 
 	/**

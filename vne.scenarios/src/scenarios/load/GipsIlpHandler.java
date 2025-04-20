@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.emoflon.gips.core.milp.SolverOutput;
 import org.emoflon.gips.core.milp.SolverStatus;
+import org.emoflon.gips.core.util.IMeasurement;
 
 import algorithms.gips.GipsAlgorithm;
 import io.micrometer.core.instrument.DistributionSummary;
@@ -53,7 +54,9 @@ public class GipsIlpHandler implements HasMetric<Context.VnetEmbeddingContext> {
 
 			@Override
 			public boolean supportsMeter(Meter meter) {
-				return meter instanceof DistributionSummary && meter.getId().getName().startsWith("ilp.");
+				return meter instanceof DistributionSummary
+						&& (meter.getId().getName().startsWith("ilp.") || (meter.getId().getName().startsWith("gips.")
+								&& meter.getId().getName().endsWith(".timing")));
 			}
 
 			@Override
@@ -82,13 +85,25 @@ public class GipsIlpHandler implements HasMetric<Context.VnetEmbeddingContext> {
 
 		GipsAlgorithm gipsAlgorithm = (GipsAlgorithm) context.getAlgorithm();
 		SolverOutput solverOutput = gipsAlgorithm.getSolverOutput();
+		Map<String, IMeasurement> measurements = gipsAlgorithm.getMeasurements();
+		Map<String, String> gipsMeasurementsToTake = Map.of("gips.pattern_matcher.timing", "PM",
+				"gips.build_gips.timing", "BUILD_GIPS", "gips.build_solver.timing", "BUILD_SOLVER", "gips.build.timing",
+				"BUILD", "gips.solve_problem.timing", "SOLVE_PROBLEM");
 
 		meterRegistry.summary("ilp.objective_value", createTags(context)).record(solverOutput.objectiveValue());
 		meterRegistry.summary("ilp.solution_count", createTags(context)).record(solverOutput.solutionCount());
-		meterRegistry.summary("ilp.constraints", createTags(context)).record(solverOutput.stats().constraints());
-		meterRegistry.summary("ilp.mappings", createTags(context)).record(solverOutput.stats().mappings());
-		meterRegistry.summary("ilp.vars", createTags(context)).record(solverOutput.stats().vars());
 		meterRegistry.summary("ilp.status", createTags(context)).record(solverOutput.status().ordinal());
+		if (solverOutput.stats() != null) {
+			meterRegistry.summary("ilp.constraints", createTags(context)).record(solverOutput.stats().constraints());
+			meterRegistry.summary("ilp.mappings", createTags(context)).record(solverOutput.stats().mappings());
+			meterRegistry.summary("ilp.vars", createTags(context)).record(solverOutput.stats().vars());
+		}
+		for (Map.Entry<String, String> take : gipsMeasurementsToTake.entrySet()) {
+			if (measurements.containsKey(take.getValue())) {
+				meterRegistry.summary(take.getKey(), createTags(context))
+						.record(measurements.get(take.getValue()).maxDurationSeconds());
+			}
+		}
 
 	}
 

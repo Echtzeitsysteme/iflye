@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.emoflon.gips.core.milp.SolverOutput;
+import org.emoflon.gips.core.util.IMeasurement;
 import org.emoflon.gips.gipsl.examples.mdvne.MdvneGipsIflyeAdapter;
 
 import algorithms.AbstractAlgorithm;
@@ -95,9 +96,15 @@ public class VneGipsAlgorithm extends AbstractAlgorithm implements GipsAlgorithm
 		return this.iflyeOutput.matches();
 	}
 
+	@Override
+	public Map<String, IMeasurement> getMeasurements() {
+		return this.iflyeOutput.measurements();
+	}
+
 	/**
 	 * Resets the algorithm instance.
 	 */
+	@Override
 	public void dispose() {
 		iflyeAdapter.resetInit();
 	}
