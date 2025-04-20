@@ -49,7 +49,9 @@ public class MemoryHandler implements HasMetric<Context>, AutoCloseable {
 	 * Start a new {@link MemoryHandler} and schedule the memory sampling.
 	 */
 	public MemoryHandler() {
-		this.executor = Executors.newSingleThreadScheduledExecutor();
+		this.executor = Executors
+				.newSingleThreadScheduledExecutor(new SampleThreadFactory("observer-memory-sampler-%d-%d"));
+
 		executor.scheduleAtFixedRate(this::sampleMemory, 0, 200, TimeUnit.MILLISECONDS);
 	}
 

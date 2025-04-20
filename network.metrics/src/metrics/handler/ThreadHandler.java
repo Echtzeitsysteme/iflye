@@ -57,7 +57,8 @@ public class ThreadHandler implements HasMetric<Context>, AutoCloseable {
 	 */
 	public ThreadHandler() {
 		this.threadBean = ManagementFactory.getThreadMXBean();
-		this.executor = Executors.newSingleThreadScheduledExecutor();
+		this.executor = Executors
+				.newSingleThreadScheduledExecutor(new SampleThreadFactory("observer-thread-sampler-%d-%d"));
 		executor.scheduleAtFixedRate(this::sampleThreads, 0, 200, TimeUnit.MILLISECONDS);
 	}
 
