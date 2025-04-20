@@ -1,8 +1,10 @@
 package metrics.manager;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
@@ -76,6 +78,12 @@ public class MetricsManager implements AutoCloseable {
 	protected Tags tags;
 
 	/**
+	 * Flag if this {@link MetricsManager} instance was created by user application
+	 * code.
+	 */
+	protected boolean isRoot = false;
+
+	/**
 	 * A Default MetricsManager configuration with a {@link TextSummaryReporter} and
 	 * the {@link TimingHandler} and {@link EmbeddedNetworkHandler}.
 	 */
@@ -99,6 +107,8 @@ public class MetricsManager implements AutoCloseable {
 	 */
 	public MetricsManager() {
 		this(new CompositeMeterRegistry(), Observations.getGlobalRegistry());
+
+		this.isRoot = true;
 	}
 
 	/**
@@ -969,10 +979,12 @@ public class MetricsManager implements AutoCloseable {
 
 	/**
 	 * Closes the {@link MetricsManager} and stops all running {@link Observation}s.
+	 * If this is the root {@link MetricsManager}, all {@link MeterRegistry}s will
+	 * be closed as well.
 	 */
 	@Override
 	public void close() {
-		close(false);
+		close(this.isRoot);
 	}
 
 	/**
@@ -982,13 +994,31 @@ public class MetricsManager implements AutoCloseable {
 	 *                        well.
 	 */
 	public void close(final boolean closeRegistries) {
+		List<Exception> caughtExceptions = new ArrayList<>();
 		stopAll();
 		if (closeRegistries) {
-			this.reporters.forEach((reporter) -> reporter.getMeterRegistry().close());
+			this.meterProviders.forEach((meterProvider) -> {
+				if (meterProvider instanceof AutoCloseable) {
+					try {
+						((AutoCloseable) meterProvider).close();
+					} catch (Exception e) {
+						caughtExceptions.add(e);
+					}
+				}
+			});
 			this.meterRegistry.close();
 		}
 
 		instance.get().remove(this);
+
+		if (caughtExceptions.size() == 1) {
+			throw new RuntimeException(
+					"An exception occurred while closing the " + MetricsManager.class.getSimpleName() + "!",
+					caughtExceptions.getFirst());
+		} else if (caughtExceptions.size() > 1) {
+			throw new RuntimeException(caughtExceptions.size() + " exceptions occurred while closing the "
+					+ MetricsManager.class.getSimpleName() + "! Most recent one: ", caughtExceptions.getLast());
+		}
 	}
 
 	/**
