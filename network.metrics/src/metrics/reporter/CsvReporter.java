@@ -27,7 +27,7 @@ import metrics.Reporter;
  * 
  * @author Janik Stracke {@literal <janik.stracke@stud.tu-darmstadt.de>}
  */
-public class CsvReporter extends GroupByTagsReporter implements Reporter {
+public class CsvReporter extends GroupByTagValueReporter implements Reporter {
 
 	/**
 	 * The file to which the metrics will be written.
@@ -57,7 +57,7 @@ public class CsvReporter extends GroupByTagsReporter implements Reporter {
 	 * list before writing to the file.
 	 */
 	protected List<String> persistTags = new ArrayList<>(List.of("lastVNR", "substrate network", "algorithm",
-			"virtual network", "started", "objective", "series uuid"));
+			"virtual network", "started", "objective", "series uuid", "series group uuid"));
 
 	/**
 	 * Initializes a new CsvReporter with the given output file. The file will be
@@ -103,7 +103,7 @@ public class CsvReporter extends GroupByTagsReporter implements Reporter {
 	 * @throws RuntimeException If an error occurs while writing to the file.
 	 */
 	@Override
-	protected void flushEntry(GroupedReporter.Entry entry, Map<String, String> groupKey) {
+	protected void flushEntry(GroupedReporter.Entry entry, String groupKey) {
 		getPersistedTags(entry.tags()).entrySet()
 				.forEach((tag) -> entry.values().putIfAbsent(tag.getKey(), tag.getValue()));
 

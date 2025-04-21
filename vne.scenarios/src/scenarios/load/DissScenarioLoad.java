@@ -157,7 +157,7 @@ public class DissScenarioLoad {
 								() -> algo.prepare(sNet, Set.of(vNet)));
 						return MetricsManager.getInstance().observe("execute", Context.ExecuteStageContext::new,
 								algo::execute);
-					}, Tags.of("lastVNR", vNetId));
+					}, Tags.of("lastVNR", vNetId, "series group uuid", UUID.randomUUID().toString()));
 
 			if (!success && removeUnembeddedVnets) {
 				ModelFacade.getInstance().removeNetworkFromRoot(vNetId);

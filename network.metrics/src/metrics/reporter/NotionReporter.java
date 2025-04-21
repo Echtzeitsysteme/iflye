@@ -31,7 +31,7 @@ import metrics.manager.MetricsManager;
  * 
  * @author Janik Stracke {@literal <janik.stracke@stud.tu-darmstadt.de>}
  */
-public class NotionReporter extends GroupByTagsReporter implements Reporter {
+public class NotionReporter extends GroupByTagValueReporter implements Reporter {
 
 	/**
 	 * The HTTP client used to send requests to the Notion API.
@@ -90,6 +90,7 @@ public class NotionReporter extends GroupByTagsReporter implements Reporter {
 			this.addPropertyFormat("objective", PROPERTY_TYPE.SELECT);
 			this.addPropertyFormat("lastVNR", PROPERTY_TYPE.TEXT);
 			this.addPropertyFormat("series uuid", PROPERTY_TYPE.SELECT);
+			this.addPropertyFormat("series group uuid", PROPERTY_TYPE.SELECT);
 		}
 	}
 
@@ -312,7 +313,7 @@ public class NotionReporter extends GroupByTagsReporter implements Reporter {
 	 * @see #initialized()
 	 */
 	@Override
-	protected void flushEntry(GroupedReporter.Entry entry, Map<String, String> groupKey) {
+	protected void flushEntry(GroupedReporter.Entry entry, String groupKey) {
 		if (this.token == null || this.metricDatabaseId == null) {
 			return;
 		}
