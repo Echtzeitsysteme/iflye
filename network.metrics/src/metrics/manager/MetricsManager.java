@@ -22,6 +22,7 @@ import metrics.HasMetric;
 import metrics.Reporter;
 import metrics.handler.CounterHandler;
 import metrics.handler.EmbeddedNetworkHandler;
+import metrics.handler.ErrorHandler;
 import metrics.handler.MemoryHandler;
 import metrics.handler.ThreadHandler;
 import metrics.handler.TimingHandler;
@@ -91,6 +92,7 @@ public class MetricsManager implements AutoCloseable {
 		public Default() {
 			super();
 
+			this.addMeter(new ErrorHandler());
 			this.addMeter(new TimingHandler());
 			this.addMeter(new EmbeddedNetworkHandler());
 			this.addMeter(new CounterHandler());
@@ -263,6 +265,7 @@ public class MetricsManager implements AutoCloseable {
 	 * 
 	 * @return A new {@link MetricsManager} with the given tags.
 	 */
+	@Override
 	public MetricsManager clone() {
 		final MetricsManager metricsManager = new MetricsManager(meterRegistry, observationRegistry);
 		metricsManager.addTags(this.tags);

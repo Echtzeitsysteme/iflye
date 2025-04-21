@@ -57,7 +57,7 @@ public class CsvReporter extends GroupByTagValueReporter implements Reporter {
 	 * list before writing to the file.
 	 */
 	protected List<String> persistTags = new ArrayList<>(List.of("lastVNR", "substrate network", "algorithm",
-			"virtual network", "started", "objective", "series uuid", "series group uuid"));
+			"virtual network", "started", "objective", "series uuid", "series group uuid", "exception"));
 
 	/**
 	 * Initializes a new CsvReporter with the given output file. The file will be

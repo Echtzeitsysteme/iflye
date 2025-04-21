@@ -10,6 +10,7 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -90,6 +91,7 @@ public class NotionReporter extends GroupByTagValueReporter implements Reporter 
 			this.addPropertyFormat("objective", PROPERTY_TYPE.SELECT);
 			this.addPropertyFormat("lastVNR", PROPERTY_TYPE.TEXT);
 			this.addPropertyFormat("series uuid", PROPERTY_TYPE.SELECT);
+			this.addPropertyFormat("exception", PROPERTY_TYPE.MULTI_SELECT);
 			this.addPropertyFormat("series group uuid", PROPERTY_TYPE.SELECT);
 		}
 	}
@@ -175,7 +177,10 @@ public class NotionReporter extends GroupByTagValueReporter implements Reporter 
 		default public String value(final String key, final String value) {
 			switch (type(key, value)) {
 			case "select":
-				return "{ \"name\": \"" + value + "\" }";
+				return "{ \"name\": \"" + value.replace(",", ";") + "\" }";
+			case "multi_select":
+				return "[" + String.join(", ", Arrays.asList(value.split("\s*,\s*")).stream()
+						.map((i) -> "{ \"name\": \"" + i + "\" }").toList()) + "]";
 			case "date":
 				return "{ \"start\": \"" + value + "\" }";
 			case "title":
@@ -214,6 +219,12 @@ public class NotionReporter extends GroupByTagValueReporter implements Reporter 
 			@Override
 			public String type(String key, String value) {
 				return "select";
+			}
+		},
+		MULTI_SELECT {
+			@Override
+			public String type(String key, String value) {
+				return "multi_select";
 			}
 		},
 		DATE {
