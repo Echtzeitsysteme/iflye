@@ -74,9 +74,13 @@ public class ThreadHandler implements HasMetric<Context>, AutoCloseable {
 				String name = meter.getId().getName();
 
 				Map<String, Object> entry = new HashMap<>();
-				entry.put(name + ".avg", memory.mean());
-				entry.put(name + ".max", memory.max());
-				entry.put(name + ".count", (double) memory.count());
+				if (name.endsWith(".started.begin") || name.endsWith(".started.end")) {
+					entry.put(name, memory.max());
+				} else {
+					entry.put(name + ".avg", (Object) memory.mean());
+					entry.put(name + ".max", (Object) memory.max());
+					entry.put(name + ".count", (double) memory.count());
+				}
 				return entry;
 			}
 
@@ -145,6 +149,8 @@ public class ThreadHandler implements HasMetric<Context>, AutoCloseable {
 		DistributionSummary daemonThreadSummary = DistributionSummary.builder("threads_" + suffix + ".daemon")
 				.description("Daemon threads used").tags(createTags(context)).register(meterRegistry);
 
+		context.put("threads-started-begin", (double) this.threadBean.getTotalStartedThreadCount());
+
 		String id = submit(new TrackingContext(context, totalThreadSummary, startedThreadSummary, daemonThreadSummary));
 		context.put("thread-tracking-id", id);
 	}
@@ -154,10 +160,20 @@ public class ThreadHandler implements HasMetric<Context>, AutoCloseable {
 	 */
 	@Override
 	public void onStop(Context context) {
+		final String suffix = getSuffix(context);
 		String id = context.getOrDefault("thread-tracking-id", () -> null);
 		if (id != null) {
 			activeContexts.remove(id);
 		}
+
+		if (context.containsKey("threads-started-begin")) {
+			double threadsStartedBegin = context.get("threads-started-begin");
+			this.meterRegistry.summary("threads_" + suffix + ".started.begin", createTags(context))
+					.record(threadsStartedBegin);
+		}
+
+		this.meterRegistry.summary("threads_" + suffix + ".started.end", createTags(context))
+				.record(this.threadBean.getTotalStartedThreadCount());
 	}
 
 	/**
