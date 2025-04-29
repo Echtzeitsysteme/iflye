@@ -48,7 +48,7 @@ public class NetworkGraph extends SingleGraph {
 	 * True if links should be displayed bidirectional.
 	 */
 	private final boolean LINK_BIDIRECTIONAL = true;
-	
+
 	/**
 	 * The iflye ModelFacade for model interaction
 	 */
@@ -66,12 +66,12 @@ public class NetworkGraph extends SingleGraph {
 	/**
 	 * Sets the model to use for rendering.
 	 *
-	 * @param model     The ModelFacade to access the model.
+	 * @param model The ModelFacade to access the model.
 	 */
 	public void setModel(final ModelFacade model) {
 		this.model = model;
 	}
-	
+
 	/**
 	 * Sets the networkId to render.
 	 *
@@ -92,11 +92,11 @@ public class NetworkGraph extends SingleGraph {
 		setNetworkId(networkId);
 		render();
 	}
-	
+
 	/**
 	 * Main method that starts the visualization process.
 	 *
-	 * @param model     The ModelFacade to access the model.
+	 * @param model The ModelFacade to access the model.
 	 */
 	public void render(final ModelFacade model) {
 		setModel(model);
@@ -112,7 +112,7 @@ public class NetworkGraph extends SingleGraph {
 		setNetworkId(networkId);
 		render();
 	}
-	
+
 	/**
 	 * Main method that starts the visualization process.
 	 */
@@ -120,8 +120,8 @@ public class NetworkGraph extends SingleGraph {
 		// Create the graph
 		this.setAttribute("ui.quality");
 		this.setAttribute("ui.antialias");
-		
-		// Servers 
+
+		// Servers
 		final List<model.Node> servers = new LinkedList<>(this.model.getAllServersOfNetwork(this.subNetworkId));
 		renderServers(servers);
 
@@ -132,12 +132,12 @@ public class NetworkGraph extends SingleGraph {
 		// Links
 		final Set<model.Link> links = new HashSet<>(this.model.getAllLinksOfNetwork(this.subNetworkId));
 		renderLinks(links);
-		
+
 		// Virtual Links
 		final Set<String> virtualNetworks = getEmbeddedVirtualNetworks(servers);
 		renderVirtualLinks(virtualNetworks);
 	}
-	
+
 	/**
 	 * Place the servers and their respective guest servers/switches on the graph.
 	 * 
@@ -167,7 +167,7 @@ public class NetworkGraph extends SingleGraph {
 			srvCurrX += SCALE_X;
 		}
 	}
-	
+
 	/**
 	 * Place the guest servers of a server on the graph.
 	 * 
@@ -188,14 +188,15 @@ public class NetworkGraph extends SingleGraph {
 			counter++;
 		}
 	}
-	
+
 	/**
 	 * Place the guest switches of a server on the graph.
 	 * 
 	 * @param guestSwitches
 	 * @param coordinates
 	 */
-	private void renderGuestSwitchesOnServer(final Collection<VirtualSwitch> guestSwitches, final double[] coordinates) {
+	private void renderGuestSwitchesOnServer(final Collection<VirtualSwitch> guestSwitches,
+			final double[] coordinates) {
 		int counter = 0;
 		for (final VirtualSwitch gs : guestSwitches) {
 			final String act = gs.getName();
@@ -214,7 +215,7 @@ public class NetworkGraph extends SingleGraph {
 	 * 
 	 * @param switches
 	 */
-	private void renderSwitches(final List <model.Node> switches) {
+	private void renderSwitches(final List<model.Node> switches) {
 		// Calculate switch positions
 		final Map<Integer, Double> xMap = new HashMap<>();
 		final Map<Integer, Integer> depthCounters = new HashMap<>();
@@ -249,7 +250,7 @@ public class NetworkGraph extends SingleGraph {
 			renderGuestSwitches(ssw.getGuestSwitches(), coordinates);
 		}
 	}
-	
+
 	/**
 	 * Place the guest switches of a native switch on the graph.
 	 * 
@@ -263,9 +264,8 @@ public class NetworkGraph extends SingleGraph {
 			final Node vswNode = this.addNode(act);
 			vswNode.setAttribute("ui.label", act.substring(act.indexOf("_") + 1));
 			vswNode.setAttribute("ui.style",
-					"fill-color: rgb(255,255,255); " + "stroke-color: rgb(155,000,000); "
-							+ "stroke-width: 4px; " + "stroke-mode: plain; " + "text-size: 8; " + "size: 25px; "
-							+ "text-style: bold;");
+					"fill-color: rgb(255,255,255); " + "stroke-color: rgb(155,000,000); " + "stroke-width: 4px; "
+							+ "stroke-mode: plain; " + "text-size: 8; " + "size: 25px; " + "text-style: bold;");
 
 			vswNode.setAttribute("xyz", coordinates[0] - 0.75, coordinates[1] - 0.5 * counter, 0);
 			counter++;
@@ -294,7 +294,7 @@ public class NetworkGraph extends SingleGraph {
 			}
 		}
 	}
-	
+
 	/**
 	 * Get all the networks that are embedded on components of this network.
 	 * 
@@ -302,21 +302,14 @@ public class NetworkGraph extends SingleGraph {
 	 * @return
 	 */
 	private Set<String> getEmbeddedVirtualNetworks(final List<model.Node> servers) {
-		return servers
-				.stream()
-				.flatMap((srv) -> {
-					final SubstrateServer ssrv = (SubstrateServer) srv;
-					
-					return Stream
-							.concat(
-								ssrv.getGuestServers().stream().map((gs) -> gs.getNetwork().getName()),
-								ssrv.getGuestSwitches().stream().map((gs) -> gs.getNetwork().getName())
-							)
-							.distinct();
-				})
-				.collect(Collectors.toSet());
+		return servers.stream().flatMap((srv) -> {
+			final SubstrateServer ssrv = (SubstrateServer) srv;
+
+			return Stream.concat(ssrv.getGuestServers().stream().map((gs) -> gs.getNetwork().getName()),
+					ssrv.getGuestSwitches().stream().map((gs) -> gs.getNetwork().getName())).distinct();
+		}).collect(Collectors.toSet());
 	}
-	
+
 	/**
 	 * Place the links of a virtual network on the graph.
 	 * 
@@ -352,10 +345,9 @@ public class NetworkGraph extends SingleGraph {
 	 */
 	private double[] nodeToCoordinates(final Node node) {
 		final Object[] coordinatesObj = (Object[]) node.getAttribute("xyz");
-		
+
 		return Arrays.stream(coordinatesObj)
-	        .mapToDouble(num -> num instanceof Integer ? ((Integer) num).doubleValue() : (double) num)
-	        .toArray();
+				.mapToDouble(num -> num instanceof Integer ? ((Integer) num).doubleValue() : (double) num).toArray();
 	}
 
 	/**

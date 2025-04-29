@@ -44,58 +44,59 @@ import model.VirtualNetwork;
  * @author Janik Stracke {@literal <janik.stracke@stud.tu-darmstadt.de>}
  */
 public class Application extends JFrame {
-	
+
 	private static final long serialVersionUID = -2863860255459271789L;
-	
+
 	private static final String APP_NAME = "Network Explorer";
 
 	/**
 	 * The NetworkGraph to render in the Frame
 	 */
 	private final NetworkGraph graph = new NetworkGraph("Network Viewer");
-	
+
 	/**
 	 * The viewer where the graph is embedded.
 	 */
 	private SwingViewer graphViewer;
-	
+
 	/**
 	 * The List for viewing all available networks.
 	 */
 	private final JList<String> networkList = new JList<>();
-	
+
 	/**
 	 * All available networks to view.
 	 */
 	private List<String> networks = new LinkedList<>();
-	
+
 	/**
 	 * The path to the currently loaded file.
 	 */
 	private String loadedModelFilePath;
-	
+
 	/**
 	 * The name of the currently viewed network.
 	 */
 	private String networkId;
-	
+
 	/**
 	 * If the graph view should be automatically laid out.
 	 */
 	private boolean autoLayout;
-	
+
 	/**
 	 * The Checkbox to control the autoLayout state.
 	 */
 	private JCheckBox autoLayoutCheckbox;
-	
+
 	/**
 	 * The Menu item to control the autoLayout state.
 	 */
 	private JMenuItem menuItemAutoLayout;
-	
+
 	/**
-	 * If the view is currently ready for rerender. Prevents unintentional rerenders while rendering.
+	 * If the view is currently ready for rerender. Prevents unintentional rerenders
+	 * while rendering.
 	 */
 	private boolean ready = false;
 
@@ -110,36 +111,38 @@ public class Application extends JFrame {
 		try {
 			System.setProperty("org.graphstream.ui", "swing");
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
-	        System.setProperty("com.apple.mrj.application.apple.menu.about.name", APP_NAME);
-	        System.setProperty("apple.awt.application.name", APP_NAME);
+			System.setProperty("com.apple.mrj.application.apple.menu.about.name", APP_NAME);
+			System.setProperty("apple.awt.application.name", APP_NAME);
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e) {
 			// Continue to launch the app without proper design
 			e.printStackTrace();
 		}
 
-		new Application(args.length < 1 ? null : args[0], args.length < 2 ? null : args[1], args.length < 3 || !"0".equals(args[2]));
+		new Application(args.length < 1 ? null : args[0], args.length < 2 ? null : args[1],
+				args.length < 3 || !"0".equals(args[2]));
 	}
-	
+
 	/**
 	 * Creates a new UI application with an embedded NetworkGraph for visualization.
 	 * 
-	 * @param path       Path to read file from.
+	 * @param path Path to read file from.
 	 */
 	public Application(final String path) {
 		this(path, null);
 	}
-	
+
 	/**
 	 * Creates a new UI application with an embedded NetworkGraph for visualization.
 	 * 
-	 * @param path       Path to read file from.
-	 * @param networkId  Network ID of the network to visualize.
+	 * @param path      Path to read file from.
+	 * @param networkId Network ID of the network to visualize.
 	 */
 	public Application(final String path, final String networkId) {
 		this(path, networkId, true);
 	}
-	
+
 	/**
 	 * Creates a new UI application with an embedded NetworkGraph for visualization.
 	 * 
@@ -159,7 +162,7 @@ public class Application extends JFrame {
 			System.exit(0);
 			return;
 		}
-		
+
 		loadModelFile(selection);
 
 		refreshNetworkList();
@@ -172,7 +175,7 @@ public class Application extends JFrame {
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		this.setVisible(true);
 	}
-	
+
 	/**
 	 * Initialize basic Frame attributes.
 	 */
@@ -182,13 +185,13 @@ public class Application extends JFrame {
 		this.setSize(getPreferredSize());
 		this.setBackground(Color.lightGray);
 	}
-	
+
 	/**
 	 * Initialize the menu bar.
 	 */
 	private void initMenu() {
 		JMenuBar menuBar = new JMenuBar();
-		
+
 		JMenu menu = new JMenu("File");
 		JMenuItem menuItemOpen = new JMenuItem("Open Model...", KeyEvent.VK_O);
 		menuItemOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.META_MASK));
@@ -197,7 +200,7 @@ public class Application extends JFrame {
 			if (path == null) {
 				return;
 			}
-			
+
 			loadModelFile(path);
 			rerender();
 		});
@@ -220,17 +223,17 @@ public class Application extends JFrame {
 
 		this.setJMenuBar(menuBar);
 	}
-	
+
 	/**
 	 * Initialize the graph view.
 	 */
 	private void initGraph() {
 		this.graphViewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
 
-		View view = this.graphViewer.addDefaultView(false);   // false indicates "no JFrame".
+		View view = this.graphViewer.addDefaultView(false); // false indicates "no JFrame".
 		this.add((DefaultView) view, BorderLayout.CENTER);
 	}
-	
+
 	/**
 	 * Initialize the toolbar.
 	 */
@@ -243,21 +246,21 @@ public class Application extends JFrame {
 			setAutoLayout(e.getStateChange() == ItemEvent.SELECTED);
 			rerender();
 		});
-	    toolBar.add(autoLayoutCheckbox);
+		toolBar.add(autoLayoutCheckbox);
 
-	    JButton button = new JButton("Reload");
-	    button.setBounds(150, 200, 220, 50);
-	    button.setMnemonic(KeyEvent.VK_R);
-	    toolBar.add(button);
+		JButton button = new JButton("Reload");
+		button.setBounds(150, 200, 220, 50);
+		button.setMnemonic(KeyEvent.VK_R);
+		toolBar.add(button);
 
-	    button.addActionListener((ActionEvent e) -> {
-	    	loadModelFile(this.loadedModelFilePath);
-	    	rerender();
-	    });
-	    
-	    this.add(toolBar, BorderLayout.PAGE_START);
+		button.addActionListener((ActionEvent e) -> {
+			loadModelFile(this.loadedModelFilePath);
+			rerender();
+		});
+
+		this.add(toolBar, BorderLayout.PAGE_START);
 	}
-	
+
 	/**
 	 * Initialize the network list view.
 	 */
@@ -274,10 +277,10 @@ public class Application extends JFrame {
 
 		JScrollPane listScroller = new JScrollPane(networkList);
 		listScroller.setPreferredSize(new Dimension(250, 80));
-		
+
 		this.add(listScroller, BorderLayout.LINE_START);
 	}
-	
+
 	/**
 	 * Set the network ID to another value.
 	 * 
@@ -290,7 +293,7 @@ public class Application extends JFrame {
 
 		this.networkId = networkId;
 	}
-	
+
 	/**
 	 * Toggle the auto layout of the graph view.
 	 * 
@@ -299,32 +302,34 @@ public class Application extends JFrame {
 	public void setAutoLayout(final boolean autoLayout) {
 		this.autoLayout = autoLayout;
 	}
-	
+
 	/**
 	 * Enable the auto layout of the graph view.
 	 */
 	public void enableAutoLayout() {
 		setAutoLayout(true);
 	}
-	
+
 	/**
 	 * Disable the auto layout of the graph view.
 	 */
 	public void disableAutoLayout() {
 		setAutoLayout(true);
 	}
-	
+
 	/**
-	 * Opens a FileChooser to select a file. Current path is last loaded model file path or falling back to current dir.
+	 * Opens a FileChooser to select a file. Current path is last loaded model file
+	 * path or falling back to current dir.
 	 * 
 	 * @return
 	 */
 	public String selectFile() {
-		final String currentDirectory = this.loadedModelFilePath != null ? this.loadedModelFilePath : System.getProperty("user.dir");
-		
+		final String currentDirectory = this.loadedModelFilePath != null ? this.loadedModelFilePath
+				: System.getProperty("user.dir");
+
 		return selectFile(currentDirectory);
 	}
-	
+
 	/**
 	 * Opens a FileChooser to select a file at the specified location.
 	 * 
@@ -335,15 +340,15 @@ public class Application extends JFrame {
 		JFileChooser fileChooser = new JFileChooser(currentDirectoryPath);
 		int returnVal = fileChooser.showOpenDialog(this);
 
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File file = fileChooser.getSelectedFile();
 
-            return file.getPath();
-        }
-        
-        return null;
+			return file.getPath();
+		}
+
+		return null;
 	}
-	
+
 	/**
 	 * Select a file path based on the supplied path.
 	 * 
@@ -354,19 +359,19 @@ public class Application extends JFrame {
 		if (path == null) {
 			return selectFile();
 		}
-		
+
 		File f = new File(path);
 		if (!f.exists()) {
 			return selectFile();
 		}
-		
+
 		if (f.isDirectory()) {
 			return selectFile(path);
 		}
-			
+
 		return path;
 	}
-	
+
 	/**
 	 * Load the model from the supplied path.
 	 * 
@@ -377,7 +382,7 @@ public class Application extends JFrame {
 		ModelFacade.getInstance().loadModel(this.loadedModelFilePath);
 		graph.setModel(ModelFacade.getInstance());
 	}
-	
+
 	/**
 	 * Converts a path into a path relative to the current working directory.
 	 * Necessary for loading models with the ModelFacade.
@@ -388,7 +393,7 @@ public class Application extends JFrame {
 	private String relativizePath(final String path) {
 		return Paths.get(System.getProperty("user.dir")).relativize(Paths.get(path).toAbsolutePath()).toString();
 	}
-	
+
 	/**
 	 * Updates the full UI with all changed configuration values.
 	 */
@@ -405,30 +410,32 @@ public class Application extends JFrame {
 		this.setTitle(this.loadedModelFilePath + " – " + this.networkId);
 		this.autoLayoutCheckbox.setSelected(autoLayout);
 		this.menuItemAutoLayout.setSelected(autoLayout);
-		
+
 		this.ready = true;
 	}
-	
+
 	/**
 	 * Refreshes the graph view with updated values.
 	 */
 	public void refreshGraph() {
 		graph.clear();
 		graph.render(this.networkId);
-		
+
 		if (!this.autoLayout) {
-    		graphViewer.disableAutoLayout();
-    	} else {
-    		graphViewer.enableAutoLayout();
-    	}
+			graphViewer.disableAutoLayout();
+		} else {
+			graphViewer.enableAutoLayout();
+		}
 	}
-	
+
 	/**
-	 * Refreshes the network list view with updated values. Resets the currently selected networkId if necessary.
+	 * Refreshes the network list view with updated values. Resets the currently
+	 * selected networkId if necessary.
 	 */
 	public void refreshNetworkList() {
-		networks = ModelFacade.getInstance().getAllNetworks().stream().filter((network) -> !(network instanceof VirtualNetwork)).map((network) -> network.getName()).toList();
-		
+		networks = ModelFacade.getInstance().getAllNetworks().stream()
+				.filter((network) -> !(network instanceof VirtualNetwork)).map((network) -> network.getName()).toList();
+
 		if (!networks.contains(this.networkId)) {
 			setNetworkId(networks.getFirst());
 		}
