@@ -122,8 +122,14 @@ public class EmbeddedNetworkHandler implements HasMetric<Context.VnetEmbeddingCo
 		SubstrateNetwork sNet = context.getSubstrateNetwork();
 		List<Tag> tags = createTags(context);
 
-		this.metrics
-				.forEach((key, metric) -> this.meterRegistry.summary(key, tags).record(metric.apply(sNet).getValue()));
+		this.metrics.forEach((key, metric) -> {
+			try {
+				this.meterRegistry.summary(key, tags).record(metric.apply(sNet).getValue());
+			} catch (UnsupportedOperationException _ignored) {
+				// Ignore the exception, as the metric might not be supported by the
+				// SubstrateNetwork.
+			}
+		});
 	}
 
 	/**
