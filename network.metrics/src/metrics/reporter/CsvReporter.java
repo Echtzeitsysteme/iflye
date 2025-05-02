@@ -89,6 +89,7 @@ public class CsvReporter extends GroupByTagValueReporter implements Reporter {
 	 */
 	protected Map<String, String> getPersistedTags(Map<String, String> tags) {
 		return tags.entrySet().stream().filter((tag) -> persistTags.contains(tag.getKey()))
+				.map((tag) -> Map.entry(tag.getKey(), tag.getValue().replace(",", "/")))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
