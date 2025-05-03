@@ -1,10 +1,13 @@
 package scenarios.load;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import org.apache.commons.cli.ParseException;
 
 import algorithms.AbstractAlgorithm;
 import facade.ModelFacade;
@@ -28,10 +31,17 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
 	 *
 	 * @param args See {@link #parseArgs(String[])}.
 	 */
-	public static void main(final String[] args) {
-		final MetricsManager metricsManager = new MetricsManager.Default();
-		parseArgs(args, metricsManager);
+	public static void main(final String[] args) throws IOException, InterruptedException, ParseException {
+		final DissScenarioLoad experiment = new DissScenarioLoad();
+		experiment.parseArgs(args);
+	}
+
+	public DissScenarioLoadBatch() {
 		metricsManager.addMeter(new GipsIlpHandler());
+	}
+
+	@Override
+	public void run() {
 		final AbstractAlgorithm algo = algoFactory.apply(ModelFacade.getInstance());
 
 		try {
@@ -59,7 +69,7 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
 			vNetIds.forEach(i -> vNets.add((VirtualNetwork) ModelFacade.getInstance().getNetworkById(i)));
 
 			metricsManager.addTags("series uuid", UUID.randomUUID().toString(), "started",
-					OffsetDateTime.now().toString(), "algorithm", algo.getAlgorithmName());
+					OffsetDateTime.now().toString(), "implementation", algo.getAlgorithmName());
 			metricsManager.initialized();
 
 			metricsManager.observe("batch", () -> new Context.VnetRootContext(sNet, vNets, algo), () -> {
