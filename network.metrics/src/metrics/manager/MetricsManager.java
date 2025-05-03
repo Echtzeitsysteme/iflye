@@ -388,7 +388,7 @@ public class MetricsManager implements AutoCloseable {
 	 *                 the new {@link MetricsManager}.
 	 * @return A new callable.
 	 */
-	public <T, E extends Throwable> Callable<T> wrap(Callable<T> callable, Tag... tags) {
+	public <T> Callable<T> wrap(Callable<T> callable, Tag... tags) {
 		return this.wrap(callable, Tags.of(tags));
 	}
 
@@ -404,7 +404,7 @@ public class MetricsManager implements AutoCloseable {
 	 *                 the new {@link MetricsManager}.
 	 * @return A new callable.
 	 */
-	public <T, E extends Throwable> Callable<T> wrap(Callable<T> callable, String... tags) {
+	public <T> Callable<T> wrap(Callable<T> callable, String... tags) {
 		return this.wrap(callable, Tags.of(tags));
 	}
 
@@ -420,7 +420,7 @@ public class MetricsManager implements AutoCloseable {
 	 *                 the new {@link MetricsManager}.
 	 * @return A new callable.
 	 */
-	public <T, E extends Throwable> Callable<T> wrap(Callable<T> callable, Iterable<? extends Tag> tags) {
+	public <T> Callable<T> wrap(Callable<T> callable, Iterable<? extends Tag> tags) {
 		return () -> this.withTags(callable, tags);
 	}
 
@@ -438,6 +438,72 @@ public class MetricsManager implements AutoCloseable {
 		return () -> {
 			try (final MetricsManager metricsManager = this.clone()) {
 				return callable.call();
+			}
+		};
+	}
+
+	/**
+	 * Wraps the call of the runnable in a new {@link MetricsManager} instance. The
+	 * new {@link MetricsManager} will have the same {@link MeterRegistry} and
+	 * {@link ObservationRegistry} as this one, but will have the given tags. A new
+	 * runnable will be returned.
+	 * 
+	 * @param runnable The runnable to be executed with the new
+	 *                 {@link MetricsManager}.
+	 * @param tags     The tags to be used for all observations that are started by
+	 *                 the new {@link MetricsManager}.
+	 * @return A new runnable.
+	 */
+	public Runnable wrap(Runnable runnable, Tag... tags) {
+		return this.wrap(runnable, Tags.of(tags));
+	}
+
+	/**
+	 * Wraps the call of the runnable in a new {@link MetricsManager} instance. The
+	 * new {@link MetricsManager} will have the same {@link MeterRegistry} and
+	 * {@link ObservationRegistry} as this one, but will have the given tags. A new
+	 * runnable will be returned.
+	 * 
+	 * @param runnable The runnable to be executed with the new
+	 *                 {@link MetricsManager}.
+	 * @param tags     The tags to be used for all observations that are started by
+	 *                 the new {@link MetricsManager}.
+	 * @return A new runnable.
+	 */
+	public Runnable wrap(Runnable runnable, String... tags) {
+		return this.wrap(runnable, Tags.of(tags));
+	}
+
+	/**
+	 * Wraps the call of the runnable in a new {@link MetricsManager} instance. The
+	 * new {@link MetricsManager} will have the same {@link MeterRegistry} and
+	 * {@link ObservationRegistry} as this one, but will have the given tags. A new
+	 * runnable will be returned.
+	 * 
+	 * @param runnable The runnable to be executed with the new
+	 *                 {@link MetricsManager}.
+	 * @param tags     The tags to be used for all observations that are started by
+	 *                 the new {@link MetricsManager}.
+	 * @return A new runnable.
+	 */
+	public Runnable wrap(Runnable runnable, Iterable<? extends Tag> tags) {
+		return () -> this.withTags(runnable, tags);
+	}
+
+	/**
+	 * Wraps the run of the runnable in a new {@link MetricsManager} instance. The
+	 * new {@link MetricsManager} will have the same {@link MeterRegistry},
+	 * {@link ObservationRegistry} and tags as this one. A new runnable will be
+	 * returned.
+	 * 
+	 * @param runnable The runnable to be executed with the new
+	 *                 {@link MetricsManager}.
+	 * @return A new runnable.
+	 */
+	public Runnable wrap(Runnable runnable) {
+		return () -> {
+			try (final MetricsManager metricsManager = this.clone()) {
+				runnable.run();
 			}
 		};
 	}
@@ -1024,6 +1090,122 @@ public class MetricsManager implements AutoCloseable {
 			Supplier<? extends Observation.Context> context, Callable<T> callable, Iterable<? extends Tag> tags)
 			throws E {
 		return this.wrap(() -> getInstance().observe(name, context, callable), tags);
+	}
+
+	/**
+	 * Wraps the given runnable with the given name into a new runnable for
+	 * observation.
+	 * 
+	 * @param name     The name of the {@link Observation}.
+	 * @param runnable The runnable to be observed.
+	 * @return A new runnable for observation.
+	 */
+	public Runnable wrapObserve(String name, Runnable runnable) {
+		return () -> this.observe(name, runnable);
+	}
+
+	/**
+	 * Wraps the given runnable with the given name and context into a new runnable
+	 * for observation.
+	 * 
+	 * @param name     The name of the {@link Observation}.
+	 * @param context  The context of the {@link Observation}.
+	 * @param runnable The runnable to be observed.
+	 * @return A new runnable for observation.
+	 */
+	public Runnable wrapObserve(String name,
+			Supplier<? extends Observation.Context> context, Runnable runnable) {
+		return () -> this.observe(name, context, runnable);
+	}
+
+	/**
+	 * Wraps the given runnable into a new runnable with a new
+	 * {@link MetricsManager} with the tags assigned. It will be observed with the
+	 * given name.
+	 * 
+	 * @param name     The name of the {@link Observation}.
+	 * @param runnable The runnable to be observed.
+	 * @param tags     The tags to be used for the {@link Observation}.
+	 * @return A new runnable for observation.
+	 */
+	public Runnable wrapObserve(String name, Runnable runnable, Tag... tags) {
+		return this.wrapObserve(name, runnable, Tags.of(tags));
+	}
+
+	/**
+	 * Wraps the given runnable into a new runnable with a new
+	 * {@link MetricsManager} with the tags assigned. It will be observed with the
+	 * given name and context.
+	 * 
+	 * @param name     The name of the {@link Observation}.
+	 * @param context  The context of the {@link Observation}.
+	 * @param runnable The runnable to be observed.
+	 * @param tags     The tags to be used for the {@link Observation}.
+	 * @return A new runnable for observation.
+	 */
+	public Runnable wrapObserve(String name, Supplier<? extends Observation.Context> context, Runnable runnable,
+			Tag... tags) {
+		return this.wrapObserve(name, context, runnable, Tags.of(tags));
+	}
+
+	/**
+	 * Wraps the given runnable into a new runnable with a new
+	 * {@link MetricsManager} with the tags assigned. It will be observed with the
+	 * given name.
+	 * 
+	 * @param name     The name of the {@link Observation}.
+	 * @param runnable The runnable to be observed.
+	 * @param tags     The tags to be used for the {@link Observation}.
+	 * @return A new runnable for observation.
+	 */
+	public Runnable wrapObserve(String name, Runnable runnable, String... tags) {
+		return this.wrapObserve(name, runnable, Tags.of(tags));
+	}
+
+	/**
+	 * Wraps the given runnable into a new runnable with a new
+	 * {@link MetricsManager} with the tags assigned. It will be observed with the
+	 * given name and context.
+	 * 
+	 * @param name     The name of the {@link Observation}.
+	 * @param context  The context of the {@link Observation}.
+	 * @param runnable The runnable to be observed.
+	 * @param tags     The tags to be used for the {@link Observation}.
+	 * @return A new runnable for observation.
+	 */
+	public Runnable wrapObserve(String name, Supplier<? extends Observation.Context> context, Runnable runnable,
+			String... tags) {
+		return this.wrapObserve(name, context, runnable, Tags.of(tags));
+	}
+
+	/**
+	 * Wraps the given runnable into a new runnable with a new
+	 * {@link MetricsManager} with the tags assigned. It will be observed with the
+	 * given name.
+	 * 
+	 * @param name     The name of the {@link Observation}.
+	 * @param runnable The runnable to be observed.
+	 * @param tags     The tags to be used for the {@link Observation}.
+	 * @return A new runnable for observation.
+	 */
+	public Runnable wrapObserve(String name, Runnable runnable, Iterable<? extends Tag> tags) {
+		return this.wrapObserve(name, DEFAULT_CONTEXT, runnable, tags);
+	}
+
+	/**
+	 * Wraps the given runnable into a new runnable with a new
+	 * {@link MetricsManager} with the tags assigned. It will be observed with the
+	 * given name and context.
+	 * 
+	 * @param name     The name of the {@link Observation}.
+	 * @param context  The context of the {@link Observation}.
+	 * @param runnable The runnable to be observed.
+	 * @param tags     The tags to be used for the {@link Observation}.
+	 * @return A new runnable for observation.
+	 */
+	public Runnable wrapObserve(String name, Supplier<? extends Observation.Context> context, Runnable runnable,
+			Iterable<? extends Tag> tags) {
+		return this.wrap(() -> getInstance().observe(name, context, runnable), tags);
 	}
 
 	/**
