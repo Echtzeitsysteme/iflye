@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -39,49 +38,7 @@ import scenarios.modules.NotionModule;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class DissScenarioLoad {
-
-	/**
-	 * Substrate network to use.
-	 */
-	protected SubstrateNetwork sNet;
-
-	/**
-	 * File path for the JSON file to load the substrate network from.
-	 */
-	protected String subNetPath;
-
-	/**
-	 * File path for the JSON file to load all virtual networks from.
-	 */
-	protected String virtNetsPath;
-
-	/**
-	 * File path for the metric CSV output.
-	 */
-	protected static String csvPath = null;
-
-	/**
-	 * The algorithm to use
-	 */
-	protected Function<ModelFacade, AbstractAlgorithm> algoFactory = null;
-
-	/**
-	 * If the model should be persisted after execution, optionally supply the file
-	 * name.
-	 */
-	protected boolean persistModel = false;
-
-	/**
-	 * The path to the file where the model should be persisted.
-	 */
-	protected String persistModelPath;
-
-	/**
-	 * If VNets that where not successfully embedded should be removed from the
-	 * model to prevent from blocking further embeddings.
-	 */
-	protected boolean removeUnembeddedVnets = false;
+public class DissScenarioLoad extends AbstractExperiment {
 
 	protected final MetricsManager metricsManager = new MetricsManager.Default();
 
@@ -101,6 +58,7 @@ public class DissScenarioLoad {
 		metricsManager.addMeter(new GipsIlpHandler());
 	}
 
+	@Override
 	public void run() {
 		final AbstractAlgorithm algo = algoFactory.apply(ModelFacade.getInstance());
 
@@ -202,14 +160,14 @@ public class DissScenarioLoad {
 		options.addOption(help);
 
 		final List<Module> modules = List.of(//
-				new AlgorithmModule(this), //
-				new CsvModule(this), //
-				new MemoryModule(this), //
-				new ModelConfigurationModule(this), //
-				new NotionModule(this)//
+				new AlgorithmModule(), //
+				new CsvModule(), //
+				new MemoryModule(), //
+				new ModelConfigurationModule(), //
+				new NotionModule()//
 		);
 
-		modules.forEach((module) -> module.register(options));
+		modules.forEach((module) -> module.register(this, options));
 
 		final CommandLineParser parser = new DefaultParser();
 		final HelpFormatter formatter = new HelpFormatter();
@@ -224,7 +182,7 @@ public class DissScenarioLoad {
 			}
 
 			for (final Module module : modules) {
-				module.configure(cmd);
+				module.configure(this, cmd);
 			}
 
 			// Print arguments into logs/system outputs
@@ -238,56 +196,8 @@ public class DissScenarioLoad {
 		}
 	}
 
-	public Function<ModelFacade, AbstractAlgorithm> getAlgoFactory() {
-		return algoFactory;
-	}
-
-	public void setAlgoFactory(Function<ModelFacade, AbstractAlgorithm> algoFactory) {
-		this.algoFactory = algoFactory;
-	}
-
-	public boolean isPersistModel() {
-		return persistModel;
-	}
-
-	public void setPersistModel(boolean persistModel) {
-		this.persistModel = persistModel;
-	}
-
-	public String getPersistModelPath() {
-		return persistModelPath;
-	}
-
-	public void setPersistModelPath(String persistModelPath) {
-		this.persistModelPath = persistModelPath;
-	}
-
-	public boolean isRemoveUnembeddedVnets() {
-		return removeUnembeddedVnets;
-	}
-
-	public void setRemoveUnembeddedVnets(boolean removeUnembeddedVnets) {
-		this.removeUnembeddedVnets = removeUnembeddedVnets;
-	}
-
 	public MetricsManager getMetricsManager() {
 		return metricsManager;
-	}
-
-	public String getSubNetPath() {
-		return subNetPath;
-	}
-
-	public void setSubNetPath(String subNetPath) {
-		this.subNetPath = subNetPath;
-	}
-
-	public String getVirtNetsPath() {
-		return virtNetsPath;
-	}
-
-	public void setVirtNetsPath(String virtNetsPath) {
-		this.virtNetsPath = virtNetsPath;
 	}
 
 }

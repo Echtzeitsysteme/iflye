@@ -11,7 +11,7 @@ import org.apache.commons.cli.ParseException;
 import metrics.Reporter;
 import metrics.manager.MetricsManager;
 import metrics.reporter.CsvReporter;
-import scenarios.load.DissScenarioLoad;
+import scenarios.load.Experiment;
 
 public class CsvModule extends AbstractModule {
 	protected final Option csvPath = Option.builder()//
@@ -23,22 +23,20 @@ public class CsvModule extends AbstractModule {
 
 	protected Function<File, Reporter> csvReporterSupplier = CsvReporter.Default::new;
 
-	public CsvModule(final DissScenarioLoad experiment) {
-		super(experiment);
+	public CsvModule() {
 	}
 
-	public CsvModule(final DissScenarioLoad experiment, final Function<File, Reporter> csvReporterSupplier) {
-		this(experiment);
+	public CsvModule(final Function<File, Reporter> csvReporterSupplier) {
 		this.csvReporterSupplier = csvReporterSupplier;
 	}
 
 	@Override
-	public void register(final Options options) {
+	public void register(final Experiment experiment, final Options options) {
 		options.addOption(csvPath);
 	}
 
 	@Override
-	public void configure(final CommandLine cmd) throws ParseException {
+	public void configure(final Experiment experiment, final CommandLine cmd) throws ParseException {
 		if (cmd.getOptionValue(csvPath) != null) {
 			final String csvPath = cmd.getOptionValue("csvpath");
 			MetricsManager.getInstance().addReporter(this.csvReporterSupplier.apply(new File(csvPath)));

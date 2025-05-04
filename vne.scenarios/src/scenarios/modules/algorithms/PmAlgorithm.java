@@ -17,7 +17,8 @@ import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesRackA;
 import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesRackB;
 import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesVnet;
 import facade.ModelFacade;
-import scenarios.load.DissScenarioLoad;
+import metrics.manager.MetricsManager;
+import scenarios.load.Experiment;
 import scenarios.modules.AbstractModule;
 import scenarios.modules.AlgorithmModule;
 
@@ -29,25 +30,22 @@ public class PmAlgorithm extends AbstractModule implements AlgorithmModule.Algor
 			.hasArg()//
 			.build();
 
-	public PmAlgorithm(final DissScenarioLoad experiment) {
-		super(experiment);
-	}
-
 	@Override
-	public void register(final Options options) {
+	public void register(final Experiment experiment, final Options options) {
 		options.addOption(tries);
 	}
 
 	@Override
-	public void configure(final CommandLine cmd) throws ParseException {
+	public void configure(final Experiment experiment, final CommandLine cmd) throws ParseException {
 		if (cmd.getOptionValue("tries") != null) {
 			AlgorithmConfig.pmNoMigrations = Integer.valueOf(cmd.getOptionValue("tries"));
-			this.getExperiment().getMetricsManager().addTags("tries", cmd.getOptionValue("tries"));
+			MetricsManager.getInstance().addTags("tries", cmd.getOptionValue("tries"));
 		}
 	}
 
 	@Override
-	public Function<ModelFacade, AbstractAlgorithm> getAlgorithmFactory(final String algoConfig, final CommandLine cmd,
+	public Function<ModelFacade, AbstractAlgorithm> getAlgorithmFactory(final Experiment experiment,
+			final String algoConfig, final CommandLine cmd,
 			final Function<ModelFacade, AbstractAlgorithm> previousAlgoFactory) {
 		switch (algoConfig) {
 		case "pm":

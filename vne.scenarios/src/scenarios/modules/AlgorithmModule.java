@@ -16,7 +16,8 @@ import algorithms.AlgorithmConfig.Embedding;
 import algorithms.AlgorithmConfig.Objective;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
-import scenarios.load.DissScenarioLoad;
+import metrics.manager.MetricsManager;
+import scenarios.load.Experiment;
 import scenarios.modules.algorithms.GipsAlgorithm;
 import scenarios.modules.algorithms.IlpAlgorithm;
 import scenarios.modules.algorithms.PmAlgorithm;
@@ -63,19 +64,19 @@ public class AlgorithmModule extends AbstractModule {
 
 	protected final List<AlgorithmConfiguration> algorithms = new ArrayList<>();
 
-	public AlgorithmModule(final DissScenarioLoad experiment) {
-		this(experiment, defaultAlgorithms(experiment));
+	public AlgorithmModule() {
+		this(defaultAlgorithms());
 	}
 
-	public AlgorithmModule(final DissScenarioLoad experiment, final Collection<AlgorithmConfiguration> algorithms) {
-		super(experiment);
+	public AlgorithmModule(final Collection<AlgorithmConfiguration> algorithms) {
+		super();
 
 		this.algorithms.addAll(algorithms);
 	}
 
-	public static List<AlgorithmConfiguration> defaultAlgorithms(final DissScenarioLoad experiment) {
-		return List.of(new GipsAlgorithm(experiment), new IlpAlgorithm(experiment), new PmAlgorithm(experiment),
-				new RandomAlgorithm(experiment), new TafAlgorithmConfig(experiment));
+	public static List<AlgorithmConfiguration> defaultAlgorithms() {
+		return List.of(new GipsAlgorithm(), new IlpAlgorithm(), new PmAlgorithm(), new RandomAlgorithm(),
+				new TafAlgorithmConfig());
 	}
 
 	public AlgorithmModule addAlgorithm(final AlgorithmConfiguration algorithmConfiguration) {
@@ -84,22 +85,22 @@ public class AlgorithmModule extends AbstractModule {
 	}
 
 	@Override
-	public void register(final Options options) {
+	public void register(final Experiment experiment, final Options options) {
 		options.addOption(algo);
 		options.addOption(obj);
 		options.addOption(pathLength);
 		options.addOption(paths);
 		options.addOption(emb);
 
-		this.algorithms.forEach((algorithm) -> algorithm.register(options));
+		this.algorithms.forEach((algorithm) -> algorithm.register(experiment, options));
 	}
 
 	@Override
-	public void configure(final CommandLine cmd) throws ParseException {
+	public void configure(final Experiment experiment, final CommandLine cmd) throws ParseException {
 		final String algoConfig = cmd.getOptionValue("algorithm");
-		this.getExperiment().getMetricsManager().addTags("algorithm", algoConfig);
+		MetricsManager.getInstance().addTags("algorithm", algoConfig);
 
-		this.getExperiment().getMetricsManager().addTags("objective", cmd.getOptionValue("objective"));
+		MetricsManager.getInstance().addTags("objective", cmd.getOptionValue("objective"));
 		switch (cmd.getOptionValue("objective")) {
 		case "total-path":
 			AlgorithmConfig.obj = Objective.TOTAL_PATH_COST;
@@ -124,7 +125,7 @@ public class AlgorithmModule extends AbstractModule {
 		ModelFacadeConfig.MIN_PATH_LENGTH = 1;
 		String pathLengthParam = cmd.getOptionValue("path-length");
 		if (pathLengthParam != null) {
-			this.getExperiment().getMetricsManager().addTags("path-length", pathLengthParam);
+			MetricsManager.getInstance().addTags("path-length", pathLengthParam);
 			if (pathLengthParam.equals("auto")) {
 				ModelFacadeConfig.MAX_PATH_LENGTH_AUTO = true;
 			} else {
@@ -134,7 +135,7 @@ public class AlgorithmModule extends AbstractModule {
 
 		if (cmd.getOptionValue("kfastestpaths") != null) {
 			final int K = Integer.valueOf(cmd.getOptionValue("kfastestpaths"));
-			this.getExperiment().getMetricsManager().addTags("kfastestpaths", cmd.getOptionValue("kfastestpaths"));
+			MetricsManager.getInstance().addTags("kfastestpaths", cmd.getOptionValue("kfastestpaths"));
 			if (K > 1) {
 				ModelFacadeConfig.YEN_PATH_GEN = true;
 				ModelFacadeConfig.YEN_K = K;
@@ -142,7 +143,7 @@ public class AlgorithmModule extends AbstractModule {
 		}
 
 		if (cmd.getOptionValue("embedding") != null) {
-			this.getExperiment().getMetricsManager().addTags("embedding", cmd.getOptionValue("embedding"));
+			MetricsManager.getInstance().addTags("embedding", cmd.getOptionValue("embedding"));
 			switch (cmd.getOptionValue("embedding")) {
 			case "emoflon":
 				AlgorithmConfig.emb = Embedding.EMOFLON;
@@ -157,12 +158,12 @@ public class AlgorithmModule extends AbstractModule {
 		}
 
 		for (final AlgorithmConfiguration algorithm : this.algorithms) {
-			algorithm.configure(cmd);
+			algorithm.configure(experiment, cmd);
 		}
 		final Function<ModelFacade, AbstractAlgorithm> algorithmFactory = this.algorithms.stream().reduce(null,
 				(factory, algorithmConfiguration) -> {
 					try {
-						return algorithmConfiguration.getAlgorithmFactory(algoConfig, cmd, factory);
+						return algorithmConfiguration.getAlgorithmFactory(experiment, algoConfig, cmd, factory);
 					} catch (ParseException e) {
 						throw new RuntimeException(e);
 					}
@@ -172,11 +173,11 @@ public class AlgorithmModule extends AbstractModule {
 			throw new IllegalArgumentException("Configured algorithm not known.");
 		}
 
-		this.getExperiment().setAlgoFactory(algorithmFactory);
+		experiment.setAlgoFactory(algorithmFactory);
 	}
 
 	public static interface AlgorithmConfiguration extends Module {
-		public Function<ModelFacade, AbstractAlgorithm> getAlgorithmFactory(String algoConfig, CommandLine cmd,
-				Function<ModelFacade, AbstractAlgorithm> previousAlgoFactory) throws ParseException;
+		public Function<ModelFacade, AbstractAlgorithm> getAlgorithmFactory(Experiment experiment, String algoConfig,
+				CommandLine cmd, Function<ModelFacade, AbstractAlgorithm> previousAlgoFactory) throws ParseException;
 	}
 }

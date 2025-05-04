@@ -13,7 +13,8 @@ import algorithms.gips.VneGipsBwIgnoreAlgorithm;
 import algorithms.gips.VneGipsMigrationAlgorithm;
 import algorithms.gips.VneGipsSeqAlgorithm;
 import facade.ModelFacade;
-import scenarios.load.DissScenarioLoad;
+import metrics.manager.MetricsManager;
+import scenarios.load.Experiment;
 import scenarios.modules.AbstractModule;
 import scenarios.modules.AlgorithmModule;
 
@@ -26,17 +27,14 @@ public class GipsAlgorithm extends AbstractModule implements AlgorithmModule.Alg
 			.type(Integer.class)//
 			.build();
 
-	public GipsAlgorithm(final DissScenarioLoad experiment) {
-		super(experiment);
-	}
-
 	@Override
-	public void register(final Options options) {
+	public void register(final Experiment experiment, final Options options) {
 		options.addOption(gipsSolverThreadsOption);
 	}
 
 	@Override
-	public Function<ModelFacade, AbstractAlgorithm> getAlgorithmFactory(final String algoConfig, final CommandLine cmd,
+	public Function<ModelFacade, AbstractAlgorithm> getAlgorithmFactory(final Experiment experiment,
+			final String algoConfig, final CommandLine cmd,
 			final Function<ModelFacade, AbstractAlgorithm> previousAlgoFactory) throws ParseException {
 		if (!algoConfig.startsWith("gips")) {
 			return previousAlgoFactory;
@@ -44,7 +42,7 @@ public class GipsAlgorithm extends AbstractModule implements AlgorithmModule.Alg
 
 		final int gipsSolverThreads = cmd.getParsedOptionValue(gipsSolverThreadsOption, -1);
 		if (gipsSolverThreads > 0) {
-			this.getExperiment().getMetricsManager().addTags("gips.solver_threads", String.valueOf(gipsSolverThreads));
+			MetricsManager.getInstance().addTags("gips.solver_threads", String.valueOf(gipsSolverThreads));
 		}
 
 		switch (algoConfig) {

@@ -6,7 +6,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import metrics.MetricConfig;
-import scenarios.load.DissScenarioLoad;
+import scenarios.load.Experiment;
 
 @Deprecated
 public class MemoryModule extends AbstractModule {
@@ -17,17 +17,13 @@ public class MemoryModule extends AbstractModule {
 			.deprecated()//
 			.build();
 
-	public MemoryModule(final DissScenarioLoad experiment) {
-		super(experiment);
-	}
-
 	@Override
-	public void register(final Options options) {
+	public void register(final Experiment experiment, final Options options) {
 		options.addOption(memEnabled);
 	}
 
 	@Override
-	public void configure(final CommandLine cmd) throws ParseException {
+	public void configure(final Experiment experiment, final CommandLine cmd) throws ParseException {
 		MetricConfig.ENABLE_MEMORY = cmd.hasOption("memmeasurement");
 	}
 }

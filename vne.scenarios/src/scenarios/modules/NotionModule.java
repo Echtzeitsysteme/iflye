@@ -13,7 +13,7 @@ import org.apache.commons.cli.ParseException;
 import metrics.Reporter;
 import metrics.manager.MetricsManager;
 import metrics.reporter.NotionReporter;
-import scenarios.load.DissScenarioLoad;
+import scenarios.load.Experiment;
 
 public class NotionModule extends AbstractModule {
 	protected final Option notionToken = Option.builder()//
@@ -39,25 +39,22 @@ public class NotionModule extends AbstractModule {
 
 	protected TriFunction<String, String, String, Reporter> notionReporterSupplier = NotionReporter.Default::new;
 
-	public NotionModule(final DissScenarioLoad experiment) {
-		super(experiment);
+	public NotionModule() {
 	}
 
-	public NotionModule(final DissScenarioLoad experiment,
-			final TriFunction<String, String, String, Reporter> notionReporterSupplier) {
-		this(experiment);
+	public NotionModule(final TriFunction<String, String, String, Reporter> notionReporterSupplier) {
 		this.notionReporterSupplier = notionReporterSupplier;
 	}
 
 	@Override
-	public void register(final Options options) {
+	public void register(final Experiment experiment, final Options options) {
 		options.addOption(notionToken);
 		options.addOption(notionSeriesDB);
 		options.addOption(notionMetricDB);
 	}
 
 	@Override
-	public void configure(final CommandLine cmd) throws ParseException {
+	public void configure(final Experiment experiment, final CommandLine cmd) throws ParseException {
 		final boolean withNotion = cmd.hasOption(notionToken);
 		if (!withNotion) {
 			return;

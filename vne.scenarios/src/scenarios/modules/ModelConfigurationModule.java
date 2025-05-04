@@ -8,7 +8,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import scenarios.load.DissScenarioLoad;
+import metrics.manager.MetricsManager;
+import scenarios.load.Experiment;
 
 public class ModelConfigurationModule extends AbstractModule {
 	protected final Option subNetFile = Option.builder()//
@@ -41,12 +42,8 @@ public class ModelConfigurationModule extends AbstractModule {
 			.hasArg(false)//
 			.build();
 
-	public ModelConfigurationModule(final DissScenarioLoad experiment) {
-		super(experiment);
-	}
-
 	@Override
-	public void register(final Options options) {
+	public void register(final Experiment experiment, final Options options) {
 		options.addOption(subNetFile);
 		options.addOption(virtNetFile);
 		options.addOption(modelPersist);
@@ -54,22 +51,22 @@ public class ModelConfigurationModule extends AbstractModule {
 	}
 
 	@Override
-	public void configure(final CommandLine cmd) throws ParseException {
+	public void configure(final Experiment experiment, final CommandLine cmd) throws ParseException {
 		final String subNetPath = cmd.getOptionValue("snetfile");
-		this.getExperiment().setSubNetPath(subNetPath);
-		this.getExperiment().getMetricsManager().addTags("substrate network", getNetworkConfigurationName(subNetPath));
+		experiment.setSubNetPath(subNetPath);
+		MetricsManager.getInstance().addTags("substrate network", getNetworkConfigurationName(subNetPath));
 
 		final String virtNetsPath = cmd.getOptionValue("vnetfile");
-		this.getExperiment().setVirtNetsPath(virtNetsPath);
-		this.getExperiment().getMetricsManager().addTags("virtual network", getNetworkConfigurationName(virtNetsPath));
+		experiment.setVirtNetsPath(virtNetsPath);
+		MetricsManager.getInstance().addTags("virtual network", getNetworkConfigurationName(virtNetsPath));
 
 		if (cmd.hasOption(modelPersist)) {
 			final String filePath = cmd.getParsedOptionValue(modelPersist, "");
-			this.getExperiment().setPersistModel(true);
-			this.getExperiment().setPersistModelPath(filePath.isBlank() ? null : filePath);
+			experiment.setPersistModel(true);
+			experiment.setPersistModelPath(filePath.isBlank() ? null : filePath);
 		}
 
-		this.getExperiment().setRemoveUnembeddedVnets(cmd.hasOption(removeUnembeddedVnetsOption));
+		experiment.setRemoveUnembeddedVnets(cmd.hasOption(removeUnembeddedVnetsOption));
 	}
 
 	public static String getNetworkConfigurationName(final String filePath) {

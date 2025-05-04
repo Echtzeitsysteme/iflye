@@ -12,7 +12,8 @@ import algorithms.ilp.VneFakeIlpAlgorithm;
 import algorithms.ilp.VneFakeIlpBatchAlgorithm;
 import facade.ModelFacade;
 import ilp.wrapper.config.IlpSolverConfig;
-import scenarios.load.DissScenarioLoad;
+import metrics.manager.MetricsManager;
+import scenarios.load.Experiment;
 import scenarios.modules.AbstractModule;
 import scenarios.modules.AlgorithmModule;
 
@@ -51,12 +52,8 @@ public class IlpAlgorithm extends AbstractModule implements AlgorithmModule.Algo
 			.desc("ILP solver objective logarithm")//
 			.build();
 
-	public IlpAlgorithm(final DissScenarioLoad experiment) {
-		super(experiment);
-	}
-
 	@Override
-	public void register(final Options options) {
+	public void register(final Experiment experiment, final Options options) {
 		options.addOption(ilpTimeout);
 		options.addOption(ilpRandomSeed);
 		options.addOption(ilpOptTol);
@@ -65,35 +62,36 @@ public class IlpAlgorithm extends AbstractModule implements AlgorithmModule.Algo
 	}
 
 	@Override
-	public void configure(final CommandLine cmd) throws ParseException {
+	public void configure(final Experiment experiment, final CommandLine cmd) throws ParseException {
 		if (cmd.getOptionValue("ilptimeout") != null) {
 			IlpSolverConfig.TIME_OUT = Integer.valueOf(cmd.getOptionValue("ilptimeout"));
-			this.getExperiment().getMetricsManager().addTags("ilptimeout", cmd.getOptionValue("ilptimeout"));
+			MetricsManager.getInstance().addTags("ilptimeout", cmd.getOptionValue("ilptimeout"));
 		}
 
 		if (cmd.getOptionValue("ilprandomseed") != null) {
 			IlpSolverConfig.RANDOM_SEED = Integer.valueOf(cmd.getOptionValue("ilprandomseed"));
-			this.getExperiment().getMetricsManager().addTags("ilprandomseed", cmd.getOptionValue("ilprandomseed"));
+			MetricsManager.getInstance().addTags("ilprandomseed", cmd.getOptionValue("ilprandomseed"));
 		}
 
 		if (cmd.getOptionValue("ilpopttol") != null) {
 			IlpSolverConfig.OPT_TOL = Double.valueOf(cmd.getOptionValue("ilpopttol"));
-			this.getExperiment().getMetricsManager().addTags("ilpopttol", cmd.getOptionValue("ilpopttol"));
+			MetricsManager.getInstance().addTags("ilpopttol", cmd.getOptionValue("ilpopttol"));
 		}
 
 		if (cmd.getOptionValue("ilpobjscaling") != null) {
 			IlpSolverConfig.OBJ_SCALE = Double.valueOf(cmd.getOptionValue("ilpobjscaling"));
-			this.getExperiment().getMetricsManager().addTags("ilpobjscaling", cmd.getOptionValue("ilpobjscaling"));
+			MetricsManager.getInstance().addTags("ilpobjscaling", cmd.getOptionValue("ilpobjscaling"));
 		}
 
 		IlpSolverConfig.OBJ_LOG = cmd.hasOption("ilpobjlog");
 		if (cmd.hasOption("ilpobjlog")) {
-			this.getExperiment().getMetricsManager().addTags("ilpobjlog", String.valueOf(cmd.hasOption("ilpobjlog")));
+			MetricsManager.getInstance().addTags("ilpobjlog", String.valueOf(cmd.hasOption("ilpobjlog")));
 		}
 	}
 
 	@Override
-	public Function<ModelFacade, AbstractAlgorithm> getAlgorithmFactory(final String algoConfig, final CommandLine cmd,
+	public Function<ModelFacade, AbstractAlgorithm> getAlgorithmFactory(final Experiment experiment,
+			final String algoConfig, final CommandLine cmd,
 			final Function<ModelFacade, AbstractAlgorithm> previousAlgoFactory) {
 		switch (algoConfig) {
 		case "ilp":

@@ -4,8 +4,10 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-public interface Module {
-	public void register(final Options options);
+import scenarios.load.Experiment;
 
-	public void configure(final CommandLine cmd) throws ParseException;
+public interface Module {
+	public void register(final Experiment experiment, final Options options);
+
+	public void configure(final Experiment experiment, final CommandLine cmd) throws ParseException;
 }
