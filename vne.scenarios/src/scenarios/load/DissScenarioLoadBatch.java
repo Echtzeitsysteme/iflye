@@ -32,8 +32,7 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
 	 * @param args See {@link #parseArgs(String[])}.
 	 */
 	public static void main(final String[] args) throws IOException, InterruptedException, ParseException {
-		final DissScenarioLoad experiment = new DissScenarioLoad();
-		experiment.parseArgs(args);
+		ExperimentConfigurator.of(new DissScenarioLoadBatch(), args).run();
 	}
 
 	public DissScenarioLoadBatch() {

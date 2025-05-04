@@ -2,17 +2,10 @@ package scenarios.load;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import algorithms.AbstractAlgorithm;
@@ -25,12 +18,6 @@ import model.SubstrateNetwork;
 import model.VirtualNetwork;
 import model.converter.BasicModelConverter;
 import model.converter.IncrementalModelConverter;
-import scenarios.modules.AlgorithmModule;
-import scenarios.modules.CsvModule;
-import scenarios.modules.MemoryModule;
-import scenarios.modules.ModelConfigurationModule;
-import scenarios.modules.Module;
-import scenarios.modules.NotionModule;
 
 /**
  * Runnable (incremental) scenario for VNE algorithms that reads specified files
@@ -50,8 +37,7 @@ public class DissScenarioLoad extends AbstractExperiment {
 	 * @throws IOException
 	 */
 	public static void main(final String[] args) throws IOException, InterruptedException, ParseException {
-		final DissScenarioLoad experiment = new DissScenarioLoad();
-		experiment.parseArgs(args);
+		ExperimentConfigurator.of(new DissScenarioLoad(), args).run();
 	}
 
 	public DissScenarioLoad() {
@@ -146,54 +132,6 @@ public class DissScenarioLoad extends AbstractExperiment {
 
 		System.out.println("=> Execution finished.");
 		System.exit(0);
-	}
-
-	/**
-	 * Parses the given arguments to configure the scenario.
-	 *
-	 * @param args Arguments to parse.
-	 */
-	protected void parseArgs(final String[] args) throws ParseException {
-		final Options options = new Options();
-
-		final Option help = Option.builder().option("h").longOpt("help").desc("Display this help message").build();
-		options.addOption(help);
-
-		final List<Module> modules = List.of(//
-				new AlgorithmModule(), //
-				new CsvModule(), //
-				new MemoryModule(), //
-				new ModelConfigurationModule(), //
-				new NotionModule()//
-		);
-
-		modules.forEach((module) -> module.register(this, options));
-
-		final CommandLineParser parser = new DefaultParser();
-		final HelpFormatter formatter = new HelpFormatter();
-
-		try {
-			final CommandLine cmd = parser.parse(options, args);
-
-			if (cmd.hasOption(help)) {
-				formatter.printHelp("cli parameters", options);
-				System.exit(0);
-				return;
-			}
-
-			for (final Module module : modules) {
-				module.configure(this, cmd);
-			}
-
-			// Print arguments into logs/system outputs
-			System.out.println("=> Arguments: " + Arrays.toString(args));
-		} catch (final ParseException e) {
-			System.err.println(e.getMessage());
-			System.err.println();
-			formatter.printHelp("cli parameters", options);
-			System.exit(1);
-			return;
-		}
 	}
 
 	public MetricsManager getMetricsManager() {
