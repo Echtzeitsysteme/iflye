@@ -202,6 +202,8 @@ public class TafAlgorithm extends AbstractAlgorithm {
 			throw new IllegalArgumentException("The TAF algorithm is only suited for one virtual network at a time.");
 		}
 
+		super.prepare(sNet, vNets);
+
 		virtualLinks.clear();
 		// Add virtual links from model
 		final List<Link> vLinks = modelFacade.getAllLinksOfNetwork(getFirstVnet().getName());
