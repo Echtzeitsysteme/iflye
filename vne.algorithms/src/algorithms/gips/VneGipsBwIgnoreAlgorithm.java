@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.emoflon.gips.core.milp.SolverOutput;
+import org.emoflon.gips.gipsl.examples.mdvne.MdvneGipsIflyeAdapter;
 import org.emoflon.gips.gipsl.examples.mdvne.bwignore.MdvneGipsBwIgnoreIflyeAdapter;
 
 import algorithms.AbstractAlgorithm;
@@ -29,9 +30,14 @@ public class VneGipsBwIgnoreAlgorithm extends AbstractAlgorithm implements GipsA
 	private final static String GIPS_PROJECT_BASE_PATH = "../../gips-examples/org.emoflon.gips.gipsl.examples.mdvne.bwignore";
 
 	/**
-	 * Algorithm instance (singleton).
+	 * The GIPS MdVNE adapter.
 	 */
-	private static VneGipsBwIgnoreAlgorithm instance;
+	private final MdvneGipsBwIgnoreIflyeAdapter iflyeAdapter;
+
+	/**
+	 * The most recent GIPS MdVNE output.
+	 */
+	private MdvneGipsIflyeAdapter.MdvneIflyeOutput iflyeOutput;
 
 	/**
 	 * Initialize the algorithm with the global model facade.
@@ -47,6 +53,8 @@ public class VneGipsBwIgnoreAlgorithm extends AbstractAlgorithm implements GipsA
 	 */
 	public VneGipsBwIgnoreAlgorithm(final ModelFacade modelFacade) {
 		super(modelFacade);
+
+		iflyeAdapter = new MdvneGipsBwIgnoreIflyeAdapter();
 	}
 
 	@Override
@@ -64,13 +72,15 @@ public class VneGipsBwIgnoreAlgorithm extends AbstractAlgorithm implements GipsA
 
 		// TODO: Time measurement
 		final ResourceSet model = getModelFacade().getResourceSet();
-		final boolean gipsSuccess = MdvneGipsBwIgnoreIflyeAdapter.execute(model,
+		iflyeOutput = iflyeAdapter.execute(model,
 				GIPS_PROJECT_BASE_PATH
 						+ "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/bwignore/api/gips/gips-model.xmi",
 				GIPS_PROJECT_BASE_PATH
 						+ "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/bwignore/api/ibex-patterns.xmi",
 				GIPS_PROJECT_BASE_PATH
 						+ "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/bwignore/hipe/engine/hipe-network.xmi");
+
+		final boolean gipsSuccess = this.iflyeOutput.solverOutput().solutionCount() > 0;
 
 		// The following workaround is not necessary because of the global bandwidth
 		// ignoring needed for this VNE algorithm
@@ -82,12 +92,12 @@ public class VneGipsBwIgnoreAlgorithm extends AbstractAlgorithm implements GipsA
 
 	@Override
 	public SolverOutput getSolverOutput() {
-		return null;
+		return this.iflyeOutput.solverOutput();
 	}
 
 	@Override
 	public Map<String, String> getMatches() {
-		return null;
+		return this.iflyeOutput.matches();
 	}
 
 	/**
@@ -97,6 +107,7 @@ public class VneGipsBwIgnoreAlgorithm extends AbstractAlgorithm implements GipsA
 	 * @param vNets Set of virtual networks to work with.
 	 * @return Instance of this algorithm implementation.
 	 */
+	@Override
 	public void prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		VneGipsAlgorithmUtils.checkGivenVnets(getModelFacade(), vNets);
 
@@ -106,12 +117,9 @@ public class VneGipsBwIgnoreAlgorithm extends AbstractAlgorithm implements GipsA
 	/**
 	 * Resets the algorithm instance.
 	 */
+	@Override
 	public void dispose() {
-		MdvneGipsBwIgnoreIflyeAdapter.resetInit();
-		if (instance == null) {
-			return;
-		}
-		instance = null;
+		iflyeAdapter.resetInit();
 	}
 
 }

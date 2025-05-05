@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.emoflon.gips.core.milp.SolverOutput;
+import org.emoflon.gips.gipsl.examples.mdvne.MdvneGipsIflyeAdapter;
 import org.emoflon.gips.gipsl.examples.mdvne.migration.MdvneMigrationGipsIflyeAdapter;
 
 import algorithms.AbstractAlgorithm;
@@ -28,6 +29,16 @@ public class VneGipsMigrationAlgorithm extends AbstractAlgorithm implements Gips
 	private final static String GIPS_PROJECT_BASE_PATH = "../../gips-examples/org.emoflon.gips.gipsl.examples.mdvne.migration";
 
 	/**
+	 * The GIPS MdVNE adapter.
+	 */
+	private final MdvneMigrationGipsIflyeAdapter iflyeAdapter;
+
+	/**
+	 * The most recent GIPS MdVNE output.
+	 */
+	private MdvneGipsIflyeAdapter.MdvneIflyeOutput iflyeOutput;
+
+	/**
 	 * Initialize the algorithm with the global model facade.
 	 */
 	public VneGipsMigrationAlgorithm() {
@@ -41,6 +52,8 @@ public class VneGipsMigrationAlgorithm extends AbstractAlgorithm implements Gips
 	 */
 	public VneGipsMigrationAlgorithm(final ModelFacade modelFacade) {
 		super(modelFacade);
+
+		this.iflyeAdapter = new MdvneMigrationGipsIflyeAdapter();
 	}
 
 	@Override
@@ -54,20 +67,20 @@ public class VneGipsMigrationAlgorithm extends AbstractAlgorithm implements Gips
 		// TODO: Time measurement
 
 		// Remove all old embeddings
-		for (final Network net : ModelFacade.getInstance().getAllNetworks()) {
+		for (final Network net : getModelFacade().getAllNetworks()) {
 			if (net instanceof VirtualNetwork vNet) {
 				if (vNet.getHost() != null || vNet.getHostServer() != null) {
-					ModelFacade.getInstance().removeNetworkEmbedding(vNet.getName());
+					getModelFacade().removeNetworkEmbedding(vNet.getName());
 				}
 			}
 		}
 
 		// Sanity check
-		ModelFacade.getInstance().validateModel();
-		ModelFacade.getInstance().updateAllPathsResidualBandwidth(sNet.getName());
+		getModelFacade().validateModel();
+		getModelFacade().updateAllPathsResidualBandwidth(sNet.getName());
 
-		final ResourceSet model = ModelFacade.getInstance().getResourceSet();
-		final boolean gipsSuccess = MdvneMigrationGipsIflyeAdapter.execute(model,
+		final ResourceSet model = getModelFacade().getResourceSet();
+		iflyeOutput = iflyeAdapter.execute(model,
 				GIPS_PROJECT_BASE_PATH
 						+ "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/migration/api/gips/gips-model.xmi",
 				GIPS_PROJECT_BASE_PATH
@@ -75,9 +88,11 @@ public class VneGipsMigrationAlgorithm extends AbstractAlgorithm implements Gips
 				GIPS_PROJECT_BASE_PATH
 						+ "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/migration/hipe/engine/hipe-network.xmi");
 
+		final boolean gipsSuccess = this.iflyeOutput.solverOutput().solutionCount() > 0;
+
 		// Workaround to fix the residual bandwidth of other paths possibly affected by
 		// virtual link to substrate path embeddings
-		ModelFacade.getInstance().updateAllPathsResidualBandwidth(sNet.getName());
+		getModelFacade().updateAllPathsResidualBandwidth(sNet.getName());
 		return gipsSuccess;
 	}
 
@@ -115,8 +130,9 @@ public class VneGipsMigrationAlgorithm extends AbstractAlgorithm implements Gips
 	/**
 	 * Resets the algorithm instance.
 	 */
+	@Override
 	public void dispose() {
-		MdvneMigrationGipsIflyeAdapter.resetInit();
+		iflyeAdapter.resetInit();
 	}
 
 }

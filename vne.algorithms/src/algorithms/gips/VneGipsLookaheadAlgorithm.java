@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.emoflon.gips.core.milp.SolverOutput;
+import org.emoflon.gips.gipsl.examples.mdvne.MdvneGipsIflyeAdapter;
 import org.emoflon.gips.gipsl.examples.mdvne.MdvneGipsLookaheadIflyeAdapter;
 
 import algorithms.AbstractAlgorithm;
@@ -32,9 +33,19 @@ public class VneGipsLookaheadAlgorithm extends AbstractAlgorithm implements Gips
 	private String vNetId = null;
 
 	/**
-	 * Initialize the algorithm with the global model facade. GIPS will
-	 * calculate a valid embedding for all given virtual networks but only the one
-	 * whose name matches the given network ID will be embedded within the model.
+	 * The GIPS MdVNE adapter.
+	 */
+	private final MdvneGipsLookaheadIflyeAdapter iflyeAdapter;
+
+	/**
+	 * The most recent GIPS MdVNE output.
+	 */
+	private MdvneGipsIflyeAdapter.MdvneIflyeOutput iflyeOutput;
+
+	/**
+	 * Initialize the algorithm with the global model facade. GIPS will calculate a
+	 * valid embedding for all given virtual networks but only the one whose name
+	 * matches the given network ID will be embedded within the model.
 	 *
 	 * @param sNet   Substrate network to work with.
 	 * @param vNets  Set of virtual networks to work with.
@@ -51,6 +62,8 @@ public class VneGipsLookaheadAlgorithm extends AbstractAlgorithm implements Gips
 	 */
 	public VneGipsLookaheadAlgorithm(final ModelFacade modelFacade) {
 		super(modelFacade);
+
+		iflyeAdapter = new MdvneGipsLookaheadIflyeAdapter();
 	}
 
 	@Override
@@ -62,16 +75,18 @@ public class VneGipsLookaheadAlgorithm extends AbstractAlgorithm implements Gips
 		}
 
 		// TODO: Time measurement
-		final ResourceSet model = ModelFacade.getInstance().getResourceSet();
-		final boolean gipsSuccess = MdvneGipsLookaheadIflyeAdapter.execute(model,
+		final ResourceSet model = getModelFacade().getResourceSet();
+		iflyeOutput = iflyeAdapter.execute(model,
 				GIPS_PROJECT_BASE_PATH + "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/api/gips/gips-model.xmi",
 				GIPS_PROJECT_BASE_PATH + "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/api/ibex-patterns.xmi",
 				GIPS_PROJECT_BASE_PATH + "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/hipe/engine/hipe-network.xmi",
 				vNetId);
 
+		final boolean gipsSuccess = this.iflyeOutput.solverOutput().solutionCount() > 0;
+
 		// Workaround to fix the residual bandwidth of other paths possibly affected by
 		// virtual link to substrate path embeddings
-		ModelFacade.getInstance().updateAllPathsResidualBandwidth(sNet.getName());
+		getModelFacade().updateAllPathsResidualBandwidth(sNet.getName());
 		return gipsSuccess;
 	}
 
@@ -118,19 +133,20 @@ public class VneGipsLookaheadAlgorithm extends AbstractAlgorithm implements Gips
 
 	@Override
 	public SolverOutput getSolverOutput() {
-		return null;
+		return this.iflyeOutput.solverOutput();
 	}
 
 	@Override
 	public Map<String, String> getMatches() {
-		return null;
+		return this.iflyeOutput.matches();
 	}
 
 	/**
 	 * Resets the algorithm instance.
 	 */
+	@Override
 	public void dispose() {
-		MdvneGipsLookaheadIflyeAdapter.resetInit();
+		iflyeAdapter.resetInit();
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package algorithms.gips;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -67,7 +66,7 @@ public class VneGipsHeapAlgorithm extends AbstractAlgorithm implements GipsAlgor
 		}
 
 		// TODO: Time measurement
-		final ResourceSet model = ModelFacade.getInstance().getResourceSet();
+		final ResourceSet model = getModelFacade().getResourceSet();
 		this.iflyeOutput = iflyeAdapter.execute(model,
 				GIPS_PROJECT_BASE_PATH + "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/heap/api/gips/gips-model.xmi",
 				GIPS_PROJECT_BASE_PATH + "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/heap/api/ibex-patterns.xmi",
@@ -90,6 +89,7 @@ public class VneGipsHeapAlgorithm extends AbstractAlgorithm implements GipsAlgor
 	 * @param vNets Set of virtual networks to work with.
 	 * @return Instance of this algorithm implementation.
 	 */
+	@Override
 	public void prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		VneGipsAlgorithmUtils.checkGivenVnets(getModelFacade(), vNets);
 
@@ -109,6 +109,7 @@ public class VneGipsHeapAlgorithm extends AbstractAlgorithm implements GipsAlgor
 	/**
 	 * Resets the algorithm instance.
 	 */
+	@Override
 	public void dispose() {
 		iflyeAdapter.resetInit();
 	}
