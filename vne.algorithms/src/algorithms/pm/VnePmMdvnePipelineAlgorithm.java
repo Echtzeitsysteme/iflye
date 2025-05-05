@@ -1,5 +1,6 @@
 package algorithms.pm;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,7 +39,7 @@ import model.VirtualServer;
  * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public abstract class VnePmMdvnePipelineAlgorithm extends AlgorithmPipeline {
+public abstract class VnePmMdvnePipelineAlgorithm extends VnePmMdvneAlgorithm implements AlgorithmPipeline {
 
 	/**
 	 * Incremental pattern matcher to use.
@@ -54,6 +55,11 @@ public abstract class VnePmMdvnePipelineAlgorithm extends AlgorithmPipeline {
 	 * Mapping of string (name) to matches.
 	 */
 	protected final Map<String, Match> variablesToMatch = new HashMap<>();
+
+	/**
+	 * A list of all algorithms that are part of this pipeline.
+	 */
+	protected final List<AbstractAlgorithm> pipeline = new ArrayList<>();
 
 	/**
 	 * Set of ignored virtual networks. Ignored virtual networks are requests, that
@@ -84,7 +90,14 @@ public abstract class VnePmMdvnePipelineAlgorithm extends AlgorithmPipeline {
 	}
 
 	public VnePmMdvnePipelineAlgorithm(final ModelFacade modelFacade, final Collection<AbstractAlgorithm> pipeline) {
-		super(modelFacade, pipeline);
+		super(modelFacade);
+
+		this.pipeline.addAll(pipeline);
+	}
+
+	@Override
+	public List<AbstractAlgorithm> getPipeline() {
+		return this.pipeline;
 	}
 
 	/**
@@ -107,11 +120,14 @@ public abstract class VnePmMdvnePipelineAlgorithm extends AlgorithmPipeline {
 		super.prepare(sNet, vNets);
 
 		checkPreConditions();
+
+		AlgorithmPipeline.super.prepare(sNet, vNets);
 	}
 
 	/**
 	 * Resets the ILP solver and the pattern matcher.
 	 */
+	@Override
 	public void dispose() {
 		if (this.ilpSolver != null) {
 			this.ilpSolver.dispose();
@@ -121,6 +137,7 @@ public abstract class VnePmMdvnePipelineAlgorithm extends AlgorithmPipeline {
 		}
 
 		super.dispose();
+		AlgorithmPipeline.super.dispose(sNet, vNets);
 	}
 
 	@Override
@@ -162,6 +179,7 @@ public abstract class VnePmMdvnePipelineAlgorithm extends AlgorithmPipeline {
 	 * placed on the substrate network at all, the method adds it to the set of
 	 * ignored networks.
 	 */
+	@Override
 	protected void checkOverallResources() {
 		// Calculate total residual resources for substrate servers
 		// Datatype long is needed, because of the possible large values of substrate
@@ -211,6 +229,7 @@ public abstract class VnePmMdvnePipelineAlgorithm extends AlgorithmPipeline {
 	 * virtual network was removed "dirty" from the model and the residual values or
 	 * guest references are not updated properly.
 	 */
+	@Override
 	protected void repairSubstrateNetwork() {
 		// Find all networks that were removed in the meantime
 		final Set<VirtualNetwork> removedGuests = sNet.getGuests().stream()
@@ -230,6 +249,7 @@ public abstract class VnePmMdvnePipelineAlgorithm extends AlgorithmPipeline {
 	 * @return Set of virtual networks that have to be embedded again, because their
 	 *         old embedding was invalid.
 	 */
+	@Override
 	protected Set<VirtualNetwork> repairVirtualNetworks() {
 		// Find all virtual networks that are floating
 		final Set<VirtualNetwork> floatingGuests = sNet.getGuests().stream().filter(g -> modelFacade.checkIfFloating(g))
@@ -245,6 +265,7 @@ public abstract class VnePmMdvnePipelineAlgorithm extends AlgorithmPipeline {
 	 * Checks every condition necessary to run this algorithm. If a condition is not
 	 * met, it throws an UnsupportedOperationException.
 	 */
+	@Override
 	protected void checkPreConditions() {
 		// Path creation has to be enabled for paths with length = 1
 		if (ModelFacadeConfig.MIN_PATH_LENGTH != 1) {
@@ -261,6 +282,7 @@ public abstract class VnePmMdvnePipelineAlgorithm extends AlgorithmPipeline {
 	 * Initializes the algorithm by creating a new incremental solver object and a
 	 * new pattern matcher object.
 	 */
+	@Override
 	public void init() {
 		// Create new ILP solver object on every method call.
 		ilpSolver = IlpSolverConfig.getIlpSolver();
