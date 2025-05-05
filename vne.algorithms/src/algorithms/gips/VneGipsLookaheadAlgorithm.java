@@ -32,7 +32,7 @@ public class VneGipsLookaheadAlgorithm extends AbstractAlgorithm implements Gips
 	private String vNetId = null;
 
 	/**
-	 * Constructor that gets the substrate as well as the virtual network. GIPS will
+	 * Initialize the algorithm with the global model facade. GIPS will
 	 * calculate a valid embedding for all given virtual networks but only the one
 	 * whose name matches the given network ID will be embedded within the model.
 	 *
@@ -45,7 +45,9 @@ public class VneGipsLookaheadAlgorithm extends AbstractAlgorithm implements Gips
 	}
 
 	/**
-	 * Constructor.
+	 * Initialize the algorithm with the given model facade.
+	 * 
+	 * @param modelFacade Model facade to work with.
 	 */
 	public VneGipsLookaheadAlgorithm(final ModelFacade modelFacade) {
 		super(modelFacade);

@@ -34,14 +34,16 @@ public class VneGipsBwIgnoreAlgorithm extends AbstractAlgorithm implements GipsA
 	private static VneGipsBwIgnoreAlgorithm instance;
 
 	/**
-	 * Initializes a new abstract algorithm with a given substrate and given virtual
+	 * Initialize the algorithm with the global model facade.
 	 */
 	public VneGipsBwIgnoreAlgorithm() {
 		this(ModelFacade.getInstance());
 	}
 
 	/**
-	 * Constructor that gets the substrate as well as the virtual network.
+	 * Initialize the algorithm with the given model facade.
+	 * 
+	 * @param modelFacade Model facade to work with.
 	 */
 	public VneGipsBwIgnoreAlgorithm(final ModelFacade modelFacade) {
 		super(modelFacade);

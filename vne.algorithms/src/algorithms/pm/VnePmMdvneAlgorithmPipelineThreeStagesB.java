@@ -16,14 +16,16 @@ import facade.ModelFacade;
 public class VnePmMdvneAlgorithmPipelineThreeStagesB extends VnePmMdvnePipelineAlgorithm {
 
 	/**
-	 * Constructor that gets the substrate as well as the virtual network.
+	 * Initialize the algorithm with the global model facade.
 	 */
 	public VnePmMdvneAlgorithmPipelineThreeStagesB() {
 		this(ModelFacade.getInstance());
 	}
 
 	/**
-	 * Constructor.
+	 * Initialize the algorithm with the given model facade.
+	 * 
+	 * @param modelFacade Model facade to work with.
 	 */
 	public VnePmMdvneAlgorithmPipelineThreeStagesB(final ModelFacade modelFacade) {
 		super(modelFacade, List.of(new VnePmMdvneAlgorithmPipelineStageVnet(modelFacade),

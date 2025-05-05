@@ -34,17 +34,16 @@ public class VnePmMdvneAlgorithmPipelineStageRackB extends VnePmMdvneAlgorithm {
 	protected IncrementalPatternMatcher patternMatcherRack;
 
 	/**
-	 * Constructor that gets the substrate as well as the virtual network.
-	 *
-	 * @param sNet  Substrate network to work with.
-	 * @param vNets Set of virtual networks to work with.
+	 * Initialize the algorithm with the global model facade.
 	 */
 	public VnePmMdvneAlgorithmPipelineStageRackB() {
 		this(ModelFacade.getInstance());
 	}
 
 	/**
-	 * Constructor.
+	 * Initialize the algorithm with the given model facade.
+	 * 
+	 * @param modelFacade Model facade to work with.
 	 */
 	public VnePmMdvneAlgorithmPipelineStageRackB(final ModelFacade modelFacade) {
 		super(modelFacade);

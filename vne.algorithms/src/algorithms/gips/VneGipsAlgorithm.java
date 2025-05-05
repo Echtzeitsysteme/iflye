@@ -26,19 +26,27 @@ public class VneGipsAlgorithm extends AbstractAlgorithm implements GipsAlgorithm
 	 */
 	private final static String GIPS_PROJECT_BASE_PATH = "../../gips-examples/org.emoflon.gips.gipsl.examples.mdvne";
 
+	/**
+	 * The GIPS MdVNE adapter.
+	 */
 	private final MdvneGipsIflyeAdapter iflyeAdapter;
 
+	/**
+	 * The most recent GIPS MdVNE output.
+	 */
 	private MdvneGipsIflyeAdapter.MdvneIflyeOutput iflyeOutput;
 
 	/**
-	 * Initializes a new abstract algorithm
+	 * Initializes a new GIPS algorithm with the global model facade.
 	 */
 	public VneGipsAlgorithm() {
 		this(ModelFacade.getInstance());
 	}
 
 	/**
-	 * Constructor.
+	 * Create a new GIPS algorithm instance with the given model facade.
+	 * 
+	 * @param modelFacade The model facade to use.
 	 */
 	public VneGipsAlgorithm(final ModelFacade modelFacade) {
 		super(modelFacade);

@@ -23,17 +23,16 @@ import model.VirtualServer;
 public class SimpleVne extends AbstractAlgorithm {
 
 	/**
-	 * Initializes a new object of this simple VNE algorithm.
-	 *
-	 * @param sNet  Substrate network to work with.
-	 * @param vNets Set of virtual networks to work with.
+	 * Initialize the algorithm with the global model facade.
 	 */
 	public SimpleVne() {
 		this(ModelFacade.getInstance());
 	}
 
 	/**
-	 * Constructor.
+	 * Initialize the algorithm with the given model facade.
+	 * 
+	 * @param modelFacade Model facade to work with.
 	 */
 	public SimpleVne(final ModelFacade modelFacade) {
 		super(modelFacade);

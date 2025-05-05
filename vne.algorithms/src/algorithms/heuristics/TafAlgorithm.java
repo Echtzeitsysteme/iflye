@@ -181,17 +181,16 @@ public class TafAlgorithm extends AbstractAlgorithm {
 	}
 
 	/**
-	 * Public constructor that initializes the instance of this algorithm.
-	 *
-	 * @param sNet  Substrate network to embed virtual network in.
-	 * @param vNets Virtual network to generate embedding for.
+	 * Initialize the algorithm with the global model facade.
 	 */
 	public TafAlgorithm() {
 		this(ModelFacade.getInstance());
 	}
 
 	/**
-	 * Constructor.
+	 * Initialize the algorithm with the given model facade.
+	 * 
+	 * @param modelFacade Model facade to work with.
 	 */
 	public TafAlgorithm(final ModelFacade modelFacade) {
 		super(modelFacade);

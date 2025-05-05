@@ -303,17 +303,16 @@ public class VneFakeIlpAlgorithm extends AbstractAlgorithm {
 	protected final Set<VirtualNetwork> ignoredVnets = new HashSet<>();
 
 	/**
-	 * Constructor that gets the substrate as well as the virtual network.
-	 *
-	 * @param sNet  Substrate network to work with.
-	 * @param vNets Set of virtual networks to work with.
+	 * Initialize the algorithm with the global model facade.
 	 */
 	public VneFakeIlpAlgorithm() {
 		this(ModelFacade.getInstance());
 	}
 
 	/**
-	 * Constructor.
+	 * Initialize the algorithm with the given model facade.
+	 * 
+	 * @param modelFacade Model facade to work with.
 	 */
 	public VneFakeIlpAlgorithm(final ModelFacade modelFacade) {
 		super(modelFacade);

@@ -36,10 +36,7 @@ public class RandomVneAlgorithm extends AbstractAlgorithm {
 	private int retries = 10;
 
 	/**
-	 * Initializes a new object of this random VNE algorithm.
-	 *
-	 * @param sNet  Substrate network to work with.
-	 * @param vNets Set of virtual networks to work with.
+	 * Initialize the algorithm with the global model facade.
 	 */
 	public RandomVneAlgorithm() {
 		this(ModelFacade.getInstance());
@@ -59,14 +56,20 @@ public class RandomVneAlgorithm extends AbstractAlgorithm {
 	}
 
 	/**
-	 * Constructor.
+	 * Initialize the algorithm with the given model facade.
+	 * 
+	 * @param modelFacade Model facade to work with.
 	 */
 	public RandomVneAlgorithm(final ModelFacade modelFacade) {
 		super(modelFacade);
 	}
 
 	/**
-	 * Constructor.
+	 * Initialize the algorithm with the given model facade.
+	 * 
+	 * @param modelFacade Model facade to work with.
+	 * @param randomSeed  Random seed.
+	 * @param retries     Number of retries.
 	 */
 	public RandomVneAlgorithm(final ModelFacade modelFacade, final int randomSeed, final int retries) {
 		this(modelFacade);

@@ -69,26 +69,38 @@ public abstract class VnePmMdvnePipelineAlgorithm extends VnePmMdvneAlgorithm im
 	protected final Set<VirtualNetwork> ignoredVnets = new HashSet<>();
 
 	/**
-	 * Constructor that gets the substrate as well as the virtual network.
-	 *
-	 * @param sNet  Substrate network to work with.
-	 * @param vNets Set of virtual networks to work with.
+	 * Initialize the algorithm with the global model facade.
 	 */
 	public VnePmMdvnePipelineAlgorithm() {
 		this(ModelFacade.getInstance());
 	}
 
+	/**
+	 * Initialize the algorithm with the global model facade and the given pipeline
+	 * of algorithms.
+	 * 
+	 * @param pipeline The algorithms to be used in the pipeline.
+	 */
 	public VnePmMdvnePipelineAlgorithm(final Collection<AbstractAlgorithm> pipeline) {
 		this(ModelFacade.getInstance(), pipeline);
 	}
 
 	/**
-	 * Constructor.
+	 * Initialize the algorithm with the given model facade.
+	 * 
+	 * @param modelFacade Model facade to work with.
 	 */
 	public VnePmMdvnePipelineAlgorithm(final ModelFacade modelFacade) {
 		this(modelFacade, List.of());
 	}
 
+	/**
+	 * Initialize the algorithm with the given model facade and the given pipeline
+	 * of algorithms.
+	 * 
+	 * @param modelFacade Model facade to work with.
+	 * @param pipeline    The algorithms to be used in the pipeline.
+	 */
 	public VnePmMdvnePipelineAlgorithm(final ModelFacade modelFacade, final Collection<AbstractAlgorithm> pipeline) {
 		super(modelFacade);
 
@@ -137,7 +149,7 @@ public abstract class VnePmMdvnePipelineAlgorithm extends VnePmMdvneAlgorithm im
 		}
 
 		super.dispose();
-		AlgorithmPipeline.super.dispose(sNet, vNets);
+		AlgorithmPipeline.super.dispose();
 	}
 
 	@Override
