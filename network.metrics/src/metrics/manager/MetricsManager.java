@@ -331,6 +331,52 @@ public class MetricsManager implements AutoCloseable {
 	}
 
 	/**
+	 * Runs the runnable in the context of a new {@link MetricsManager} instance.
+	 * The new {@link MetricsManager} will have the same {@link MeterRegistry} and
+	 * {@link ObservationRegistry} as this one, but will have the given tags.
+	 * 
+	 * @param runnable The runnable to be executed with the new
+	 *                 {@link MetricsManager}.
+	 * @param tags     The tags to be used for all observations that are started by
+	 *                 the new {@link MetricsManager}.
+	 */
+	public void withTags(Runnable runnable, Tag... tags) {
+		this.withTags(runnable, Tags.of(tags));
+	}
+
+	/**
+	 * Runs the runnable in the context of a new {@link MetricsManager} instance.
+	 * The new {@link MetricsManager} will have the same {@link MeterRegistry} and
+	 * {@link ObservationRegistry} as this one, but will have the given tags.
+	 * 
+	 * @param runnable The runnable to be executed with the new
+	 *                 {@link MetricsManager}.
+	 * @param tags     The tags to be used for all observations that are started by
+	 *                 the new {@link MetricsManager}.
+	 */
+	public void withTags(Runnable runnable, String... tags) {
+		this.withTags(runnable, Tags.of(tags));
+	}
+
+	/**
+	 * Runs the runnable in the context of a new {@link MetricsManager} instance.
+	 * The new {@link MetricsManager} will have the same {@link MeterRegistry} and
+	 * {@link ObservationRegistry} as this one, but will have the given tags.
+	 * 
+	 * @param runnable The runnable to be executed with the new
+	 *                 {@link MetricsManager}.
+	 * @param tags     The tags to be used for all observations that are started by
+	 *                 the new {@link MetricsManager}.
+	 */
+	public void withTags(Runnable runnable, Iterable<? extends Tag> tags) {
+		try (final MetricsManager metricsManager = this.withTags(tags)) {
+			runnable.run();
+		} catch (Throwable e) {
+			throw e instanceof RuntimeException ? (RuntimeException) e : new RuntimeException(e);
+		}
+	}
+
+	/**
 	 * Wraps the call of the callable in a new {@link MetricsManager} instance. The
 	 * new {@link MetricsManager} will have the same {@link MeterRegistry} and
 	 * {@link ObservationRegistry} as this one, but will have the given tags. A new
