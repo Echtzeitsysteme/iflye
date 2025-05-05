@@ -45,27 +45,43 @@ public class CsvReporter extends GroupByTagValueReporter implements Reporter {
 	 * file. New headers will be added if they do not exist in the file. They will
 	 * be written in the order they are added.
 	 */
-	protected List<String> headers = new ArrayList<>(List.of("level_0.counter", "timestamp", "lastVNR", "time_total",
-			"time_prepare", "time_execute", "time_pm", "time_ilp", "time_deploy", "accepted_vnrs", "total_path_cost",
-			"average_path_length", "total_communication_cost_a", "total_communication_cost_b",
-			"total_communication_cost_c", "total_communication_cost_d", "total_communication_objective_c",
-			"total_communication_objective_d", "total_taf_communication_cost", "operation_cost", "memory_total",
-			"memory_prepare", "memory_execute"));
+	protected List<String> headers;
 
 	/**
 	 * The tags that will be persisted in the CSV file. Tags are filtered by this
 	 * list before writing to the file.
 	 */
-	protected List<String> persistTags = new ArrayList<>(List.of("lastVNR", "substrate network", "algorithm",
-			"virtual network", "started", "objective", "series uuid", "series group uuid", "exception"));
+	protected List<String> persistTags;
 
 	/**
 	 * Initializes a new CsvReporter with the given output file. The file will be
 	 * created if it does not exist. If the file already exists, the headers will be
 	 * read from the first line of the file.
 	 */
-	public CsvReporter(File outputFile) {
+	public CsvReporter(final File outputFile) {
+		this(outputFile, List.of());
+	}
+
+	/**
+	 * Initializes a new CsvReporter with the given output file. The file will be
+	 * created if it does not exist. If the file already exists, the headers will be
+	 * read from the first line of the file.
+	 */
+	public CsvReporter(final File outputFile, final List<String> persistTags) {
+		this(outputFile, persistTags, List.of());
+	}
+
+	/**
+	 * Initializes a new CsvReporter with the given output file. The file will be
+	 * created if it does not exist. If the file already exists, the headers will be
+	 * read from the first line of the file. If no file is present, the provided
+	 * headers will be used.
+	 */
+	public CsvReporter(final File outputFile, final List<String> persistTags, final List<String> headers) {
 		super();
+
+		this.headers = new ArrayList<>(headers);
+		this.persistTags = new ArrayList<>(persistTags);
 
 		this.outputFile = outputFile;
 		if (this.outputFile.exists()) {
@@ -77,6 +93,26 @@ public class CsvReporter extends GroupByTagValueReporter implements Reporter {
 				}
 			} catch (IOException _ignored) {
 			}
+		}
+	}
+
+	public static class Default extends CsvReporter {
+		public Default(final File outputFile) {
+			super(outputFile, defaultPersistTags(), defaultHeaders());
+		}
+
+		public static List<String> defaultPersistTags() {
+			return List.of("lastVNR", "substrate network", "algorithm", "virtual network", "started", "objective",
+					"series uuid", "series group uuid", "exception");
+		}
+
+		public static List<String> defaultHeaders() {
+			return List.of("level_0.counter", "timestamp", "lastVNR", "time_total", "time_prepare", "time_execute",
+					"time_pm", "time_ilp", "time_deploy", "accepted_vnrs", "total_path_cost", "average_path_length",
+					"total_communication_cost_a", "total_communication_cost_b", "total_communication_cost_c",
+					"total_communication_cost_d", "total_communication_objective_c", "total_communication_objective_d",
+					"total_taf_communication_cost", "operation_cost", "memory_total", "memory_prepare",
+					"memory_execute");
 		}
 	}
 
