@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
+import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import gt.IncrementalPatternMatcher;
 import gt.PatternMatchingDelta;
@@ -117,7 +118,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 		 */
 		public void addLinkServerMatch(final Match match) {
 			final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
-			final VirtualLink vLink = (VirtualLink) facade.getLinkById(match.getVirtual().getName());
+			final VirtualLink vLink = (VirtualLink) modelFacade.getLinkById(match.getVirtual().getName());
 
 			// If the source node (target node) of the virtual link may not be embedded to
 			// the substrate
@@ -151,8 +152,8 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 		 * @param match Match to get information from.
 		 */
 		public void addLinkPathMatch(final Match match) {
-			final VirtualLink vLink = (VirtualLink) facade.getLinkById(match.getVirtual().getName());
-			final SubstratePath sPath = facade.getPathById(match.getSubstrate().getName());
+			final VirtualLink vLink = (VirtualLink) modelFacade.getLinkById(match.getVirtual().getName());
+			final SubstratePath sPath = modelFacade.getPathById(match.getSubstrate().getName());
 
 			// If the source node (target node) of the virtual link may not be embedded to
 			// the substrate
@@ -193,7 +194,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 		 * @param match Match to get information from.
 		 */
 		public void addServerMatch(final Match match) {
-			final VirtualServer vServer = (VirtualServer) facade.getServerById(match.getVirtual().getName());
+			final VirtualServer vServer = (VirtualServer) modelFacade.getServerById(match.getVirtual().getName());
 			final String varName = match.getVirtual().getName() + "_" + match.getSubstrate().getName();
 			delta.addVariable(varName, getCost(vServer, (SubstrateServer) match.getSubstrate()));
 			delta.setVariableWeightForConstraint("vs" + match.getVirtual().getName(), 1, varName);
@@ -289,11 +290,6 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 	}
 
 	/**
-	 * Algorithm instance (singleton).
-	 */
-	protected static VnePmMdvneAlgorithm instance;
-
-	/**
 	 * Incremental pattern matcher to use.
 	 */
 	protected IncrementalPatternMatcher patternMatcher;
@@ -316,13 +312,19 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 	protected final Set<VirtualNetwork> ignoredVnets = new HashSet<>();
 
 	/**
-	 * Constructor that gets the substrate as well as the virtual network.
-	 *
-	 * @param sNet  Substrate network to work with.
-	 * @param vNets Set of virtual networks to work with.
+	 * Initialize the algorithm with the global model facade.
 	 */
-	protected VnePmMdvneAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		super(sNet, vNets);
+	public VnePmMdvneAlgorithm() {
+		this(ModelFacade.getInstance());
+	}
+
+	/**
+	 * Initialize the algorithm with the given model facade.
+	 * 
+	 * @param modelFacade Model facade to work with.
+	 */
+	public VnePmMdvneAlgorithm(final ModelFacade modelFacade) {
+		super(modelFacade);
 	}
 
 	/**
@@ -332,7 +334,8 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 	 * @param vNets Set of virtual networks to work with.
 	 * @return Instance of this algorithm implementation.
 	 */
-	public static VnePmMdvneAlgorithm prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
+	@Override
+	public void prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		if (sNet == null || vNets == null) {
 			throw new IllegalArgumentException("One of the provided network objects was null.");
 		}
@@ -341,31 +344,21 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 			throw new IllegalArgumentException("Provided set of virtual networks was empty.");
 		}
 
-		if (instance == null) {
-			instance = new VnePmMdvneAlgorithm(sNet, vNets);
-		}
-		instance.sNet = sNet;
-		instance.vNets = new HashSet<>();
-		instance.vNets.addAll(vNets);
+		super.prepare(sNet, vNets);
 
-		instance.checkPreConditions();
-		return instance;
+		checkPreConditions();
 	}
 
 	/**
 	 * Resets the ILP solver and the pattern matcher.
 	 */
 	public void dispose() {
-		if (instance == null) {
-			return;
-		}
 		if (this.ilpSolver != null) {
 			this.ilpSolver.dispose();
 		}
 		if (this.patternMatcher != null) {
 			this.patternMatcher.dispose();
 		}
-		instance = null;
 	}
 
 	@Override
@@ -518,10 +511,10 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 	protected void repairSubstrateNetwork() {
 		// Find all networks that were removed in the meantime
 		final Set<VirtualNetwork> removedGuests = sNet.getGuests().stream()
-				.filter(g -> !facade.networkExists(g.getName())).collect(Collectors.toSet());
+				.filter(g -> !modelFacade.networkExists(g.getName())).collect(Collectors.toSet());
 
 		// Remove embedding of all elements of the virtual network
-		removedGuests.forEach(g -> facade.unembedVirtualNetwork(g));
+		removedGuests.forEach(g -> modelFacade.unembedVirtualNetwork(g));
 	}
 
 	/**
@@ -536,12 +529,12 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 	 */
 	protected Set<VirtualNetwork> repairVirtualNetworks() {
 		// Find all virtual networks that are floating
-		final Set<VirtualNetwork> floatingGuests = sNet.getGuests().stream().filter(g -> facade.checkIfFloating(g))
+		final Set<VirtualNetwork> floatingGuests = sNet.getGuests().stream().filter(g -> modelFacade.checkIfFloating(g))
 				.collect(Collectors.toSet());
 
 		// Remove embedding of all elements of the virtual network so they can be
 		// embedded again
-		floatingGuests.forEach(g -> facade.unembedVirtualNetwork(g));
+		floatingGuests.forEach(g -> modelFacade.unembedVirtualNetwork(g));
 		return floatingGuests;
 	}
 
@@ -570,7 +563,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 	protected void embedNetworks(final Set<VirtualNetwork> rejectedNetworks) {
 		for (final VirtualNetwork vNet : vNets) {
 			if (!rejectedNetworks.contains(vNet)) {
-				facade.embedNetworkToNetwork(sNet.getName(), vNet.getName());
+				modelFacade.embedNetworkToNetwork(sNet.getName(), vNet.getName());
 			}
 		}
 	}
@@ -665,14 +658,14 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 				final VirtualElement ve = (VirtualElement) m.getVirtual();
 				final SubstrateElement se = (SubstrateElement) m.getSubstrate();
 				if (ve instanceof VirtualServer) {
-					facade.embedServerToServer(se.getName(), ve.getName());
+					modelFacade.embedServerToServer(se.getName(), ve.getName());
 				} else if (ve instanceof VirtualSwitch) {
-					facade.embedSwitchToNode(se.getName(), ve.getName());
+					modelFacade.embedSwitchToNode(se.getName(), ve.getName());
 				} else if (ve instanceof VirtualLink) {
 					if (se instanceof SubstrateServer) {
-						facade.embedLinkToServer(se.getName(), ve.getName());
+						modelFacade.embedLinkToServer(se.getName(), ve.getName());
 					} else if (se instanceof SubstratePath) {
-						facade.embedLinkToPath(se.getName(), ve.getName());
+						modelFacade.embedLinkToPath(se.getName(), ve.getName());
 					}
 				}
 				break;
@@ -681,7 +674,7 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 
 		// Workaround to fix the residual bandwidth of other paths possibly affected by
 		// virtual link to substrate path embeddings
-		facade.updateAllPathsResidualBandwidth(sNet.getName());
+		modelFacade.updateAllPathsResidualBandwidth(sNet.getName());
 
 		return rejectedNetworks;
 	}
@@ -709,8 +702,8 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 	 *
 	 * @param sNet Substrate network to set.
 	 */
-	protected static void setSnet(final SubstrateNetwork sNet) {
-		instance.sNet = sNet;
+	protected void setSnet(final SubstrateNetwork sNet) {
+		this.sNet = sNet;
 	}
 
 	/**
@@ -719,8 +712,8 @@ public class VnePmMdvneAlgorithm extends AbstractAlgorithm {
 	 *
 	 * @param vNets Virtual networks to set.
 	 */
-	protected static void setVnets(final Set<VirtualNetwork> vNets) {
-		instance.vNets = vNets;
+	protected void setVnets(final Set<VirtualNetwork> vNets) {
+		this.vNets = vNets;
 	}
 
 	/*

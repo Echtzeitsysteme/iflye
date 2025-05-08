@@ -23,7 +23,8 @@ public class VneGipsSeqAlgorithmTotalCommunicationObjectiveCTest
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
-		algo = VneGipsSeqAlgorithm.prepare(sNet, vNets);
+		algo = new VneGipsSeqAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 	@AfterEach

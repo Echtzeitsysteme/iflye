@@ -59,7 +59,8 @@ public class VneFakeIlpAlgorithmExampleMedium {
 
 			// Create and execute algorithm
 			System.out.println("=> Embedding virtual network #" + i);
-			final VneFakeIlpAlgorithm algo = VneFakeIlpAlgorithm.prepare(sNet, Set.of(vNet));
+			final VneFakeIlpAlgorithm algo = new VneFakeIlpAlgorithm();
+			algo.prepare(sNet, Set.of(vNet));
 			algo.execute();
 		}
 

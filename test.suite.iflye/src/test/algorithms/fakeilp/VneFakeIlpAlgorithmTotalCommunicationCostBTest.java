@@ -40,7 +40,8 @@ public class VneFakeIlpAlgorithmTotalCommunicationCostBTest extends AAlgorithmMu
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_B;
 		AlgorithmConfig.emb = Embedding.MANUAL;
-		algo = VneFakeIlpAlgorithm.prepare(sNet, vNets);
+		algo = new VneFakeIlpAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 	/**

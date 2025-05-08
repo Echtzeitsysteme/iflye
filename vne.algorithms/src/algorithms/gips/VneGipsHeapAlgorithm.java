@@ -1,9 +1,11 @@
 package algorithms.gips;
 
-import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.emoflon.gips.core.milp.SolverOutput;
+import org.emoflon.gips.gipsl.examples.mdvne.MdvneGipsIflyeAdapter;
 import org.emoflon.gips.gipsl.examples.mdvne.heap.MdvneGipsHeapIflyeAdapter;
 
 import algorithms.AbstractAlgorithm;
@@ -20,7 +22,7 @@ import model.VirtualNetwork;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneGipsHeapAlgorithm extends AbstractAlgorithm {
+public class VneGipsHeapAlgorithm extends AbstractAlgorithm implements GipsAlgorithm {
 
 	/**
 	 * Relative base path of the GIPS MdVNE project.
@@ -28,18 +30,31 @@ public class VneGipsHeapAlgorithm extends AbstractAlgorithm {
 	private final static String GIPS_PROJECT_BASE_PATH = "../../gips-examples/org.emoflon.gips.gipsl.examples.mdvne.heap";
 
 	/**
-	 * Algorithm instance (singleton).
+	 * The GIPS MdVNE adapter.
 	 */
-	private static VneGipsHeapAlgorithm instance;
+	private final MdvneGipsHeapIflyeAdapter iflyeAdapter;
 
 	/**
-	 * Constructor that gets the substrate as well as the virtual network.
-	 *
-	 * @param sNet  Substrate network to work with.
-	 * @param vNets Set of virtual networks to work with.
+	 * The most recent GIPS MdVNE output.
 	 */
-	public VneGipsHeapAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		super(sNet, vNets);
+	private MdvneGipsIflyeAdapter.MdvneIflyeOutput iflyeOutput;
+
+	/**
+	 * Initialize the algorithm with the global model facade.
+	 */
+	public VneGipsHeapAlgorithm() {
+		this(ModelFacade.getInstance());
+	}
+
+	/**
+	 * Initialize the algorithm with the given model facade.
+	 * 
+	 * @param modelFacade Model facade to work with.
+	 */
+	public VneGipsHeapAlgorithm(final ModelFacade modelFacade) {
+		super(modelFacade);
+
+		iflyeAdapter = new MdvneGipsHeapIflyeAdapter();
 	}
 
 	@Override
@@ -51,16 +66,19 @@ public class VneGipsHeapAlgorithm extends AbstractAlgorithm {
 		}
 
 		// TODO: Time measurement
-		final ResourceSet model = ModelFacade.getInstance().getResourceSet();
-		final boolean gipsSuccess = MdvneGipsHeapIflyeAdapter.execute(model,
+		final ResourceSet model = getModelFacade().getResourceSet();
+		this.iflyeOutput = iflyeAdapter.execute(model,
 				GIPS_PROJECT_BASE_PATH + "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/heap/api/gips/gips-model.xmi",
 				GIPS_PROJECT_BASE_PATH + "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/heap/api/ibex-patterns.xmi",
 				GIPS_PROJECT_BASE_PATH
 						+ "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/heap/hipe/engine/hipe-network.xmi");
 
+		final boolean gipsSuccess = this.iflyeOutput.solverOutput().solutionCount() > 0;
+
 		// Workaround to fix the residual bandwidth of other paths possibly affected by
 		// virtual link to substrate path embeddings
-		ModelFacade.getInstance().updateAllPathsResidualBandwidth(sNet.getName());
+		getModelFacade().updateAllPathsResidualBandwidth(sNet.getName());
+
 		return gipsSuccess;
 	}
 
@@ -71,36 +89,29 @@ public class VneGipsHeapAlgorithm extends AbstractAlgorithm {
 	 * @param vNets Set of virtual networks to work with.
 	 * @return Instance of this algorithm implementation.
 	 */
-	public static VneGipsHeapAlgorithm prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		if (sNet == null || vNets == null) {
-			throw new IllegalArgumentException("One of the provided network objects was null.");
-		}
+	@Override
+	public void prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
+		VneGipsAlgorithmUtils.checkGivenVnets(getModelFacade(), vNets);
 
-		if (vNets.size() == 0) {
-			throw new IllegalArgumentException("Provided set of virtual networks was empty.");
-		}
+		super.prepare(sNet, vNets);
+	}
 
-		VneGipsAlgorithmUtils.checkGivenVnets(vNets);
+	@Override
+	public SolverOutput getSolverOutput() {
+		return this.iflyeOutput.solverOutput();
+	}
 
-		if (instance == null) {
-			instance = new VneGipsHeapAlgorithm(sNet, vNets);
-		}
-		instance.sNet = sNet;
-		instance.vNets = new HashSet<>();
-		instance.vNets.addAll(vNets);
-
-		return instance;
+	@Override
+	public Map<String, String> getMatches() {
+		return this.iflyeOutput.matches();
 	}
 
 	/**
 	 * Resets the algorithm instance.
 	 */
+	@Override
 	public void dispose() {
-		MdvneGipsHeapIflyeAdapter.resetInit();
-		if (instance == null) {
-			return;
-		}
-		instance = null;
+		iflyeAdapter.resetInit();
 	}
 
 }

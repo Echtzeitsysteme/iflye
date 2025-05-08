@@ -51,7 +51,8 @@ public class TafAlgorithmTwoVnsLargerExample {
 			virtGen.createNetwork("virt_" + i, true);
 			final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt_" + i);
 			// Create and execute algorithm
-			final TafAlgorithm taf = new TafAlgorithm(sNet, Set.of(vNet));
+			final TafAlgorithm taf = new TafAlgorithm();
+			taf.prepare(sNet, Set.of(vNet));
 			taf.execute();
 		}
 

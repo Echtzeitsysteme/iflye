@@ -20,7 +20,8 @@ public class VnePmMdvneAlgorithmPipelineThreeStagesARepairModelNetworkTest
 
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		algo = VnePmMdvneAlgorithmPipelineThreeStagesA.prepare(sNet, vNets);
+		algo = new VnePmMdvneAlgorithmPipelineThreeStagesA();
+		algo.prepare(sNet, vNets);
 	}
 
 }

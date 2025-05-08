@@ -36,7 +36,8 @@ public class SimpleVneExample {
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
 		// Create and execute algorithm
-		final SimpleVne svne = new SimpleVne(sNet, Set.of(vNet));
+		final SimpleVne svne = new SimpleVne();
+		svne.prepare(sNet, Set.of(vNet));
 		svne.execute();
 
 		// Save model to file

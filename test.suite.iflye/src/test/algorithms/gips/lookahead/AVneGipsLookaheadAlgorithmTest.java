@@ -41,7 +41,9 @@ public class AVneGipsLookaheadAlgorithmTest extends AAlgorithmTest {
 		// it is hard-coded in GIPSL
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
 		ModelFacadeConfig.IGNORE_BW = true;
-		algo = VneGipsLookaheadAlgorithm.prepare(sNet, vNets, vNetId);
+		algo = new VneGipsLookaheadAlgorithm();
+		algo.prepare(sNet, vNets);
+		((VneGipsLookaheadAlgorithm) algo).setVNetId(vNetId);
 	}
 
 	@Override

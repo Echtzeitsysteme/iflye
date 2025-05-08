@@ -19,7 +19,8 @@ public class VnePmMdvneAlgorithmPipelineTwoStagesRackBPathBandwidthBugTest exten
 
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		algo = VnePmMdvneAlgorithmPipelineTwoStagesRackB.prepare(sNet, vNets);
+		algo = new VnePmMdvneAlgorithmPipelineTwoStagesRackB();
+		algo.prepare(sNet, vNets);
 	}
 
 	@AfterEach

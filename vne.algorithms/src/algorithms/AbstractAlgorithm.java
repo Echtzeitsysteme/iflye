@@ -2,6 +2,7 @@ package algorithms;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 
 import facade.ModelFacade;
@@ -14,12 +15,12 @@ import model.VirtualNetwork;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public abstract class AbstractAlgorithm {
+public abstract class AbstractAlgorithm implements Algorithm {
 
 	/**
 	 * ModelFacade instance.
 	 */
-	public static ModelFacade facade = ModelFacade.getInstance();
+	protected ModelFacade modelFacade;
 
 	/**
 	 * The substrate network (model).
@@ -36,16 +37,35 @@ public abstract class AbstractAlgorithm {
 	 *
 	 * @return True if embedding process was successful.
 	 */
+	@Override
 	public abstract boolean execute();
 
 	/**
-	 * Initializes a new abstract algorithm with a given substrate and given virtual
-	 * networks.
+	 * Initializes a new abstract algorithm
+	 */
+	public AbstractAlgorithm() {
+		this(ModelFacade.getInstance());
+	}
+
+	/**
+	 * Initializes a new abstract algorithm
 	 *
+	 * @param modelFacade The ModelFacade to use
+	 */
+	public AbstractAlgorithm(final ModelFacade modelFacade) {
+		Objects.requireNonNull(modelFacade);
+
+		this.modelFacade = modelFacade;
+	}
+
+	/**
+	 * Prepare the algorithm for execution
+	 * 
 	 * @param sNet  Substrate network to work with.
 	 * @param vNets A set of virtual networks to work with.
 	 */
-	public AbstractAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
+	@Override
+	public void prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		if (sNet == null || vNets == null) {
 			throw new IllegalArgumentException("One of the provided network objects was null!");
 		}
@@ -59,6 +79,10 @@ public abstract class AbstractAlgorithm {
 		this.vNets.addAll(vNets);
 	}
 
+	@Override
+	public void dispose() {
+	}
+
 	/**
 	 * Returns the first virtual network from this super type.
 	 *
@@ -67,6 +91,15 @@ public abstract class AbstractAlgorithm {
 	protected VirtualNetwork getFirstVnet() {
 		final Iterator<VirtualNetwork> it = vNets.iterator();
 		return it.next();
+	}
+
+	/**
+	 * Returns the currently used ModelFacade instance.
+	 * 
+	 * @return The used ModelFacade instance.
+	 */
+	public ModelFacade getModelFacade() {
+		return this.modelFacade;
 	}
 
 }

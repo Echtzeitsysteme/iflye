@@ -37,7 +37,8 @@ public class VneGipsSeqAlgorithmVnetSetExceptionTest extends AAlgorithmTest {
 		// The algorithm is only able to use the total communication objective C because
 		// it is hard-coded in GIPSL
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
-		algo = VneGipsSeqAlgorithm.prepare(sNet, vNets);
+		algo = new VneGipsSeqAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 	@AfterEach

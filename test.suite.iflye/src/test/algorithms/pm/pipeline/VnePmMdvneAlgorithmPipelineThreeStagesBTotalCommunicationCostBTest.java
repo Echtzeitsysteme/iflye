@@ -21,7 +21,8 @@ public class VnePmMdvneAlgorithmPipelineThreeStagesBTotalCommunicationCostBTest
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_B;
-		algo = VnePmMdvneAlgorithmPipelineThreeStagesB.prepare(sNet, vNets);
+		algo = new VnePmMdvneAlgorithmPipelineThreeStagesB();
+		algo.prepare(sNet, vNets);
 	}
 
 }

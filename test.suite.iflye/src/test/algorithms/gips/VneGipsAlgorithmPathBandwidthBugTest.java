@@ -24,7 +24,8 @@ public class VneGipsAlgorithmPathBandwidthBugTest extends AVneAlgorithmPathBandw
 		// The algorithm is only able to use the total communication objective C because
 		// it is hard-coded in GIPSL
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
-		algo = VneGipsAlgorithm.prepare(sNet, vNets);
+		algo = new VneGipsAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 	@AfterEach

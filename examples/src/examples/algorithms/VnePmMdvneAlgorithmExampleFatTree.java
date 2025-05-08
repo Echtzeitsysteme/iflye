@@ -64,7 +64,8 @@ public class VnePmMdvneAlgorithmExampleFatTree {
 
 			// Create and execute algorithm
 			System.out.println("=> Embedding virtual network #" + i);
-			final VnePmMdvneAlgorithm algo = VnePmMdvneAlgorithm.prepare(sNet, Set.of(vNet));
+			final VnePmMdvneAlgorithm algo = new VnePmMdvneAlgorithm();
+			algo.prepare(sNet, Set.of(vNet));
 			algo.execute();
 			// algo.dispose();
 		}

@@ -20,7 +20,8 @@ public class VnePmMdvneAlgorithmPipelineTwoStagesRackARepairModelServerTest
 
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		algo = VnePmMdvneAlgorithmPipelineTwoStagesRackA.prepare(sNet, vNets);
+		algo = new VnePmMdvneAlgorithmPipelineTwoStagesRackA();
+		algo.prepare(sNet, vNets);
 	}
 
 }

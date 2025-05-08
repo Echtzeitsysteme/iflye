@@ -21,7 +21,8 @@ public class VnePmMdvneAlgorithmMigrationTotalCommunicationCostATest
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_A;
-		algo = VnePmMdvneAlgorithmMigration.prepare(sNet, vNets);
+		algo = new VnePmMdvneAlgorithmMigration();
+		algo.prepare(sNet, vNets);
 	}
 
 }

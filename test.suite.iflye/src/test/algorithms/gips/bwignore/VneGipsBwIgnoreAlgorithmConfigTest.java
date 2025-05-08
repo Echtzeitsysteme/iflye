@@ -34,7 +34,8 @@ public class VneGipsBwIgnoreAlgorithmConfigTest extends AAlgorithmTest {
 
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		algo = VneGipsBwIgnoreAlgorithm.prepare(sNet, vNets);
+		algo = new VneGipsBwIgnoreAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 	@AfterEach

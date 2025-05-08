@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
+import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import metrics.CostUtility;
 import metrics.manager.GlobalMetricsManager;
@@ -180,32 +181,46 @@ public class TafAlgorithm extends AbstractAlgorithm {
 	}
 
 	/**
-	 * Public constructor that initializes the instance of this algorithm.
-	 *
-	 * @param sNet  Substrate network to embed virtual network in.
-	 * @param vNets Virtual network to generate embedding for.
+	 * Initialize the algorithm with the global model facade.
 	 */
-	public TafAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		super(sNet, vNets);
+	public TafAlgorithm() {
+		this(ModelFacade.getInstance());
+	}
 
+	/**
+	 * Initialize the algorithm with the given model facade.
+	 * 
+	 * @param modelFacade Model facade to work with.
+	 */
+	public TafAlgorithm(final ModelFacade modelFacade) {
+		super(modelFacade);
+	}
+
+	@Override
+	public void prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		if (vNets.size() != 1) {
 			throw new IllegalArgumentException("The TAF algorithm is only suited for one virtual network at a time.");
 		}
 
+		super.prepare(sNet, vNets);
+
+		virtualLinks.clear();
 		// Add virtual links from model
-		final List<Link> vLinks = facade.getAllLinksOfNetwork(getFirstVnet().getName());
+		final List<Link> vLinks = modelFacade.getAllLinksOfNetwork(getFirstVnet().getName());
 		for (final Link l : vLinks) {
 			virtualLinks.add((VirtualLink) l);
 		}
 
+		virtualServers.clear();
 		// Add virtual servers from model
-		final List<Node> vServers = facade.getAllServersOfNetwork(getFirstVnet().getName());
+		final List<Node> vServers = modelFacade.getAllServersOfNetwork(getFirstVnet().getName());
 		for (final Node n : vServers) {
 			virtualServers.add((VirtualServer) n);
 		}
 
+		substrateServers.clear();
 		// Add substrate servers from model
-		final List<Node> sServers = facade.getAllServersOfNetwork(sNet.getName());
+		final List<Node> sServers = modelFacade.getAllServersOfNetwork(sNet.getName());
 		for (final Node n : sServers) {
 			substrateServers.add((SubstrateServer) n);
 		}
@@ -280,26 +295,26 @@ public class TafAlgorithm extends AbstractAlgorithm {
 	 */
 	private void embed() {
 		// Network
-		facade.embedNetworkToNetwork(sNet.getName(), getFirstVnet().getName());
+		modelFacade.embedNetworkToNetwork(sNet.getName(), getFirstVnet().getName());
 
 		// Embed all servers
 		for (final Entry<VirtualServer, SubstrateServer> m : placedVms.entrySet()) {
-			facade.embedServerToServer(m.getValue().getName(), m.getKey().getName());
+			modelFacade.embedServerToServer(m.getValue().getName(), m.getKey().getName());
 		}
 
 		// Embed all links and the switch
-		final String vSwitchId = facade.getAllSwitchesOfNetwork(getFirstVnet().getName()).get(0).getName();
+		final String vSwitchId = modelFacade.getAllSwitchesOfNetwork(getFirstVnet().getName()).get(0).getName();
 
 		if (allVirtualServersToOneSubstrateServer()) {
 			// If the virtual network can be placed onto one substrate server
 			// Switch
 			final Iterator<SubstrateServer> sServerIt = placedVms.values().iterator();
 			final String sServerId = sServerIt.next().getName();
-			facade.embedSwitchToNode(sServerId, vSwitchId);
+			modelFacade.embedSwitchToNode(sServerId, vSwitchId);
 
 			// Links
 			for (final VirtualLink l : virtualLinks) {
-				facade.embedLinkToServer(sServerId, l.getName());
+				modelFacade.embedLinkToServer(sServerId, l.getName());
 			}
 		} else {
 			// If the virtual network can *not* be placed onto one substrate server
@@ -314,7 +329,7 @@ public class TafAlgorithm extends AbstractAlgorithm {
 				commonSwitch = getHighestCommonSwitch(placedVms.values());
 			}
 
-			facade.embedSwitchToNode(commonSwitch.getName(), vSwitchId);
+			modelFacade.embedSwitchToNode(commonSwitch.getName(), vSwitchId);
 
 			// Get links from servers to that switch -> Embed virtual links onto them
 			for (final VirtualLink l : virtualLinks) {
@@ -334,10 +349,10 @@ public class TafAlgorithm extends AbstractAlgorithm {
 
 				// Forward only, because all backward links are part of the collection
 				// virtualLinks
-				final SubstratePath sPath = facade.getPathFromSourceToTarget((SubstrateNode) source,
+				final SubstratePath sPath = modelFacade.getPathFromSourceToTarget((SubstrateNode) source,
 						(SubstrateNode) target);
 				// final Set<Link> sLinks = facade.getAllLinksFromPath(sPath);
-				facade.embedLinkToPath(sPath.getName(), l.getName());
+				modelFacade.embedLinkToPath(sPath.getName(), l.getName());
 			}
 		}
 	}

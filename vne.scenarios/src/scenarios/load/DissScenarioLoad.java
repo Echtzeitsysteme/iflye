@@ -3,6 +3,7 @@ package scenarios.load;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -70,11 +71,6 @@ public class DissScenarioLoad {
 	protected static SubstrateNetwork sNet;
 
 	/**
-	 * Configured algorithm to use for every embedding.
-	 */
-	protected static String algoConfig;
-
-	/**
 	 * File path for the JSON file to load the substrate network from.
 	 */
 	protected static String subNetPath;
@@ -88,6 +84,28 @@ public class DissScenarioLoad {
 	 * File path for the metric CSV output.
 	 */
 	protected static String csvPath = null;
+
+	/**
+	 * The algorithm to use
+	 */
+	protected static Function<ModelFacade, AbstractAlgorithm> algoFactory = null;
+
+	/**
+	 * If the model should be persisted after execution, optionally supply the file
+	 * name.
+	 */
+	protected static boolean persistModel = false;
+
+	/**
+	 * The path to the file where the model should be persisted.
+	 */
+	protected static String persistModelPath;
+
+	/**
+	 * If VNets that where not successfully embedded should be removed from the
+	 * model to prevent from blocking further embeddings.
+	 */
+	protected static boolean removeUnembeddedVnets = false;
 
 	/**
 	 * Main method to start the example. String array of arguments will be parsed.
@@ -117,6 +135,7 @@ public class DissScenarioLoad {
 		 */
 
 		String vNetId = IncrementalModelConverter.jsonToModelIncremental(virtNetsPath, true);
+		final AbstractAlgorithm algo = algoFactory.apply(ModelFacade.getInstance());
 
 		while (vNetId != null) {
 			final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById(vNetId);
@@ -124,10 +143,14 @@ public class DissScenarioLoad {
 			System.out.println("=> Embedding virtual network " + vNetId);
 
 			// Create and execute algorithm
-			final AbstractAlgorithm algo = newAlgo(Set.of(vNet));
+			algo.prepare(sNet, Set.of(vNet));
 			GlobalMetricsManager.startRuntime();
-			algo.execute();
+			boolean success = algo.execute();
 			GlobalMetricsManager.stopRuntime();
+
+			if (!success && removeUnembeddedVnets) {
+				ModelFacade.getInstance().removeNetworkFromRoot(vNetId);
+			}
 
 			// Save metrics to CSV file
 			// Reload substrate network from model facade (needed for GIPS-based
@@ -139,6 +162,15 @@ public class DissScenarioLoad {
 
 			// Get next virtual network ID to embed
 			vNetId = IncrementalModelConverter.jsonToModelIncremental(virtNetsPath, true);
+
+			// Save model to file
+			if (persistModel) {
+				if (persistModelPath == null) {
+					ModelFacade.getInstance().persistModel();
+				} else {
+					ModelFacade.getInstance().persistModel(persistModelPath);
+				}
+			}
 		}
 
 		/*
@@ -155,8 +187,6 @@ public class DissScenarioLoad {
 		// Print metrics before saving the model
 		printMetrics();
 
-		// Save model to file
-		ModelFacade.getInstance().persistModel();
 		System.out.println("=> Execution finished.");
 		System.exit(0);
 	}
@@ -269,6 +299,20 @@ public class DissScenarioLoad {
 		ilpObjLog.setRequired(false);
 		options.addOption(ilpObjLog);
 
+		// Model: Persist after run
+		final Option modelPersist = new Option("persist-model", true,
+				"If the model should be persisted after execution, optionally supply the file name.");
+		modelPersist.setRequired(false);
+		modelPersist.setOptionalArg(true);
+		modelPersist.setType(String.class);
+		options.addOption(modelPersist);
+
+		// Model: Remove unembedded VNets
+		final Option removeUnembeddedVnetsOption = new Option("remove-unembedded-vnets", false,
+				"If VNets that where not successfully embedded should be removed from the model to prevent from blocking further embeddings");
+		removeUnembeddedVnetsOption.setRequired(false);
+		options.addOption(removeUnembeddedVnetsOption);
+
 		final CommandLineParser parser = new DefaultParser();
 		final HelpFormatter formatter = new HelpFormatter();
 		CommandLine cmd = null;
@@ -284,7 +328,8 @@ public class DissScenarioLoad {
 		// Parsing finished. Here starts the configuration.
 
 		// #0 Algorithm
-		algoConfig = cmd.getOptionValue("algorithm");
+		final String algoConfig = cmd.getOptionValue("algorithm");
+		algoFactory = getAlgoFactory(algoConfig);
 
 		// #1 Objective
 		switch (cmd.getOptionValue("objective")) {
@@ -385,6 +430,14 @@ public class DissScenarioLoad {
 		// #14: ILP solver objective logarithm
 		IlpSolverConfig.OBJ_LOG = cmd.hasOption("ilpobjlog");
 
+		if (cmd.hasOption(modelPersist)) {
+			final String filePath = cmd.getOptionValue(modelPersist, "");
+			persistModel = true;
+			persistModelPath = filePath.isBlank() ? null : filePath;
+		}
+
+		removeUnembeddedVnets = cmd.hasOption(removeUnembeddedVnetsOption);
+
 		// Print arguments into logs/system outputs
 		System.out.println("=> Arguments: " + Arrays.toString(args));
 	}
@@ -394,40 +447,40 @@ public class DissScenarioLoad {
 	 *
 	 * @param vNets Virtual network(s) to embed.
 	 */
-	protected static AbstractAlgorithm newAlgo(final Set<VirtualNetwork> vNets) {
+	protected static Function<ModelFacade, AbstractAlgorithm> getAlgoFactory(final String algoConfig) {
 		switch (algoConfig) {
 		case "pm":
-			return VnePmMdvneAlgorithm.prepare(sNet, vNets);
+			return VnePmMdvneAlgorithm::new;
 		case "pm-migration":
-			return VnePmMdvneAlgorithmMigration.prepare(sNet, vNets);
+			return VnePmMdvneAlgorithmMigration::new;
 		case "pm-pipeline2-vnet":
-			return VnePmMdvneAlgorithmPipelineTwoStagesVnet.prepare(sNet, vNets);
+			return VnePmMdvneAlgorithmPipelineTwoStagesVnet::new;
 		case "pm-pipeline2-racka":
-			return VnePmMdvneAlgorithmPipelineTwoStagesRackA.prepare(sNet, vNets);
+			return VnePmMdvneAlgorithmPipelineTwoStagesRackA::new;
 		case "pm-pipeline2-rackb":
-			return VnePmMdvneAlgorithmPipelineTwoStagesRackB.prepare(sNet, vNets);
+			return VnePmMdvneAlgorithmPipelineTwoStagesRackB::new;
 		case "pm-pipeline3a":
-			return VnePmMdvneAlgorithmPipelineThreeStagesA.prepare(sNet, vNets);
+			return VnePmMdvneAlgorithmPipelineThreeStagesA::new;
 		case "pm-pipeline3b":
-			return VnePmMdvneAlgorithmPipelineThreeStagesB.prepare(sNet, vNets);
+			return VnePmMdvneAlgorithmPipelineThreeStagesB::new;
 		case "ilp":
-			return VneFakeIlpAlgorithm.prepare(sNet, vNets);
+			return VneFakeIlpAlgorithm::new;
 		case "ilp-batch":
-			return VneFakeIlpBatchAlgorithm.prepare(sNet, vNets);
+			return VneFakeIlpBatchAlgorithm::new;
 		case "gips":
-			return VneGipsAlgorithm.prepare(sNet, vNets);
+			return VneGipsAlgorithm::new;
 		case "gips-mig":
-			return VneGipsMigrationAlgorithm.prepare(sNet, vNets);
+			return VneGipsMigrationAlgorithm::new;
 		case "gips-seq":
-			return VneGipsSeqAlgorithm.prepare(sNet, vNets);
+			return VneGipsSeqAlgorithm::new;
 		case "gips-bwignore":
-			return VneGipsBwIgnoreAlgorithm.prepare(sNet, vNets);
+			return VneGipsBwIgnoreAlgorithm::new;
 		case "taf":
 			ModelFacadeConfig.IGNORE_BW = true;
-			return new TafAlgorithm(sNet, vNets);
+			return TafAlgorithm::new;
 		case "random":
 			ModelFacadeConfig.IGNORE_BW = true;
-			return new RandomVneAlgorithm(sNet, vNets);
+			return RandomVneAlgorithm::new;
 		default:
 			throw new IllegalArgumentException("Configured algorithm not known.");
 		}

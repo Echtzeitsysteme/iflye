@@ -45,7 +45,8 @@ public class TafAlgorithmIntraRackOneTierLargerExample {
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt_1");
 
 		// Create and execute algorithm
-		TafAlgorithm taf = new TafAlgorithm(sNet, Set.of(vNet));
+		TafAlgorithm taf = new TafAlgorithm();
+		taf.prepare(sNet, Set.of(vNet));
 		taf.execute();
 
 		virtualConfig = new OneTierConfig(2, 1, false, 1, 1, 1, 5);
@@ -55,7 +56,8 @@ public class TafAlgorithmIntraRackOneTierLargerExample {
 		final VirtualNetwork vNet2 = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt_2");
 
 		// Create and execute algorithm
-		taf = new TafAlgorithm(sNet, Set.of(vNet2));
+		taf = new TafAlgorithm();
+		taf.prepare(sNet, Set.of(vNet2));
 		taf.execute();
 
 		// Save model to file

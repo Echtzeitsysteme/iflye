@@ -31,7 +31,8 @@ public class VnePmMdvneAlgorithmTotalCommunicationCostATest extends AAlgorithmMu
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_COST_A;
-		algo = VnePmMdvneAlgorithm.prepare(sNet, vNets);
+		algo = new VnePmMdvneAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 	@AfterEach

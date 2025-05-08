@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import algorithms.AbstractAlgorithm;
+import facade.ModelFacade;
 import model.Link;
 import model.Node;
 import model.SubstrateNetwork;
@@ -22,23 +23,34 @@ import model.VirtualServer;
 public class SimpleVne extends AbstractAlgorithm {
 
 	/**
-	 * Initializes a new object of this simple VNE algorithm.
-	 *
-	 * @param sNet  Substrate network to work with.
-	 * @param vNets Set of virtual networks to work with.
+	 * Initialize the algorithm with the global model facade.
 	 */
-	public SimpleVne(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		super(sNet, vNets);
+	public SimpleVne() {
+		this(ModelFacade.getInstance());
+	}
 
+	/**
+	 * Initialize the algorithm with the given model facade.
+	 * 
+	 * @param modelFacade Model facade to work with.
+	 */
+	public SimpleVne(final ModelFacade modelFacade) {
+		super(modelFacade);
+	}
+
+	@Override
+	public void prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
 		if (vNets.size() != 1) {
 			throw new IllegalArgumentException(
 					"The simple VNE algorithm is only suited for one virtual network at a time.");
 		}
+
+		super.prepare(sNet, vNets);
 	}
 
 	@Override
 	public boolean execute() {
-		final List<Node> subServers = facade.getAllServersOfNetwork(sNet.getName());
+		final List<Node> subServers = modelFacade.getAllServersOfNetwork(sNet.getName());
 		String largestServerId = "";
 		long largestServerRes = Long.MAX_VALUE;
 
@@ -57,14 +69,14 @@ public class SimpleVne extends AbstractAlgorithm {
 		int summedMem = 0;
 		int summedStor = 0;
 
-		for (Node actNode : facade.getAllServersOfNetwork(getFirstVnet().getName())) {
+		for (Node actNode : modelFacade.getAllServersOfNetwork(getFirstVnet().getName())) {
 			final VirtualServer actServer = (VirtualServer) actNode;
 			summedCpu += actServer.getCpu();
 			summedMem += actServer.getMemory();
 			summedMem += actServer.getStorage();
 		}
 
-		final SubstrateServer largestSubServer = (SubstrateServer) facade.getServerById(largestServerId);
+		final SubstrateServer largestSubServer = (SubstrateServer) modelFacade.getServerById(largestServerId);
 
 		if (!(summedCpu <= largestSubServer.getResidualCpu() && summedMem <= largestSubServer.getResidualMemory()
 				&& summedStor <= largestSubServer.getResidualStorage())) {
@@ -79,21 +91,21 @@ public class SimpleVne extends AbstractAlgorithm {
 		boolean success = true;
 
 		// Network
-		success &= facade.embedNetworkToNetwork(sNet.getName(), getFirstVnet().getName());
+		success &= modelFacade.embedNetworkToNetwork(sNet.getName(), getFirstVnet().getName());
 
 		// Servers
-		for (Node act : facade.getAllServersOfNetwork(getFirstVnet().getName())) {
-			success &= facade.embedServerToServer(largestServerId, act.getName());
+		for (Node act : modelFacade.getAllServersOfNetwork(getFirstVnet().getName())) {
+			success &= modelFacade.embedServerToServer(largestServerId, act.getName());
 		}
 
 		// Switches
-		for (Node act : facade.getAllSwitchesOfNetwork(getFirstVnet().getName())) {
-			success &= facade.embedSwitchToNode(largestServerId, act.getName());
+		for (Node act : modelFacade.getAllSwitchesOfNetwork(getFirstVnet().getName())) {
+			success &= modelFacade.embedSwitchToNode(largestServerId, act.getName());
 		}
 
 		// Links
-		for (Link act : facade.getAllLinksOfNetwork(getFirstVnet().getName())) {
-			success &= facade.embedLinkToServer(largestServerId, act.getName());
+		for (Link act : modelFacade.getAllLinksOfNetwork(getFirstVnet().getName())) {
+			success &= modelFacade.embedLinkToServer(largestServerId, act.getName());
 		}
 
 		return success;

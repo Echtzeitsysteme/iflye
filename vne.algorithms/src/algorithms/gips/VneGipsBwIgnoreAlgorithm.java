@@ -1,9 +1,11 @@
 package algorithms.gips;
 
-import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.emoflon.gips.core.milp.SolverOutput;
+import org.emoflon.gips.gipsl.examples.mdvne.MdvneGipsIflyeAdapter;
 import org.emoflon.gips.gipsl.examples.mdvne.bwignore.MdvneGipsBwIgnoreIflyeAdapter;
 
 import algorithms.AbstractAlgorithm;
@@ -20,7 +22,7 @@ import model.VirtualNetwork;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneGipsBwIgnoreAlgorithm extends AbstractAlgorithm {
+public class VneGipsBwIgnoreAlgorithm extends AbstractAlgorithm implements GipsAlgorithm {
 
 	/**
 	 * Relative base path of the GIPS MdVNE project.
@@ -28,18 +30,31 @@ public class VneGipsBwIgnoreAlgorithm extends AbstractAlgorithm {
 	private final static String GIPS_PROJECT_BASE_PATH = "../../gips-examples/org.emoflon.gips.gipsl.examples.mdvne.bwignore";
 
 	/**
-	 * Algorithm instance (singleton).
+	 * The GIPS MdVNE adapter.
 	 */
-	private static VneGipsBwIgnoreAlgorithm instance;
+	private final MdvneGipsBwIgnoreIflyeAdapter iflyeAdapter;
 
 	/**
-	 * Constructor that gets the substrate as well as the virtual network.
-	 *
-	 * @param sNet  Substrate network to work with.
-	 * @param vNets Set of virtual networks to work with.
+	 * The most recent GIPS MdVNE output.
 	 */
-	public VneGipsBwIgnoreAlgorithm(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		super(sNet, vNets);
+	private MdvneGipsIflyeAdapter.MdvneIflyeOutput iflyeOutput;
+
+	/**
+	 * Initialize the algorithm with the global model facade.
+	 */
+	public VneGipsBwIgnoreAlgorithm() {
+		this(ModelFacade.getInstance());
+	}
+
+	/**
+	 * Initialize the algorithm with the given model facade.
+	 * 
+	 * @param modelFacade Model facade to work with.
+	 */
+	public VneGipsBwIgnoreAlgorithm(final ModelFacade modelFacade) {
+		super(modelFacade);
+
+		iflyeAdapter = new MdvneGipsBwIgnoreIflyeAdapter();
 	}
 
 	@Override
@@ -56,8 +71,8 @@ public class VneGipsBwIgnoreAlgorithm extends AbstractAlgorithm {
 		}
 
 		// TODO: Time measurement
-		final ResourceSet model = ModelFacade.getInstance().getResourceSet();
-		final boolean gipsSuccess = MdvneGipsBwIgnoreIflyeAdapter.execute(model,
+		final ResourceSet model = getModelFacade().getResourceSet();
+		iflyeOutput = iflyeAdapter.execute(model,
 				GIPS_PROJECT_BASE_PATH
 						+ "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/bwignore/api/gips/gips-model.xmi",
 				GIPS_PROJECT_BASE_PATH
@@ -65,12 +80,24 @@ public class VneGipsBwIgnoreAlgorithm extends AbstractAlgorithm {
 				GIPS_PROJECT_BASE_PATH
 						+ "/src-gen/org/emoflon/gips/gipsl/examples/mdvne/bwignore/hipe/engine/hipe-network.xmi");
 
+		final boolean gipsSuccess = this.iflyeOutput.solverOutput().solutionCount() > 0;
+
 		// The following workaround is not necessary because of the global bandwidth
 		// ignoring needed for this VNE algorithm
 //		// Workaround to fix the residual bandwidth of other paths possibly affected by
 //		// virtual link to substrate path embeddings
-//		ModelFacade.getInstance().updateAllPathsResidualBandwidth(sNet.getName());
+//		getModelFacade().updateAllPathsResidualBandwidth(sNet.getName());
 		return gipsSuccess;
+	}
+
+	@Override
+	public SolverOutput getSolverOutput() {
+		return this.iflyeOutput.solverOutput();
+	}
+
+	@Override
+	public Map<String, String> getMatches() {
+		return this.iflyeOutput.matches();
 	}
 
 	/**
@@ -80,36 +107,19 @@ public class VneGipsBwIgnoreAlgorithm extends AbstractAlgorithm {
 	 * @param vNets Set of virtual networks to work with.
 	 * @return Instance of this algorithm implementation.
 	 */
-	public static VneGipsBwIgnoreAlgorithm prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		if (sNet == null || vNets == null) {
-			throw new IllegalArgumentException("One of the provided network objects was null.");
-		}
+	@Override
+	public void prepare(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
+		VneGipsAlgorithmUtils.checkGivenVnets(getModelFacade(), vNets);
 
-		if (vNets.size() == 0) {
-			throw new IllegalArgumentException("Provided set of virtual networks was empty.");
-		}
-
-		VneGipsAlgorithmUtils.checkGivenVnets(vNets);
-
-		if (instance == null) {
-			instance = new VneGipsBwIgnoreAlgorithm(sNet, vNets);
-		}
-		instance.sNet = sNet;
-		instance.vNets = new HashSet<>();
-		instance.vNets.addAll(vNets);
-
-		return instance;
+		super.prepare(sNet, vNets);
 	}
 
 	/**
 	 * Resets the algorithm instance.
 	 */
+	@Override
 	public void dispose() {
-		MdvneGipsBwIgnoreIflyeAdapter.resetInit();
-		if (instance == null) {
-			return;
-		}
-		instance = null;
+		iflyeAdapter.resetInit();
 	}
 
 }

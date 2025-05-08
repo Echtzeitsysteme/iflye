@@ -16,12 +16,12 @@ public class VneGipsAlgorithmUtils {
 	 * 
 	 * @param vNets Set of virtual networks to check for.
 	 */
-	protected static void checkGivenVnets(final Set<VirtualNetwork> vNets) {
+	protected static void checkGivenVnets(final ModelFacade modelFacade, final Set<VirtualNetwork> vNets) {
 		if (vNets == null) {
 			throw new IllegalArgumentException("Virtual network set was null.");
 		}
 
-		final Collection<Network> modelNets = ModelFacade.getInstance().getAllNetworks();
+		final Collection<Network> modelNets = modelFacade.getAllNetworks();
 		final Set<VirtualNetwork> modelVnets = new HashSet<VirtualNetwork>();
 		for (final Network n : modelNets) {
 			if (n instanceof VirtualNetwork vnet) {
@@ -32,8 +32,9 @@ public class VneGipsAlgorithmUtils {
 		}
 
 		if (vNets.size() != modelVnets.size()) {
-			throw new IllegalStateException("Number of given virtual networks does not match the number of "
-					+ "non-embedded virtual networks existing in the model.");
+			throw new IllegalStateException(
+					"Number of given virtual networks (" + vNets.size() + ") does not match the number of "
+							+ "non-embedded virtual networks (" + modelVnets.size() + ") existing in the model.");
 		}
 
 		if (!vNets.containsAll(modelVnets) || !modelVnets.containsAll(vNets)) {

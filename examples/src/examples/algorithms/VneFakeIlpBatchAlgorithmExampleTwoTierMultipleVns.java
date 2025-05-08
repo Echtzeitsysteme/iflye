@@ -66,7 +66,8 @@ public class VneFakeIlpBatchAlgorithmExampleTwoTierMultipleVns {
 		});
 
 		// Create and execute algorithm
-		final AbstractAlgorithm algo = VneFakeIlpBatchAlgorithm.prepare(sNet, virtNets);
+		final AbstractAlgorithm algo = new VneFakeIlpBatchAlgorithm();
+		algo.prepare(sNet, virtNets);
 		algo.execute();
 
 		// Save model to file

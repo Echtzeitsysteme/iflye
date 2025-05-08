@@ -24,7 +24,8 @@ public class VneGipsLookaheadAlgorithmMultipleSnetsTest extends VneGipsAlgorithm
 		// The algorithm is only able to use the total communication objective C because
 		// it is hard-coded in GIPSL
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
-		algo = VneGipsLookaheadAlgorithm.prepare(sNet, vNets);
+		algo = new VneGipsLookaheadAlgorithm();
+		algo.prepare(sNet, vNets);
 		((VneGipsLookaheadAlgorithm) algo).setVNetId("virt");
 	}
 

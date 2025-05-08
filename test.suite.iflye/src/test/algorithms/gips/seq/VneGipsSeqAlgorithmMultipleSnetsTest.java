@@ -26,13 +26,14 @@ public class VneGipsSeqAlgorithmMultipleSnetsTest extends VneGipsAlgorithmMultip
 		// it is hard-coded in GIPSL
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
 		ModelFacadeConfig.IGNORE_BW = true;
-		algo = VneGipsSeqAlgorithm.prepare(sNet, vNets);
+		algo = new VneGipsSeqAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 	@AfterEach
 	public void resetAlgo() {
 		facade.resetAll();
-		((VneGipsSeqAlgorithm) algo).dispose();
+		algo.dispose();
 	}
 
 }

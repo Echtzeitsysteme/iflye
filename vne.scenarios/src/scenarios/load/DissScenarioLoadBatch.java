@@ -53,7 +53,8 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
 		vNetIds.forEach(i -> vNets.add((VirtualNetwork) ModelFacade.getInstance().getNetworkById(i)));
 
 		// Create and execute algorithm
-		final AbstractAlgorithm algo = newAlgo(vNets);
+		final AbstractAlgorithm algo = algoFactory.apply(ModelFacade.getInstance());
+		algo.prepare(sNet, vNets);
 
 		GlobalMetricsManager.startRuntime();
 		algo.execute();

@@ -26,7 +26,8 @@ public class VneGipsHeapAlgorithmMultipleSnetsTest extends VneGipsAlgorithmMulti
 		// it is hard-coded in GIPSL
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
 		ModelFacadeConfig.IGNORE_BW = true;
-		algo = VneGipsHeapAlgorithm.prepare(sNet, vNets);
+		algo = new VneGipsHeapAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 	@AfterEach

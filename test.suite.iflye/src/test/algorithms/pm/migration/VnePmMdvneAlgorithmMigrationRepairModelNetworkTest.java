@@ -19,7 +19,8 @@ public class VnePmMdvneAlgorithmMigrationRepairModelNetworkTest extends VnePmMdv
 
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		algo = VnePmMdvneAlgorithmMigration.prepare(sNet, vNets);
+		algo = new VnePmMdvneAlgorithmMigration();
+		algo.prepare(sNet, vNets);
 	}
 
 }

@@ -30,7 +30,8 @@ public class VnePmMdvneAlgorithmRepairModelNetworkTest extends AAlgorithmTest {
 
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		algo = VnePmMdvneAlgorithm.prepare(sNet, vNets);
+		algo = new VnePmMdvneAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 	@AfterEach

@@ -32,7 +32,8 @@ public class RandomAlgorithmTest extends AAlgorithmTest {
 
 	@Override
 	public void initAlgo(final SubstrateNetwork sNet, final Set<VirtualNetwork> vNets) {
-		algo = new RandomVneAlgorithm(sNet, vNets);
+		algo = new RandomVneAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 	@BeforeEach
@@ -66,7 +67,8 @@ public class RandomAlgorithmTest extends AAlgorithmTest {
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-		final RandomVneAlgorithm randomVne = new RandomVneAlgorithm(sNet, Set.of(vNet));
+		final RandomVneAlgorithm randomVne = new RandomVneAlgorithm();
+		randomVne.prepare(sNet, Set.of(vNet));
 		assertTrue(randomVne.execute());
 
 		// Test all vServer hosts
@@ -96,7 +98,8 @@ public class RandomAlgorithmTest extends AAlgorithmTest {
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-		final RandomVneAlgorithm randomVne = new RandomVneAlgorithm(sNet, Set.of(vNet));
+		final RandomVneAlgorithm randomVne = new RandomVneAlgorithm();
+		randomVne.prepare(sNet, Set.of(vNet));
 		assertTrue(randomVne.execute());
 
 		// Test switch placement
@@ -138,7 +141,8 @@ public class RandomAlgorithmTest extends AAlgorithmTest {
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-		final RandomVneAlgorithm randomVne = new RandomVneAlgorithm(sNet, Set.of(vNet));
+		final RandomVneAlgorithm randomVne = new RandomVneAlgorithm();
+		randomVne.prepare(sNet, Set.of(vNet));
 		assertTrue(randomVne.execute());
 
 		// Test switch placement
@@ -180,7 +184,8 @@ public class RandomAlgorithmTest extends AAlgorithmTest {
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-		final RandomVneAlgorithm randomVne = new RandomVneAlgorithm(sNet, Set.of(vNet));
+		final RandomVneAlgorithm randomVne = new RandomVneAlgorithm();
+		randomVne.prepare(sNet, Set.of(vNet));
 		assertTrue(randomVne.execute());
 
 		// Test switch placement
@@ -234,7 +239,7 @@ public class RandomAlgorithmTest extends AAlgorithmTest {
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
 		assertThrows(UnsupportedOperationException.class, () -> {
-			new RandomVneAlgorithm(sNet, Set.of(vNet));
+			new RandomVneAlgorithm().prepare(sNet, Set.of(vNet));
 		});
 	}
 
@@ -246,7 +251,7 @@ public class RandomAlgorithmTest extends AAlgorithmTest {
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
 		assertThrows(UnsupportedOperationException.class, () -> {
-			new RandomVneAlgorithm(sNet, Set.of(vNet));
+			new RandomVneAlgorithm().prepare(sNet, Set.of(vNet));
 		});
 	}
 
@@ -260,7 +265,7 @@ public class RandomAlgorithmTest extends AAlgorithmTest {
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
 		assertThrows(UnsupportedOperationException.class, () -> {
-			new RandomVneAlgorithm(sNet, Set.of(vNet));
+			new RandomVneAlgorithm().prepare(sNet, Set.of(vNet));
 		});
 	}
 
@@ -274,7 +279,8 @@ public class RandomAlgorithmTest extends AAlgorithmTest {
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
-		final RandomVneAlgorithm randomVne = new RandomVneAlgorithm(sNet, Set.of(vNet));
+		final RandomVneAlgorithm randomVne = new RandomVneAlgorithm();
+		randomVne.prepare(sNet, Set.of(vNet));
 
 		// Embedding should not be possible, because a split of one VM to embed it on
 		// two substrate servers is not possible although the total amount of resources
@@ -291,7 +297,7 @@ public class RandomAlgorithmTest extends AAlgorithmTest {
 		final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt");
 
 		assertThrows(IllegalArgumentException.class, () -> {
-			new RandomVneAlgorithm(sNet, Set.of(vNet, vNet));
+			new RandomVneAlgorithm().prepare(sNet, Set.of(vNet, vNet));
 		});
 	}
 

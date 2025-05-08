@@ -34,7 +34,8 @@ public class VneGipsHeapAlgorithmSimpleTest extends VneGipsAlgorithmSimpleTest {
 		// The algorithm is only able to use the total communication objective C because
 		// it is hard-coded in GIPSL
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
-		algo = VneGipsHeapAlgorithm.prepare(sNet, vNets);
+		algo = new VneGipsHeapAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 	@AfterEach

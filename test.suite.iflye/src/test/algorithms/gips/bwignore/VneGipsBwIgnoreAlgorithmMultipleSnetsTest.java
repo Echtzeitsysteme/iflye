@@ -26,7 +26,8 @@ public class VneGipsBwIgnoreAlgorithmMultipleSnetsTest extends VneGipsAlgorithmM
 		// it is hard-coded in GIPSL
 		AlgorithmConfig.obj = Objective.TOTAL_COMMUNICATION_OBJECTIVE_C;
 		ModelFacadeConfig.IGNORE_BW = true;
-		algo = VneGipsBwIgnoreAlgorithm.prepare(sNet, vNets);
+		algo = new VneGipsBwIgnoreAlgorithm();
+		algo.prepare(sNet, vNets);
 	}
 
 	@AfterEach

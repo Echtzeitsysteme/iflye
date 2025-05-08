@@ -63,7 +63,8 @@ public class MdvneFatTreeAdaptedScenario extends AMdvneAdaptedScenario implement
 			scen.virtualSetup(virtualNetworkId);
 			final VirtualNetwork virt = (VirtualNetwork) facade.getNetworkById(virtualNetworkId);
 			// TODO: Change the algorithm instance later on.
-			final AbstractAlgorithm algo = new TafAlgorithm(sub, Set.of(virt));
+			final AbstractAlgorithm algo = new TafAlgorithm();
+			algo.prepare(sub, Set.of(virt));
 			final boolean success = algo.execute();
 
 			if (success) {
