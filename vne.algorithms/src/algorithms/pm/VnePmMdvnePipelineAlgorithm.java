@@ -172,6 +172,9 @@ public abstract class VnePmMdvnePipelineAlgorithm extends VnePmMdvneAlgorithm im
 
 		int stage = 0;
 		for (AbstractAlgorithm algo : pipeline) {
+			// Run algorithm preparation again because the substrate network or the set of
+			// virtual networks may have changed because of the repairing above.
+			algo.prepare(sNet, vNets);
 			if (stage > 0) {
 				PmAlgorithmUtils.unembedAll(sNet, vNets);
 			}
