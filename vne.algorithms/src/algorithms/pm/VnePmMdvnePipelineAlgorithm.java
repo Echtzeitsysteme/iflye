@@ -132,8 +132,6 @@ public abstract class VnePmMdvnePipelineAlgorithm extends VnePmMdvneAlgorithm im
 		super.prepare(sNet, vNets);
 
 		checkPreConditions();
-
-		AlgorithmPipeline.super.prepare(sNet, vNets);
 	}
 
 	/**
