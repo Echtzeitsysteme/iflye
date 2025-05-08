@@ -11,6 +11,7 @@ import metrics.MetricConsts;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
+@Deprecated
 public class MemoryMetric implements IMetric {
 
 	/**

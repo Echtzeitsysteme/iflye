@@ -36,6 +36,7 @@ import model.SubstrateNetwork;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
+@Deprecated
 public class CsvUtil {
 
 	/**
