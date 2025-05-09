@@ -12,6 +12,7 @@ import java.util.List;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
+@Deprecated
 public class MemoryDetailedMetric extends MemoryMetric {
 
 	/**

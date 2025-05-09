@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import facade.ModelFacade;
 import metrics.CostUtility;
 import metrics.IMetric;
 import model.Network;
@@ -44,7 +45,7 @@ public class TotalTafCommunicationCostMetric implements IMetric {
 
 		// For all embedded virtual networks
 		for (final VirtualNetwork guest : sNet.getGuests()) {
-			final List<Node> guestServers = facade.getAllServersOfNetwork(guest.getName());
+			final List<Node> guestServers = ModelFacade.getAllServersOfNetwork(guest);
 
 			// This metric needs a pair of all virtual servers to all other virtual servers.
 			// Therefore,
@@ -110,12 +111,12 @@ public class TotalTafCommunicationCostMetric implements IMetric {
 	private boolean isEmbeddedOnOneRack(final VirtualNetwork vNet) {
 		// Get all substrate servers hosting the virtual ones
 		final Set<SubstrateServer> sServers = new HashSet<>();
-		for (final Node n : facade.getAllServersOfNetwork(vNet.getName())) {
+		for (final Node n : ModelFacade.getAllServersOfNetwork(vNet)) {
 			sServers.add(((VirtualServer) n).getHost());
 		}
 
 		// Iterate through all virtual switches
-		for (final Node n : facade.getAllSwitchesOfNetwork(vNet.getName())) {
+		for (final Node n : ModelFacade.getAllSwitchesOfNetwork(vNet)) {
 			final VirtualSwitch vSwitch = (VirtualSwitch) n;
 
 			// Check if switch is hosted on a substrate server
@@ -172,7 +173,7 @@ public class TotalTafCommunicationCostMetric implements IMetric {
 	 * @param net Network to check server conditions.
 	 */
 	private void checkAllServerConnections(final Network net) {
-		for (final Node n : facade.getAllServersOfNetwork(net.getName())) {
+		for (final Node n : ModelFacade.getAllServersOfNetwork(net)) {
 			// Only one outgoing link
 			if (n.getOutgoingLinks().size() != 1) {
 				throw new UnsupportedOperationException("There is more than one outgoing link.");
@@ -198,7 +199,7 @@ public class TotalTafCommunicationCostMetric implements IMetric {
 	 */
 	private void checkOnlyOneLayerOfSwitches(final Network net) {
 		int oldVal = Integer.MAX_VALUE;
-		for (final Node n : facade.getAllSwitchesOfNetwork(net.getName())) {
+		for (final Node n : ModelFacade.getAllSwitchesOfNetwork(net)) {
 			if (oldVal == Integer.MAX_VALUE) {
 				oldVal = n.getDepth();
 			}

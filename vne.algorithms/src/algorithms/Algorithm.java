@@ -32,4 +32,6 @@ public interface Algorithm {
 	 */
 	public abstract void dispose();
 
+	public String getAlgorithmName();
+
 }

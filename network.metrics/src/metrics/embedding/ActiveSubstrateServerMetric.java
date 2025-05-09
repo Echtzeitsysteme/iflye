@@ -1,5 +1,6 @@
 package metrics.embedding;
 
+import facade.ModelFacade;
 import metrics.IMetric;
 import model.Node;
 import model.SubstrateNetwork;
@@ -26,7 +27,7 @@ public class ActiveSubstrateServerMetric implements IMetric {
 	public ActiveSubstrateServerMetric(final SubstrateNetwork sNet) {
 		int value = 0;
 
-		for (final Node n : facade.getAllServersOfNetwork(sNet.getName())) {
+		for (final Node n : ModelFacade.getAllServersOfNetwork(sNet)) {
 			final SubstrateServer srv = (SubstrateServer) n;
 			if (!srv.getGuestServers().isEmpty() || !srv.getGuestSwitches().isEmpty()
 					|| !srv.getGuestLinks().isEmpty()) {

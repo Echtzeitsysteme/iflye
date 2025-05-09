@@ -11,6 +11,7 @@ package metrics.time;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
+@Deprecated
 public class RuntimeDetailedMetric extends RuntimeMetric {
 
 	// TODO: Documentation for the whole class is missing.

@@ -12,6 +12,7 @@ import metrics.IMetric;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
+@Deprecated
 public class RuntimeMetric implements IMetric {
 
 	/**

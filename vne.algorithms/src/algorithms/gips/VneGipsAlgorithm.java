@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.emoflon.gips.core.milp.SolverOutput;
+import org.emoflon.gips.core.util.IMeasurement;
 import org.emoflon.gips.gipsl.examples.mdvne.MdvneGipsIflyeAdapter;
 
 import algorithms.AbstractAlgorithm;
@@ -49,9 +50,24 @@ public class VneGipsAlgorithm extends AbstractAlgorithm implements GipsAlgorithm
 	 * @param modelFacade The model facade to use.
 	 */
 	public VneGipsAlgorithm(final ModelFacade modelFacade) {
+		this(modelFacade, 0);
+	}
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param modelFacade              the model facade to use
+	 * @param numberOfIlpSolverThreads the number of threads to use for the ILP
+	 *                                 solver
+	 */
+	public VneGipsAlgorithm(final ModelFacade modelFacade, final int numberOfIlpSolverThreads) {
 		super(modelFacade);
 
 		iflyeAdapter = new MdvneGipsIflyeAdapter();
+
+		if (numberOfIlpSolverThreads > 0) {
+			iflyeAdapter.setIlpSolverThreadCount(numberOfIlpSolverThreads);
+		}
 	}
 
 	@Override
@@ -95,9 +111,15 @@ public class VneGipsAlgorithm extends AbstractAlgorithm implements GipsAlgorithm
 		return this.iflyeOutput.matches();
 	}
 
+	@Override
+	public Map<String, IMeasurement> getMeasurements() {
+		return this.iflyeOutput.measurements();
+	}
+
 	/**
 	 * Resets the algorithm instance.
 	 */
+	@Override
 	public void dispose() {
 		iflyeAdapter.resetInit();
 	}

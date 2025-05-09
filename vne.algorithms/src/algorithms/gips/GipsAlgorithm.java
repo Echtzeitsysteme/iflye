@@ -3,6 +3,7 @@ package algorithms.gips;
 import java.util.Map;
 
 import org.emoflon.gips.core.milp.SolverOutput;
+import org.emoflon.gips.core.util.IMeasurement;
 
 import algorithms.Algorithm;
 
@@ -27,5 +28,7 @@ public interface GipsAlgorithm extends Algorithm {
 	 *         substrate node IDs.
 	 */
 	public abstract Map<String, String> getMatches();
+
+	public abstract Map<String, IMeasurement> getMeasurements();
 
 }

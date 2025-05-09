@@ -1,8 +1,15 @@
 package scenarios.load;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 
 import org.apache.commons.cli.CommandLine;
@@ -35,27 +42,16 @@ import algorithms.random.RandomVneAlgorithm;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import ilp.wrapper.config.IlpSolverConfig;
+import io.micrometer.core.instrument.Tags;
 import metrics.MetricConfig;
-import metrics.MetricConsts;
-import metrics.embedding.AcceptedVnrMetric;
-import metrics.embedding.AveragePathLengthMetric;
-import metrics.embedding.OperatingCostMetric;
-import metrics.embedding.TotalCommunicationCostMetricA;
-import metrics.embedding.TotalCommunicationCostMetricB;
-import metrics.embedding.TotalCommunicationCostMetricC;
-import metrics.embedding.TotalCommunicationCostMetricD;
-import metrics.embedding.TotalCommunicationCostObjectiveC;
-import metrics.embedding.TotalCommunicationCostObjectiveD;
-import metrics.embedding.TotalPathCostMetric;
-import metrics.embedding.TotalTafCommunicationCostMetric;
-import metrics.manager.GlobalMetricsManager;
-import metrics.memory.MemoryMetric;
-import metrics.memory.MemoryPidMetric;
+import metrics.manager.Context;
+import metrics.manager.MetricsManager;
+import metrics.reporter.CsvReporter;
+import metrics.reporter.NotionReporter;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 import model.converter.BasicModelConverter;
 import model.converter.IncrementalModelConverter;
-import scenario.util.CsvUtil;
 
 /**
  * Runnable (incremental) scenario for VNE algorithms that reads specified files
@@ -79,6 +75,11 @@ public class DissScenarioLoad {
 	 * File path for the JSON file to load all virtual networks from.
 	 */
 	protected static String virtNetsPath;
+
+	/**
+	 * The number of threads to use for the GIPS ILP solver.
+	 */
+	protected static int gipsSolverThreads;
 
 	/**
 	 * File path for the metric CSV output.
@@ -111,81 +112,97 @@ public class DissScenarioLoad {
 	 * Main method to start the example. String array of arguments will be parsed.
 	 *
 	 * @param args See {@link #parseArgs(String[])}.
+	 * @throws InterruptedException
+	 * @throws IOException
 	 */
-	public static void main(final String[] args) {
-		parseArgs(args);
-
-		// Substrate network = read from file
-		final List<String> sNetIds = BasicModelConverter.jsonToModel(subNetPath, false);
-
-		if (sNetIds.size() != 1) {
-			throw new UnsupportedOperationException("There is more than one substrate network.");
-		}
-
-		sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNetIds.get(0));
-
-		// Print maximum path length (after possible auto determination)
-		if (ModelFacadeConfig.MAX_PATH_LENGTH_AUTO) {
-			System.out.println("=> Using path length auto determination");
-		}
-		System.out.println("=> Using max path length " + ModelFacadeConfig.MAX_PATH_LENGTH);
-
-		/*
-		 * Every embedding starts here.
-		 */
-
-		String vNetId = IncrementalModelConverter.jsonToModelIncremental(virtNetsPath, true);
+	public static void main(final String[] args) throws IOException, InterruptedException, ParseException {
+		final MetricsManager metricsManager = new MetricsManager.Default();
+		parseArgs(args, metricsManager);
+		metricsManager.addMeter(new GipsIlpHandler());
 		final AbstractAlgorithm algo = algoFactory.apply(ModelFacade.getInstance());
 
-		while (vNetId != null) {
-			final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById(vNetId);
+		try {
 
-			System.out.println("=> Embedding virtual network " + vNetId);
+			// Substrate network = read from file
+			final List<String> sNetIds = BasicModelConverter.jsonToModel(subNetPath, false);
 
-			// Create and execute algorithm
-			algo.prepare(sNet, Set.of(vNet));
-			GlobalMetricsManager.startRuntime();
-			boolean success = algo.execute();
-			GlobalMetricsManager.stopRuntime();
-
-			if (!success && removeUnembeddedVnets) {
-				ModelFacade.getInstance().removeNetworkFromRoot(vNetId);
+			if (sNetIds.size() != 1) {
+				throw new UnsupportedOperationException("There is more than one substrate network.");
 			}
 
-			// Save metrics to CSV file
-			// Reload substrate network from model facade (needed for GIPS-based
-			// algorithms.)
-			sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNet.getName());
-			CsvUtil.appendCsvLine(vNet.getName(), csvPath, sNet);
-			GlobalMetricsManager.resetRuntime();
-			GlobalMetricsManager.resetMemory();
+			sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNetIds.get(0));
 
-			// Get next virtual network ID to embed
-			vNetId = IncrementalModelConverter.jsonToModelIncremental(virtNetsPath, true);
+			// Print maximum path length (after possible auto determination)
+			if (ModelFacadeConfig.MAX_PATH_LENGTH_AUTO) {
+				System.out.println("=> Using path length auto determination");
+			}
+			System.out.println("=> Using max path length " + ModelFacadeConfig.MAX_PATH_LENGTH);
 
-			// Save model to file
-			if (persistModel) {
-				if (persistModelPath == null) {
-					ModelFacade.getInstance().persistModel();
-				} else {
-					ModelFacade.getInstance().persistModel(persistModelPath);
+			/*
+			 * Every embedding starts here.
+			 */
+
+			String vNetId = IncrementalModelConverter.jsonToModelIncremental(virtNetsPath, true);
+
+			metricsManager.addTags("series uuid", UUID.randomUUID().toString(), "started",
+					OffsetDateTime.now().toString(), "algorithm", algo.getAlgorithmName());
+			metricsManager.initialized();
+
+			while (vNetId != null) {
+				final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById(vNetId);
+
+				System.out.println("=> Embedding virtual network " + vNetId);
+
+				boolean success = metricsManager.observe("algorithm",
+						() -> new Context.VnetRootContext(sNet, Set.of(vNet), algo), () -> {
+							// Create and execute algorithm
+							MetricsManager.getInstance().observe("prepare", Context.PrepareStageContext::new,
+									() -> algo.prepare(sNet, Set.of(vNet)));
+							return MetricsManager.getInstance().observe("execute", Context.ExecuteStageContext::new,
+									algo::execute);
+						}, Tags.of("lastVNR", vNetId, "series group uuid", UUID.randomUUID().toString()));
+
+				if (!success && removeUnembeddedVnets) {
+					ModelFacade.getInstance().removeNetworkFromRoot(vNetId);
+				}
+
+				// Save metrics to CSV file
+				// Reload substrate network from model facade (needed for GIPS-based
+				// algorithms.)
+				sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById(sNet.getName());
+				metricsManager.flush();
+
+				// Get next virtual network ID to embed
+				vNetId = IncrementalModelConverter.jsonToModelIncremental(virtNetsPath, true);
+
+				// Save model to file
+				if (persistModel) {
+					if (persistModelPath == null) {
+						ModelFacade.getInstance().persistModel();
+					} else {
+						ModelFacade.getInstance().persistModel(persistModelPath);
+					}
 				}
 			}
+
+			/*
+			 * End of every embedding.
+			 */
+
+			// Validate model
+			ModelFacade.getInstance().validateModel();
+
+			/*
+			 * Evaluation.
+			 */
+
+			// Print metrics before saving the model
+			metricsManager.conclude();
+		} finally {
+			algo.dispose();
+			metricsManager.close();
+			MetricsManager.closeAll();
 		}
-
-		/*
-		 * End of every embedding.
-		 */
-
-		// Validate model
-		ModelFacade.getInstance().validateModel();
-
-		/*
-		 * Evaluation.
-		 */
-
-		// Print metrics before saving the model
-		printMetrics();
 
 		System.out.println("=> Execution finished.");
 		System.exit(0);
@@ -221,7 +238,7 @@ public class DissScenarioLoad {
 	 *
 	 * @param args Arguments to parse.
 	 */
-	protected static void parseArgs(final String[] args) {
+	protected static void parseArgs(final String[] args, MetricsManager metricsManager) {
 		final Options options = new Options();
 
 		// Algorithm
@@ -299,6 +316,33 @@ public class DissScenarioLoad {
 		ilpObjLog.setRequired(false);
 		options.addOption(ilpObjLog);
 
+		// Notion: API Token
+		final Option notionToken = new Option("notion-token", true, "The Notion API token.");
+		notionToken.setRequired(false);
+		notionToken.setType(String.class);
+		options.addOption(notionToken);
+
+		// Notion: ID of the series configuration DB
+		final Option notionSeriesDB = new Option("notion-series-db", true,
+				"The ID of the Notion database to which to store the series configurations");
+		notionSeriesDB.setRequired(false);
+		notionSeriesDB.setType(String.class);
+		options.addOption(notionSeriesDB);
+
+		// Notion: ID of the metrics DB
+		final Option notionMetricDB = new Option("notion-metric-db", true,
+				"The ID of the Notion database to which to store the metrics");
+		notionMetricDB.setRequired(false);
+		notionMetricDB.setType(String.class);
+		options.addOption(notionMetricDB);
+
+		// GIPS: Number of threads for the ILP solver
+		final Option gipsSolverThreadsOption = new Option("gips-solver-threads", true,
+				"How many threads should be used by the GIPS ILP solver");
+		gipsSolverThreadsOption.setRequired(false);
+		gipsSolverThreadsOption.setType(Integer.class);
+		options.addOption(gipsSolverThreadsOption);
+
 		// Model: Persist after run
 		final Option modelPersist = new Option("persist-model", true,
 				"If the model should be persisted after execution, optionally supply the file name.");
@@ -330,8 +374,10 @@ public class DissScenarioLoad {
 		// #0 Algorithm
 		final String algoConfig = cmd.getOptionValue("algorithm");
 		algoFactory = getAlgoFactory(algoConfig);
+		metricsManager.addTags("algorithm", algoConfig);
 
 		// #1 Objective
+		metricsManager.addTags("objective", cmd.getOptionValue("objective"));
 		switch (cmd.getOptionValue("objective")) {
 		case "total-path":
 			AlgorithmConfig.obj = Objective.TOTAL_PATH_COST;
@@ -355,6 +401,7 @@ public class DissScenarioLoad {
 
 		// #2 Embedding
 		if (cmd.getOptionValue("embedding") != null) {
+			metricsManager.addTags("embedding", cmd.getOptionValue("embedding"));
 			switch (cmd.getOptionValue("embedding")) {
 			case "emoflon":
 				AlgorithmConfig.emb = Embedding.EMOFLON;
@@ -372,6 +419,7 @@ public class DissScenarioLoad {
 		ModelFacadeConfig.MIN_PATH_LENGTH = 1;
 		String pathLengthParam = cmd.getOptionValue("path-length");
 		if (pathLengthParam != null) {
+			metricsManager.addTags("path-length", pathLengthParam);
 			if (pathLengthParam.equals("auto")) {
 				ModelFacadeConfig.MAX_PATH_LENGTH_AUTO = true;
 			} else {
@@ -381,47 +429,62 @@ public class DissScenarioLoad {
 
 		// #4 Substrate network file path
 		subNetPath = cmd.getOptionValue("snetfile");
+		metricsManager.addTags("substrate network", getNetworkConfigurationName(subNetPath));
 
 		// #5 Virtual network file path
 		virtNetsPath = cmd.getOptionValue("vnetfile");
+		metricsManager.addTags("virtual network", getNetworkConfigurationName(virtNetsPath));
 
 		// #6 Number of migration tries
 		if (cmd.getOptionValue("tries") != null) {
 			AlgorithmConfig.pmNoMigrations = Integer.valueOf(cmd.getOptionValue("tries"));
+			metricsManager.addTags("tries", cmd.getOptionValue("tries"));
 		}
 
 		// #7: K fastest paths
 		if (cmd.getOptionValue("kfastestpaths") != null) {
 			final int K = Integer.valueOf(cmd.getOptionValue("kfastestpaths"));
+			metricsManager.addTags("kfastestpaths", cmd.getOptionValue("kfastestpaths"));
 			if (K > 1) {
 				ModelFacadeConfig.YEN_PATH_GEN = true;
 				ModelFacadeConfig.YEN_K = K;
 			}
 		}
 
+		// GIPS: Number of threads for the GIPS ILP Solver
+		gipsSolverThreads = Integer.valueOf(cmd.getOptionValue(gipsSolverThreadsOption, "-1"));
+		if (gipsSolverThreads > 0) {
+			metricsManager.addTags("gips.solver_threads", String.valueOf(gipsSolverThreads));
+		}
+
 		// #8: CSV metric file path
 		if (cmd.getOptionValue("csvpath") != null) {
 			csvPath = cmd.getOptionValue("csvpath");
+			metricsManager.addReporter(new CsvReporter(new File(csvPath)));
 		}
 
 		// #9: ILP solver timeout value
 		if (cmd.getOptionValue("ilptimeout") != null) {
 			IlpSolverConfig.TIME_OUT = Integer.valueOf(cmd.getOptionValue("ilptimeout"));
+			metricsManager.addTags("ilptimeout", cmd.getOptionValue("ilptimeout"));
 		}
 
 		// #10: ILP solver random seed
 		if (cmd.getOptionValue("ilprandomseed") != null) {
 			IlpSolverConfig.RANDOM_SEED = Integer.valueOf(cmd.getOptionValue("ilprandomseed"));
+			metricsManager.addTags("ilprandomseed", cmd.getOptionValue("ilprandomseed"));
 		}
 
 		// #11: ILP solver optimality tolerance
 		if (cmd.getOptionValue("ilpopttol") != null) {
 			IlpSolverConfig.OPT_TOL = Double.valueOf(cmd.getOptionValue("ilpopttol"));
+			metricsManager.addTags("ilpopttol", cmd.getOptionValue("ilpopttol"));
 		}
 
 		// #12: ILP solver objective scaling
 		if (cmd.getOptionValue("ilpobjscaling") != null) {
 			IlpSolverConfig.OBJ_SCALE = Double.valueOf(cmd.getOptionValue("ilpobjscaling"));
+			metricsManager.addTags("ilpobjscaling", cmd.getOptionValue("ilpobjscaling"));
 		}
 
 		// #13: Memory measurement enabled
@@ -429,6 +492,30 @@ public class DissScenarioLoad {
 
 		// #14: ILP solver objective logarithm
 		IlpSolverConfig.OBJ_LOG = cmd.hasOption("ilpobjlog");
+		if (cmd.hasOption("ilpobjlog")) {
+			metricsManager.addTags("ilpobjlog", String.valueOf(cmd.hasOption("ilpobjlog")));
+		}
+
+		final boolean withNotion = cmd.hasOption(notionToken);
+		if (withNotion) {
+			final String tokenFile = cmd.getOptionValue(notionToken);
+			final String seriesDb = cmd.getOptionValue(notionSeriesDB, "");
+			final String metricDb = cmd.getOptionValue(notionMetricDB, "");
+
+			final Path path = Paths.get(tokenFile);
+			if (!path.toFile().exists() || !path.toFile().isFile() || !path.toFile().canRead()) {
+				throw new RuntimeException("Notion Token File does not exist or is not readable: "
+						+ path.toAbsolutePath().normalize().toString());
+			}
+			try {
+				final String token = Files.readAllLines(path).get(0).trim();
+				metricsManager.addReporter(new NotionReporter.Default(token, seriesDb.isBlank() ? null : seriesDb,
+						metricDb.isBlank() ? null : metricDb));
+			} catch (IOException e) {
+				throw new RuntimeException(
+						"Notion Token is not readable at path " + path.toAbsolutePath().normalize().toString());
+			}
+		}
 
 		if (cmd.hasOption(modelPersist)) {
 			final String filePath = cmd.getOptionValue(modelPersist, "");
@@ -468,7 +555,7 @@ public class DissScenarioLoad {
 		case "ilp-batch":
 			return VneFakeIlpBatchAlgorithm::new;
 		case "gips":
-			return VneGipsAlgorithm::new;
+			return (modelFacade) -> new VneGipsAlgorithm(modelFacade, gipsSolverThreads);
 		case "gips-mig":
 			return VneGipsMigrationAlgorithm::new;
 		case "gips-seq":
@@ -486,40 +573,9 @@ public class DissScenarioLoad {
 		}
 	}
 
-	/**
-	 * Prints out all captured metrics that are relevant.
-	 */
-	protected static void printMetrics() {
-		// Time measurements
-		System.out.println("=> Elapsed time (total): "
-				+ GlobalMetricsManager.getGlobalTimeArray()[0] / MetricConsts.NANO_TO_MILLI + " seconds");
-		System.out.println("=> Elapsed time (PM): "
-				+ GlobalMetricsManager.getGlobalTimeArray()[1] / MetricConsts.NANO_TO_MILLI + " seconds");
-		System.out.println("=> Elapsed time (ILP): "
-				+ GlobalMetricsManager.getGlobalTimeArray()[2] / MetricConsts.NANO_TO_MILLI + " seconds");
-		System.out.println("=> Elapsed time (deploy): "
-				+ GlobalMetricsManager.getGlobalTimeArray()[3] / MetricConsts.NANO_TO_MILLI + " seconds");
-		System.out.println("=> Elapsed time (rest): "
-				+ GlobalMetricsManager.getGlobalTimeArray()[4] / MetricConsts.NANO_TO_MILLI + " seconds");
-
-		// Embedding quality metrics
-		System.out.println("=> Accepted VNRs: " + (int) new AcceptedVnrMetric(sNet).getValue());
-		System.out.println("=> Total path cost: " + new TotalPathCostMetric(sNet).getValue());
-		System.out.println("=> Average path length: " + new AveragePathLengthMetric(sNet).getValue());
-		System.out.println("=> Total communication cost A: " + new TotalCommunicationCostMetricA(sNet).getValue());
-		System.out.println("=> Total communication cost B: " + new TotalCommunicationCostMetricB(sNet).getValue());
-		System.out.println("=> Total communication cost C: " + new TotalCommunicationCostMetricC(sNet).getValue());
-		System.out.println("=> Total communication cost D: " + new TotalCommunicationCostMetricD(sNet).getValue());
-		System.out.println(
-				"=> Total communication objective C: " + new TotalCommunicationCostObjectiveC(sNet).getValue());
-		System.out.println(
-				"=> Total communication objective D: " + new TotalCommunicationCostObjectiveD(sNet).getValue());
-		System.out.println("=> Total TAF communication cost: " + new TotalTafCommunicationCostMetric(sNet).getValue());
-		System.out.println("=> Operation cost: " + new OperatingCostMetric(sNet).getValue());
-
-		// Memory measurements
-		System.out.println("=> Memory metric (current): " + new MemoryMetric().getValue() + " MiB");
-		System.out.println("=> Memory PID metric (maximum): " + new MemoryPidMetric().getValue() + " MiB");
+	public static String getNetworkConfigurationName(final String filePath) {
+		Path p = Paths.get(filePath);
+		return p.getParent().getFileName().toString();
 	}
 
 }

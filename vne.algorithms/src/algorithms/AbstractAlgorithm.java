@@ -83,6 +83,11 @@ public abstract class AbstractAlgorithm implements Algorithm {
 	public void dispose() {
 	}
 
+	@Override
+	public String getAlgorithmName() {
+		return this.getClass().getSimpleName();
+	}
+
 	/**
 	 * Returns the first virtual network from this super type.
 	 *

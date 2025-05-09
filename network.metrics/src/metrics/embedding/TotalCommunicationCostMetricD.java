@@ -2,6 +2,7 @@ package metrics.embedding;
 
 import java.util.List;
 
+import facade.ModelFacade;
 import metrics.CostUtility;
 import metrics.IMetric;
 import model.Link;
@@ -56,7 +57,7 @@ public class TotalCommunicationCostMetricD implements IMetric {
 
 		// Iterate over all virtual networks that are embedded on the substrate network
 		for (final VirtualNetwork vNet : sNet.getGuests()) {
-			final List<Link> guestLinks = facade.getAllLinksOfNetwork(vNet.getName());
+			final List<Link> guestLinks = vNet.getLinks();
 
 			// Iterate over all virtual links
 			for (final Link l : guestLinks) {
@@ -64,7 +65,7 @@ public class TotalCommunicationCostMetricD implements IMetric {
 				cost += CostUtility.getTotalCommunicationCostLinkBCD(vl, vl.getHost());
 			}
 
-			final List<Node> substrateServers = facade.getAllServersOfNetwork(sNet.getName());
+			final List<Node> substrateServers = ModelFacade.getAllServersOfNetwork(sNet);
 
 			// Iterate over all substrate servers
 			for (final Node s : substrateServers) {
