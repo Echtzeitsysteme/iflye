@@ -18,6 +18,18 @@ import scenarios.load.Experiment;
 import scenarios.modules.AbstractModule;
 import scenarios.modules.AlgorithmModule;
 
+/**
+ * Add an option to configure the experiment to use the {@link VneGipsAlgorithm}
+ * with different characteristics.
+ * 
+ * Options: --gips-solver-threads <arg>, -a / --algorithm
+ * <gips/gips-mig/gips-seq/gips-bwignore>
+ * 
+ * @see {@link VneGipsAlgorithm}
+ * @see {@link VneGipsMigrationAlgorithm}
+ * @see {@link VneGipsSeqAlgorithm}
+ * @see {@link VneGipsBwIgnoreAlgorithm}
+ */
 public class GipsAlgorithm extends AbstractModule implements AlgorithmModule.AlgorithmConfiguration {
 
 	protected final Option gipsSolverThreadsOption = Option.builder()//
@@ -27,11 +39,17 @@ public class GipsAlgorithm extends AbstractModule implements AlgorithmModule.Alg
 			.type(Integer.class)//
 			.build();
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void register(final Experiment experiment, final Options options) {
 		options.addOption(gipsSolverThreadsOption);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Function<ModelFacade, AbstractAlgorithm> getAlgorithmFactory(final Experiment experiment,
 			final String algoConfig, final CommandLine cmd,
@@ -58,4 +76,5 @@ public class GipsAlgorithm extends AbstractModule implements AlgorithmModule.Alg
 			return previousAlgoFactory;
 		}
 	}
+
 }

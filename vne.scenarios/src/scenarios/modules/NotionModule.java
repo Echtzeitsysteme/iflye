@@ -15,10 +15,20 @@ import metrics.manager.MetricsManager;
 import metrics.reporter.NotionReporter;
 import scenarios.load.Experiment;
 
+/**
+ * Configure an experiment to use Notion as a reporter.
+ * 
+ * This module requires the Notion API token to be provided as a file path.
+ * 
+ * Options: --notion-token <path>, --notion-series-db <arg>, --notion-metric-db
+ * <arg>
+ * 
+ * @author Janik Stracke {@literal <janik.stracke@stud.tu-darmstadt.de>}
+ */
 public class NotionModule extends AbstractModule {
 	protected final Option notionToken = Option.builder()//
 			.longOpt("notion-token")//
-			.desc("The Notion API token")//
+			.desc("The path to a text file containing the Notion API token")//
 			.hasArg()//
 			.type(String.class)//
 			.build();
@@ -37,15 +47,33 @@ public class NotionModule extends AbstractModule {
 			.type(String.class)//
 			.build();
 
-	protected TriFunction<String, String, String, Reporter> notionReporterSupplier = NotionReporter.Default::new;
+	/**
+	 * The factory to create a new NotionReporter from the token, series and metric
+	 * DB IDs.
+	 */
+	protected NotionReporterFactory notionReporterSupplier;
 
+	/**
+	 * Initialize with the default NotionReporter.
+	 */
 	public NotionModule() {
+		this(NotionReporter.Default::new);
 	}
 
-	public NotionModule(final TriFunction<String, String, String, Reporter> notionReporterSupplier) {
+	/**
+	 * Initialize with the given NotionReporter factory.
+	 * 
+	 * @param notionReporterSupplier the factory to create a new
+	 *                               {@link NotionReporter} with the given token,
+	 *                               series DB and metrics DB.
+	 */
+	public NotionModule(final NotionReporterFactory notionReporterSupplier) {
 		this.notionReporterSupplier = notionReporterSupplier;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void register(final Experiment experiment, final Options options) {
 		options.addOption(notionToken);
@@ -53,6 +81,9 @@ public class NotionModule extends AbstractModule {
 		options.addOption(notionMetricDB);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void configure(final Experiment experiment, final CommandLine cmd) throws ParseException {
 		final boolean withNotion = cmd.hasOption(notionToken);
@@ -79,8 +110,22 @@ public class NotionModule extends AbstractModule {
 		}
 	}
 
+	/**
+	 * Factory to create a new {@link NotionReporter}.
+	 */
 	@FunctionalInterface
-	public static interface TriFunction<S, T, U, R> {
-		public R apply(S s, T t, U u);
+	public static interface NotionReporterFactory {
+
+		/**
+		 * Create a new {@link NotionReporter}.
+		 * 
+		 * @param token    the notion API token.
+		 * @param seriesDb the ID of the series DB, null if not provided.
+		 * @param metricDb the ID of the metrics DB, null if not provided.
+		 * @return a new {@link Reporter} instance.
+		 */
+		public Reporter apply(String token, String seriesDb, String metricDb);
+
 	}
+
 }

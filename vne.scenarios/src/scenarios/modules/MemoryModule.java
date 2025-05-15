@@ -8,6 +8,15 @@ import org.apache.commons.cli.ParseException;
 import metrics.MetricConfig;
 import scenarios.load.Experiment;
 
+/**
+ * Configure an experiment to enable memory management with the old
+ * GlobalMetricManager.
+ * 
+ * Options: -g / --memmeasurement
+ * 
+ * @deprecated Please use the new MetricManager with its own MemoryHandler
+ *             instead.
+ */
 @Deprecated
 public class MemoryModule extends AbstractModule {
 	protected final Option memEnabled = Option.builder()//
@@ -17,11 +26,17 @@ public class MemoryModule extends AbstractModule {
 			.deprecated()//
 			.build();
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void register(final Experiment experiment, final Options options) {
 		options.addOption(memEnabled);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void configure(final Experiment experiment, final CommandLine cmd) throws ParseException {
 		MetricConfig.ENABLE_MEMORY = cmd.hasOption("memmeasurement");

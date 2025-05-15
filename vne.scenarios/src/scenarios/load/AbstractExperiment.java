@@ -50,64 +50,103 @@ public abstract class AbstractExperiment implements Experiment {
 	 */
 	protected boolean removeUnembeddedVnets = false;
 
+	/**
+	 * Constructs a new uninitialized experiment.
+	 */
 	public AbstractExperiment() {
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Function<ModelFacade, AbstractAlgorithm> getAlgoFactory() {
 		return algoFactory;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setAlgoFactory(Function<ModelFacade, AbstractAlgorithm> algoFactory) {
 		this.algoFactory = algoFactory;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isPersistModel() {
 		return persistModel;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setPersistModel(boolean persistModel) {
 		this.persistModel = persistModel;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getPersistModelPath() {
 		return persistModelPath;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setPersistModelPath(String persistModelPath) {
 		this.persistModelPath = persistModelPath;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isRemoveUnembeddedVnets() {
 		return removeUnembeddedVnets;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setRemoveUnembeddedVnets(boolean removeUnembeddedVnets) {
 		this.removeUnembeddedVnets = removeUnembeddedVnets;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getSubNetPath() {
 		return subNetPath;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setSubNetPath(String subNetPath) {
 		this.subNetPath = subNetPath;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getVirtNetsPath() {
 		return virtNetsPath;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setVirtNetsPath(String virtNetsPath) {
 		this.virtNetsPath = virtNetsPath;

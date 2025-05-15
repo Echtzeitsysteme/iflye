@@ -24,6 +24,16 @@ import scenarios.modules.algorithms.PmAlgorithm;
 import scenarios.modules.algorithms.RandomAlgorithm;
 import scenarios.modules.algorithms.TafAlgorithmConfig;
 
+/**
+ * Configure the algorithm to use for the experiment.
+ * 
+ * The supported algorithms are provided by the {@link AlgorithmConfiguration}
+ * implementations. General-purpose options are provided by this class to
+ * configure certain options of several algorithms.
+ * 
+ * Options: -e / --embedding <arg>, -a / --algorithm <arg>, -o / --objective
+ * <arg>, -l / --path-length <arg>, -k / --kfastestpaths <arg>
+ */
 public class AlgorithmModule extends AbstractModule {
 	protected final Option emb = Option.builder()//
 			.option("e")//
@@ -62,28 +72,51 @@ public class AlgorithmModule extends AbstractModule {
 			.hasArg()//
 			.build();
 
+	/**
+	 * The list of all configured algorithms.
+	 */
 	protected final List<AlgorithmConfiguration> algorithms = new ArrayList<>();
 
+	/**
+	 * Initialize the default algorithms.
+	 */
 	public AlgorithmModule() {
 		this(defaultAlgorithms());
 	}
 
+	/**
+	 * Initialize the given algorithms.
+	 * 
+	 * @param algorithms the algorithms to initialize.
+	 */
 	public AlgorithmModule(final Collection<AlgorithmConfiguration> algorithms) {
 		super();
 
 		this.algorithms.addAll(algorithms);
 	}
 
+	/**
+	 * Get a list of all the default algorithms.
+	 */
 	public static List<AlgorithmConfiguration> defaultAlgorithms() {
 		return List.of(new GipsAlgorithm(), new IlpAlgorithm(), new PmAlgorithm(), new RandomAlgorithm(),
 				new TafAlgorithmConfig());
 	}
 
+	/**
+	 * Add an algorithm to the list of algorithms.
+	 * 
+	 * @param algorithmConfiguration The algorithm to add.
+	 * @return This module.
+	 */
 	public AlgorithmModule addAlgorithm(final AlgorithmConfiguration algorithmConfiguration) {
 		this.algorithms.add(algorithmConfiguration);
 		return this;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void register(final Experiment experiment, final Options options) {
 		options.addOption(algo);
@@ -95,6 +128,9 @@ public class AlgorithmModule extends AbstractModule {
 		this.algorithms.forEach((algorithm) -> algorithm.register(experiment, options));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void configure(final Experiment experiment, final CommandLine cmd) throws ParseException {
 		final String algoConfig = cmd.getOptionValue("algorithm");
@@ -176,8 +212,27 @@ public class AlgorithmModule extends AbstractModule {
 		experiment.setAlgoFactory(algorithmFactory);
 	}
 
+	/**
+	 * Interface for algorithm modules.
+	 * 
+	 * @author Janik Stracke {@literal <janik.stracke@stud.tu-darmstadt.de>}
+	 */
 	public static interface AlgorithmConfiguration extends Module {
+
+		/**
+		 * Get the next algorithm factory for the given algoConfig and the previous
+		 * algorithm factory.
+		 * 
+		 * @param experiment          the experiment to configure
+		 * @param algoConfig          the algorithm configuration
+		 * @param cmd                 the command line arguments
+		 * @param previousAlgoFactory the previous algorithm factory
+		 * @return the algorithm factory for the given algoConfig
+		 * @throws ParseException if an error occurs while parsing the command line
+		 *                        arguments
+		 */
 		public Function<ModelFacade, AbstractAlgorithm> getAlgorithmFactory(Experiment experiment, String algoConfig,
 				CommandLine cmd, Function<ModelFacade, AbstractAlgorithm> previousAlgoFactory) throws ParseException;
+
 	}
 }

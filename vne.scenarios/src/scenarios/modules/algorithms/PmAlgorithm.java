@@ -22,6 +22,21 @@ import scenarios.load.Experiment;
 import scenarios.modules.AbstractModule;
 import scenarios.modules.AlgorithmModule;
 
+/**
+ * Add an option to configure the experiment to use the
+ * {@link VnePmMdvneAlgorithm} with different characteristics.
+ * 
+ * Options: -t / --tries <arg>, -a / --algorithm
+ * <pm/pm-migration/pm-pipeline2-vnet/pm-pipeline2-racka/pm-pipeline2-rackb/pm-pipeline3a/pm-pipeline3b>
+ * 
+ * @see {@link VnePmMdvneAlgorithm}
+ * @see {@link VnePmMdvneAlgorithmMigration}
+ * @see {@link VnePmMdvneAlgorithmPipelineTwoStagesVnet}
+ * @see {@link VnePmMdvneAlgorithmPipelineTwoStagesRackA}
+ * @see {@link VnePmMdvneAlgorithmPipelineTwoStagesRackB}
+ * @see {@link VnePmMdvneAlgorithmPipelineThreeStagesA}
+ * @see {@link VnePmMdvneAlgorithmPipelineThreeStagesB}
+ */
 public class PmAlgorithm extends AbstractModule implements AlgorithmModule.AlgorithmConfiguration {
 	protected final Option tries = Option.builder()//
 			.option("t")//
@@ -30,11 +45,17 @@ public class PmAlgorithm extends AbstractModule implements AlgorithmModule.Algor
 			.hasArg()//
 			.build();
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void register(final Experiment experiment, final Options options) {
 		options.addOption(tries);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void configure(final Experiment experiment, final CommandLine cmd) throws ParseException {
 		if (cmd.getOptionValue("tries") != null) {
@@ -43,6 +64,9 @@ public class PmAlgorithm extends AbstractModule implements AlgorithmModule.Algor
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Function<ModelFacade, AbstractAlgorithm> getAlgorithmFactory(final Experiment experiment,
 			final String algoConfig, final CommandLine cmd,
@@ -66,4 +90,5 @@ public class PmAlgorithm extends AbstractModule implements AlgorithmModule.Algor
 			return previousAlgoFactory;
 		}
 	}
+
 }

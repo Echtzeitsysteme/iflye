@@ -13,6 +13,11 @@ import metrics.manager.MetricsManager;
 import metrics.reporter.CsvReporter;
 import scenarios.load.Experiment;
 
+/**
+ * Configure an experiment to use a CSV file as a reporter.
+ * 
+ * Options: -c / --csvpath <arg>
+ */
 public class CsvModule extends AbstractModule {
 	protected final Option csvPath = Option.builder()//
 			.option("c")//
@@ -21,20 +26,39 @@ public class CsvModule extends AbstractModule {
 			.hasArg()//
 			.build();
 
-	protected Function<File, Reporter> csvReporterSupplier = CsvReporter.Default::new;
+	/**
+	 * The factory to create a new CSV reporter with the configured CSV file path.
+	 */
+	protected Function<File, Reporter> csvReporterSupplier;
 
+	/**
+	 * Initialize with the default CsvReporter.
+	 */
 	public CsvModule() {
+		this(CsvReporter.Default::new);
 	}
 
+	/**
+	 * Initialize with the given CsvReporter factory.
+	 * 
+	 * @param csvReporterSupplier the factory to create a new CsvReporter with the
+	 *                            given CSV file path.
+	 */
 	public CsvModule(final Function<File, Reporter> csvReporterSupplier) {
 		this.csvReporterSupplier = csvReporterSupplier;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void register(final Experiment experiment, final Options options) {
 		options.addOption(csvPath);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void configure(final Experiment experiment, final CommandLine cmd) throws ParseException {
 		if (cmd.getOptionValue(csvPath) != null) {

@@ -17,6 +17,17 @@ import scenarios.load.Experiment;
 import scenarios.modules.AbstractModule;
 import scenarios.modules.AlgorithmModule;
 
+/**
+ * Add options to configure the experiment to use the
+ * {@link VneFakeIlpAlgorithm}.
+ * 
+ * Options: -i / --ilptimeout <arg>, -r / --ilprandomseed <arg>, -m /
+ * --ilpopttol <arg>, -y / --ilpobjscaling <arg>, -x / --ilpobjlog, -a /
+ * --algorithm <ilp/ilp-batch>
+ * 
+ * @see {@link VneFakeIlpAlgorithm}
+ * @see {@link VneFakeIlpBatchAlgorithm}
+ */
 public class IlpAlgorithm extends AbstractModule implements AlgorithmModule.AlgorithmConfiguration {
 	protected final Option ilpTimeout = Option.builder()//
 			.option("i")//
@@ -52,6 +63,9 @@ public class IlpAlgorithm extends AbstractModule implements AlgorithmModule.Algo
 			.desc("ILP solver objective logarithm")//
 			.build();
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void register(final Experiment experiment, final Options options) {
 		options.addOption(ilpTimeout);
@@ -61,6 +75,9 @@ public class IlpAlgorithm extends AbstractModule implements AlgorithmModule.Algo
 		options.addOption(ilpObjLog);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void configure(final Experiment experiment, final CommandLine cmd) throws ParseException {
 		if (cmd.getOptionValue("ilptimeout") != null) {
@@ -89,6 +106,9 @@ public class IlpAlgorithm extends AbstractModule implements AlgorithmModule.Algo
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Function<ModelFacade, AbstractAlgorithm> getAlgorithmFactory(final Experiment experiment,
 			final String algoConfig, final CommandLine cmd,

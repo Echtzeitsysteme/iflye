@@ -11,6 +11,16 @@ import org.apache.commons.cli.ParseException;
 import metrics.manager.MetricsManager;
 import scenarios.load.Experiment;
 
+/**
+ * Configure an experiment with all model-related parameters.
+ * 
+ * This module requires the paths to the substrate and virtual networks and can
+ * optionally enable model persistence after each step and remove unembedded
+ * vNets.
+ * 
+ * Options: -s / --snetfile <path>, -v / --vnetfile <path>, --persist-model
+ * [<path>], --remove-unembedded-vnets
+ */
 public class ModelConfigurationModule extends AbstractModule {
 	protected final Option subNetFile = Option.builder()//
 			.option("s")//
@@ -42,6 +52,9 @@ public class ModelConfigurationModule extends AbstractModule {
 			.hasArg(false)//
 			.build();
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void register(final Experiment experiment, final Options options) {
 		options.addOption(subNetFile);
@@ -50,6 +63,9 @@ public class ModelConfigurationModule extends AbstractModule {
 		options.addOption(removeUnembeddedVnetsOption);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void configure(final Experiment experiment, final CommandLine cmd) throws ParseException {
 		final String subNetPath = cmd.getOptionValue("snetfile");
@@ -69,8 +85,15 @@ public class ModelConfigurationModule extends AbstractModule {
 		experiment.setRemoveUnembeddedVnets(cmd.hasOption(removeUnembeddedVnetsOption));
 	}
 
+	/**
+	 * Extract the name of the network configuration from its file path. Assumes
+	 * that the name corresponds to the parent folder's name.
+	 * 
+	 * @return the name of the network configuration.
+	 */
 	public static String getNetworkConfigurationName(final String filePath) {
 		Path p = Paths.get(filePath);
 		return p.getParent().getFileName().toString();
 	}
+
 }

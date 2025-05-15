@@ -28,23 +28,42 @@ import scenarios.modules.NotionModule;
  */
 public class ExperimentConfigurator {
 
+	/**
+	 * All modules that are registered for configuration.
+	 */
 	protected List<Module> modules = new ArrayList<>();
 
+	/**
+	 * Create a new ExperimentConfigurator.
+	 */
 	public ExperimentConfigurator() {
 	}
 
+	/**
+	 * Create a new ExperimentConfigurator with the given modules.
+	 * 
+	 * @param modules the modules to use for configuration.
+	 */
 	public ExperimentConfigurator(final Collection<Module> modules) {
 		this();
 
 		this.addAll(modules);
 	}
 
+	/**
+	 * An ExperimentConfigurator with the default modules.
+	 */
 	public static class Default extends ExperimentConfigurator {
 		public Default() {
 			super(defaultModules());
 		}
 	}
 
+	/**
+	 * Get a list of all the default modules.
+	 * 
+	 * @return the default experiment configuration modules.
+	 */
 	public static List<Module> defaultModules() {
 		return List.of(//
 				new AlgorithmModule(), //
@@ -55,16 +74,35 @@ public class ExperimentConfigurator {
 		);
 	}
 
+	/**
+	 * Configure the given experiment with the default modules by parsing the given
+	 * command line arguments.
+	 * 
+	 * @param experiment the {@link Experiment} to configure
+	 * @param args       the command line arguments to parse
+	 * @return the configured experiment
+	 * @throws ParseException if the supplied CLI arguments could not be parsed
+	 */
 	public static <T extends Experiment> T of(final T experiment, final String[] args) throws ParseException {
 		ExperimentConfigurator experimentConfigurator = new ExperimentConfigurator.Default();
 
 		return experimentConfigurator.configure(experiment, args);
 	}
 
+	/**
+	 * Add a new module to the list of configuration modules.
+	 * 
+	 * @param module the module to add.
+	 */
 	public void add(final Module module) {
 		this.modules.add(module);
 	}
 
+	/**
+	 * Add all given modules to the list of configuration modules.
+	 * 
+	 * @param modules a collection of all modules to add.
+	 */
 	public void addAll(final Collection<Module> modules) {
 		this.modules.addAll(modules);
 	}

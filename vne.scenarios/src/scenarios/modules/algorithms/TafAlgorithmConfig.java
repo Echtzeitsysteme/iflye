@@ -12,8 +12,18 @@ import scenarios.load.Experiment;
 import scenarios.modules.AbstractModule;
 import scenarios.modules.AlgorithmModule;
 
+/**
+ * Add an option to configure the experiment to use the {@link TafAlgorithm}.
+ * 
+ * Options: -a / --algorithm <taf>
+ * 
+ * @see {@link TafAlgorithm}
+ */
 public class TafAlgorithmConfig extends AbstractModule implements AlgorithmModule.AlgorithmConfiguration {
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Function<ModelFacade, AbstractAlgorithm> getAlgorithmFactory(final Experiment experiment,
 			final String algoConfig, final CommandLine cmd,
@@ -25,4 +35,5 @@ public class TafAlgorithmConfig extends AbstractModule implements AlgorithmModul
 
 		return previousAlgoFactory;
 	}
+
 }
