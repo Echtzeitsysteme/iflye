@@ -7,7 +7,7 @@
 
 * Install [Temurin JDK21](https://adoptium.net/temurin/releases/) or newer.
 * Install [GIPS](https://gips.dev) as described [here](https://github.com/Echtzeitsysteme/gips#installation-development) or use the [pre-built Eclipse](https://github.com/Echtzeitsysteme/gips-eclipse-build).
-* Install [Gurobi](https://www.gurobi.com/) in version `12.0.1` and activate a license for your computer.
+* Install [Gurobi](https://www.gurobi.com/) in version `12.0.2` and activate a license for your computer.
     * Currently, Gurobi is the default ILP solver used in **iflye**.
 * Install [IBM ILOG CPLEX](https://www.ibm.com/products/ilog-cplex-optimization-studio) in version `22.1.2`.
     * CPLEX is an alternative ILP solver in **iflye**. You do not need it explicitely, but if you did not install and configure it properly, at least one test case will fail.
@@ -17,21 +17,21 @@
 ```
 # Linux
 GRB_LICENSE_FILE=/home/mkratz/gurobi.lic
-GUROBI_HOME=/opt/gurobi1201/linux64/
-LD_LIBRARY_PATH=/opt/gurobi1201/linux64/lib/:/opt/ibm/ILOG/CPLEX_Studio2212/cplex/bin/x86-64_linux/
-PATH=/opt/gurobi1201/linux64/bin/:/opt/ibm/ILOG/CPLEX_Studio2212/cplex/bin/x86-64_linux/:$PATH
+GUROBI_HOME=/opt/gurobi1202/linux64/
+LD_LIBRARY_PATH=/opt/gurobi1202/linux64/lib/:/opt/ibm/ILOG/CPLEX_Studio2212/cplex/bin/x86-64_linux/
+PATH=/opt/gurobi1202/linux64/bin/:/opt/ibm/ILOG/CPLEX_Studio2212/cplex/bin/x86-64_linux/:$PATH
 
 # macOS
 GRB_LICENSE_FILE=/Users/mkratz/gurobi.lic
-GUROBI_HOME=/Library/gurobi1201/macos_universal2/
-LD_LIBRARY_PATH=/Library/gurobi1201/macos_universal2/lib/:/Applications/CPLEX_Studio2212/cplex/bin/arm64_osx/
-PATH=/Library/gurobi1201/macos_universal2/bin/:/Applications/CPLEX_Studio2212/cplex/bin/arm64_osx/:$PATH
+GUROBI_HOME=/Library/gurobi1202/macos_universal2/
+LD_LIBRARY_PATH=/Library/gurobi1202/macos_universal2/lib/:/Applications/CPLEX_Studio2212/cplex/bin/arm64_osx/
+PATH=/Library/gurobi1202/macos_universal2/bin/:/Applications/CPLEX_Studio2212/cplex/bin/arm64_osx/:$PATH
 
 # Windows
 GRB_LICENSE_FILE=C:\Users\mkratz\gurobi.lic
-GUROBI_HOME=C:\gurobi1201\win64
-LD_LIBRARY_PATH=C:\gurobi1201\win64\lib;C:\Program Files\IBM\ILOG\CPLEX_Studio2212\cplex\bin\x64_win64\
-PATH=C:\gurobi1201\win64\bin;C:\Program Files\IBM\ILOG\CPLEX_Studio2212\cplex\bin\x64_win64\
+GUROBI_HOME=C:\gurobi1202\win64
+LD_LIBRARY_PATH=C:\gurobi1202\win64\lib;C:\Program Files\IBM\ILOG\CPLEX_Studio2212\cplex\bin\x64_win64\
+PATH=C:\gurobi1202\win64\bin;C:\Program Files\IBM\ILOG\CPLEX_Studio2212\cplex\bin\x64_win64\
 ```
 
 ### Project setup (manual)
