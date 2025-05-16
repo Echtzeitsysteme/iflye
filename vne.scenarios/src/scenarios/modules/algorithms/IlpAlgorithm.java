@@ -1,16 +1,12 @@
 package scenarios.modules.algorithms;
 
-import java.util.function.Function;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import algorithms.AbstractAlgorithm;
 import algorithms.ilp.VneFakeIlpAlgorithm;
 import algorithms.ilp.VneFakeIlpBatchAlgorithm;
-import facade.ModelFacade;
 import ilp.wrapper.config.IlpSolverConfig;
 import metrics.manager.MetricsManager;
 import scenarios.load.Experiment;
@@ -67,6 +63,15 @@ public class IlpAlgorithm extends AbstractModule implements AlgorithmModule.Algo
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void initialize(final AlgorithmModule algorithmModule) {
+		algorithmModule.addAlgorithm("ilp", VneFakeIlpAlgorithm::new);
+		algorithmModule.addAlgorithm("ilp-batch", VneFakeIlpBatchAlgorithm::new);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void register(final Experiment experiment, final Options options) {
 		options.addOption(ilpTimeout);
 		options.addOption(ilpRandomSeed);
@@ -80,46 +85,30 @@ public class IlpAlgorithm extends AbstractModule implements AlgorithmModule.Algo
 	 */
 	@Override
 	public void configure(final Experiment experiment, final CommandLine cmd) throws ParseException {
-		if (cmd.getOptionValue("ilptimeout") != null) {
-			IlpSolverConfig.TIME_OUT = Integer.valueOf(cmd.getOptionValue("ilptimeout"));
-			MetricsManager.getInstance().addTags("ilptimeout", cmd.getOptionValue("ilptimeout"));
+		if (cmd.getOptionValue(this.ilpTimeout) != null) {
+			IlpSolverConfig.TIME_OUT = Integer.valueOf(cmd.getOptionValue(this.ilpTimeout));
+			MetricsManager.getInstance().addTags("ilptimeout", cmd.getOptionValue(this.ilpTimeout));
 		}
 
-		if (cmd.getOptionValue("ilprandomseed") != null) {
-			IlpSolverConfig.RANDOM_SEED = Integer.valueOf(cmd.getOptionValue("ilprandomseed"));
-			MetricsManager.getInstance().addTags("ilprandomseed", cmd.getOptionValue("ilprandomseed"));
+		if (cmd.getOptionValue(this.ilpRandomSeed) != null) {
+			IlpSolverConfig.RANDOM_SEED = Integer.valueOf(cmd.getOptionValue(this.ilpRandomSeed));
+			MetricsManager.getInstance().addTags("ilprandomseed", cmd.getOptionValue(this.ilpRandomSeed));
 		}
 
-		if (cmd.getOptionValue("ilpopttol") != null) {
-			IlpSolverConfig.OPT_TOL = Double.valueOf(cmd.getOptionValue("ilpopttol"));
-			MetricsManager.getInstance().addTags("ilpopttol", cmd.getOptionValue("ilpopttol"));
+		if (cmd.getOptionValue(this.ilpOptTol) != null) {
+			IlpSolverConfig.OPT_TOL = Double.valueOf(cmd.getOptionValue(this.ilpOptTol));
+			MetricsManager.getInstance().addTags("ilpopttol", cmd.getOptionValue(this.ilpOptTol));
 		}
 
-		if (cmd.getOptionValue("ilpobjscaling") != null) {
-			IlpSolverConfig.OBJ_SCALE = Double.valueOf(cmd.getOptionValue("ilpobjscaling"));
-			MetricsManager.getInstance().addTags("ilpobjscaling", cmd.getOptionValue("ilpobjscaling"));
+		if (cmd.getOptionValue(this.ilpObjScaling) != null) {
+			IlpSolverConfig.OBJ_SCALE = Double.valueOf(cmd.getOptionValue(this.ilpObjScaling));
+			MetricsManager.getInstance().addTags("ilpobjscaling", cmd.getOptionValue(this.ilpObjScaling));
 		}
 
-		IlpSolverConfig.OBJ_LOG = cmd.hasOption("ilpobjlog");
-		if (cmd.hasOption("ilpobjlog")) {
-			MetricsManager.getInstance().addTags("ilpobjlog", String.valueOf(cmd.hasOption("ilpobjlog")));
+		IlpSolverConfig.OBJ_LOG = cmd.hasOption(this.ilpObjLog);
+		if (cmd.hasOption(this.ilpObjLog)) {
+			MetricsManager.getInstance().addTags("ilpobjlog", String.valueOf(cmd.hasOption(this.ilpObjLog)));
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Function<ModelFacade, AbstractAlgorithm> getAlgorithmFactory(final Experiment experiment,
-			final String algoConfig, final CommandLine cmd,
-			final Function<ModelFacade, AbstractAlgorithm> previousAlgoFactory) {
-		switch (algoConfig) {
-		case "ilp":
-			return VneFakeIlpAlgorithm::new;
-		case "ilp-batch":
-			return VneFakeIlpBatchAlgorithm::new;
-		default:
-			return previousAlgoFactory;
-		}
-	}
 }

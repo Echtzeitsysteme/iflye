@@ -1,13 +1,10 @@
 package scenarios.modules.algorithms;
 
-import java.util.function.Function;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
 import algorithms.pm.VnePmMdvneAlgorithm;
 import algorithms.pm.VnePmMdvneAlgorithmMigration;
@@ -16,7 +13,6 @@ import algorithms.pm.VnePmMdvneAlgorithmPipelineThreeStagesB;
 import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesRackA;
 import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesRackB;
 import algorithms.pm.VnePmMdvneAlgorithmPipelineTwoStagesVnet;
-import facade.ModelFacade;
 import metrics.manager.MetricsManager;
 import scenarios.load.Experiment;
 import scenarios.modules.AbstractModule;
@@ -49,6 +45,20 @@ public class PmAlgorithm extends AbstractModule implements AlgorithmModule.Algor
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void initialize(final AlgorithmModule algorithmModule) {
+		algorithmModule.addAlgorithm("pm", VnePmMdvneAlgorithm::new);
+		algorithmModule.addAlgorithm("pm-migration", VnePmMdvneAlgorithmMigration::new);
+		algorithmModule.addAlgorithm("pm-pipeline2-vnet", VnePmMdvneAlgorithmPipelineTwoStagesVnet::new);
+		algorithmModule.addAlgorithm("pm-pipeline2-racka", VnePmMdvneAlgorithmPipelineTwoStagesRackA::new);
+		algorithmModule.addAlgorithm("pm-pipeline2-rackb", VnePmMdvneAlgorithmPipelineTwoStagesRackB::new);
+		algorithmModule.addAlgorithm("pm-pipeline3a", VnePmMdvneAlgorithmPipelineThreeStagesA::new);
+		algorithmModule.addAlgorithm("pm-pipeline3b", VnePmMdvneAlgorithmPipelineThreeStagesB::new);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void register(final Experiment experiment, final Options options) {
 		options.addOption(tries);
 	}
@@ -58,36 +68,9 @@ public class PmAlgorithm extends AbstractModule implements AlgorithmModule.Algor
 	 */
 	@Override
 	public void configure(final Experiment experiment, final CommandLine cmd) throws ParseException {
-		if (cmd.getOptionValue("tries") != null) {
-			AlgorithmConfig.pmNoMigrations = Integer.valueOf(cmd.getOptionValue("tries"));
-			MetricsManager.getInstance().addTags("tries", cmd.getOptionValue("tries"));
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Function<ModelFacade, AbstractAlgorithm> getAlgorithmFactory(final Experiment experiment,
-			final String algoConfig, final CommandLine cmd,
-			final Function<ModelFacade, AbstractAlgorithm> previousAlgoFactory) {
-		switch (algoConfig) {
-		case "pm":
-			return VnePmMdvneAlgorithm::new;
-		case "pm-migration":
-			return VnePmMdvneAlgorithmMigration::new;
-		case "pm-pipeline2-vnet":
-			return VnePmMdvneAlgorithmPipelineTwoStagesVnet::new;
-		case "pm-pipeline2-racka":
-			return VnePmMdvneAlgorithmPipelineTwoStagesRackA::new;
-		case "pm-pipeline2-rackb":
-			return VnePmMdvneAlgorithmPipelineTwoStagesRackB::new;
-		case "pm-pipeline3a":
-			return VnePmMdvneAlgorithmPipelineThreeStagesA::new;
-		case "pm-pipeline3b":
-			return VnePmMdvneAlgorithmPipelineThreeStagesB::new;
-		default:
-			return previousAlgoFactory;
+		if (cmd.getOptionValue(this.tries) != null) {
+			AlgorithmConfig.pmNoMigrations = Integer.valueOf(cmd.getOptionValue(this.tries));
+			MetricsManager.getInstance().addTags("tries", cmd.getOptionValue(this.tries));
 		}
 	}
 

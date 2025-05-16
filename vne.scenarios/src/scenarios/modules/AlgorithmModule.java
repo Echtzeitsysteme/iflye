@@ -2,7 +2,9 @@ package scenarios.modules;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.commons.cli.CommandLine;
@@ -31,8 +33,10 @@ import scenarios.modules.algorithms.TafAlgorithmConfig;
  * implementations. General-purpose options are provided by this class to
  * configure certain options of several algorithms.
  * 
- * Options: -e / --embedding <arg>, -a / --algorithm <arg>, -o / --objective
- * <arg>, -l / --path-length <arg>, -k / --kfastestpaths <arg>
+ * Options: -e / --embedding <emoflon/emoflon_wo_update/manual>, -a /
+ * --algorithm <arg>, -o / --objective
+ * <total-path/total-comm-a/total-comm-b/total-obj-c/total-obj-d/total-taf-comm>,
+ * -l / --path-length <auto/int>, -k / --kfastestpaths <int>
  */
 public class AlgorithmModule extends AbstractModule {
 	protected final Option emb = Option.builder()//
@@ -42,10 +46,11 @@ public class AlgorithmModule extends AbstractModule {
 			.hasArg()//
 			.build();
 
+	protected static final String ALGORITHM_DESCRIPTION = "Algorithm to use. Values: \n%s";
 	protected final Option algo = Option.builder()//
 			.option("a")//
 			.longOpt("algorithm")//
-			.desc("algorithm to use")//
+			.desc(ALGORITHM_DESCRIPTION.formatted(" -- No algorithms registered --"))//
 			.hasArg()//
 			.required()//
 			.build();
@@ -75,13 +80,18 @@ public class AlgorithmModule extends AbstractModule {
 	/**
 	 * The list of all configured algorithms.
 	 */
-	protected final List<AlgorithmConfiguration> algorithms = new ArrayList<>();
+	protected final Map<String, Function<ModelFacade, AbstractAlgorithm>> algorithms = new HashMap<>();
+
+	/**
+	 * All submodules that could configure the algorithms.
+	 */
+	protected final List<AlgorithmConfiguration> submodules = new ArrayList<>();
 
 	/**
 	 * Initialize the default algorithms.
 	 */
 	public AlgorithmModule() {
-		this(defaultAlgorithms());
+		this(defaultSubmodules());
 	}
 
 	/**
@@ -89,28 +99,87 @@ public class AlgorithmModule extends AbstractModule {
 	 * 
 	 * @param algorithms the algorithms to initialize.
 	 */
-	public AlgorithmModule(final Collection<AlgorithmConfiguration> algorithms) {
+	public AlgorithmModule(final Map<String, Function<ModelFacade, AbstractAlgorithm>> algorithms) {
+		this(algorithms, defaultSubmodules());
+	}
+
+	/**
+	 * Initialize the given submodules.
+	 * 
+	 * @param submodules the submodules to initialize.
+	 */
+	public AlgorithmModule(final Collection<AlgorithmConfiguration> submodules) {
+		this(Map.of(), submodules);
+	}
+
+	/**
+	 * Initialize the given algorithms.
+	 * 
+	 * @param algorithms the algorithms to initialize.
+	 * @param submodules the submodules to initialize.
+	 */
+	public AlgorithmModule(final Map<String, Function<ModelFacade, AbstractAlgorithm>> algorithms,
+			final Collection<AlgorithmConfiguration> submodules) {
 		super();
 
-		this.algorithms.addAll(algorithms);
+		this.algorithms.putAll(algorithms);
+		this.addSubmodule(submodules);
 	}
 
 	/**
 	 * Get a list of all the default algorithms.
 	 */
-	public static List<AlgorithmConfiguration> defaultAlgorithms() {
+	public static List<AlgorithmConfiguration> defaultSubmodules() {
 		return List.of(new GipsAlgorithm(), new IlpAlgorithm(), new PmAlgorithm(), new RandomAlgorithm(),
 				new TafAlgorithmConfig());
 	}
 
 	/**
+	 * Add all algorithms to the list of algorithms.
+	 * 
+	 * @param algorithms The algorithms to add.
+	 * @return This module.
+	 */
+	public AlgorithmModule addAlgorithm(final Map<String, Function<ModelFacade, AbstractAlgorithm>> algorithms) {
+		this.algorithms.putAll(algorithms);
+		return this;
+	}
+
+	/**
 	 * Add an algorithm to the list of algorithms.
 	 * 
+	 * @param algorithm              The name of the algorithm.
 	 * @param algorithmConfiguration The algorithm to add.
 	 * @return This module.
 	 */
-	public AlgorithmModule addAlgorithm(final AlgorithmConfiguration algorithmConfiguration) {
-		this.algorithms.add(algorithmConfiguration);
+	public AlgorithmModule addAlgorithm(final String algorithm,
+			final Function<ModelFacade, AbstractAlgorithm> algorithmConfiguration) {
+		this.algorithms.put(algorithm, algorithmConfiguration);
+		return this;
+	}
+
+	/**
+	 * Add all submodules to the list of submodules.
+	 * 
+	 * @param submodules The submodules to add.
+	 * @return This module.
+	 */
+	public AlgorithmModule addSubmodule(final Collection<AlgorithmConfiguration> submodules) {
+		submodules.forEach(this::addSubmodule);
+
+		return this;
+	}
+
+	/**
+	 * Add a submodule to the list of submodules.
+	 * 
+	 * @param submodule The submodule to add.
+	 * @return This module.
+	 */
+	public AlgorithmModule addSubmodule(final AlgorithmConfiguration submodule) {
+		this.submodules.add(submodule);
+		submodule.initialize(this);
+
 		return this;
 	}
 
@@ -119,13 +188,18 @@ public class AlgorithmModule extends AbstractModule {
 	 */
 	@Override
 	public void register(final Experiment experiment, final Options options) {
+		algo.setDescription(ALGORITHM_DESCRIPTION
+				.formatted(String.join("\n", algorithms.keySet().stream().map((k) -> " - " + k).toList())));
+
 		options.addOption(algo);
 		options.addOption(obj);
 		options.addOption(pathLength);
 		options.addOption(paths);
 		options.addOption(emb);
 
-		this.algorithms.forEach((algorithm) -> algorithm.register(experiment, options));
+		for (final AlgorithmConfiguration algorithmConfiguration : submodules) {
+			algorithmConfiguration.register(experiment, options);
+		}
 	}
 
 	/**
@@ -133,11 +207,11 @@ public class AlgorithmModule extends AbstractModule {
 	 */
 	@Override
 	public void configure(final Experiment experiment, final CommandLine cmd) throws ParseException {
-		final String algoConfig = cmd.getOptionValue("algorithm");
+		final String algoConfig = cmd.getOptionValue(this.algo);
 		MetricsManager.getInstance().addTags("algorithm", algoConfig);
 
 		MetricsManager.getInstance().addTags("objective", cmd.getOptionValue("objective"));
-		switch (cmd.getOptionValue("objective")) {
+		switch (cmd.getOptionValue(this.obj)) {
 		case "total-path":
 			AlgorithmConfig.obj = Objective.TOTAL_PATH_COST;
 			break;
@@ -159,28 +233,28 @@ public class AlgorithmModule extends AbstractModule {
 		}
 
 		ModelFacadeConfig.MIN_PATH_LENGTH = 1;
-		String pathLengthParam = cmd.getOptionValue("path-length");
+		String pathLengthParam = cmd.getOptionValue(this.pathLength);
 		if (pathLengthParam != null) {
 			MetricsManager.getInstance().addTags("path-length", pathLengthParam);
 			if (pathLengthParam.equals("auto")) {
 				ModelFacadeConfig.MAX_PATH_LENGTH_AUTO = true;
 			} else {
-				ModelFacadeConfig.MAX_PATH_LENGTH = Integer.valueOf(cmd.getOptionValue("path-length"));
+				ModelFacadeConfig.MAX_PATH_LENGTH = Integer.valueOf(pathLengthParam);
 			}
 		}
 
-		if (cmd.getOptionValue("kfastestpaths") != null) {
-			final int K = Integer.valueOf(cmd.getOptionValue("kfastestpaths"));
-			MetricsManager.getInstance().addTags("kfastestpaths", cmd.getOptionValue("kfastestpaths"));
+		if (cmd.getOptionValue(this.paths) != null) {
+			final int K = Integer.valueOf(cmd.getOptionValue(this.paths));
+			MetricsManager.getInstance().addTags("kfastestpaths", cmd.getOptionValue(this.paths));
 			if (K > 1) {
 				ModelFacadeConfig.YEN_PATH_GEN = true;
 				ModelFacadeConfig.YEN_K = K;
 			}
 		}
 
-		if (cmd.getOptionValue("embedding") != null) {
+		if (cmd.getOptionValue(this.emb) != null) {
 			MetricsManager.getInstance().addTags("embedding", cmd.getOptionValue("embedding"));
-			switch (cmd.getOptionValue("embedding")) {
+			switch (cmd.getOptionValue(this.emb)) {
 			case "emoflon":
 				AlgorithmConfig.emb = Embedding.EMOFLON;
 				break;
@@ -193,20 +267,15 @@ public class AlgorithmModule extends AbstractModule {
 			}
 		}
 
-		for (final AlgorithmConfiguration algorithm : this.algorithms) {
-			algorithm.configure(experiment, cmd);
+		if (!this.algorithms.containsKey(algoConfig.toLowerCase())) {
+			throw new IllegalArgumentException("Unknown value for --" + algo.getLongOpt() + ": " + algoConfig);
 		}
-		final Function<ModelFacade, AbstractAlgorithm> algorithmFactory = this.algorithms.stream().reduce(null,
-				(factory, algorithmConfiguration) -> {
-					try {
-						return algorithmConfiguration.getAlgorithmFactory(experiment, algoConfig, cmd, factory);
-					} catch (ParseException e) {
-						throw new RuntimeException(e);
-					}
-				}, (factory1, factory2) -> factory2 == null ? factory1 : factory2);
 
-		if (algorithmFactory == null) {
-			throw new IllegalArgumentException("Configured algorithm not known.");
+		Function<ModelFacade, AbstractAlgorithm> algorithmFactory = this.algorithms.get(algoConfig.toLowerCase());
+
+		for (final AlgorithmConfiguration algorithmConfiguration : submodules) {
+			algorithmConfiguration.configure(experiment, cmd);
+			algorithmFactory = algorithmConfiguration.configure(experiment, algoConfig, cmd, algorithmFactory);
 		}
 
 		experiment.setAlgoFactory(algorithmFactory);
@@ -220,6 +289,15 @@ public class AlgorithmModule extends AbstractModule {
 	public static interface AlgorithmConfiguration extends Module {
 
 		/**
+		 * Initialize the algorithm module with the desired algorithm configurations.
+		 * 
+		 * @param algorithmModule The algorithm module to configure.
+		 */
+		default public void initialize(final AlgorithmModule algorithmModule) {
+			// noop
+		}
+
+		/**
 		 * Get the next algorithm factory for the given algoConfig and the previous
 		 * algorithm factory.
 		 * 
@@ -231,8 +309,10 @@ public class AlgorithmModule extends AbstractModule {
 		 * @throws ParseException if an error occurs while parsing the command line
 		 *                        arguments
 		 */
-		public Function<ModelFacade, AbstractAlgorithm> getAlgorithmFactory(Experiment experiment, String algoConfig,
-				CommandLine cmd, Function<ModelFacade, AbstractAlgorithm> previousAlgoFactory) throws ParseException;
+		default public Function<ModelFacade, AbstractAlgorithm> configure(Experiment experiment, String algoConfig,
+				CommandLine cmd, Function<ModelFacade, AbstractAlgorithm> previousAlgoFactory) throws ParseException {
+			return previousAlgoFactory;
+		}
 
 	}
 }

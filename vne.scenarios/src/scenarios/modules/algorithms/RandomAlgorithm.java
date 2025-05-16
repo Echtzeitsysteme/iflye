@@ -26,12 +26,18 @@ public class RandomAlgorithm extends AbstractModule implements AlgorithmModule.A
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Function<ModelFacade, AbstractAlgorithm> getAlgorithmFactory(final Experiment experiment,
-			final String algoConfig, final CommandLine cmd,
-			final Function<ModelFacade, AbstractAlgorithm> previousAlgoFactory) {
+	public void initialize(final AlgorithmModule algorithmModule) {
+		algorithmModule.addAlgorithm("random", RandomVneAlgorithm::new);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Function<ModelFacade, AbstractAlgorithm> configure(final Experiment experiment, final String algoConfig,
+			final CommandLine cmd, final Function<ModelFacade, AbstractAlgorithm> previousAlgoFactory) {
 		if (algoConfig.equals("random")) {
 			ModelFacadeConfig.IGNORE_BW = true;
-			return RandomVneAlgorithm::new;
 		}
 
 		return previousAlgoFactory;

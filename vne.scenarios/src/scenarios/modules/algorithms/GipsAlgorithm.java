@@ -43,6 +43,17 @@ public class GipsAlgorithm extends AbstractModule implements AlgorithmModule.Alg
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void initialize(final AlgorithmModule algorithmModule) {
+		algorithmModule.addAlgorithm("gips", VneGipsAlgorithm::new);
+		algorithmModule.addAlgorithm("gips-mig", VneGipsMigrationAlgorithm::new);
+		algorithmModule.addAlgorithm("gips-seq", VneGipsSeqAlgorithm::new);
+		algorithmModule.addAlgorithm("gips-bwignore", VneGipsBwIgnoreAlgorithm::new);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void register(final Experiment experiment, final Options options) {
 		options.addOption(gipsSolverThreadsOption);
 	}
@@ -51,9 +62,9 @@ public class GipsAlgorithm extends AbstractModule implements AlgorithmModule.Alg
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Function<ModelFacade, AbstractAlgorithm> getAlgorithmFactory(final Experiment experiment,
-			final String algoConfig, final CommandLine cmd,
-			final Function<ModelFacade, AbstractAlgorithm> previousAlgoFactory) throws ParseException {
+	public Function<ModelFacade, AbstractAlgorithm> configure(final Experiment experiment, final String algoConfig,
+			final CommandLine cmd, final Function<ModelFacade, AbstractAlgorithm> previousAlgoFactory)
+			throws ParseException {
 		if (!algoConfig.startsWith("gips")) {
 			return previousAlgoFactory;
 		}
@@ -61,20 +72,13 @@ public class GipsAlgorithm extends AbstractModule implements AlgorithmModule.Alg
 		final int gipsSolverThreads = cmd.getParsedOptionValue(gipsSolverThreadsOption, -1);
 		if (gipsSolverThreads > 0) {
 			MetricsManager.getInstance().addTags("gips.solver_threads", String.valueOf(gipsSolverThreads));
+
+			if (algoConfig.equals("gips")) {
+				return (modelFacade) -> new VneGipsAlgorithm(modelFacade, gipsSolverThreads);
+			}
 		}
 
-		switch (algoConfig) {
-		case "gips":
-			return (modelFacade) -> new VneGipsAlgorithm(modelFacade, gipsSolverThreads);
-		case "gips-mig":
-			return VneGipsMigrationAlgorithm::new;
-		case "gips-seq":
-			return VneGipsSeqAlgorithm::new;
-		case "gips-bwignore":
-			return VneGipsBwIgnoreAlgorithm::new;
-		default:
-			return previousAlgoFactory;
-		}
+		return previousAlgoFactory;
 	}
 
 }

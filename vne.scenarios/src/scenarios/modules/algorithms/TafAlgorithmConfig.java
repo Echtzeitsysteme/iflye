@@ -25,12 +25,18 @@ public class TafAlgorithmConfig extends AbstractModule implements AlgorithmModul
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Function<ModelFacade, AbstractAlgorithm> getAlgorithmFactory(final Experiment experiment,
-			final String algoConfig, final CommandLine cmd,
-			final Function<ModelFacade, AbstractAlgorithm> previousAlgoFactory) {
+	public void initialize(final AlgorithmModule algorithmModule) {
+		algorithmModule.addAlgorithm("taf", TafAlgorithm::new);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Function<ModelFacade, AbstractAlgorithm> configure(final Experiment experiment, final String algoConfig,
+			final CommandLine cmd, final Function<ModelFacade, AbstractAlgorithm> previousAlgoFactory) {
 		if (algoConfig.equals("taf")) {
 			ModelFacadeConfig.IGNORE_BW = true;
-			return TafAlgorithm::new;
 		}
 
 		return previousAlgoFactory;
