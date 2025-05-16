@@ -1,9 +1,11 @@
 package scenarios.load;
 
+import java.util.List;
 import java.util.function.Function;
 
 import algorithms.AbstractAlgorithm;
 import facade.ModelFacade;
+import scenarios.modules.Module;
 
 /**
  * An experiment is any configurable class to run a defined scenario with
@@ -19,6 +21,16 @@ public interface Experiment {
 	 * Run the configured scenario.
 	 */
 	public void run();
+
+	/**
+	 * The the default modules to configure this experiment.
+	 * 
+	 * @return A list of all modules that could be used to configure this
+	 *         Experiment.
+	 */
+	default public List<Module> getConfigurationModules() {
+		return List.of();
+	}
 
 	/**
 	 * Get the currently configured algorithm factory.

@@ -18,6 +18,12 @@ import model.SubstrateNetwork;
 import model.VirtualNetwork;
 import model.converter.BasicModelConverter;
 import model.converter.IncrementalModelConverter;
+import scenarios.modules.AlgorithmModule;
+import scenarios.modules.CsvModule;
+import scenarios.modules.MemoryModule;
+import scenarios.modules.ModelConfigurationModule;
+import scenarios.modules.Module;
+import scenarios.modules.NotionModule;
 
 /**
  * Runnable (incremental) scenario for VNE algorithms that reads specified files
@@ -37,13 +43,30 @@ public class DissScenarioLoad extends AbstractExperiment {
 	 * @throws IOException
 	 */
 	public static void main(final String[] args) throws IOException, InterruptedException, ParseException {
-		ExperimentConfigurator.of(new DissScenarioLoad(), args).run();
+		ExperimentConfigurator.of(DissScenarioLoad::new, args).run();
 	}
 
 	public DissScenarioLoad() {
 		metricsManager.addMeter(new GipsIlpHandler());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<Module> getConfigurationModules() {
+		return List.of(//
+				new AlgorithmModule(), //
+				new CsvModule(), //
+				new MemoryModule(), //
+				new ModelConfigurationModule(), //
+				new NotionModule() //
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void run() {
 		final AbstractAlgorithm algo = algoFactory.apply(ModelFacade.getInstance());
@@ -134,6 +157,11 @@ public class DissScenarioLoad extends AbstractExperiment {
 		System.exit(0);
 	}
 
+	/**
+	 * Get the root {@link MetricsManager} instance.
+	 * 
+	 * @return The root {@link MetricsManager}.
+	 */
 	public MetricsManager getMetricsManager() {
 		return metricsManager;
 	}
