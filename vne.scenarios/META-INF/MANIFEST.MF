@@ -20,7 +20,9 @@ Automatic-Module-Name: vne.scenarios
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: scenario.util,
  scenarios.gen,
- scenarios.load
+ scenarios.load,
+ scenarios.modules,
+ scenarios.modules.algorithms
 Require-Bundle: ilp,
  network.model,
  vne.algorithms,
