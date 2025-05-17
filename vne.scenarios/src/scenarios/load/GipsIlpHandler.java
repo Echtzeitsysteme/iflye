@@ -90,21 +90,26 @@ public class GipsIlpHandler implements HasMetric<Context.VnetEmbeddingContext> {
 				"gips.build_gips.timing", "BUILD_GIPS", "gips.build_solver.timing", "BUILD_SOLVER", "gips.build.timing",
 				"BUILD", "gips.solve_problem.timing", "SOLVE_PROBLEM");
 
-		meterRegistry.summary("ilp.objective_value", createTags(context)).record(solverOutput.objectiveValue());
-		meterRegistry.summary("ilp.solution_count", createTags(context)).record(solverOutput.solutionCount());
-		meterRegistry.summary("ilp.status", createTags(context)).record(solverOutput.status().ordinal());
-		if (solverOutput.stats() != null) {
-			meterRegistry.summary("ilp.constraints", createTags(context)).record(solverOutput.stats().constraints());
-			meterRegistry.summary("ilp.mappings", createTags(context)).record(solverOutput.stats().mappings());
-			meterRegistry.summary("ilp.vars", createTags(context)).record(solverOutput.stats().vars());
-		}
-		for (Map.Entry<String, String> take : gipsMeasurementsToTake.entrySet()) {
-			if (measurements.containsKey(take.getValue())) {
-				meterRegistry.summary(take.getKey(), createTags(context))
-						.record(measurements.get(take.getValue()).maxDurationSeconds());
+		if (solverOutput != null) {
+			meterRegistry.summary("ilp.objective_value", createTags(context)).record(solverOutput.objectiveValue());
+			meterRegistry.summary("ilp.solution_count", createTags(context)).record(solverOutput.solutionCount());
+			meterRegistry.summary("ilp.status", createTags(context)).record(solverOutput.status().ordinal());
+			if (solverOutput.stats() != null) {
+				meterRegistry.summary("ilp.constraints", createTags(context))
+						.record(solverOutput.stats().constraints());
+				meterRegistry.summary("ilp.mappings", createTags(context)).record(solverOutput.stats().mappings());
+				meterRegistry.summary("ilp.vars", createTags(context)).record(solverOutput.stats().vars());
 			}
 		}
 
+		if (measurements != null) {
+			for (Map.Entry<String, String> take : gipsMeasurementsToTake.entrySet()) {
+				if (measurements.containsKey(take.getValue())) {
+					meterRegistry.summary(take.getKey(), createTags(context))
+							.record(measurements.get(take.getValue()).maxDurationSeconds());
+				}
+			}
+		}
 	}
 
 	/**
