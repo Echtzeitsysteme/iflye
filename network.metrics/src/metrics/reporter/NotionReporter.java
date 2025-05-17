@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -73,6 +75,11 @@ public class NotionReporter extends GroupByTagValueReporter implements Reporter 
 	protected final Map<String, PropertyFormat> properties = new HashMap<>();
 
 	/**
+	 * The {@link ExecutorService} to flush metrics in parallel
+	 */
+	protected final ExecutorService executorService;
+
+	/**
 	 * A default configuration of the NotionReporter with preset property formats.
 	 */
 	public static class Default extends NotionReporter {
@@ -113,12 +120,27 @@ public class NotionReporter extends GroupByTagValueReporter implements Reporter 
 	 * @param metricDatabaseId the ID of the database used to store the metrics
 	 */
 	public NotionReporter(final String token, final String seriesDatabaseId, final String metricDatabaseId) {
+		this(token, seriesDatabaseId, metricDatabaseId, Executors.newSingleThreadExecutor());
+	}
+
+	/**
+	 * Creates a new NotionReporter with the given token and database IDs.
+	 * 
+	 * @param token            the token used to authenticate with the Notion API
+	 * @param seriesDatabaseId the ID of the database used to store the parent
+	 *                         series
+	 * @param metricDatabaseId the ID of the database used to store the metrics
+	 * @param executorService  the executorService to use to flush metrics to Notion
+	 */
+	public NotionReporter(final String token, final String seriesDatabaseId, final String metricDatabaseId,
+			final ExecutorService executorService) {
 		super();
 
 		this.token = token;
 		this.metricDatabaseId = metricDatabaseId;
 		this.seriesDatabaseId = seriesDatabaseId;
-		
+		this.executorService = executorService;
+
 		IflyeLogger.configureLogging(logger);
 	}
 
@@ -360,15 +382,17 @@ public class NotionReporter extends GroupByTagValueReporter implements Reporter 
 		}
 		properties.addAll(entry.values().values().stream().map((e) -> String.valueOf(e)).toList());
 
-		try {
-			this.postMetric(this.metricDatabaseId, properties);
-		} catch (IOException | InterruptedException | NoSuchElementException e) {
-			// Don't propagate error to prevent failing the entire series
-			logger.warning("Failed to write to Notion DB!");
-			logger.warning("Entry was:");
-			logger.warning(properties.toString());
-			e.printStackTrace();
-		}
+		this.executorService.submit(() -> {
+			try {
+				this.postMetric(this.metricDatabaseId, properties);
+			} catch (IOException | InterruptedException | NoSuchElementException e) {
+				// Don't propagate error to prevent failing the entire series
+				logger.warning("Failed to write to Notion DB!");
+				logger.warning("Entry was:");
+				logger.warning(properties.toString());
+				e.printStackTrace();
+			}
+		});
 	}
 
 	/**
@@ -501,6 +525,17 @@ public class NotionReporter extends GroupByTagValueReporter implements Reporter 
 		}
 
 		return this.properties.get(key).format(key, value);
+	}
+
+	/**
+	 * Shutdown the flush executor service and wait for all metrics to be sent to
+	 * the Notion DB.
+	 */
+	@Override
+	public void close() {
+		super.close();
+
+		this.executorService.close();
 	}
 
 }
