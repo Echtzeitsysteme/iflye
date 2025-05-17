@@ -15,12 +15,20 @@ import scenarios.modules.Module;
  * 
  * @author Janik Stracke {@literal <janik.stracke@stud.tu-darmstadt.de>}
  */
-public interface Experiment {
+public interface Experiment extends AutoCloseable {
 
 	/**
 	 * Run the configured scenario.
 	 */
 	public void run();
+
+	/**
+	 * Close any resources that were opened during the initialization.
+	 */
+	@Override
+	default void close() {
+		// noop
+	}
 
 	/**
 	 * The the default modules to configure this experiment.

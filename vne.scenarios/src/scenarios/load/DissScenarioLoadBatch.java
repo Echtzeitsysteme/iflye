@@ -32,7 +32,10 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
 	 * @param args See {@link #parseArgs(String[])}.
 	 */
 	public static void main(final String[] args) throws IOException, InterruptedException, ParseException {
-		ExperimentConfigurator.of(new DissScenarioLoadBatch(), args).run();
+		try (final Experiment experiment = new DissScenarioLoadBatch()) {
+			ExperimentConfigurator.of(experiment, args);
+			experiment.run();
+		}
 	}
 
 	public DissScenarioLoadBatch() {
@@ -106,8 +109,6 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
 			metricsManager.conclude();
 		} finally {
 			algo.dispose();
-			metricsManager.close();
-			MetricsManager.closeAll();
 		}
 
 		logger.info("=> Execution finished.");

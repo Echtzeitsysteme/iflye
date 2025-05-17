@@ -43,7 +43,10 @@ public class DissScenarioLoad extends AbstractExperiment {
 	 * @throws IOException
 	 */
 	public static void main(final String[] args) throws IOException, InterruptedException, ParseException {
-		ExperimentConfigurator.of(DissScenarioLoad::new, args).run();
+		try (final Experiment experiment = new DissScenarioLoad()) {
+			ExperimentConfigurator.of(experiment, args);
+			experiment.run();
+		}
 	}
 
 	public DissScenarioLoad() {
@@ -149,12 +152,16 @@ public class DissScenarioLoad extends AbstractExperiment {
 			metricsManager.conclude();
 		} finally {
 			algo.dispose();
-			metricsManager.close();
-			MetricsManager.closeAll();
 		}
 
 		logger.info("=> Execution finished.");
 		System.exit(0);
+	}
+
+	@Override
+	public void close() {
+		metricsManager.close();
+		MetricsManager.closeAll();
 	}
 
 	/**
