@@ -189,8 +189,11 @@ public class NotionReporter extends GroupByTagValueReporter implements Reporter 
 			case "select":
 				return "{ \"name\": \"" + value.replace(",", ";") + "\" }";
 			case "multi_select":
-				return "[" + String.join(", ", Arrays.asList(value.split("\s*,\s*")).stream()
-						.map((i) -> "{ \"name\": \"" + i + "\" }").toList()) + "]";
+				return "[" + String.join(", ",
+						Arrays.asList(value.split("\s*,\s*")).stream().map(
+								(i) -> "{ \"name\": \"" + (i.length() > 100 ? i.substring(0, 97) + "..." : i) + "\" }")
+								.toList())
+						+ "]";
 			case "date":
 				return "{ \"start\": \"" + value + "\" }";
 			case "title":
