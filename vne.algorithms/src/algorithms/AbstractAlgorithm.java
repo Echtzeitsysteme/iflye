@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import facade.ModelFacade;
+import iflye.dependencies.logging.IflyeLogger;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
@@ -15,7 +16,7 @@ import model.VirtualNetwork;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public abstract class AbstractAlgorithm implements Algorithm {
+public abstract class AbstractAlgorithm extends IflyeLogger implements Algorithm {
 
 	/**
 	 * ModelFacade instance.

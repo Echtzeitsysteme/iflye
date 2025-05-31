@@ -177,7 +177,7 @@ public abstract class VnePmMdvnePipelineAlgorithm extends VnePmMdvneAlgorithm im
 				PmAlgorithmUtils.unembedAll(sNet, vNets);
 			}
 
-			System.out.println("=> Starting pipeline stage #" + (++stage));
+			logger.info("=> Starting pipeline stage #" + (++stage));
 			if (algo.execute()) {
 				return true;
 			}

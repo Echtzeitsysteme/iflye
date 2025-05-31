@@ -80,7 +80,7 @@ public class SimpleVne extends AbstractAlgorithm {
 
 		if (!(summedCpu <= largestSubServer.getResidualCpu() && summedMem <= largestSubServer.getResidualMemory()
 				&& summedStor <= largestSubServer.getResidualStorage())) {
-			System.out.println("=> SimpleVne: Embedding not possible due to resource constraints.");
+			logger.info("=> SimpleVne: Embedding not possible due to resource constraints.");
 			return false;
 		}
 

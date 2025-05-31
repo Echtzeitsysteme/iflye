@@ -24,7 +24,8 @@ Export-Package: algorithms,
  algorithms.random,
  algorithms.simple
 Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt
-Import-Package: org.emoflon.gips.gipsl.examples.mdvne,
+Import-Package: iflye.dependencies.logging,
+ org.emoflon.gips.gipsl.examples.mdvne,
  org.emoflon.gips.gipsl.examples.mdvne.bwignore,
  org.emoflon.gips.gipsl.examples.mdvne.heap,
  org.emoflon.gips.gipsl.examples.mdvne.migration,

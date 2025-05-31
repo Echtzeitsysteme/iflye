@@ -91,7 +91,7 @@ public class VnePmMdvneAlgorithmPipelineStageRackB extends VnePmMdvneAlgorithm {
 
 		// // Remove embedding of all already embedded networks
 		// PmAlgorithmUtils.unembedAll(sNet, vNets);
-		// System.out.println("=> Starting pipeline stage #2");
+		// logger.info("=> Starting pipeline stage #2");
 
 		GlobalMetricsManager.startPmTime();
 		final PatternMatchingDelta deltaTwo = patternMatcherRack.run();
