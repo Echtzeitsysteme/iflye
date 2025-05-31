@@ -11,6 +11,7 @@ import generators.OneTierNetworkGenerator;
 import generators.TwoTierNetworkGenerator;
 import generators.config.OneTierConfig;
 import generators.config.TwoTierConfig;
+import iflye.dependencies.logging.IflyeLogger;
 import model.SubstrateNetwork;
 import model.VirtualNetwork;
 
@@ -29,7 +30,7 @@ import model.VirtualNetwork;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class OptimalVmScenario implements IScenario {
+public class OptimalVmScenario extends IflyeLogger implements IScenario {
 
 	/**
 	 * Amount of CPU per substrate server.
@@ -119,15 +120,15 @@ public class OptimalVmScenario implements IScenario {
 			final boolean success = algo.execute();
 
 			if (success) {
-				System.out.println("Embedded VNR: " + virtualNetworkId);
+				logger.info("Embedded VNR: " + virtualNetworkId);
 			} else {
-				System.err.println("Rejected VNR: " + virtualNetworkId);
+				logger.warning("Rejected VNR: " + virtualNetworkId);
 			}
 		}
 
 		// Save model to file
 		ModelFacade.getInstance().persistModel();
-		System.out.println("=> Scenario finished.");
+		logger.info("=> Scenario finished.");
 
 		System.exit(0);
 	}

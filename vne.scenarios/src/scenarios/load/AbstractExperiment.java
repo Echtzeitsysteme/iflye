@@ -4,6 +4,7 @@ import java.util.function.Function;
 
 import algorithms.AbstractAlgorithm;
 import facade.ModelFacade;
+import iflye.dependencies.logging.IflyeLogger;
 import model.SubstrateNetwork;
 
 /**
@@ -11,7 +12,7 @@ import model.SubstrateNetwork;
  *
  * @author Janik Stracke {@literal <janik.stracke@stud.tu-darmstadt.de>}
  */
-public abstract class AbstractExperiment implements Experiment {
+public abstract class AbstractExperiment extends IflyeLogger implements Experiment {
 
 	/**
 	 * Substrate network to use.

@@ -14,6 +14,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import iflye.dependencies.logging.IflyeLogger;
 import scenarios.modules.Module;
 
 /**
@@ -22,7 +23,7 @@ import scenarios.modules.Module;
  *
  * @author Janik Stracke {@literal <janik.stracke@stud.tu-darmstadt.de>}
  */
-public class ExperimentConfigurator {
+public class ExperimentConfigurator extends IflyeLogger {
 
 	/**
 	 * All modules that are registered for configuration.
@@ -138,10 +139,9 @@ public class ExperimentConfigurator {
 			}
 
 			// Print arguments into logs/system outputs
-			System.out.println("=> Arguments: " + Arrays.toString(args));
+			logger.info("=> Arguments: " + Arrays.toString(args));
 		} catch (final ParseException e) {
-			System.err.println(e.getMessage());
-			System.err.println();
+			logger.warning(e.getMessage());
 			formatter.printHelp("cli parameters", options);
 			System.exit(1);
 			// return is easier to spot
