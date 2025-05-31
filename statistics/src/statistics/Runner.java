@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import iflye.dependencies.logging.IflyeLogger;
 import scenario.util.CsvUtil;
 
 /**
@@ -13,7 +14,7 @@ import scenario.util.CsvUtil;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class Runner {
+public class Runner extends IflyeLogger {
 
 	// TODO: Find a way to dynamically determine upper limit (e.g., by using 'find')
 	/**
@@ -122,7 +123,7 @@ public class Runner {
 		final String[] line = StatisticUtils.assembleTimeSumCsvLine(timeSums);
 		CsvUtil.createCsvTimeSumFile(expName + "_timesums.csv", line);
 
-		System.out.println("=> Finished statistics file: " + outputName);
+		logger.info("=> Finished statistics file: " + outputName);
 	}
 
 }
