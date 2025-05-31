@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.unix4j.Unix4j;
 
+import iflye.dependencies.logging.IflyeLogger;
 import metrics.IMetric;
 import metrics.MetricConsts;
 
@@ -22,7 +23,7 @@ import metrics.MetricConsts;
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 @Deprecated
-public class MemoryPidMetric implements IMetric {
+public class MemoryPidMetric extends IflyeLogger implements IMetric {
 
 	/**
 	 * Measured value of maximum used RAM in kiB.
@@ -41,7 +42,7 @@ public class MemoryPidMetric implements IMetric {
 		}
 		final File file = new File("/proc/" + getPid() + "/status");
 		if (!file.exists()) {
-			System.err.println("Proc file for MemoryPidMetric is not available!");
+			logger.warning("Proc file for MemoryPidMetric is not available!");
 			this.memory = -1;
 			return;
 		}
@@ -53,7 +54,7 @@ public class MemoryPidMetric implements IMetric {
 		try {
 			memory = Long.valueOf(mem);
 		} catch (final NumberFormatException ex) {
-			System.err.println("Catched an exception while parsing the string: " + memComplex);
+			logger.warning("Catched an exception while parsing the string: " + memComplex);
 		} finally {
 			this.memory = memory;
 		}
