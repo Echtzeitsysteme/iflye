@@ -11,5 +11,6 @@ Export-Package: examples.algorithms,
 Require-Bundle: vne.algorithms,
  network.generators,
  network.metrics,
- network.model
+ network.model,
+ iflye.dependencies
 Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt

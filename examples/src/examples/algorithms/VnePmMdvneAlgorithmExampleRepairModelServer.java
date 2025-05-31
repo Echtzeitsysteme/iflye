@@ -3,6 +3,7 @@ package examples.algorithms;
 import java.util.Set;
 
 import algorithms.pm.VnePmMdvneAlgorithm;
+import examples.AbstractIflyeExample;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.OneTierNetworkGenerator;
@@ -25,7 +26,7 @@ import model.VirtualServer;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VnePmMdvneAlgorithmExampleRepairModelServer {
+public class VnePmMdvneAlgorithmExampleRepairModelServer extends AbstractIflyeExample {
 
 	/**
 	 * Main method to start the example. String array of arguments will be ignored.
@@ -64,7 +65,7 @@ public class VnePmMdvneAlgorithmExampleRepairModelServer {
 			final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById("virt_" + i);
 
 			// Create and execute algorithm
-			System.out.println("=> Embedding virtual network #" + i);
+			logger.info("=> Embedding virtual network #" + i);
 			final VnePmMdvneAlgorithm algo = new VnePmMdvneAlgorithm();
 			algo.prepare(sNet, Set.of(vNet));
 			algo.execute();
@@ -73,27 +74,27 @@ public class VnePmMdvneAlgorithmExampleRepairModelServer {
 		GlobalMetricsManager.stopRuntime();
 
 		// Save model to file
-		System.out.println("=> Execution finished.");
+		logger.info("=> Execution finished.");
 		ModelFacade.getInstance().validateModel();
 		ModelFacade.getInstance().persistModel();
 
 		// Time measurements
-		System.out.println("=> Elapsed time (total): " + GlobalMetricsManager.getRuntime().getValue() / 1_000_000_000
+		logger.info("=> Elapsed time (total): " + GlobalMetricsManager.getRuntime().getValue() / 1_000_000_000
 				+ " seconds");
-		System.out.println(
+		logger.info(
 				"=> Elapsed time (PM): " + GlobalMetricsManager.getRuntime().getPmValue() / 1_000_000_000 + " seconds");
-		System.out.println("=> Elapsed time (ILP): " + GlobalMetricsManager.getRuntime().getIlpValue() / 1_000_000_000
+		logger.info("=> Elapsed time (ILP): " + GlobalMetricsManager.getRuntime().getIlpValue() / 1_000_000_000
 				+ " seconds");
-		System.out.println("=> Elapsed time (rest): " + GlobalMetricsManager.getRuntime().getRestValue() / 1_000_000_000
+		logger.info("=> Elapsed time (rest): " + GlobalMetricsManager.getRuntime().getRestValue() / 1_000_000_000
 				+ " seconds");
 
 		final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance().getNetworkById("sub");
 		final AcceptedVnrMetric acceptedVnrs = new AcceptedVnrMetric(sNet);
-		System.out.println("=> Accepted VNRs: " + (int) acceptedVnrs.getValue());
+		logger.info("=> Accepted VNRs: " + (int) acceptedVnrs.getValue());
 		final TotalPathCostMetric totalPathCost = new TotalPathCostMetric(sNet);
-		System.out.println("=> Total path cost: " + totalPathCost.getValue());
+		logger.info("=> Total path cost: " + totalPathCost.getValue());
 		final AveragePathLengthMetric averagePathLength = new AveragePathLengthMetric(sNet);
-		System.out.println("=> Average path length: " + averagePathLength.getValue());
+		logger.info("=> Average path length: " + averagePathLength.getValue());
 
 		System.exit(0);
 	}

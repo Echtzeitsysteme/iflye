@@ -42,6 +42,7 @@ Bundle-ClassPath: .,
  lib/micrometer/micrometer-observation-1.14.5.jar,
  lib/micrometer/slf4j-api-2.0.17.jar
 Export-Package: com.gurobi.gurobi;version="12.0.0",
+ iflye.dependencies.logging,
  ilog.concert;version="22.1.2",
  ilog.cplex;version="22.1.2",
  io.micrometer.common;version="1.14.5",

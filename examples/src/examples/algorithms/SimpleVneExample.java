@@ -3,6 +3,7 @@ package examples.algorithms;
 import java.util.Set;
 
 import algorithms.simple.SimpleVne;
+import examples.AbstractIflyeExample;
 import facade.ModelFacade;
 import generators.OneTierNetworkGenerator;
 import generators.config.OneTierConfig;
@@ -14,7 +15,7 @@ import model.VirtualNetwork;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class SimpleVneExample {
+public class SimpleVneExample extends AbstractIflyeExample {
 
 	/**
 	 * Main method to start the example. String array of arguments will be ignored.
@@ -42,7 +43,7 @@ public class SimpleVneExample {
 
 		// Save model to file
 		ModelFacade.getInstance().persistModel();
-		System.out.println("=> Execution finished.");
+		logger.info("=> Execution finished.");
 
 		System.exit(0);
 	}

@@ -5,6 +5,7 @@ import java.util.Set;
 
 import algorithms.AbstractAlgorithm;
 import algorithms.pm.VnePmMdvneAlgorithm;
+import examples.AbstractIflyeExample;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import model.SubstrateNetwork;
@@ -17,7 +18,7 @@ import model.converter.BasicModelConverter;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VnePmMdvneAlgorithmExampleDualRead {
+public class VnePmMdvneAlgorithmExampleDualRead extends AbstractIflyeExample {
 
 	/**
 	 * Main method to start the example. String array of arguments will be ignored.
@@ -47,7 +48,7 @@ public class VnePmMdvneAlgorithmExampleDualRead {
 
 		// Save model to file
 		ModelFacade.getInstance().persistModel();
-		System.out.println("=> Execution finished.");
+		logger.info("=> Execution finished.");
 
 		System.exit(0);
 	}
