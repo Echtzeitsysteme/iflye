@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
 public interface IncrementalIlpSolver {
+	
 	/**
 	 * ILP constraint implementation.
 	 *

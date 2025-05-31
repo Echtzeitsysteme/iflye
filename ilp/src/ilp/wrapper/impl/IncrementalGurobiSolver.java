@@ -22,6 +22,7 @@ import com.gurobi.gurobi.GRBLinExpr;
 import com.gurobi.gurobi.GRBModel;
 import com.gurobi.gurobi.GRBVar;
 
+import iflye.dependencies.logging.IflyeLogger;
 import ilp.wrapper.IlpSolverException;
 import ilp.wrapper.IncrementalIlpSolver;
 import ilp.wrapper.SolverStatus;
@@ -42,7 +43,7 @@ import ilp.wrapper.config.IlpSolverConfig;
  * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class IncrementalGurobiSolver implements IncrementalIlpSolver {
+public class IncrementalGurobiSolver extends IflyeLogger implements IncrementalIlpSolver {
 
 	/**
 	 * Gurobi environment (for configuration etc.).
@@ -546,7 +547,7 @@ public class IncrementalGurobiSolver implements IncrementalIlpSolver {
 			} else if (model.get(GRB.IntAttr.Status) == GRB.OPTIMAL) {
 				status = SolverStatus.OPTIMAL;
 			} else if (model.get(GRB.IntAttr.Status) == GRB.TIME_LIMIT) {
-				System.err.println("Warning: time limit (" + model.get(GRB.DoubleParam.TimeLimit) + "s) reached! "
+				logger.warning("Warning: time limit (" + model.get(GRB.DoubleParam.TimeLimit) + "s) reached! "
 						+ model.get(GRB.IntAttr.SolCount) + " solutions were found so far.");
 				status = SolverStatus.TIME_OUT;
 			} else {
