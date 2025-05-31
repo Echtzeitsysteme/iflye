@@ -4,6 +4,7 @@ import java.util.Set;
 
 import algorithms.AbstractAlgorithm;
 import algorithms.ilp.VneFakeIlpBatchAlgorithm;
+import examples.AbstractIflyeExample;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.OneTierNetworkGenerator;
@@ -19,7 +20,7 @@ import model.VirtualNetwork;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneFakeIlpBatchAlgorithmExampleSmallDuplicate {
+public class VneFakeIlpBatchAlgorithmExampleSmallDuplicate extends AbstractIflyeExample {
 
 	/**
 	 * Main method to start the example. String array of arguments will be ignored.
@@ -63,16 +64,16 @@ public class VneFakeIlpBatchAlgorithmExampleSmallDuplicate {
 
 		// Save model to file
 		ModelFacade.getInstance().persistModel();
-		System.out.println("=> Execution finished.");
+		logger.info("=> Execution finished.");
 
 		// Time measurements
-		System.out.println("=> Elapsed time (total): " + GlobalMetricsManager.getRuntime().getValue() / 1_000_000_000
+		logger.info("=> Elapsed time (total): " + GlobalMetricsManager.getRuntime().getValue() / 1_000_000_000
 				+ " seconds");
-		System.out.println(
+		logger.info(
 				"=> Elapsed time (PM): " + GlobalMetricsManager.getRuntime().getPmValue() / 1_000_000_000 + " seconds");
-		System.out.println("=> Elapsed time (ILP): " + GlobalMetricsManager.getRuntime().getIlpValue() / 1_000_000_000
+		logger.info("=> Elapsed time (ILP): " + GlobalMetricsManager.getRuntime().getIlpValue() / 1_000_000_000
 				+ " seconds");
-		System.out.println("=> Elapsed time (rest): " + GlobalMetricsManager.getRuntime().getRestValue() / 1_000_000_000
+		logger.info("=> Elapsed time (rest): " + GlobalMetricsManager.getRuntime().getRestValue() / 1_000_000_000
 				+ " seconds");
 
 		System.exit(0);

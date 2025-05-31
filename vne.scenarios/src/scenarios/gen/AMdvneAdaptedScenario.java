@@ -4,6 +4,7 @@ import java.util.Random;
 
 import generators.OneTierNetworkGenerator;
 import generators.config.OneTierConfig;
+import iflye.dependencies.logging.IflyeLogger;
 
 /**
  * Abstract class to generate scenarios based on the evaluation chapter of the
@@ -21,7 +22,7 @@ import generators.config.OneTierConfig;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public abstract class AMdvneAdaptedScenario implements IScenario {
+public abstract class AMdvneAdaptedScenario extends IflyeLogger implements IScenario {
 
 	/**
 	 * Pseudo random number generator with a seed.

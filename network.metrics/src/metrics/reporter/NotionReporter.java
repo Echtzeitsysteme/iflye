@@ -16,10 +16,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import iflye.dependencies.logging.IflyeLogger;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Tag;
 import metrics.MetricTransformer;
@@ -33,6 +35,11 @@ import metrics.manager.MetricsManager;
  * @author Janik Stracke {@literal <janik.stracke@stud.tu-darmstadt.de>}
  */
 public class NotionReporter extends GroupByTagValueReporter implements Reporter {
+
+	/**
+	 * Logger for system outputs.
+	 */
+	protected final Logger logger = Logger.getLogger(this.getClass().getName());
 
 	/**
 	 * The HTTP client used to send requests to the Notion API.
@@ -111,6 +118,8 @@ public class NotionReporter extends GroupByTagValueReporter implements Reporter 
 		this.token = token;
 		this.metricDatabaseId = metricDatabaseId;
 		this.seriesDatabaseId = seriesDatabaseId;
+		
+		IflyeLogger.configureLogging(logger);
 	}
 
 	/**
@@ -352,9 +361,9 @@ public class NotionReporter extends GroupByTagValueReporter implements Reporter 
 			this.postMetric(this.metricDatabaseId, properties);
 		} catch (IOException | InterruptedException | NoSuchElementException e) {
 			// Don't propagate error to prevent failing the entire series
-			System.err.println("Failed to write to Notion DB!");
-			System.err.println("Entry was:");
-			System.err.println(properties);
+			logger.warning("Failed to write to Notion DB!");
+			logger.warning("Entry was:");
+			logger.warning(properties.toString());
 			e.printStackTrace();
 		}
 	}

@@ -82,9 +82,9 @@ public class DissScenarioLoad extends AbstractExperiment {
 
 			// Print maximum path length (after possible auto determination)
 			if (ModelFacadeConfig.MAX_PATH_LENGTH_AUTO) {
-				System.out.println("=> Using path length auto determination");
+				logger.info("=> Using path length auto determination");
 			}
-			System.out.println("=> Using max path length " + ModelFacadeConfig.MAX_PATH_LENGTH);
+			logger.info("=> Using max path length " + ModelFacadeConfig.MAX_PATH_LENGTH);
 
 			/*
 			 * Every embedding starts here.
@@ -99,7 +99,7 @@ public class DissScenarioLoad extends AbstractExperiment {
 			while (vNetId != null) {
 				final VirtualNetwork vNet = (VirtualNetwork) ModelFacade.getInstance().getNetworkById(vNetId);
 
-				System.out.println("=> Embedding virtual network " + vNetId);
+				logger.info("=> Embedding virtual network " + vNetId);
 
 				final SubstrateNetwork sNet = (SubstrateNetwork) ModelFacade.getInstance()
 						.getNetworkById(sNetIds.get(0));
@@ -153,7 +153,7 @@ public class DissScenarioLoad extends AbstractExperiment {
 			MetricsManager.closeAll();
 		}
 
-		System.out.println("=> Execution finished.");
+		logger.info("=> Execution finished.");
 		System.exit(0);
 	}
 

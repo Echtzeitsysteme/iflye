@@ -6,13 +6,15 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
+import iflye.dependencies.logging.IflyeLogger;
+
 /**
  * Runner wrapper class that searches for CSV metric files and starts the Runner
  * class accordingly.
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class RunnerWrapper {
+public class RunnerWrapper extends IflyeLogger {
 
 	/**
 	 * Private constructor ensures no object instantiation.
@@ -45,7 +47,7 @@ public class RunnerWrapper {
 						}
 					});
 		} catch (final IOException e) {
-			System.out.println("=> Catched an IOException. Halting.");
+			logger.warning("=> Catched an IOException. Halting.");
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -54,7 +56,7 @@ public class RunnerWrapper {
 		experiments.forEach(e -> {
 			Runner.main(new String[] { e });
 		});
-		System.out.println("=> Runner wrapper finished.");
+		logger.info("=> Runner wrapper finished.");
 	}
 
 }

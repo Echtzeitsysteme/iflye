@@ -55,9 +55,9 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
 
 			// Print maximum path length (after possible auto determination)
 			if (ModelFacadeConfig.MAX_PATH_LENGTH_AUTO) {
-				System.out.println("=> Using path length auto determination");
+				logger.info("=> Using path length auto determination");
 			}
-			System.out.println("=> Using max path length " + ModelFacadeConfig.MAX_PATH_LENGTH);
+			logger.info("=> Using max path length " + ModelFacadeConfig.MAX_PATH_LENGTH);
 
 			/*
 			 * Every embedding starts here.
@@ -110,7 +110,7 @@ public class DissScenarioLoadBatch extends DissScenarioLoad {
 			MetricsManager.closeAll();
 		}
 
-		System.out.println("=> Execution finished.");
+		logger.info("=> Execution finished.");
 		System.exit(0);
 	}
 

@@ -6,6 +6,7 @@ import algorithms.AbstractAlgorithm;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
 import algorithms.gips.VneGipsSeqAlgorithm;
+import examples.AbstractIflyeExample;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.OneTierNetworkGenerator;
@@ -21,7 +22,7 @@ import model.VirtualNetwork;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class VneGipsSeqAlgorithmExampleLarge {
+public class VneGipsSeqAlgorithmExampleLarge extends AbstractIflyeExample {
 
 	/**
 	 * Main method to start the example. String array of arguments will be ignored.
@@ -63,10 +64,10 @@ public class VneGipsSeqAlgorithmExampleLarge {
 
 		// Save model to file
 		ModelFacade.getInstance().persistModel();
-		System.out.println("=> Execution finished.");
+		logger.info("=> Execution finished.");
 
 		// Time measurements
-		System.out.println("=> Elapsed time (total): " + GlobalMetricsManager.getRuntime().getValue() / 1_000_000_000
+		logger.info("=> Elapsed time (total): " + GlobalMetricsManager.getRuntime().getValue() / 1_000_000_000
 				+ " seconds");
 		System.exit(0);
 	}

@@ -5,6 +5,7 @@ import java.util.Set;
 import algorithms.AlgorithmConfig;
 import algorithms.AlgorithmConfig.Objective;
 import algorithms.heuristics.TafAlgorithm;
+import examples.AbstractIflyeExample;
 import facade.ModelFacade;
 import facade.config.ModelFacadeConfig;
 import generators.OneTierNetworkGenerator;
@@ -20,7 +21,7 @@ import model.VirtualNetwork;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class TafAlgorithmTwoVnsExample {
+public class TafAlgorithmTwoVnsExample extends AbstractIflyeExample {
 
 	/**
 	 * Main method to start the example. String array of arguments will be ignored.
@@ -58,7 +59,7 @@ public class TafAlgorithmTwoVnsExample {
 
 		// Save model to file
 		ModelFacade.getInstance().persistModel();
-		System.out.println("=> Execution finished.");
+		logger.info("=> Execution finished.");
 
 		System.exit(0);
 	}

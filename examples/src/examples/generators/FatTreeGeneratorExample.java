@@ -1,5 +1,6 @@
 package examples.generators;
 
+import examples.AbstractIflyeExample;
 import facade.ModelFacade;
 import generators.FatTreeNetworkGenerator;
 import generators.config.FatTreeConfig;
@@ -10,7 +11,7 @@ import generators.config.FatTreeConfig;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class FatTreeGeneratorExample {
+public class FatTreeGeneratorExample extends AbstractIflyeExample {
 
 	/**
 	 * Main method to start the example. String array of arguments will be ignored.
@@ -27,7 +28,7 @@ public class FatTreeGeneratorExample {
 
 		// Save model to file
 		ModelFacade.getInstance().persistModel();
-		System.out.println("=> Execution finished.");
+		logger.info("=> Execution finished.");
 
 		System.exit(0);
 	}

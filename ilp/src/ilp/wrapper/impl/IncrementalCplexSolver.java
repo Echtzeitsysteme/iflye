@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+import iflye.dependencies.logging.IflyeLogger;
 import ilog.concert.IloException;
 import ilog.concert.IloIntVar;
 import ilog.concert.IloLinearNumExpr;
@@ -35,7 +36,7 @@ import ilp.wrapper.config.IlpSolverConfig;
  * @author Stefan Tomaszek (ES TU Darmstadt) [idyve project]
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class IncrementalCplexSolver implements IncrementalIlpSolver {
+public class IncrementalCplexSolver  extends IflyeLogger implements IncrementalIlpSolver {
 
 	/**
 	 * CPLEX object (solver and model).
@@ -103,7 +104,7 @@ public class IncrementalCplexSolver implements IncrementalIlpSolver {
 		//
 		// Source: https://www.ibm.com/docs/en/icos/22.1.2?topic=sos-declaring-members
 		//
-		System.out.println("=> WARNING: SOS1 constraints are currently not supported by the CPLEX implementation!");
+		logger.warning("=> WARNING: SOS1 constraints are currently not supported by the CPLEX implementation!");
 		return;
 	}
 

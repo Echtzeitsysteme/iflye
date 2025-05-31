@@ -2,9 +2,10 @@ package metrics;
 
 import java.util.UUID;
 
+import iflye.dependencies.logging.IflyeLogger;
 import metrics.manager.MetricsManager;
 
-class MetricsExample {
+class MetricsExample extends IflyeLogger {
 	public static void main(String[] args) {
 		// Create a MetricsManager instance
 		MetricsManager metricsManager = new MetricsManager.Default();
@@ -24,7 +25,7 @@ class MetricsExample {
 				metricsManager.observe("exampleObservation", () -> {
 					// Your code to be observed goes here
 					// This could be a method call or any other code block
-					System.out.println("Executing observed code...");
+					logger.info("Executing observed code...");
 					try {
 						Thread.sleep(1000); // Simulate some work
 					} catch (InterruptedException e) {
@@ -33,7 +34,7 @@ class MetricsExample {
 						// This is important to allow reporting on exceptions.
 						throw new RuntimeException(e);
 					}
-					System.out.println("Finished observed code.");
+					logger.info("Finished observed code.");
 				}, //
 					// Again, we could add some tags that are specific to this observation
 					// and will be inherited by any sub-observations

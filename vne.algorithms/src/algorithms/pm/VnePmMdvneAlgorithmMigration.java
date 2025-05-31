@@ -90,7 +90,7 @@ public class VnePmMdvneAlgorithmMigration extends VnePmMdvneAlgorithm {
 
 		// Check if embedding migration routing must be started
 		if (!rejectedNetworks.isEmpty()) {
-			System.out.println("=> Started embedding migration.");
+			logger.info("=> Started embedding migration.");
 			embedNetworks(rejectedNetworks);
 			rejectedNetworks = tryMigrationEmbedding();
 		}

@@ -1,5 +1,6 @@
 package examples.generators;
 
+import examples.AbstractIflyeExample;
 import facade.ModelFacade;
 import generators.TwoTierNetworkGenerator;
 import generators.config.TwoTierConfig;
@@ -10,7 +11,7 @@ import generators.config.TwoTierConfig;
  *
  * @author Maximilian Kratz {@literal <maximilian.kratz@es.tu-darmstadt.de>}
  */
-public class TwoTierGeneratorExample {
+public class TwoTierGeneratorExample extends AbstractIflyeExample {
 
 	/**
 	 * Main method to start the example. String array of arguments will be ignored.
@@ -31,7 +32,7 @@ public class TwoTierGeneratorExample {
 
 		// Save model to file
 		ModelFacade.getInstance().persistModel();
-		System.out.println("=> Execution finished.");
+		logger.info("=> Execution finished.");
 
 		System.exit(0);
 	}

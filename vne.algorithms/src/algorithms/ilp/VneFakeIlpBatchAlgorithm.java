@@ -74,7 +74,7 @@ public class VneFakeIlpBatchAlgorithm extends VneFakeIlpAlgorithm {
 		// substrate one
 		vNets.forEach(vn -> {
 			if (vn.getHost() != null) {
-				System.out.println("=> Un-embed virtual network " + vn.getName());
+				logger.info("=> Un-embed virtual network " + vn.getName());
 				modelFacade.removeNetworkEmbedding(vn.getName());
 			}
 		});

@@ -68,15 +68,15 @@ public class MdvneFatTreeAdaptedScenario extends AMdvneAdaptedScenario implement
 			final boolean success = algo.execute();
 
 			if (success) {
-				System.out.println("Embedded VNR: " + virtualNetworkId);
+				logger.info("Embedded VNR: " + virtualNetworkId);
 			} else {
-				System.err.println("Rejected VNR: " + virtualNetworkId);
+				logger.warning("Rejected VNR: " + virtualNetworkId);
 			}
 		}
 
 		// Save model to file
 		ModelFacade.getInstance().persistModel();
-		System.out.println("=> Scenario finished.");
+		logger.info("=> Scenario finished.");
 
 		System.exit(0);
 	}
