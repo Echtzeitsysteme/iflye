@@ -103,17 +103,17 @@ public class VneGipsAlgorithm extends AbstractAlgorithm implements GipsAlgorithm
 
 	@Override
 	public SolverOutput getSolverOutput() {
-		return this.iflyeOutput.solverOutput();
+		return this.iflyeOutput != null ? this.iflyeOutput.solverOutput() : null;
 	}
 
 	@Override
 	public Map<String, String> getMatches() {
-		return this.iflyeOutput.matches();
+		return this.iflyeOutput != null ? this.iflyeOutput.matches() : null;
 	}
 
 	@Override
 	public Map<String, IMeasurement> getMeasurements() {
-		return this.iflyeOutput.measurements();
+		return this.iflyeOutput != null ? this.iflyeOutput.measurements() : null;
 	}
 
 	/**
