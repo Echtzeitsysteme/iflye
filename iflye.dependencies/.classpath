@@ -2,15 +2,15 @@
 <classpath>
 	<classpathentry exported="true" kind="lib" path="lib/gurobi/gurobi-12.0.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gurobi/gurobi-javadoc-12.0.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-io/commons-io-2.17.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-io/commons-io-2.17.0-javadoc.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-io/commons-io-2.17.0-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-csv/commons-csv-1.12.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-csv/commons-csv-1.12.0-javadoc.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-csv/commons-csv-1.12.0-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-codec/commons-codec-1.17.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-codec/commons-codec-1.17.1-javadoc.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-codec/commons-codec-1.17.1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io/commons-io-2.19.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io/commons-io-2.19.0-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io/commons-io-2.19.0-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-csv/commons-csv-1.14.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-csv/commons-csv-1.14.0-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-csv/commons-csv-1.14.0-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-codec/commons-codec-1.18.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-codec/commons-codec-1.18.0-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-codec/commons-codec-1.18.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-cli/commons-cli-1.9.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-cli/commons-cli-1.9.0-javadoc.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-cli/commons-cli-1.9.0-sources.jar"/>
@@ -37,19 +37,19 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry exported="true" kind="lib" path="lib/cplex/cplex-22.1.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/micrometer/micrometer-commons-1.14.5.jar" sourcepath="lib/micrometer/micrometer-commons-1.14.5-sources.jar">
+	<classpathentry exported="true" kind="lib" path="lib/micrometer/micrometer-commons-1.15.1.jar" sourcepath="lib/micrometer/micrometer-commons-1.15.1-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/iflye.dependencies/lib/micrometer/micrometer-commons-1.14.5-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:platform:/resource/iflye.dependencies/lib/micrometer/micrometer-commons-1.15.1-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/micrometer/micrometer-core-1.14.5.jar" sourcepath="lib/micrometer/micrometer-core-1.14.5-sources.jar">
+	<classpathentry exported="true" kind="lib" path="lib/micrometer/micrometer-core-1.15.1.jar" sourcepath="lib/micrometer/micrometer-core-1.15.1-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/iflye.dependencies/lib/micrometer/micrometer-core-1.14.5-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:platform:/resource/iflye.dependencies/lib/micrometer/micrometer-core-1.15.1-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/micrometer/micrometer-observation-1.14.5.jar" sourcepath="lib/micrometer/micrometer-observation-1.14.5-sources.jar">
+	<classpathentry exported="true" kind="lib" path="lib/micrometer/micrometer-observation-1.15.1.jar" sourcepath="lib/micrometer/micrometer-observation-1.15.1-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/iflye.dependencies/lib/micrometer/micrometer-observation-1.14.5-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:platform:/resource/iflye.dependencies/lib/micrometer/micrometer-observation-1.15.1-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/micrometer/slf4j-api-2.0.17.jar"/>
