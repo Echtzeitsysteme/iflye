@@ -49,13 +49,13 @@ public class EmoflonGtRackB implements IncrementalPatternMatcher {
 	/**
 	 * Map for matches: (Virtual) element to (substrate) element.
 	 */
-	private final Map<Element, List<Element>> virtualMatches = new UnifiedMap<>();
+	private final UnifiedMap<Element, List<Element>> virtualMatches = new UnifiedMap<Element, List<Element>>();
 
 	/**
 	 * Map for GT matches: Tuple of virtual and substrate element to
 	 * GraphTransformationMatch.
 	 */
-	private final Map<Tuple, GraphTransformationMatch<?, ?>> tupleToGtMatch = new UnifiedMap<>();
+	private final UnifiedMap<Tuple, GraphTransformationMatch<?, ?>> tupleToGtMatch = new UnifiedMap<Tuple, GraphTransformationMatch<?, ?>>();
 
 	/**
 	 * Constructor that initializes the object for a given root node.
@@ -148,7 +148,9 @@ public class EmoflonGtRackB implements IncrementalPatternMatcher {
 	 */
 	public void addMatch(final BiConsumer<Element, Element> deltaModification, final Element virtual,
 			final Element substrate) {
-		virtualMatches.computeIfAbsent(virtual, k -> new LinkedList<>()).add(substrate);
+		if (!virtualMatches.containsKey(virtual)) {
+			virtualMatches.put(virtual, List.of(substrate));
+		}
 		deltaModification.accept(virtual, substrate);
 	}
 

@@ -14,7 +14,7 @@ Require-Bundle: org.emoflon.ibex.common,
  org.emoflon.ibex.patternmodel,
  org.emoflon.ibex.gt.democles,
  org.emoflon.ibex.gt.hipe,
- org.eclipse.collections
+ iflye.dependencies;bundle-version="1.0.0"
 Export-Package: gt.emoflon,
  gt.emoflon.apps,
  network.model.rules.rackb.api,

@@ -1,8 +1,6 @@
 package gt.emoflon;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiConsumer;
 
 import org.eclipse.collections.impl.map.mutable.UnifiedMap;
@@ -49,13 +47,13 @@ public class EmoflonGt implements IncrementalPatternMatcher {
 	/**
 	 * Map for matches: (Virtual) element to (substrate) element.
 	 */
-	private final Map<Element, List<Element>> virtualMatches = new UnifiedMap<>();
+	private final UnifiedMap<Element, List<Element>> virtualMatches = new UnifiedMap<Element, List<Element>>();
 
 	/**
 	 * Map for GT matches: Tuple of virtual and substrate element to
 	 * GraphTransformationMatch.
 	 */
-	private final Map<Tuple, GraphTransformationMatch<?, ?>> tupleToGtMatch = new UnifiedMap<>();
+	private final UnifiedMap<Tuple, GraphTransformationMatch<?, ?>> tupleToGtMatch = new UnifiedMap<Tuple, GraphTransformationMatch<?, ?>>();
 
 	// TODO: Currently all update and removal functionality is missing!
 
@@ -147,7 +145,9 @@ public class EmoflonGt implements IncrementalPatternMatcher {
 	 */
 	public void addMatch(final BiConsumer<Element, Element> deltaModification, final Element virtual,
 			final Element substrate) {
-		virtualMatches.computeIfAbsent(virtual, k -> new LinkedList<>()).add(substrate);
+		if (!virtualMatches.containsKey(virtual)) {
+			virtualMatches.put(virtual, List.of(substrate));
+		}
 		deltaModification.accept(virtual, substrate);
 	}
 
