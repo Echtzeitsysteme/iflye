@@ -9,9 +9,9 @@
     </listAttribute>
     <mapAttribute key="org.eclipse.debug.core.environmentVariables">
         <mapEntry key="GRB_LICENSE_FILE" value="/home/mkratz/gurobi.lic"/>
-        <mapEntry key="GUROBI_HOME" value="/opt/gurobi1203/linux64/"/>
-        <mapEntry key="LD_LIBRARY_PATH" value="/opt/gurobi1203/linux64/lib/:/opt/ibm/ILOG/CPLEX_Studio2212/cplex/bin/x86-64_linux/"/>
-        <mapEntry key="PATH" value="/opt/gurobi1203/linux64/bin/:/opt/ibm/ILOG/CPLEX_Studio2212/cplex/bin/x86-64_linux/:$PATH"/>
+        <mapEntry key="GUROBI_HOME" value="/opt/gurobi1300/linux64/"/>
+        <mapEntry key="LD_LIBRARY_PATH" value="/opt/gurobi1300/linux64/lib/:/opt/ibm/ILOG/CPLEX_Studio2212/cplex/bin/x86-64_linux/"/>
+        <mapEntry key="PATH" value="/opt/gurobi1300/linux64/bin/:/opt/ibm/ILOG/CPLEX_Studio2212/cplex/bin/x86-64_linux/:$PATH"/>
     </mapAttribute>
     <stringAttribute key="org.eclipse.jdt.junit.CONTAINER" value="=test.suite.iflye"/>
     <booleanAttribute key="org.eclipse.jdt.junit.KEEPRUNNING_ATTR" value="false"/>
