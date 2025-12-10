@@ -1,9 +1,10 @@
 package test.ilp;
 
-import static org.junit.Assert.assertTrue;
 
-import org.junit.Assert;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -59,7 +60,7 @@ public class IlpSolverSetupTest {
 			solver = IlpSolverConfig.getIlpSolver();
 		} catch (final Exception | Error ex) {
 			System.out.println(ex.getMessage());
-			Assert.fail("ILP solver could not be instantiated: Exception or error thrown.");
+			Assertions.fail("ILP solver could not be instantiated: Exception or error thrown.");
 		}
 
 		// Create a very small and simple ILP problem

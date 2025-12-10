@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -67,7 +67,7 @@ public class ModelFacadePersistTest {
 			assertNotNull(ModelFacade.getInstance().getNetworkById("test"));
 			assertNotNull(ModelFacade.getInstance().getServerById("srv1"));
 		} catch (final IndexOutOfBoundsException ex) {
-			Assert.fail("The model within the resource set of the ModelFacade was "
+			Assertions.fail("The model within the resource set of the ModelFacade was "
 					+ "corrupted after previous persist call.");
 		}
 	}
@@ -99,7 +99,7 @@ public class ModelFacadePersistTest {
 
 		final File f = new File(path);
 		if (!(f.exists() && !f.isDirectory())) {
-			Assert.fail("Expected file could not be found.");
+			Assertions.fail("Expected file could not be found.");
 		}
 	}
 
