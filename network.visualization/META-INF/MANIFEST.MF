@@ -9,6 +9,6 @@ Require-Bundle: org.eclipse.emf.ecore,
  org.emoflon.smartemf,
  iflye.dependencies
 Automatic-Module-Name: test.singleton.true
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-25
 Export-Package: visualization
 Bundle-Vendor: Real-Time Systems Lab - TU Darmstadt

@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: network.generators
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-25
 Bundle-SymbolicName: network.generators; singleton:=true
 Automatic-Module-Name: network.generators
 Bundle-Version: 0.0.5.qualifier
