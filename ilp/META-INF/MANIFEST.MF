@@ -5,7 +5,7 @@ Bundle-SymbolicName: ilp
 Bundle-Version: 0.0.5.qualifier
 Bundle-ClassPath: ilp.jar
 Automatic-Module-Name: ilp
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-25
 Export-Package: ilp.solver.examples,
  ilp.solver.tests,
  ilp.wrapper,

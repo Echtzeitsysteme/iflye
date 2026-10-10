@@ -5,7 +5,7 @@
 
 ## Installation (development)
 
-* Install [Temurin JDK21](https://adoptium.net/temurin/releases/) or newer.
+* Install [Temurin JDK25](https://adoptium.net/temurin/releases/) or newer.
 * Install [GIPS](https://gips.dev) as described [here](https://github.com/Echtzeitsysteme/gips#installation-development) or use the [pre-built Eclipse](https://github.com/Echtzeitsysteme/gips-eclipse-build).
 * Install [Gurobi](https://www.gurobi.com/) in version `13.0.2` and activate a license for your computer.
     * Currently, Gurobi is the default ILP solver used in **iflye**.

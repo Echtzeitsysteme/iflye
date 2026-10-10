@@ -17,7 +17,7 @@ Bundle-ClassPath: scenarios.jar,
  lib/commons-cli/commons-cli-1.9.0-javadoc.jar,
  lib/commons-cli/commons-cli-1.9.0-sources.jar
 Automatic-Module-Name: vne.scenarios
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-25
 Export-Package: scenario.util,
  scenarios.gen,
  scenarios.load,
